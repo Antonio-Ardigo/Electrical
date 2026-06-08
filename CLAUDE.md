@@ -18,7 +18,7 @@ The course is built by three roles; keep their concerns separate when editing:
 |------|------|-------|
 | **Planner** (curriculum) | Course structure, index, overview, glossary | `README.md`, `training/00-course-overview.md` |
 | **Technical draftsman** | Single-line diagrams + tag legends | `diagrams/sld-master-2MW.md`, `diagrams/spof-examples/*` |
-| **Electrical engineer** | Technical content of the modules | `training/module-01..03-*.md` |
+| **Electrical engineer** | Technical content of the modules | `training/module-01..04-*.md` |
 
 Reference basis of design (sizing logic, equipment schedule, tag scheme):
 `docs/main-electrical-equipment-2MW-process-plant.md` — **read this first** before editing
@@ -36,7 +36,8 @@ Electrical/
 │   ├── 00-course-overview.md                  overview, learning outcomes, glossary
 │   ├── module-01-equipment-identification.md  identify equipment + function table (linked to tags)
 │   ├── module-02-calculations.md              core electrical calculations + worked examples
-│   └── module-03-spof-analysis.md             single-point-of-failure analysis
+│   ├── module-03-spof-analysis.md              single-point-of-failure analysis
+│   └── module-04-control-philosophy.md         control philosophy & power management (DCS/PMS, renewables)
 └── diagrams/
     ├── DRAWING-STANDARD.md                     SLD format/style spec (schemdraw, IEC 60617)
     ├── sld-master-2MW.md                       master reference SLD (embeds svg/, anchored legend)
