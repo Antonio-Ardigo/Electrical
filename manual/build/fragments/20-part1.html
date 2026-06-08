@@ -1,0 +1,931 @@
+<!-- ============================================================
+     Part 1 — Foundations
+     Sections: f-overview | f-read-sld | f-pcc-mcc |
+               f-equipment-table | f-powerflow |
+               f-schedule-standards | f-selfcheck
+     ============================================================ -->
+
+<section id="f-overview" data-title="The MV/LV Plant at a Glance" data-part="Part 1 — Foundations">
+  <h2>The MV/LV Plant at a Glance</h2>
+
+  <p><em>Where you are in the workflow: before you can assess a plant, you must be able to read its single-line diagram and name every item on it. Part 1 builds that foundation.</em></p>
+
+  <h3 id="f-overview-basis">Design basis of the reference plant</h3>
+
+  <p>
+    Throughout this manual, calculations and examples are illustrated using a representative
+    <strong>~2 MW industrial process plant</strong> (water / desalination service, typical of the
+    sites you will assess). The design basis is summarised below; all figures are
+    <em>indicative and tentative</em>.
+  </p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Parameter</th>
+        <th>Indicative value</th>
+        <th>Note</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Total plant maximum demand</td>
+        <td>~2.0 MW</td>
+        <td>Confirm against actual load list.</td>
+      </tr>
+      <tr>
+        <td>Overall power factor (before correction)</td>
+        <td>0.85 lagging</td>
+        <td>Indicative; varies with motor mix and VFD loading.</td>
+      </tr>
+      <tr>
+        <td>Apparent power (uncorrected)</td>
+        <td>~2.35 MVA</td>
+        <td>S = P / pf = 2000 / 0.85</td>
+      </tr>
+      <tr>
+        <td>Installed transformer capacity (with margin)</td>
+        <td>2 × 1600 kVA</td>
+        <td>+20–25 % design/diversity margin; next standard size above 2 × ~1175 kVA.</td>
+      </tr>
+      <tr>
+        <td>Utility incoming voltage (MV)</td>
+        <td>11 kV, 3-phase, 50 Hz</td>
+        <td>Actual utility voltage confirmed per plant; could differ.</td>
+      </tr>
+      <tr>
+        <td>Distribution / utilisation voltage (LV)</td>
+        <td>400 / 415 V, 3-phase, 50 Hz</td>
+        <td>IEC standard; confirm per plant.</td>
+      </tr>
+      <tr>
+        <td>MV system earthing</td>
+        <td>Resistance-earthed via NER</td>
+        <td>Limits earth-fault current to ~300–400 A (indicative).</td>
+      </tr>
+      <tr>
+        <td>LV system earthing</td>
+        <td>TN-S (solid)</td>
+        <td>Confirm per plant.</td>
+      </tr>
+      <tr>
+        <td>Redundancy philosophy</td>
+        <td>N-1 partial — 2 × transformers + N.O. bus-tie; single DG for essential loads</td>
+        <td>One transformer can carry the essential load if the other is lost.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="worked">
+    <h4>Worked example — Transformer sizing from demand</h4>
+    <p>Given ~2 MW demand at 0.85 power factor, size the transformer bank:</p>
+    <code class="formula">S = P / pf = 2000 kW / 0.85 ≈ 2353 kVA</code>
+    <p>Apply a design and diversity margin of +20–25 %:</p>
+    <code class="formula">S_design = 2353 × 1.25 ≈ 2941 kVA</code>
+    <p>Split across two transformers (N-1 split-bus), select next standard size:</p>
+    <code class="formula">S_each = 2941 / 2 ≈ 1471 kVA → select 2 × 1600 kVA</code>
+    <p><strong>Result:</strong> 2 × 1600 kVA, Dyn11, 11 kV / 0.4 kV (tags <code>TX-1</code> and <code>TX-2</code>). Values are indicative.</p>
+  </div>
+
+  <h3 id="f-overview-architecture">Power architecture — the master SLD</h3>
+
+  <p>
+    The master single-line diagram below shows the complete reference power architecture.
+    Study it before proceeding — every section of Part 1 refers to items on this drawing.
+  </p>
+
+  <figure class="fig">
+    <div class="svg-embed" data-src="diagrams/svg/sld-master-2MW.svg"></div>
+    <figcaption>Fig 1-1 — Master SLD, indicative ~2 MW MV/LV process plant (IEC 60617 symbols; all ratings indicative)</figcaption>
+  </figure>
+
+  <p>
+    The architecture has three tiers:
+  </p>
+  <ol>
+    <li><strong>MV (11 kV) tier:</strong> Utility feed → metering (<code>MV-MET</code>) → MV switchgear (<code>MV-SWGR</code>) with protection IEDs (<code>MV-PROT</code>) and neutral earthing resistor (<code>MV-NER</code>).</li>
+    <li><strong>Transformation tier:</strong> Two independent transformer feeders supply <code>TX-1</code> and <code>TX-2</code>, each stepping 11 kV down to 400 V.</li>
+    <li><strong>LV (400 V) tier:</strong> Main switchboard (<code>LV-MSB</code>) with a split bus (A and B) joined by a normally-open bus-tie (<code>BT</code>); Motor Control Centres (<code>MCC-1</code>, <code>MCC-2</code>), PFC bank, distribution boards, essential board (<code>EDB</code>), diesel generator (<code>DG</code>), ATS, UPS and DC battery system (<code>DCDB</code>).</li>
+  </ol>
+
+  <div class="key">Key takeaway: The ~2 MW reference plant is the template for everything in this manual. Two 1600 kVA transformers on a split LV bus with a normally-open bus-tie give partial N-1 resilience — understanding why this architecture is used, and where it is still vulnerable, is the core of the SPOF assessment.</div>
+</section>
+
+<!-- ============================================================ -->
+
+<section id="f-read-sld" data-title="How to Read an SLD" data-part="Part 1 — Foundations">
+  <h2>How to Read an SLD</h2>
+
+  <p><em>Where you are in the workflow: before the site visit, you must be comfortable reading any MV/LV SLD you are handed, not just the reference drawing.</em></p>
+
+  <h3 id="f-read-sld-direction">Power-flow direction and voltage levels</h3>
+
+  <p>
+    Read an SLD <strong>top to bottom</strong> — energy flows from the utility source at the top to
+    the loads (motors, boards) at the bottom. On the reference drawing there are two clearly
+    separated horizontal zones:
+  </p>
+
+  <ul>
+    <li><strong>MV zone (upper band):</strong> 11 kV — from the utility intake down to and including the transformer primaries. MV busbars are drawn in <strong>firebrick red</strong> on colour drawings.</li>
+    <li><strong>LV zone (lower band):</strong> 400 V — from the transformer secondaries to all distribution equipment and loads. LV busbars are drawn in <strong>navy blue</strong>.</li>
+  </ul>
+
+  <p>
+    The two <strong>transformers</strong> (<code>TX-1</code>, <code>TX-2</code>) are the physical
+    and electrical boundary between the MV and LV zones.
+  </p>
+
+  <h3 id="f-read-sld-symbols">IEC 60617 symbols used on the reference SLD</h3>
+
+  <div class="note">
+    <strong>Note — IEC 60617:</strong> This is the international standard defining graphical
+    symbols for diagrams. The symbols used on the reference SLD are drawn in accordance with
+    IEC 60617 series. If you encounter a drawing using ANSI/IEEE symbols (common in North
+    America), the layout is the same but some symbols differ — the most common example is the
+    circuit-breaker symbol (IEC: a solid square; ANSI: two diverging lines). Always check the
+    drawing legend before interpreting unfamiliar symbols.
+  </div>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Symbol / notation</th>
+        <th>Meaning</th>
+        <th>Where seen on reference SLD</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Heavy horizontal line (<code>═══</code>)</td>
+        <td>Busbar — the common copper to which feeders and incomers connect.</td>
+        <td>11 kV bus in MV-SWGR; LV Bus A and Bus B in LV-MSB.</td>
+      </tr>
+      <tr>
+        <td>Solid square on conductor</td>
+        <td>Circuit breaker (closed / in service). IEC 60617-07.</td>
+        <td>All MV and LV breakers.</td>
+      </tr>
+      <tr>
+        <td>Hollow / dashed square</td>
+        <td>Circuit breaker normally open (N.O.).</td>
+        <td>Bus-tie <code>BT</code>; ATS open position.</td>
+      </tr>
+      <tr>
+        <td><code>[52-I]</code>, <code>[52-T1]</code>, etc.</td>
+        <td>MV circuit breaker — ANSI device number 52. Suffix identifies the function (I = incomer, BS = bus-section, T1/T2 = transformer feeder).</td>
+        <td>MV-SWGR breakers.</td>
+      </tr>
+      <tr>
+        <td><code>[ACB]</code></td>
+        <td>Air Circuit Breaker — large LV breaker used for main incomers and bus-tie.</td>
+        <td>LV-MSB incomers from TX-1 and TX-2; bus-tie BT.</td>
+      </tr>
+      <tr>
+        <td><code>[MCCB]</code></td>
+        <td>Moulded-Case Circuit Breaker — smaller LV breaker used for outgoing feeders.</td>
+        <td>LV-MSB outgoing feeders to MCC-1, MCC-2, PFC, DB, EDB.</td>
+      </tr>
+      <tr>
+        <td>Two interlinked circles with a line between (<code>(│ │)</code> with <code>8</code>)</td>
+        <td>Two-winding transformer (IEC 60617). The winding configuration label (e.g. <strong>Dyn11</strong>) shows delta primary (D), star secondary (y, solidly earthed), and 30° phase shift (clock position 11).</td>
+        <td>TX-1 and TX-2.</td>
+      </tr>
+      <tr>
+        <td>Resistor symbol to earth at neutral point (<code>[N]</code>)</td>
+        <td>Neutral Earthing Resistor — MV neutral earthed through a resistor.</td>
+        <td>MV-NER at the 11 kV neutral.</td>
+      </tr>
+      <tr>
+        <td>Three diminishing bars to earth</td>
+        <td>Earth / ground connection.</td>
+        <td>LV transformer secondary neutral; earthing points on equipment.</td>
+      </tr>
+      <tr>
+        <td>Circle with <code>CT</code> or <code>VT</code></td>
+        <td>Current Transformer / Voltage Transformer — instrument transformers feeding meters and relays.</td>
+        <td>MV-MET (revenue CTs/VTs); MV-PROT (protection CTs).</td>
+      </tr>
+      <tr>
+        <td>Circle with <code>M</code></td>
+        <td>Motor load.</td>
+        <td>Process motors at the bottom of each MCC feeder.</td>
+      </tr>
+      <tr>
+        <td>Two parallel plates</td>
+        <td>Capacitor bank (PFC).</td>
+        <td>PFC on LV Bus A feeder.</td>
+      </tr>
+      <tr>
+        <td>Labelled rectangle (block)</td>
+        <td>Equipment assembly — used for MCC, VFD, UPS, ATS, DB, DCDB where a single-symbol representation is appropriate.</td>
+        <td>MCC-1, MCC-2, VFD, UPS, ATS, DCDB, DB, EDB.</td>
+      </tr>
+      <tr>
+        <td><code>DOL</code> / <code>S/S</code> / <code>VFD</code> label on motor feeder</td>
+        <td>Starter type: Direct-on-Line / Soft-Starter / Variable Frequency Drive.</td>
+        <td>Within MCC blocks.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 id="f-read-sld-busbar">Busbar convention and the split bus</h3>
+
+  <p>
+    The LV main switchboard (<code>LV-MSB</code>) is drawn as a <strong>split bus</strong>:
+    <strong>Bus A</strong> (left, fed by TX-1) and <strong>Bus B</strong> (right, fed by TX-2)
+    are two physically separate copper bars in the one board. They are joined only through the
+    normally-open bus-tie (<code>BT</code>). In normal operation each transformer supplies its
+    own half of the plant independently. The split-bus arrangement:
+  </p>
+  <ul>
+    <li>limits the fault current that a single transformer must interrupt,</li>
+    <li>contains the blast zone of any bus fault to one section, and</li>
+    <li>allows the bus-tie to close automatically on loss of one incomer, maintaining supply to both buses from the surviving transformer.</li>
+  </ul>
+
+  <h3 id="f-read-sld-redlining">Red-lining on site</h3>
+
+  <p>
+    On a site visit, you compare the SLD against the as-found installation and mark discrepancies
+    in red on a working print or a PDF annotation tool. Common discrepancies to look for:
+  </p>
+  <ul>
+    <li>Breaker labelling or device number differs from drawing.</li>
+    <li>An extra or missing feeder — a circuit on site not shown on the drawing.</li>
+    <li>Bus-tie in a different normal position (open or closed) from the drawing.</li>
+    <li>Equipment substituted (e.g. RMU instead of metal-clad switchgear).</li>
+    <li>Protection relay type or settings different from what is listed.</li>
+    <li>Cables or transformers replaced with a different rating.</li>
+  </ul>
+
+  <div class="key">Key takeaway: Read SLDs top-to-bottom (source to load), know the IEC 60617 symbols, and understand the split-bus concept. On site, every discrepancy between drawing and reality is a red-line — and potentially a SPOF waiting to be found.</div>
+</section>
+
+<!-- ============================================================ -->
+
+<section id="f-pcc-mcc" data-title="PCC vs MCC" data-part="Part 1 — Foundations">
+  <h2>PCC vs MCC</h2>
+
+  <p><em>Where you are in the workflow: this distinction is fundamental — confusing the two is one of the most common errors on assessment forms.</em></p>
+
+  <p>
+    Both the PCC and the MCC are LV assemblies built to <strong>IEC 61439-1/-2</strong>, and
+    they can look similar in a switchroom. They do very different jobs:
+  </p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Feature</th>
+        <th>PCC (Power Control Centre)</th>
+        <th>MCC (Motor Control Centre)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Tag in reference plant</strong></td>
+        <td><code>LV-MSB</code></td>
+        <td><code>MCC-1</code>, <code>MCC-2</code></td>
+      </tr>
+      <tr>
+        <td><strong>Primary function</strong></td>
+        <td>Receives transformer output(s); distributes <em>bulk</em> LV power to downstream boards and feeders. The LV power hub.</td>
+        <td>Houses individual motor <em>starters</em> — DOL, star-delta, soft-starter, VFD — that control and protect specific process motors.</td>
+      </tr>
+      <tr>
+        <td><strong>Incomers</strong></td>
+        <td>Air Circuit Breakers (ACBs) from transformers; motorised bus-tie ACB.</td>
+        <td>Single MCCB incomer from the PCC (LV-MSB) outgoing feeder.</td>
+      </tr>
+      <tr>
+        <td><strong>Outgoing feeders</strong></td>
+        <td>MCCBs feeding MCCs, distribution boards, PFC bank, large individual loads.</td>
+        <td>Per-motor buckets: MCCB or fuse-contactor, contactors, overload relay, local/remote control, ammeter, run/trip indication.</td>
+      </tr>
+      <tr>
+        <td><strong>Bus rating (indicative)</strong></td>
+        <td>~2500–3200 A; 50–65 kA fault withstand.</td>
+        <td>~1000–2000 A; fault withstand matched to upstream board.</td>
+      </tr>
+      <tr>
+        <td><strong>Form of segregation (IEC 61439)</strong></td>
+        <td>Form 4b — busbars separated from functional units; terminals separated from other functional units.</td>
+        <td>Form 3b/4b — functional units (starters) separated from each other.</td>
+      </tr>
+      <tr>
+        <td><strong>Where on the SLD</strong></td>
+        <td>The central LV switchboard spanning Bus A and Bus B — immediately below the transformers.</td>
+        <td>On outgoing MCCB feeders from the LV-MSB Bus A/B; one MCC per bus section in the reference plant.</td>
+      </tr>
+      <tr>
+        <td><strong>One-line description</strong></td>
+        <td>"The LV power hub — it feeds the MCCs."</td>
+        <td>"Where the motors are started — it feeds the loads."</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    <strong>Note — vocabulary variation:</strong> In different organisations, the PCC is also
+    called the Main LV Switchboard (MLVSB), Main Distribution Board (MDB), or simply the
+    Main Board. The MCC may be called a Motor Control Panel (MCP) or a starter board.
+    The <em>function</em> — bulk distribution vs. individual motor control — is the reliable
+    distinguishing criterion, regardless of what the nameplate says.
+  </div>
+
+  <div class="tip">
+    <strong>Tip — SPOF implication:</strong> Because the PCC is the single point through which
+    all transformer power passes before reaching the MCCs, a fault or loss of the PCC is a
+    plant-level SPOF. The split bus with bus-tie is specifically designed to limit this
+    vulnerability. When assessing a plant, check whether the PCC is truly split-bus or is
+    effectively a single-bus board with cosmetic segregation.
+  </div>
+
+  <div class="key">Key takeaway: PCC (<code>LV-MSB</code>) = bulk distribution hub, fed by transformers, feeds MCCs. MCC = motor starter assembly, fed by PCC, feeds individual motors. The PCC feeds the MCCs; the MCCs feed the loads.</div>
+</section>
+
+<!-- ============================================================ -->
+
+<section id="f-equipment-table" data-title="Equipment Function Table" data-part="Part 1 — Foundations">
+  <h2>Equipment Function Table</h2>
+
+  <p><em>Where you are in the workflow: this is the core reference table for the assessment — you will return to it every time you encounter a tag on site or in a document.</em></p>
+
+  <p>
+    The table below covers all 18 tags in the reference plant. For each tag it states the
+    equipment name, its function (what it does and why it is there), the indicative rating,
+    and where it appears on the master SLD. All ratings are indicative; confirm against
+    actual plant nameplates.
+  </p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Tag</th>
+        <th>Equipment</th>
+        <th>Function / purpose</th>
+        <th>Indicative rating</th>
+        <th>Where on the SLD</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>MV-MET</code></td>
+        <td>Utility revenue metering cubicle</td>
+        <td>Measures energy and maximum demand at the 11 kV intake via utility-grade CTs and VTs feeding a tariff kWh/kVAh meter. The commercial boundary between utility and plant — the utility reads this meter for billing.</td>
+        <td>Utility CT/VT and tariff meter; class 0.2S or better.</td>
+        <td>MV section, first item on the 11 kV supply side (top of drawing).</td>
+      </tr>
+      <tr>
+        <td><code>MV-SWGR</code></td>
+        <td>11 kV metal-clad switchgear</td>
+        <td>Receives and distributes the 11 kV supply. Houses the MV incomer breaker [52-I], bus-section breaker [52-BS], and two transformer-feeder breakers [52-T1] / [52-T2], so that MV circuits can be switched and fault current cleared quickly. The 11 kV busbar inside this board is the MV power hub.</td>
+        <td>11 kV, 630–1250 A bus, 25 kA / 1 s; vacuum CBs; IEC 62271-200.</td>
+        <td>MV section, central board below metering.</td>
+      </tr>
+      <tr>
+        <td><code>MV-PROT</code></td>
+        <td>MV protection and control IEDs</td>
+        <td>Detects MV faults and trips the correct breaker to isolate them quickly, minimising damage and restoring supply elsewhere. Functions: overcurrent (50/51), earth-fault (50N/51N), transformer differential (87T), under/over-voltage (27/59). Relays are supplied from the DCDB so they remain operative even on AC failure.</td>
+        <td>Numerical IEDs; one per breaker or combined; IEC 60255 series.</td>
+        <td>MV section, relay panels associated with MV-SWGR breakers.</td>
+      </tr>
+      <tr>
+        <td><code>MV-NER</code></td>
+        <td>Neutral Earthing Resistor</td>
+        <td>Earths the 11 kV transformer star neutral through a resistor that limits the earth-fault current to a safe, detectable level (~300–400 A indicative). Without it, an undetected earth fault could cause equipment damage and personnel hazard. A neutral CT allows the protection relay to detect and measure the fault current.</td>
+        <td>Resistance sized for ~300–400 A earth-fault level (indicative); with neutral CT.</td>
+        <td>MV section, at the [N] neutral point — connected to the neutral of the 11 kV supply transformer or to the MV bus neutral where provided.</td>
+      </tr>
+      <tr>
+        <td><code>TX-1</code></td>
+        <td>MV/LV power transformer No. 1</td>
+        <td>Steps 11 kV down to 400 V to supply Bus A of the LV-MSB. One of the two parallel sources that give the plant its partial N-1 resilience. If TX-2 is lost, the bus-tie closes so TX-1 can carry both buses.</td>
+        <td>1600 kVA, 11 kV / 0.4 kV, Dyn11, Z ≈ 6 %, IEC 60076; cast-resin or oil-immersed.</td>
+        <td>Between MV feeder [52-T1] and LV incomer [ACB-A] on Bus A.</td>
+      </tr>
+      <tr>
+        <td><code>TX-2</code></td>
+        <td>MV/LV power transformer No. 2</td>
+        <td>Steps 11 kV down to 400 V to supply Bus B of the LV-MSB. Mirrors TX-1 on the Bus B side. If TX-1 is lost, the bus-tie closes so TX-2 can carry both buses.</td>
+        <td>1600 kVA, 11 kV / 0.4 kV, Dyn11, Z ≈ 6 %, IEC 60076.</td>
+        <td>Between MV feeder [52-T2] and LV incomer [ACB-B] on Bus B.</td>
+      </tr>
+      <tr>
+        <td><code>LV-MSB</code></td>
+        <td>Main LV switchboard / PCC (Power Control Centre)</td>
+        <td>The 400 V power hub: receives the two transformer outputs on a split bus (A and B) and distributes bulk LV power via MCCB feeders to the MCCs, PFC bank, distribution boards and large individual feeders. ACB incomers from both transformers; motorised normally-open bus-tie (BT) between the two bus sections.</td>
+        <td>400 V, split bus A/B, ~2500–3200 A bus, 50–65 kA; ACB incomers + motorised bus-tie; Form 4b; IEC 61439-1/-2.</td>
+        <td>LV section — the main board spanning both Bus A and Bus B, directly below the transformers.</td>
+      </tr>
+      <tr>
+        <td><code>BT</code></td>
+        <td>LV bus-tie circuit breaker (normally open)</td>
+        <td>Normally open during operation so the two bus sections are independent. Automatically closes on loss of either LV incomer (trip of ACB-A or ACB-B), allowing the surviving transformer to supply both buses. This is the single most important N-1 feature in the LV distribution — its correct operation (auto-close logic armed, correct setting) must always be verified.</td>
+        <td>ACB, motorised/automatic; matching LV-MSB rating.</td>
+        <td>LV-MSB — the link between Bus A and Bus B (drawn with hollow/N.O. symbol).</td>
+      </tr>
+      <tr>
+        <td><code>MCC-1</code></td>
+        <td>Motor Control Centre No. 1 (Bus A)</td>
+        <td>Houses the motor starters (DOL, star-delta, soft-starter and/or VFD buckets) that control and protect the Bus-A process motors. Each bucket contains: MCCB or fuse-contactor, contactor(s), thermal/electronic overload relay or motor protection relay, local/remote control switch, run/trip indication and ammeter.</td>
+        <td>400 V; bus rating matched to group motor demand; IEC 61439-1/-2; Form 3b/4b.</td>
+        <td>LV-MSB Bus A, on an outgoing MCCB feeder.</td>
+      </tr>
+      <tr>
+        <td><code>MCC-2</code></td>
+        <td>Motor Control Centre No. 2 (Bus B)</td>
+        <td>Mirrors MCC-1 on Bus B — houses the starters for Bus-B process motors. Distributing motors across two bus sections means the plant retains some motor availability even if one transformer section is lost.</td>
+        <td>400 V; bus rating matched to group motor demand; IEC 61439-1/-2.</td>
+        <td>LV-MSB Bus B, on an outgoing MCCB feeder.</td>
+      </tr>
+      <tr>
+        <td><code>VFD</code></td>
+        <td>Variable Frequency Drive(s)</td>
+        <td>Provides continuously variable speed control of pumps, fans, compressors and mixers by varying output voltage and frequency. Reduces energy consumption and mechanical starting stress compared with DOL starting. May be installed as individual MCC buckets or as standalone panels. Input chokes and EMC filters required to limit harmonic injection into the LV bus.</td>
+        <td>Rated per driven motor; input choke and EMC filter; IEC 61800 series.</td>
+        <td>Within MCC-1 / MCC-2 buckets, or as standalone panels; feeding speed-controlled motors.</td>
+      </tr>
+      <tr>
+        <td><code>PFC</code></td>
+        <td>Power factor correction (detuned capacitor bank)</td>
+        <td>Supplies reactive power locally to correct the plant power factor from ~0.85 to 0.95+ lagging, reducing demand charges and freeing transformer and cable capacity. Automatic switching (contactor-controlled steps) matches reactive output to load variation. Detuned (7 % tuning reactor in series) to prevent resonance with VFD-generated harmonics.</td>
+        <td>Automatic; detuned (7 % reactor); sized to correct ~0.85 → 0.95+; IEC 60831.</td>
+        <td>LV-MSB Bus A, on a dedicated MCCB feeder.</td>
+      </tr>
+      <tr>
+        <td><code>DB</code></td>
+        <td>Distribution board(s)</td>
+        <td>Distributes LV power to general (non-essential) loads — lighting, small power, HVAC, sockets — via MCBs and RCBOs. Fed from the LV-MSB via MCCB feeders. These loads are not critical: they are shed on a utility outage before or when the generator takes over the essential bus.</td>
+        <td>400/230 V; MCB/RCBO outgoing ways; IEC 60439 / IEC 61439.</td>
+        <td>LV-MSB Bus A (and/or Bus B), on MCCB outgoing feeders.</td>
+      </tr>
+      <tr>
+        <td><code>EDB</code></td>
+        <td>Essential / emergency distribution board</td>
+        <td>Feeds loads that must remain energised through a utility outage — escape lighting, fire systems, critical control auxiliaries, communication systems. Supplied from the LV-MSB Bus B via an MCCB feeder in normal operation, and backed by the ATS so that on utility loss it is transferred to the generator within the ATS changeover time.</td>
+        <td>400/230 V; MCB/RCBO outgoing; IEC 61439.</td>
+        <td>LV section — fed from Bus B (normal) and backed via ATS from DG.</td>
+      </tr>
+      <tr>
+        <td><code>DG</code></td>
+        <td>Diesel generator set</td>
+        <td>Standby generation sized to carry the essential load on utility failure — not necessarily the full 2 MW plant demand. Starts automatically (auto-start logic) on detection of utility loss; the ATS transfers the essential bus once the generator has reached rated voltage and frequency. Equipped with AVR, fuel day-tank, acoustic canopy and exhaust system.</td>
+        <td>~800–1250 kVA indicative (size confirmed by essential-load list); 400 V, 50 Hz, AVR.</td>
+        <td>Standby power path (lower band of drawing).</td>
+      </tr>
+      <tr>
+        <td><code>ATS</code></td>
+        <td>Automatic Transfer Switch</td>
+        <td>Automatically transfers the essential bus between the utility feed (normal source) and the generator (standby source) on utility loss, and retransfers when utility supply is restored and stable. Mechanically interlocked to prevent both sources feeding the bus simultaneously — an important safety feature. Changeover time is the key performance parameter (typically 10–30 s for diesel start + transfer).</td>
+        <td>Rated for essential bus load; mechanically interlocked; IEC 60947-6-1.</td>
+        <td>Standby path — between DG output and EDB incoming supply.</td>
+      </tr>
+      <tr>
+        <td><code>UPS</code></td>
+        <td>Uninterruptible Power Supply</td>
+        <td>Provides clean, uninterrupted AC power to the DCS, PLC, SCADA, instrumentation and critical communications with no break — not even the ~20 s it takes the diesel generator to start and stabilise. Operates from internal batteries during the outage bridge; static bypass allows maintenance without interrupting the load. Battery autonomy is typically 15–30 min (confirm per spec).</td>
+        <td>Rated per DCS/instrument load; static bypass; battery 15–30 min (indicative); IEC 62040.</td>
+        <td>LV-MSB Bus B feeder, dedicated UPS output to DCS/control system.</td>
+      </tr>
+      <tr>
+        <td><code>DCDB</code></td>
+        <td>DC battery and charger system (110 V DC)</td>
+        <td>Provides secure 110 V DC power to trip and close the MV switchgear breakers, and to power the protection relay IEDs and their communications. This DC supply must remain available even when the entire AC system (both utility and generator) is dead — battery float charging maintains the battery at full charge continuously, and the battery alone sustains protection and switching capability during a complete AC blackout.</td>
+        <td>110 V DC (typical); battery sized per IEC 62485-2; float/boost charger; IEC 60896.</td>
+        <td>DC control/protection supply band — feeds MV-SWGR trip/close circuits and MV-PROT IEDs.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    <strong>Note — tag <code>MV-PROT</code>:</strong> The protection IEDs are sometimes shown
+    as part of the MV-SWGR cubicle rather than as a separate tag, depending on the drawing
+    convention. On site, check whether the relay panel has its own tag plate. For FMECA
+    purposes, MV-PROT is treated as a distinct item because its failure mode (relay malfunction
+    or loss of DC supply) is independent of the switchgear mechanism failure.
+  </div>
+
+  <div class="key">Key takeaway: Eighteen tags, two voltage levels, three functional layers — generation of the supply (MV), distribution (LV-MSB), and control/protection (DCDB/UPS/DG/ATS). Memorise the function of each tag in one sentence; you will need that knowledge to populate the FMECA without hesitation.</div>
+</section>
+
+<!-- ============================================================ -->
+
+<section id="f-powerflow" data-title="Power-Flow Walk-Through" data-part="Part 1 — Foundations">
+  <h2>Power-Flow Walk-Through</h2>
+
+  <p><em>Where you are in the workflow: tracing the three power paths is what you do mentally at every site visit — it reveals where the architecture is robust and where it is not.</em></p>
+
+  <p>
+    Keep the master SLD (<a href="#f-overview">Fig 1-1</a>) open alongside this section.
+    There are three distinct paths through the plant — trace each one on the drawing as you read.
+  </p>
+
+  <h3 id="f-powerflow-normal">Path 1 — Main (normal) path: utility to process motor</h3>
+
+  <ol>
+    <li>
+      <strong>Utility 11 kV feed</strong> arrives at the site and passes through the revenue
+      metering cubicle (<code>MV-MET</code>) where energy is metered for tariff billing.
+    </li>
+    <li>
+      The supply enters the <strong>MV switchgear</strong> (<code>MV-SWGR</code>) via incomer
+      breaker [52-I]. The protection IEDs (<code>MV-PROT</code>) watch this incomer and the
+      transformer feeders for faults. The 11 kV neutral is earthed through the resistor
+      (<code>MV-NER</code>).
+    </li>
+    <li>
+      Two transformer feeder breakers [52-T1] and [52-T2] supply the two transformers
+      (<code>TX-1</code> and <code>TX-2</code>), which step 11 kV down to 400 V.
+    </li>
+    <li>
+      Each transformer secondary feeds its LV incomer ACB: TX-1 → ACB-A → <strong>Bus A</strong>,
+      TX-2 → ACB-B → <strong>Bus B</strong>. The bus-tie (<code>BT</code>) between them is
+      normally open, so the two bus sections are independent.
+    </li>
+    <li>
+      Outgoing MCCB feeders from Bus A and Bus B supply the Motor Control Centres
+      (<code>MCC-1</code>, <code>MCC-2</code>), the PFC bank (<code>PFC</code>),
+      distribution boards (<code>DB</code>) and the essential board (<code>EDB</code>).
+    </li>
+    <li>
+      Inside an MCC, the appropriate starter (DOL, soft-starter or a <code>VFD</code>) energises
+      the <strong>process motor</strong> — pump, fan, conveyor or mixer.
+    </li>
+  </ol>
+
+  <div class="tip">
+    <strong>Tip — tracing on a real SLD:</strong> On a site SLD that may be larger or more
+    complex, follow the same top-to-bottom discipline and identify: (a) the metering point,
+    (b) the MV incomer and switchgear, (c) the transformer(s), (d) the LV main board and its
+    bus arrangement, (e) the MCC feeders, and (f) the standby and DC paths. This sequence works
+    on any MV/LV plant drawing.
+  </div>
+
+  <h3 id="f-powerflow-standby">Path 2 — Standby path: on utility loss</h3>
+
+  <p>
+    When the utility supply is lost (or falls outside acceptable voltage/frequency limits):
+  </p>
+  <ol>
+    <li>The ATS detects utility loss and issues an <strong>auto-start signal</strong> to the diesel generator (<code>DG</code>).</li>
+    <li>The DG starts, ramps to rated speed, and the AVR brings the voltage to 400 V ± tolerance.</li>
+    <li>The <strong>ATS transfers</strong> the essential bus from the utility feed to the DG output — the transfer is mechanically interlocked to ensure only one source feeds the EDB at a time.</li>
+    <li>The <strong>essential distribution board</strong> (<code>EDB</code>) remains energised — escape lighting, fire systems and critical process auxiliaries stay live.</li>
+    <li>Within the LV-MSB, if one incomer ACB trips (loss of one transformer), the <strong>bus-tie</strong> (<code>BT</code>) auto-closes so the surviving transformer can supply both Bus A and Bus B (at reduced capacity — load shedding may be needed).</li>
+  </ol>
+
+  <div class="note">
+    <strong>Note — ATS changeover time:</strong> A diesel generator takes typically 10–30 s to
+    start, synchronise and accept load (indicative). During this window, only the UPS-backed
+    loads remain energised. The EDB is de-energised for this interval unless the ATS uses a
+    static (electronic) transfer or the EDB has its own small UPS. Verify the actual changeover
+    time on site and confirm it is acceptable for the essential loads.
+  </div>
+
+  <h3 id="f-powerflow-dc">Path 3 — DC / control path: always alive</h3>
+
+  <p>
+    The control and protection path is designed to be available at all times — even during a
+    complete AC blackout:
+  </p>
+  <ol>
+    <li>
+      The <strong>DCDB</strong> (DC battery and charger) is float-charged from the LV supply
+      and holds its battery at full charge continuously. On loss of AC, the battery sustains
+      the DC bus.
+    </li>
+    <li>
+      The <strong>110 V DC bus</strong> from the DCDB feeds the trip and close coils of the MV
+      switchgear breakers and the MV protection relay IEDs. The protection system remains
+      operative — it can still detect faults and trip breakers — even with no AC available.
+    </li>
+    <li>
+      The <strong>UPS</strong> is float-charged from the LV AC bus (typically Bus B). On loss
+      of AC it switches seamlessly to its own battery (static changeover, no break). It supplies
+      the DCS, PLC, SCADA and instrumentation at clean regulated AC.
+    </li>
+    <li>
+      Together, the DCDB and UPS ensure that both <em>protection</em> (MV DC) and
+      <em>control</em> (AC to DCS/instruments) remain available for the full battery autonomy
+      period, giving the operator visibility and the ability to operate the MV switchgear
+      during a blackout.
+    </li>
+  </ol>
+
+  <div class="tip">
+    <strong>Tip — SPOF on the DC path:</strong> A common finding is that both the UPS and the
+    DCDB charger are supplied from the same LV bus section or even the same feeder, removing
+    their independence. On site, verify that the UPS and DCDB have segregated sources. Also
+    check the battery condition and last test date — an aged or untested battery is a hidden
+    SPOF that does not show up on the SLD.
+  </div>
+
+  <div class="key">Key takeaway: Three paths — normal (utility to motors), standby (DG via ATS to essential loads), and DC/control (DCDB to MV switchgear; UPS to DCS). Trace all three on every SLD you review; the points where paths converge or where independence is lost are your SPOF candidates.</div>
+</section>
+
+<!-- ============================================================ -->
+
+<section id="f-schedule-standards" data-title="Equipment Schedule and Standards" data-part="Part 1 — Foundations">
+  <h2>Equipment Schedule and Standards</h2>
+
+  <p><em>Where you are in the workflow: the equipment schedule is the quantitative companion to the function table — use it during the desk study to frame your calculations and check nameplate data on site.</em></p>
+
+  <h3 id="f-schedule-schedule">Indicative equipment schedule</h3>
+
+  <p>
+    The schedule below summarises the principal electrical equipment for the reference ~2 MW
+    plant. All ratings are <strong>indicative and tentative</strong>; confirm against the
+    actual plant documents and nameplate data.
+  </p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Tag</th>
+        <th>Equipment</th>
+        <th>Indicative rating / specification</th>
+        <th>IEC standard</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>MV-MET</code></td>
+        <td>Utility metering cubicle</td>
+        <td>11 kV; tariff-grade CTs/VTs (class 0.2S); kWh + kVAh meter; per utility specification.</td>
+        <td>IEC 62053; utility specification.</td>
+      </tr>
+      <tr>
+        <td><code>MV-SWGR</code></td>
+        <td>MV metal-clad switchgear</td>
+        <td>11 kV; 630–1250 A bus (indicative); 25 kA / 1 s fault withstand; vacuum CBs; 4 panels (incomer, bus-section, 2 × transformer feeder).</td>
+        <td>IEC 62271-200; IEC 62271-100.</td>
+      </tr>
+      <tr>
+        <td><code>MV-NER</code></td>
+        <td>Neutral Earthing Resistor</td>
+        <td>Resistance to limit earth-fault current to ~300–400 A (indicative); with neutral CT; outdoor or indoor housing.</td>
+        <td>IEC 60099-6 (guidance); manufacturer's specification.</td>
+      </tr>
+      <tr>
+        <td><code>TX-1</code> / <code>TX-2</code></td>
+        <td>MV/LV power transformers</td>
+        <td>2 × 1600 kVA (indicative); 11 kV / 0.4 kV; Dyn11; Z ≈ 6 %; cast-resin (dry-type) or oil-immersed (ONAN); off-load taps ±2 × 2.5 %.</td>
+        <td>IEC 60076 series.</td>
+      </tr>
+      <tr>
+        <td><code>LV-MSB</code></td>
+        <td>Main LV switchboard / PCC</td>
+        <td>400 V; split bus A/B; ~2500–3200 A main bus (indicative); 50–65 kA fault withstand; ACB incomers + motorised N.O. bus-tie ACB; MCCB outgoing feeders; Form 4b segregation.</td>
+        <td>IEC 61439-1; IEC 61439-2.</td>
+      </tr>
+      <tr>
+        <td><code>MCC-1</code> / <code>MCC-2</code></td>
+        <td>Motor Control Centres</td>
+        <td>400 V; horizontal bus 1000–2000 A (indicative); 50 kA fault withstand; withdrawable or fixed starter buckets: DOL, star-delta, soft-starter, VFD; MCCB or fuse-contactor, contactor, electronic overload/MPR; Form 3b/4b.</td>
+        <td>IEC 61439-1; IEC 61439-2.</td>
+      </tr>
+      <tr>
+        <td><code>VFD</code></td>
+        <td>Variable Frequency Drives</td>
+        <td>Rated per motor; 400 V input; input choke + EMC filter; integrated or remote keypad; RS485/PROFIBUS/PROFINET fieldbus interface.</td>
+        <td>IEC 61800-3; IEC 61800-5.</td>
+      </tr>
+      <tr>
+        <td><code>PFC</code></td>
+        <td>Power factor correction bank</td>
+        <td>Automatic; detuned (7 % tuning reactor); sized to correct ~0.85 → 0.95+ (indicative); contactor-switched capacitor steps.</td>
+        <td>IEC 60831; IEC 60831-1/-2.</td>
+      </tr>
+      <tr>
+        <td><code>DB</code></td>
+        <td>Distribution boards</td>
+        <td>400/230 V; MCB and RCBO outgoing ways; surface or flush-mounted; IP rating per environment.</td>
+        <td>IEC 61439-3.</td>
+      </tr>
+      <tr>
+        <td><code>EDB</code></td>
+        <td>Essential distribution board</td>
+        <td>400/230 V; fed via ATS; rated for essential load; MCB/RCBO outgoing.</td>
+        <td>IEC 61439-3.</td>
+      </tr>
+      <tr>
+        <td><code>DG</code></td>
+        <td>Diesel generator set</td>
+        <td>~800–1250 kVA (indicative — sized by essential load list); 400 V, 3-phase, 50 Hz; AVR; fuel day-tank; acoustic canopy; auto-start panel.</td>
+        <td>IEC 60034 (generator); ISO 8528 (genset performance).</td>
+      </tr>
+      <tr>
+        <td><code>ATS</code></td>
+        <td>Automatic Transfer Switch</td>
+        <td>Rated for essential bus full load; mechanically interlocked; open-transition or closed-transition (confirm per plant); changeover time per DG start time (indicative 10–30 s).</td>
+        <td>IEC 60947-6-1.</td>
+      </tr>
+      <tr>
+        <td><code>UPS</code></td>
+        <td>Uninterruptible Power Supply</td>
+        <td>Online double-conversion; rated per DCS/instrument load; static bypass; battery autonomy 15–30 min (indicative); 400 V or 230 V single-phase output as required.</td>
+        <td>IEC 62040-1; IEC 62040-3.</td>
+      </tr>
+      <tr>
+        <td><code>DCDB</code></td>
+        <td>DC battery and charger system</td>
+        <td>110 V DC (typical for MV switchgear); float/boost charger; VRLA or vented lead-acid battery; battery sized for ~8 h autonomy (confirm per spec) plus interruption allowance.</td>
+        <td>IEC 60896-11/-21; IEC 62485-2.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 id="f-schedule-standards-list">Applicable IEC standards summary</h3>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Equipment category</th>
+        <th>Primary standard(s)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>MV switchgear (metal-clad)</td><td>IEC 62271-200; IEC 62271-100 (vacuum CBs)</td></tr>
+      <tr><td>Power transformers</td><td>IEC 60076 series</td></tr>
+      <tr><td>LV switchgear and MCC assemblies</td><td>IEC 61439-1; IEC 61439-2</td></tr>
+      <tr><td>LV circuit breakers (ACB, MCCB, MCB)</td><td>IEC 60947-2; IEC 60947-3</td></tr>
+      <tr><td>Motors</td><td>IEC 60034 series</td></tr>
+      <tr><td>Variable speed drives / VFDs</td><td>IEC 61800-3; IEC 61800-5</td></tr>
+      <tr><td>Power factor correction capacitors</td><td>IEC 60831</td></tr>
+      <tr><td>Uninterruptible power supplies</td><td>IEC 62040-1; IEC 62040-3</td></tr>
+      <tr><td>Automatic transfer switches</td><td>IEC 60947-6-1</td></tr>
+      <tr><td>DC battery systems</td><td>IEC 60896; IEC 62485</td></tr>
+      <tr><td>Earthing and bonding (general installation)</td><td>IEC 60364 series</td></tr>
+      <tr><td>Lightning protection systems</td><td>IEC 62305 series</td></tr>
+      <tr><td>Protection relays / IEDs</td><td>IEC 60255 series</td></tr>
+      <tr><td>FMECA methodology</td><td>IEC 60812</td></tr>
+      <tr><td>Reliability / availability (RAM)</td><td>ISO 14224; ISO 20815</td></tr>
+      <tr><td>Arc-flash incident energy</td><td>IEEE 1584 (US basis, widely adopted)</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    <strong>Note — standards confirmation:</strong> The standards listed are indicative.
+    The governing standards for each plant are determined by the client specification and the
+    applicable national regulations. Check the project specification and confirm with the client
+    which revision of each standard applies.
+  </div>
+
+  <div class="key">Key takeaway: The equipment schedule gives you the quantitative framework for the desk study — use it to check whether the nameplate data you collect on site matches the design intent. Any significant discrepancy (wrong rating, different vector group, different impedance) is a calculation input that may change your load-flow or short-circuit result and should be noted in the Document Inventory and potentially the FMECA. Part 2 now shows you how to run the calculations.</div>
+</section>
+
+<!-- ============================================================ -->
+
+<section id="f-selfcheck" data-title="Part 1 — Self-Check" data-part="Part 1 — Foundations">
+  <h2>Part 1 — Self-Check</h2>
+
+  <p><em>Where you are in the workflow: test yourself before moving to the calculations in Part 2. If you cannot answer these confidently, re-read the relevant section of Part 1.</em></p>
+
+  <p>
+    Attempt all six questions before revealing the answers. Use only the master SLD
+    (<a href="#f-overview">Fig 1-1</a>) and your memory — no notes.
+  </p>
+
+  <h3 id="f-selfcheck-q1">Question 1</h3>
+  <p>
+    <strong>Which two tags mark the boundary between the 11 kV and the 400 V parts of the
+    plant? State what each one does.</strong>
+  </p>
+  <details>
+    <summary>Show answer</summary>
+    <p>
+      <code>TX-1</code> and <code>TX-2</code> — the two MV/LV power transformers (1600 kVA each,
+      indicative; 11 kV / 0.4 kV, Dyn11). They step the 11 kV utility supply down to 400 V for
+      the LV distribution system. TX-1 feeds Bus A and TX-2 feeds Bus B of the LV-MSB. Everything
+      above them is MV (11 kV); everything below them is LV (400 V).
+    </p>
+  </details>
+
+  <h3 id="f-selfcheck-q2">Question 2</h3>
+  <p>
+    <strong>What is the difference between <code>LV-MSB</code> and <code>MCC-1</code>?
+    Which one feeds which?</strong>
+  </p>
+  <details>
+    <summary>Show answer</summary>
+    <p>
+      <code>LV-MSB</code> is the <strong>PCC (Power Control Centre) / Main LV Switchboard</strong> —
+      it receives the transformer outputs and distributes bulk 400 V power. Think "the LV power hub."
+    </p>
+    <p>
+      <code>MCC-1</code> is a <strong>Motor Control Centre</strong> — an assembly of motor starters
+      (DOL, soft-starter, VFD) that control and protect individual process motors. Think "where
+      the motors are started."
+    </p>
+    <p>
+      The <strong>LV-MSB feeds MCC-1</strong> (via an outgoing MCCB feeder from Bus A).
+      MCC-1 feeds the individual motors.
+    </p>
+  </details>
+
+  <h3 id="f-selfcheck-q3">Question 3</h3>
+  <p>
+    <strong>The bus-tie <code>BT</code> is normally open. What event causes it to close
+    automatically, and why is that desirable?</strong>
+  </p>
+  <details>
+    <summary>Show answer</summary>
+    <p>
+      The bus-tie closes automatically on the <strong>trip or loss of either LV incomer ACB</strong>
+      (i.e. loss of one transformer or its MV feeder). The auto-close logic detects the incomer
+      trip and closes BT so the surviving transformer can carry both Bus A and Bus B loads.
+    </p>
+    <p>
+      This is desirable because it prevents loss of supply to half the plant whenever one
+      transformer is lost — it is the primary N-1 resilience feature of the LV distribution.
+      Without it, loss of TX-1 would immediately shed all Bus A loads (MCC-1, PFC, DB-A and
+      any Bus A feeders).
+    </p>
+  </details>
+
+  <h3 id="f-selfcheck-q4">Question 4</h3>
+  <p>
+    <strong>Name the three tags on the standby/essential power path and state the order
+    in which energy flows through them on a utility outage.</strong>
+  </p>
+  <details>
+    <summary>Show answer</summary>
+    <p>
+      <code>DG</code> → <code>ATS</code> → <code>EDB</code>.
+    </p>
+    <p>
+      On a utility outage: the <strong>DG</strong> starts (auto-start signal from the ATS),
+      ramps to rated voltage and frequency; the <strong>ATS</strong> transfers the essential
+      bus from the utility source to the DG output; the <strong>EDB</strong> (essential
+      distribution board) remains energised, supplying escape lighting, fire systems and
+      critical process auxiliaries.
+    </p>
+  </details>
+
+  <h3 id="f-selfcheck-q5">Question 5</h3>
+  <p>
+    <strong>Why does the plant need a separate <code>DCDB</code> when it already has a
+    <code>UPS</code>? What does each supply?</strong>
+  </p>
+  <details>
+    <summary>Show answer</summary>
+    <p>
+      They serve two different and independently critical supply circuits:
+    </p>
+    <ul>
+      <li>
+        <strong>UPS</strong> supplies <em>AC power</em> (400 V or 230 V) to the DCS, PLC,
+        SCADA and instrumentation systems. These are AC-powered electronics that need a
+        clean, regulated, uninterrupted supply.
+      </li>
+      <li>
+        <strong>DCDB</strong> supplies <em>110 V DC</em> to the trip and close coils of the
+        MV switchgear breakers and to the MV protection relay IEDs. These must operate even
+        when the AC system is completely dead — a DC battery is the only supply that can
+        guarantee this.
+      </li>
+    </ul>
+    <p>
+      If you replaced the DCDB with a UPS, the MV switchgear would lose its ability to trip
+      or close once the UPS itself lost its input feed. The DCDB's battery is the last line
+      of protection operability during a full AC blackout.
+    </p>
+  </details>
+
+  <h3 id="f-selfcheck-q6">Question 6</h3>
+  <p>
+    <strong>What is the purpose of <code>MV-NER</code>, and what would happen if it were
+    removed (neutral left floating)?</strong>
+  </p>
+  <details>
+    <summary>Show answer</summary>
+    <p>
+      <code>MV-NER</code> (the Neutral Earthing Resistor) earths the 11 kV system neutral
+      through a resistor to <strong>limit earth-fault current</strong> to approximately
+      300–400 A (indicative). This value is high enough for earth-fault protection relays to
+      detect the fault reliably, but low enough to limit damage to equipment and reduce the
+      step/touch voltage hazard at the fault location.
+    </p>
+    <p>
+      If the NER were removed and the neutral left floating (isolated neutral system):
+    </p>
+    <ul>
+      <li>
+        An earth fault would not produce a reliable fault current — the protection relay
+        could not detect it dependably, meaning the fault might persist and worsen.
+      </li>
+      <li>
+        The healthy phases would rise to line-to-line voltage above earth, stressing
+        cable insulation and equipment rated for line-to-earth voltage.
+      </li>
+      <li>
+        Transient overvoltages (ferro-resonance) could develop on the unearthed network,
+        potentially damaging voltage transformers and other equipment.
+      </li>
+    </ul>
+  </details>
+
+  <div class="key">Key takeaway: If you answered all six correctly without hesitation, you are ready for Part 2 — Calculations. If any question exposed a gap, go back to the relevant section of Part 1 now. The calculations in Part 2 assume you know what every tag does and how the three power paths connect.</div>
+</section>
