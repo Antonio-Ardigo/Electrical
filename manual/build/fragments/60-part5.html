@@ -1,0 +1,1388 @@
+<!-- ============================================================
+     Part 5 — Field Tools & Case Study
+     Sections: t-desk | t-prep | t-visual-checklist |
+               t-drawing-checklist | t-analysis | t-report |
+               t-jubail | t-walkthrough
+     ============================================================ -->
+
+<!-- ============================================================ -->
+<section id="t-desk" data-title="Desk Study Procedure" data-part="Part 5 — Field Tools &amp; Case Study">
+  <h2>Desk Study Procedure</h2>
+
+  <p><em>Where you are in the workflow: Part 5 is your field task guide. Work through it in order for every plant. You are here — beginning the pre-site desk study, before you travel to the plant.</em></p>
+
+  <p>
+    The desk study is the preparatory phase that takes place in the office, typically 3–7 days before
+    the site visit. Its purpose is to understand the plant's electrical architecture before you arrive,
+    identify gaps in the document package, and frame the questions you need to answer on site.
+    A thorough desk study shortens the site visit and substantially improves the quality of your
+    FMECA.
+  </p>
+
+  <h3 id="t-desk-request">Documents to request</h3>
+
+  <p>
+    Issue a formal document request to the plant owner / O&amp;M team as soon as the plant is assigned.
+    The table below lists the categories to cover and the specific detail to ask for.
+  </p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Category</th>
+        <th>Documents to request</th>
+        <th>Why you need it</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Single-line diagrams</strong></td>
+        <td>
+          Overall SLD (all voltage levels); MV switchgear SLD; LV main switchboard SLD;
+          MCC &amp; distribution SLD; standby (DG/ATS) schematic. Request <em>as-built</em>
+          revision with date stamp.
+        </td>
+        <td>
+          Foundation of every analysis: SPOF identification, load-flow model, protection
+          review, SLD verification on site.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Equipment schedules &amp; load list</strong></td>
+        <td>
+          Electrical load schedule (kW, pf, demand factor per feeder); equipment schedule
+          (make, model, year, rating for transformers, switchgear, generators, UPS,
+          batteries, VFDs); cable schedule.
+        </td>
+        <td>
+          Input for transformer sizing, load-flow, short-circuit, and genset sizing
+          calculations (see <a href="#c-transformer">Part 2 — Calculations</a>).
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Protection coordination study</strong></td>
+        <td>
+          Most recent protection coordination / relay grading study with relay setting
+          records (incomer, feeders, bus-section, transformer differential). Request the
+          live controlled revision — not the original EPC study if the plant has been
+          modified since.
+        </td>
+        <td>
+          Grading selectivity is a common SPOF class. An outdated study (predating
+          expansions or modifications) is itself a risk finding.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Earthing design &amp; test records</strong></td>
+        <td>
+          Earthing system design study (grid resistance, touch/step potential); soil
+          resistivity report; as-installed grid resistance test results; bonding schedule.
+          Date of last test.
+        </td>
+        <td>
+          Earthing is a latent safety SPOF: a degraded or untested earth grid impairs
+          earth-fault protection and creates touch/step hazards.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Arc-flash study</strong></td>
+        <td>
+          IEEE 1584 / IEC 61482-1 arc-flash / incident energy study; PPE category labels
+          in use; safe-working-distance schedule. Check that the study post-dates any
+          switchgear replacement or protection re-grading.
+        </td>
+        <td>
+          Obsolete arc-flash studies are a QHSE SPOF. An out-of-date study gives incorrect
+          PPE boundaries — a direct safety risk.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Transformer condition records</strong></td>
+        <td>
+          Factory acceptance test (FAT) and site acceptance test (SAT) reports; dissolved
+          gas analysis (DGA) / oil-sample trend reports; temperature monitoring logs;
+          thermography records.
+        </td>
+        <td>
+          Transformer internal faults are high-severity events. DGA trend is the primary
+          condition indicator — missing DGA data raises the Detection (D) rating in the
+          FMECA.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Standby generator records</strong></td>
+        <td>
+          Genset O&amp;M manual; auto-start / load test log (date, duration, outcome);
+          maintenance history; fuel-delivery records.
+        </td>
+        <td>
+          Genset fails-to-start is a hidden (latent) failure mode — high Detection rating
+          if test logs are absent or intermittent.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>DC / battery charger records</strong></td>
+        <td>
+          Station battery and charger O&amp;M manual; battery capacity-discharge test
+          records; DC-bus voltage trend; alarm-annunciator history.
+        </td>
+        <td>
+          DC supply is the trip power source for MV protection. Charger ageing with no
+          capacity test on record is a top-priority latent SPOF.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Switchgear maintenance records</strong></td>
+        <td>
+          Circuit breaker service records (racking operations count, contact-wear status,
+          timing tests, primary injection dates); switchgear inspection reports.
+        </td>
+        <td>
+          Ageing switchgear with no primary injection records has uncertain protection
+          reliability. Identifies candidates for the FMECA switchgear rows.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Asset register</strong></td>
+        <td>
+          Plant electrical asset register (ISO 14224 format if available); tag list.
+        </td>
+        <td>
+          Maps tags to equipment for FMECA rows and document traceability.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 id="t-desk-review">How to review the received documents</h3>
+
+  <p>Follow this sequence when documents arrive:</p>
+
+  <ol>
+    <li>
+      <strong>Open the Document Inventory form (SF-01) immediately.</strong>
+      Log every document as it arrives: title, revision, date, format, quality
+      (Good / Legible-only / Poor), and status (Received / Partial / Missing / Obsolete).
+      Do not wait until after the visit.
+    </li>
+    <li>
+      <strong>Study the master SLD first.</strong> Trace the power flow from the utility
+      point of supply through MV-MET → MV-SWGR → TX-1/TX-2 → LV-MSB → MCC and loads.
+      Mark the bus-tie status (normally open or closed) and note any parallel-feed or
+      alternative supply arrangements. Sketch a mental resilience map: what fails if
+      component X is lost?
+    </li>
+    <li>
+      <strong>Cross-check revision dates.</strong> Compare the SLD revision date to the
+      protection study revision date. If the protection study predates plant modifications
+      (equipment additions, transformer replacements, feeder changes), flag it as a gap in
+      SF-01 and a potential FMECA finding.
+    </li>
+    <li>
+      <strong>Extract equipment ratings for the calculation model.</strong> From the load
+      schedule and equipment schedule, build the shell of your load-flow and short-circuit
+      models. Fill in transformer ratings, impedances, and utility fault-level data where
+      available; mark unknowns to be resolved on site.
+    </li>
+    <li>
+      <strong>List the open questions.</strong> For each missing or poor-quality document,
+      write a specific question to ask the O&amp;M supervisor on site. Annotate these
+      directly on a working (print) copy of the SLD.
+    </li>
+  </ol>
+
+  <div class="tip">
+    <strong>Tip — start SF-01 at the document-request stage, not on arrival.</strong>
+    When you send the document request, log the requested items in the Document Inventory
+    with status "Requested". As documents arrive, change the status to "Received" or
+    "Partial". By the time you travel to site, the inventory already reflects the
+    pre-visit gap picture — which becomes your data-call agenda for the visit.
+  </div>
+
+  <h3 id="t-desk-sfstart">Starting SF-01 before the visit</h3>
+
+  <p>
+    Every row in SF-01 where status is Missing, Partial, or Obsolete at the end of the
+    desk study becomes an action item in the SF-04 Site Visit Report. Prioritise these:
+  </p>
+
+  <ul>
+    <li><strong>Missing DGA / oil-trend data</strong> → raises transformer FMECA Detection (D) rating.</li>
+    <li><strong>Missing battery capacity-discharge test</strong> → latent DC SPOF.</li>
+    <li><strong>Obsolete protection coordination study</strong> → grading selectivity SPOF.</li>
+    <li><strong>Outdated or missing arc-flash study</strong> → QHSE SPOF (immediate priority).</li>
+    <li><strong>No confirmed relay setting records</strong> → cannot validate relay grading.</li>
+  </ul>
+
+  <div class="key">Key takeaway: The desk study is not a bureaucratic step — it is where you build the mental model of the plant and identify the biggest risks before you travel. Arriving with an annotated working SLD, a part-completed SF-01, and a list of targeted questions will make your site time twice as productive.</div>
+</section>
+
+<!-- ============================================================ -->
+<section id="t-prep" data-title="Site-Visit Preparation" data-part="Part 5 — Field Tools &amp; Case Study">
+  <h2>Site-Visit Preparation</h2>
+
+  <p><em>Where you are in the workflow: the desk study is complete; you are preparing to travel to the plant for the non-intrusive site survey.</em></p>
+
+  <h3 id="t-prep-qhse">QHSE and permit-to-work</h3>
+
+  <p>
+    Before travelling to any plant site, confirm the host organisation's QHSE requirements and
+    the permit-to-work (PTW) procedure. You are a visitor operating under the host's safety
+    management system. Key points:
+  </p>
+
+  <ul>
+    <li>
+      <strong>Site induction:</strong> most plants require a formal site-safety induction on first
+      entry. Allow time for this in Day 0 of your schedule. Request the induction materials in
+      advance if possible.
+    </li>
+    <li>
+      <strong>Permit to work (PTW):</strong> entry to any switchroom or electrical plant room
+      requires a valid PTW issued by the host's authorised person (AP). Arrange this in advance —
+      do not assume you can enter on arrival.
+    </li>
+    <li>
+      <strong>Accompanying escort:</strong> the host O&amp;M electrical supervisor must accompany
+      you throughout the electrical areas. Confirm their availability and schedule before travel.
+    </li>
+    <li>
+      <strong>Emergency procedures:</strong> know the site's muster points, emergency contact
+      numbers, and first-aid arrangements before entering the plant.
+    </li>
+  </ul>
+
+  <div class="warning">
+    <strong>Warning — NON-INTRUSIVE surveys only.</strong>
+    This campaign operates under a strictly non-intrusive rule. You must not open any
+    energised electrical panel, cubicle, or enclosure; operate any switch, circuit breaker,
+    or isolator; perform any live electrical test; or take any measurement that requires
+    direct contact with live conductors. Your tools for the survey are eyes, a camera,
+    a torch, a notepad, and a tape measure for clearances only.
+    <br><br>
+    Visual inspection, nameplate reading, photograph capture, and accessible (non-contact)
+    meter readings are permitted. Where a panel is already open and de-energised under a
+    live PTW issued for O&amp;M work, you may observe but must not touch equipment or
+    interfere with the O&amp;M activity.
+    <br><br>
+    Be aware of LOTO (lock-out / tag-out) points. Never remove or interfere with a lock or
+    tag, even if you believe it is incorrectly placed. If you find LOTO absent where it
+    should be present, record it as an observation and raise it with the escort — do not
+    act on it yourself.
+  </div>
+
+  <h3 id="t-prep-entry">Pre-entry checklist</h3>
+
+  <p>Complete this checklist before entering any electrical plant area:</p>
+
+  <ul class="checklist">
+    <li>Site induction completed and card / sticker received.</li>
+    <li>PTW reviewed, understood, signed, and held on person.</li>
+    <li>Escort (plant electrical supervisor or authorised person) confirmed and present.</li>
+    <li>Personal protective equipment donned: arc-rated coveralls, hard hat, safety glasses, safety shoes, gloves (HV-rated if required by PTW).</li>
+    <li>Camera / phone cleared for site use by host security — confirm no confidential-data or photography restrictions apply.</li>
+    <li>Working copy of SLD and annotated question list in hand (printed).</li>
+    <li>Blank or pre-headed Site Visit Report (SF-04) and Document Inventory (SF-01) in hand.</li>
+    <li>Emergency muster-point location and site emergency contact number confirmed.</li>
+  </ul>
+
+  <div class="tip">
+    <strong>Tip — print the SLD at A3 or larger.</strong>
+    A reduced A4 SLD is almost unreadable for red-lining in a switchroom. Print at A3 and
+    laminate it if possible. Carry two copies: one for red-lining discrepancies, one to keep
+    clean as a reference.
+  </div>
+
+  <div class="key">Key takeaway: Safety first, always. The PTW and escort must be in place before you enter any electrical room. The non-intrusive rule is absolute — do not open any live panel regardless of circumstances. If in doubt, stop and consult the escort.</div>
+</section>
+
+<!-- ============================================================ -->
+<section id="t-visual-checklist" data-title="Visual Inspection Checklist" data-part="Part 5 — Field Tools &amp; Case Study">
+  <h2>Visual Inspection Checklist</h2>
+
+  <p><em>Where you are in the workflow: you are on site, PTW in hand, escort present. Work through this checklist zone by zone.</em></p>
+
+  <p>
+    This is the primary field inspection tool. Work through each zone in the order below,
+    checking off items as you observe them. Record observations, nameplate data and
+    discrepancies in SF-04 as you go. Where a finding seeds an FMECA row, note the
+    preliminary FM-ID in the SF-04 observation table.
+  </p>
+
+  <div class="warning">
+    <strong>Warning — non-intrusive throughout.</strong>
+    Every check in this list is visual, nameplate-based, or photographic only. Do not open
+    any energised panel, cubicle, or door. Do not operate any device. Do not remove any
+    label, lock, or tag. If a cubicle or panel is already open and de-energised under an
+    O&amp;M PTW, you may observe but must not touch.
+  </div>
+
+  <!-- ─── ZONE 1 ─── -->
+  <h3 id="t-vc-switchroom">Zone 1 — Switchroom / electrical building</h3>
+
+  <ul class="checklist">
+    <li>Building access: entry under valid PTW; door interlock or warning notice present and legible.</li>
+    <li>Room condition: adequate lighting (emergency lighting present); no water ingress; no condensation on walls or ceiling; ventilation / HVAC operating.</li>
+    <li>Housekeeping: no stored materials, rubbish, or non-electrical equipment inside the switchroom.</li>
+    <li>Fire protection: fire extinguisher(s) present, in-date, correct type (CO₂ or clean agent — never water in live electrical rooms); smoke/heat detector present.</li>
+    <li>Floor-plan organisation matches SLD layout (left-to-right / top-to-bottom incomer → bus → feeders); note any discrepancies.</li>
+    <li>Cable entries: sealed with fire-stop / intumescent material; no open penetrations.</li>
+    <li>Safety signage: arc-flash hazard warning labels and PPE requirement signs visible at room entry.</li>
+    <li>Earthing: main earth bar accessible and visible; connections not corroded or loose.</li>
+  </ul>
+
+  <!-- ─── ZONE 2 ─── -->
+  <h3 id="t-vc-mvswgr">Zone 2 — MV switchgear (MV-SWGR, MV-MET, MV-NER)</h3>
+
+  <ul class="checklist">
+    <li><strong>MV-MET:</strong> utility metering cubicle present; seals intact; meter readable through window; confirm utility voltage level on nameplate.</li>
+    <li><strong>MV-SWGR:</strong> switchgear make, type, voltage class, and year legible on main nameplate; photograph.</li>
+    <li>Switchgear type: RMU (ring-main unit), metal-clad drawout, or fixed — record and compare to SLD assumption.</li>
+    <li>Number of panel sections and their function (incomer, bus-section/tie, feeder) matches SLD; record any discrepancy.</li>
+    <li>Breaker/switch positions visible through window or on mimic diagram: incomer CB — CLOSED or OPEN; bus-tie CB — CLOSED or OPEN (mark on working SLD).</li>
+    <li>Relay front plates visible: manufacturer, type, and functional label (IDMT O/C, E/F) legible; compare relay type to protection study assumptions.</li>
+    <li>Arc-flash hazard label on each cubicle: present, legible, and carrying an incident-energy value or PPE category; record the study revision date if stated. If absent or clearly out of date, flag as an FMECA finding.</li>
+    <li>Indication lamps functioning (visible from outside — no cubicle entry); trip indication flags reset or showing.</li>
+    <li><strong>MV-NER:</strong> neutral earthing resistor present in its housing; nameplate rating (ohms, kA continuous) legible; no visible damage or corrosion on resistor elements or bushing terminals.</li>
+    <li>Cable sealing ends visible through inspection windows: no apparent tracking, surface discoloration, or visible damage.</li>
+    <li>Switchgear age: note year of manufacture; if ≥ 20 years, flag for FMECA.</li>
+  </ul>
+
+  <!-- ─── ZONE 3 ─── -->
+  <h3 id="t-vc-transformers">Zone 3 — Transformers (TX-1, TX-2)</h3>
+
+  <ul class="checklist">
+    <li><strong>TX-1 and TX-2</strong> both present and identified; nameplate data photographed: kVA, primary/secondary voltage, vector group (expect Dyn11 or Dyn1), impedance (%), year of manufacture.</li>
+    <li>Cooling type confirmed from nameplate: ONAN (oil natural air natural) or ONAF (with fans); fans operating if ONAF.</li>
+    <li>Oil level visible in sight-glass: within normal (green) range; no oil staining on tank or bund.</li>
+    <li>Oil temperature indicator: temperature reading noted; no over-temperature alarm showing.</li>
+    <li>Buchholz relay (if ONAN oil-cooled): present; no gas-alarm flag showing.</li>
+    <li>Pressure-relief device: present; no evidence of prior operation (staining, displaced disc).</li>
+    <li>HV and LV cable / busbar connections: external connections clean, no surface tracking or discoloration visible (do not touch).</li>
+    <li>Bund / drip-tray: present; clean; drain valve closed; oil-absorbing material present if required.</li>
+    <li>Transformer bay segregation: both transformer bays accessible independently for maintenance (not shared bund or blocking arrangement).</li>
+    <li>Earthing: transformer tank earth connection clearly bonded to earth grid; connection visible and accessible for future testing.</li>
+  </ul>
+
+  <!-- ─── ZONE 4 ─── -->
+  <h3 id="t-vc-lvmsb">Zone 4 — LV main switchboard (LV-MSB, bus-tie BT)</h3>
+
+  <ul class="checklist">
+    <li><strong>LV-MSB</strong> nameplate: voltage (400/415 V), form type (Form 4 or similar), busbar rating (A), year of manufacture.</li>
+    <li>Split-bus arrangement confirmed: Bus A and Bus B sections physically identifiable; incomer A and incomer B breakers present.</li>
+    <li><strong>Bus-tie (BT):</strong> bus-tie breaker clearly labelled; position confirmed: OPEN (N/O) or CLOSED — record on SLD. If closed under normal conditions, flag for FMECA (negates split-bus SPOF mitigation).</li>
+    <li>Incomer A and incomer B breakers: rated current, type, and manufacturer legible on front label or nameplate.</li>
+    <li>Auto-transfer / bus-coupling scheme: any automatic changeover relay visible on the bus-tie panel front? If so, note make and type. If absent, flag the manual-only bus-tie as a potential SPOF.</li>
+    <li>Metering and instrumentation: ammeter, voltmeter, power-factor meter, or energy meter present and readable (note readings if practical).</li>
+    <li>Feeder breakers: count and compare to SLD. Note any spare (vacant) ways. Record any breakers in tripped condition and confirm with escort whether this is normal.</li>
+    <li>Visible condition: no burn marks, scorch marks, or discoloration on busbar chambers or breaker faces (observe through front panels / viewing windows where present).</li>
+    <li>Cable entries: armoured cables properly glanded; segregation between phases maintained; no overheating discoloration on cable-entry areas.</li>
+  </ul>
+
+  <!-- ─── ZONE 5 ─── -->
+  <h3 id="t-vc-mcc">Zone 5 — MCCs and VFDs</h3>
+
+  <ul class="checklist">
+    <li>Each MCC panel (MCC-1, MCC-2, etc.) identified by tag; verify count against SLD.</li>
+    <li>MCC nameplate: voltage, busbar rating, form type, year of manufacture — photograph each.</li>
+    <li>Starter modules: starters present and labelled by motor load; DOL, star-delta, or soft-starter type visible from module face label.</li>
+    <li>Overload relay setting: record on-site if legible through the module window; compare to nameplate FLC of motor where known.</li>
+    <li><strong>VFD:</strong> VFD enclosure present; make, model, kW/kVA rating, and AC supply voltage on nameplate; photograph.</li>
+    <li>VFD ventilation / cooling: air filter grille accessible; check for visible dust build-up or blocked vents (do not open enclosure). Note any over-temperature indicator on the VFD front panel.</li>
+    <li>VFD control mode: local or remote; note any trip-history indicators showing on front panel HMI.</li>
+    <li>MCCs fed from Bus A or Bus B: confirm from the LV-MSB SLD which bus feeds each MCC; verify any cross-bus feeding arrangement (if any, flag for SPOF review).</li>
+  </ul>
+
+  <!-- ─── ZONE 6 ─── -->
+  <h3 id="t-vc-pfc">Zone 6 — PFC and distribution (PFC, DB, EDB)</h3>
+
+  <ul class="checklist">
+    <li><strong>PFC:</strong> power-factor correction panel present; nameplate: kVAr rating, number of steps, detuning reactor type (for harmonic detuning); check that capacitor bank is connected to the correct bus section.</li>
+    <li>PFC controller: power factor target setting visible on controller front panel (typically 0.95 or unity); note actual power factor on LV-MSB meter if readable.</li>
+    <li><strong>DB / EDB:</strong> each distribution board labelled; compare to SLD. Note any boards not on SLD — add to red-line discrepancies.</li>
+    <li>EDB (essential distribution board): fed from ATS or UPS output (not directly from normal supply only); verify source with escort if unclear.</li>
+    <li>Spare way capacity: note boards with no available spare ways (capacity constraint).</li>
+    <li>Cable management: trays and conduit runs in good order; no unsupported sagging; no exposed conductors in non-hazardous areas.</li>
+  </ul>
+
+  <!-- ─── ZONE 7 ─── -->
+  <h3 id="t-vc-standby">Zone 7 — Standby plant (DG, ATS)</h3>
+
+  <ul class="checklist">
+    <li><strong>DG:</strong> diesel generator set present; nameplate photographed: kVA rating, voltage (400/415 V), frequency (50 Hz), make/model/year, power factor.</li>
+    <li>DG fuel level: fuel-level gauge readable; adequate fuel for a minimum 8-hour run (indicative; confirm the site minimum with the escort).</li>
+    <li>DG condition: coolant level visible; no oil or fuel pooling beneath unit; air-intake filters accessible and not visibly clogged.</li>
+    <li>DG battery (starting battery): battery connections clean, no corrosion; battery charger indicator lamp showing charged. Note last documented start-test date from logbook if accessible.</li>
+    <li>DG start-test log: request from O&amp;M supervisor — is auto-start / load-test performed monthly? Note any gaps in the log.</li>
+    <li><strong>ATS:</strong> automatic transfer switch panel identified; nameplate rating and source labels (Normal / Standby) legible; confirm OPEN / CLOSED position of each source contactor or breaker with escort.</li>
+    <li>ATS transfer time setting: note if visible on controller (typical: 10–15 s for non-critical loads, 3–5 s for essential loads — indicative).</li>
+    <li>Load scope of ATS: confirm with escort which loads are on the essential (ATS-backed) circuit and which are non-essential — record on working SLD.</li>
+  </ul>
+
+  <!-- ─── ZONE 8 ─── -->
+  <h3 id="t-vc-dc">Zone 8 — Control and DC supplies (UPS, DCDB)</h3>
+
+  <ul class="checklist">
+    <li><strong>UPS:</strong> UPS present; nameplate: kVA, battery autonomy (hours at full load), AC input / output voltage; bypass switch position.</li>
+    <li>UPS battery condition: battery cabinet(s) present; no swollen or leaking cells visible through cabinet vents or viewing points (do not open cabinet).</li>
+    <li>UPS front-panel status: mains-OK, battery-OK, fault-alarm indicators; note any active alarms.</li>
+    <li><strong>DCDB:</strong> DC battery and charger panel identified; make, model, DC voltage (typically 110 V DC for MV switchgear trip circuits, or 24 V DC for control), charger rating.</li>
+    <li>DC charger condition: note age; any audible fan noise, vibration, or elevated surface temperature? Check for corrosion on terminals. Note last capacity-discharge test date from records if accessible.</li>
+    <li>DC battery: note battery type (VRLA / flooded); year of manufacture; any evidence of electrolyte leakage or cell swelling (visible without opening enclosure).</li>
+    <li>DC-fail alarm: confirm with escort that a DC-supply loss alarm is active and routed to SCADA or local annunciator.</li>
+    <li>Control panels: DCS / PLC / SCADA marshalling cabinets identified; physical condition (no open doors in normal service); UPS-backed supply confirmed.</li>
+  </ul>
+
+  <!-- ─── ZONE 9 ─── -->
+  <h3 id="t-vc-earthing">Zone 9 — Visible earthing</h3>
+
+  <ul class="checklist">
+    <li>Main earth bar: accessible, connections clean, no corrosion on the bonding strap or clamp; conductor cross-section approximately as designed (note mm² if labelled).</li>
+    <li>Earth test point / pit: earth test disconnect link accessible; test tag (date of last test) present and legible. Note last test date. If no test tag, or last test &gt; 3 years, flag as FMECA finding.</li>
+    <li>Transformer tank bonds: each transformer tank earthed independently to the earth bar; bond visible and accessible.</li>
+    <li>Cable-armouring bonds: MV cable armouring bonded at both ends (check at gland plate — visual only).</li>
+    <li>Exposed metalwork bonded: switchgear frame, transformer bund, cable tray continuity bonds visible; no isolated metal sections.</li>
+    <li>MV-NER earth connection: NER body earthed to earth bar with a clearly identifiable conductor (this is separate from the neutral point conductor — note if both are visible).</li>
+  </ul>
+
+  <!-- ─── PHOTOLOG ─── -->
+  <h3 id="t-vc-photolog">Photolog — mandatory photographs</h3>
+
+  <p>
+    The following 12 photographs are mandatory for every site visit. Capture them in order;
+    check each off as taken. Each photo must include a scale reference (hand, A4 sheet, or
+    tape measure) or a legible nameplate in frame. Label images sequentially
+    (e.g. P01-IMG-01) and index them in SF-04 Section 5.
+  </p>
+
+  <ul class="checklist">
+    <li><strong>PH-01 — Overall switchroom general view:</strong> taken from the room entrance looking in; shows the full panel line-up and housekeeping condition.</li>
+    <li><strong>PH-02 — MV switchgear line-up and arc-flash labels:</strong> shows the incomer, bus-section, and feeder cubicles; arc-flash PPE-category labels visible (or their absence).</li>
+    <li><strong>PH-03 — Bus-tie (BT / MV bus-section) breaker and position indicator:</strong> close-up of the bus-tie cubicle front showing the position (O or I / OPEN or CLOSED) indicator.</li>
+    <li><strong>PH-04 — TX-1 nameplate:</strong> transformer 1 rating plate showing kVA, voltage ratio, vector group, impedance, year.</li>
+    <li><strong>PH-05 — TX-2 nameplate:</strong> transformer 2 rating plate (same fields as PH-04).</li>
+    <li><strong>PH-06 — LV-MSB incomer and bus-tie section front:</strong> shows incomer A, incomer B, and bus-tie breaker with their position indicators and labels.</li>
+    <li><strong>PH-07 — DG nameplate and starting-battery condition:</strong> generator rating plate and battery / charger in same frame if possible.</li>
+    <li><strong>PH-08 — ATS panel front:</strong> shows source labels (Normal/Standby) and transfer-switch position indicator.</li>
+    <li><strong>PH-09 — DCDB / battery charger:</strong> charger nameplate, battery type label, and any front-panel fault/alarm indicators visible.</li>
+    <li><strong>PH-10 — UPS front panel:</strong> nameplate and status indicators showing mains-OK, battery-OK, and any active alarms.</li>
+    <li><strong>PH-11 — Main earth test point / pit:</strong> test disconnect link and test tag (showing last test date); earth bar bonding connections.</li>
+    <li><strong>PH-12 — Any notable defect or discrepancy found:</strong> photograph the specific item (cable termination tracking, missing label, corrosion, apparent overheating discoloration, absent arc-flash label, etc.) that seeds an FMECA finding. Take one photograph per distinct finding.</li>
+  </ul>
+
+  <div class="warning">
+    <strong>Warning — do not photograph classified or sensitive information.</strong>
+    Some plants have restrictions on photographing SCADA screens, relay setting displays,
+    production data, or utility metering. Confirm with the escort before photographing
+    anything other than physical equipment nameplates and general views.
+  </div>
+
+  <div class="key">Key takeaway: Work through this checklist zone by zone, checking off items as observed. The 12 mandatory photographs are non-negotiable — they provide the evidentiary basis for the site-visit report and support the FMECA Detection ratings. Everything is non-intrusive.</div>
+</section>
+
+<!-- ============================================================ -->
+<section id="t-drawing-checklist" data-title="Drawing Availability &amp; SLD Verification" data-part="Part 5 — Field Tools &amp; Case Study">
+  <h2>Drawing Availability &amp; SLD Verification</h2>
+
+  <p><em>Where you are in the workflow: alongside the visual inspection, you are verifying the single-line diagrams against the as-found plant and recording all discrepancies.</em></p>
+
+  <p>
+    The SLD is the primary engineering document for the plant's electrical system. Verifying
+    it against the as-found installation is a core deliverable of every site visit. Discrepancies
+    between the SLD and the real plant are often the most direct route to identifying SPOFs:
+    an unlabelled bus-tie that is closed in normal operation, a second transformer that has been
+    added without updating the SLD, or a protection relay that has been replaced with a different
+    type but the coordination study was never updated.
+  </p>
+
+  <h3 id="t-dc-documents">Drawing availability — what you need</h3>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Drawing</th>
+        <th>Minimum acceptable</th>
+        <th>Risk if missing</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Overall master SLD (all voltage levels)</td>
+        <td>Latest controlled revision, readable at A3</td>
+        <td>Cannot verify plant architecture; FMECA incomplete</td>
+      </tr>
+      <tr>
+        <td>MV switchgear SLD / internal arrangement</td>
+        <td>Cubicle-by-cubicle layout, relay type per panel</td>
+        <td>Cannot verify relay types against protection study; miss selectivity gaps</td>
+      </tr>
+      <tr>
+        <td>LV main switchboard SLD</td>
+        <td>Bus A/B split, incomer and feeder labelling, BT position</td>
+        <td>Cannot confirm bus-tie scheme; miss LV SPOF</td>
+      </tr>
+      <tr>
+        <td>Standby (DG/ATS) schematic</td>
+        <td>ATS source selection, backed loads listed</td>
+        <td>Cannot confirm essential-load scope; genset sizing FMECA row uncertain</td>
+      </tr>
+      <tr>
+        <td>Earthing system plan / layout</td>
+        <td>Grid layout, test-point locations, bonding schedule</td>
+        <td>Cannot identify earthing SPOF; cannot locate test points on site</td>
+      </tr>
+      <tr>
+        <td>Cable schedule (MV feeders and LV main cables)</td>
+        <td>Cable ref, route, cross-section, length (MV feeders as minimum)</td>
+        <td>Cannot run voltage-drop or cable-sizing calculations</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 id="t-dc-redline">The red-line technique</h3>
+
+  <p>
+    Bring a printed working copy of the master SLD to site (A3 or larger, at a scale at
+    which individual labels are legible). As you walk down the plant:
+  </p>
+
+  <ol>
+    <li>
+      <strong>Check every item on the SLD against the physical installation.</strong>
+      For each component — transformer, breaker, bus-section, relay, feeder — confirm
+      it is present and correctly labelled. If confirmed, tick the item on your working SLD.
+    </li>
+    <li>
+      <strong>Mark any discrepancy in red.</strong> Cross out items not present; annotate
+      added items not on the SLD; circle mislabelled items; note changed relay types or
+      equipment ratings.
+    </li>
+    <li>
+      <strong>Mark the as-found switch/breaker positions.</strong> Use "C" (closed) or "O"
+      (open) pencilled next to each breaker symbol. Pay particular attention to the bus-tie
+      breaker and any normally-open-by-design devices.
+    </li>
+    <li>
+      <strong>Transfer all red-line marks to SF-04</strong> (observations and findings table)
+      at the end of the visit. Each discrepancy becomes an observation with its tag and
+      a note of what action is needed (e.g., SLD revision, FMECA row).
+    </li>
+  </ol>
+
+  <h3 id="t-dc-discrepancies">Common SLD discrepancies to look for</h3>
+
+  <ul class="checklist">
+    <li><strong>Unlabelled or wrong-status bus-tie:</strong> bus-tie BT shown as normally open on SLD but confirmed closed in normal operation by escort — negates N+1 redundancy; major SPOF finding.</li>
+    <li><strong>Missing bus-section breaker:</strong> SLD shows a split bus, but physically a solid busbar link (bolted connection) has replaced the bus-tie CB; no fault-isolation possible between halves.</li>
+    <li><strong>Obsolete single-transformer SLD:</strong> SLD shows only TX-1; plant actually has TX-1 and TX-2 (second transformer added in a later expansion but SLD not updated).</li>
+    <li><strong>Nominal vs as-found protection settings:</strong> relay type on SLD (e.g. IDMT overcurrent relay) does not match the relay on the actual panel (a different make/model with different characteristic curves installed).</li>
+    <li><strong>Added loads not on SLD:</strong> additional MCCs or distribution boards installed since SLD revision; not reflected in the load schedule used for calculations.</li>
+    <li><strong>Changed transformer taps:</strong> transformer on-load or off-load tap-changer position differs from SLD assumption; affects voltage-drop and protection-relay voltage setting calculations.</li>
+    <li><strong>Earthing system changes:</strong> additional earth electrodes driven or NER earthing arrangement changed without updating the earthing design document.</li>
+    <li><strong>ATS source labelling error:</strong> on site, Normal and Standby supply labels on the ATS are reversed from the SLD, or the ATS has been replaced with a different panel type.</li>
+  </ul>
+
+  <h3 id="t-dc-nosld">When no SLD is available</h3>
+
+  <p>
+    If no SLD exists or the available SLD is so outdated as to be unreliable (e.g., a hand-sketch
+    with no revision date), proceed as follows:
+  </p>
+
+  <ol>
+    <li>
+      <strong>Record the gap in SF-01</strong> as Missing or Obsolete, with a data-call action to
+      the plant owner for a redraw or as-built survey.
+    </li>
+    <li>
+      <strong>Construct a sketch SLD during the visit.</strong> Using a blank A3 pad, sketch the
+      one-line from the incomer downwards as you walk the plant. Note every component you physically
+      observe: tag, make, rating, and switch position. This becomes the red-line baseline.
+    </li>
+    <li>
+      <strong>Note the absence of a controlled SLD as an FMECA finding</strong> in its own right:
+      operating a plant without an up-to-date SLD raises the likelihood of switching errors and
+      impairs protection-setting maintenance (Detection rating raised for affected FMECA rows).
+    </li>
+    <li>
+      <strong>Flag in SF-04</strong> that calculations are based on site-observed data only and
+      that a formal SLD should be drawn before the study is finalised.
+    </li>
+  </ol>
+
+  <div class="tip">
+    <strong>Tip — take a photo of every nameplate to supplement the SLD.</strong>
+    Even when a good SLD exists, the nameplate photograph provides data that may not appear
+    on the SLD: exact impedance %, serial number for warranty / age verification, precise kVA
+    rating, and tap position. This photographic record is also the source for completing
+    the calculation model back in the office.
+  </div>
+
+  <div class="key">Key takeaway: The red-line SLD verification is a simultaneous deliverable alongside the visual inspection — not a separate post-visit task. Discrepancies found on site are direct inputs to the FMECA and to the SLD update recommendation. A missing or obsolete SLD is itself an FMECA finding.</div>
+</section>
+
+<!-- ============================================================ -->
+<section id="t-analysis" data-title="Post-Site Analysis" data-part="Part 5 — Field Tools &amp; Case Study">
+  <h2>Post-Site Analysis</h2>
+
+  <p><em>Where you are in the workflow: the site visit is complete; you are back in the office, turning your site data into the four deliverable forms.</em></p>
+
+  <p>
+    Post-site analysis converts the raw data captured during the desk study and site visit into
+    the completed FMECA, Recommendations Register, and finalised Document Inventory. The table
+    below maps each form to its data sources and the relevant manual sections.
+  </p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Form</th>
+        <th>Primary inputs</th>
+        <th>Methods / manual sections</th>
+        <th>Key actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>SF-01 Document Inventory</strong></td>
+        <td>
+          Desk-study document log; documents collected on site; data-call responses
+          received post-visit.
+        </td>
+        <td>
+          <a href="#t-desk">Desk Study (this Part)</a>; SF-01 template in
+          <a href="#a-blankforms">Appendix — Blank Forms</a>.
+        </td>
+        <td>
+          Update status column (Received / Partial / Missing / Obsolete) for every row;
+          close data-call actions as responses arrive; ensure gap summary reflects final
+          state before submission.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>SF-02 FMECA</strong></td>
+        <td>
+          Red-lined SLD; SF-04 observations; SF-01 gaps (each Missing or Obsolete
+          document raises the Detection D rating of related rows);
+          calculation results (see below).
+        </td>
+        <td>
+          <a href="#s-checklist">Part 3 — SPOF Checklist</a>;
+          <a href="#s-fmeca">Part 3 — FMECA Method</a>; calculations from
+          <a href="#c-transformer">Part 2</a>.
+        </td>
+        <td>
+          One row per failure mode; assign S, O, D on the 1–5 scales; compute RPN = S×O×D
+          and Crit = S×O; flag SPOF=Y where a single-component loss causes the end effect
+          with no redundancy; link each row to a recommendation (REC-ID).
+        </td>
+      </tr>
+      <tr>
+        <td><strong>SF-03 Recommendations</strong></td>
+        <td>
+          Completed FMECA (SF-02) — one recommendation row per FM-ID; concept
+          modification catalogue.
+        </td>
+        <td>
+          <a href="#p-modifications">Part 4 — Modifications Catalogue</a>;
+          <a href="#s-recommendations">Part 3 — Recommendations</a>.
+        </td>
+        <td>
+          Priority derived mechanically from FMECA RPN/SPOF (P1 = SPOF S≥4 or RPN≥60;
+          P2 = RPN 36–59 or SPOF S=3; P3 = RPN 16–35; P4 &lt; 16). Assign cost band
+          (L/M/H — no SAR figures). Include reliability/availability gain basis.
+          Monitor-only findings carry no modification; note "monitor — no modification".
+        </td>
+      </tr>
+      <tr>
+        <td><strong>SF-04 Site Visit Report</strong></td>
+        <td>
+          Site-visit notes; SF-04 header completed on site; observations table from
+          visual inspection; photolog.
+        </td>
+        <td>
+          <a href="#t-report">Report Writing (this Part)</a>; photolog from
+          <a href="#t-visual-checklist">Visual Inspection Checklist</a>.
+        </td>
+        <td>
+          Finalise within 24–48 hours of the visit while recall is fresh; index all
+          photos; include agreed action list from the site meeting; note open data-calls.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 id="t-analysis-calcs">Calculations to run post-site</h3>
+
+  <p>
+    For each plant, complete the following calculation studies after the site visit using
+    the as-found equipment data captured. The relevant manual sections are cross-linked.
+  </p>
+
+  <ul>
+    <li>
+      <strong>Transformer sizing and loading check</strong> —
+      see <a href="#c-transformer">Part 2 — Transformer Calculations</a>:
+      confirm that the installed transformer kVA rating is adequate for the as-found load
+      (with N+1 contingency). A transformer running at &gt;80 % of rated kVA on normal load
+      with no N+1 available is a SPOF candidate.
+    </li>
+    <li>
+      <strong>Full-load current (FLC) check</strong> —
+      see <a href="#c-flc">Part 2 — FLC Calculations</a>:
+      verify that MCC starter and overload relay settings match the motor FLC. Significantly
+      wrong settings (e.g., overload set above locked-rotor current) are a protection SPOF.
+    </li>
+    <li>
+      <strong>Short-circuit level</strong> —
+      see <a href="#c-shortcircuit">Part 2 — Short-Circuit</a>:
+      calculate maximum prospective short-circuit current at the MV and LV busbars; confirm
+      that switchgear rated fault withstand (kA) exceeds the calculated level. If not, this
+      is a P1 safety SPOF.
+    </li>
+    <li>
+      <strong>Power factor correction sizing check</strong> —
+      see <a href="#c-pfc">Part 2 — PFC</a>:
+      verify that the installed PFC kVAr rating matches the current load's reactive demand.
+      Oversized PFC on a lightly loaded bus can lead to over-voltage; under-sized PFC misses
+      the utility penalty boundary.
+    </li>
+    <li>
+      <strong>Genset sizing check</strong> —
+      see <a href="#c-genset">Part 2 — Genset</a>:
+      verify the standby generator kVA rating against the essential-load list. If the genset
+      is sized to essential loads only (not full production), document this explicitly in the
+      FMECA — it is a design limitation, not a fault, but it must be communicated.
+    </li>
+    <li>
+      <strong>Load flow (indicative)</strong> —
+      see <a href="#c-loadflow">Part 2 — Load Flow</a>:
+      run a steady-state load flow to verify bus voltages and identify any heavily loaded
+      feeders. Confirm voltage at the end of the longest cable run is within ±6 % of nominal.
+    </li>
+  </ul>
+
+  <div class="tip">
+    <strong>Tip — update the FMECA Detection (D) rating based on SF-01 gaps.</strong>
+    Every SF-01 item with status Missing, Partial, or Obsolete directly affects the
+    detectability of a related failure mode. For example:
+    no DGA oil-trend record → transformer internal-fault D = 4 or 5 (hidden);
+    no battery capacity-discharge test → DC charger failure D = 5 (hidden).
+    Mechanically update these D ratings as you finalise SF-01 — do not leave them as
+    conservative estimates.
+  </div>
+
+  <div class="key">Key takeaway: Post-site analysis is where the data turns into decisions. The FMECA rows are built from three sources: the red-lined SLD, the SF-04 observations, and the SF-01 document gaps. Every gap in SF-01 has a direct mechanical effect on the Detection rating of at least one FMECA row — follow the chain.</div>
+</section>
+
+<!-- ============================================================ -->
+<section id="t-report" data-title="Writing the Site Visit Report" data-part="Part 5 — Field Tools &amp; Case Study">
+  <h2>Writing the Site Visit Report</h2>
+
+  <p><em>Where you are in the workflow: you are finalising SF-04 within 48 hours of the site visit.</em></p>
+
+  <p>
+    The Site Visit Report (SF-04) is the contemporaneous factual record of the visit.
+    It is not an analysis document — analysis lives in the FMECA and Recommendations Register.
+    SF-04's function is to record what you saw, where, when, with whom, and what data-calls
+    remain open. It is the evidence base that supports the FMECA findings and allows
+    the PM to quality-check that your FMECA rows are grounded in real observations.
+  </p>
+
+  <h3 id="t-report-structure">Report structure</h3>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Section</th>
+        <th>Mandatory content</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>1 · Visit metadata</strong></td>
+        <td>
+          Date and time (start–finish); plant name and reference; weather / ambient conditions;
+          escort name and title; access constraints (e.g. PTW number, energised panels not opened).
+        </td>
+        <td>Complete on the day of the visit. Do not reconstruct from memory later.</td>
+      </tr>
+      <tr>
+        <td><strong>2 · Minutes of meeting (MOM)</strong></td>
+        <td>
+          Attendees (name, organisation, role); agenda items discussed; key facts confirmed
+          by the escort (e.g. bus-tie operating philosophy, genset essential-loads-only scope,
+          date of last arc-flash study); decisions; action list (owner + due date).
+        </td>
+        <td>
+          The MOM is the primary source for confirming verbal statements made on site.
+          Include any discrepancies the escort explained versus the SLD.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>3 · Survey scope walked</strong></td>
+        <td>
+          List of all areas inspected and the equipment tags covered in each area.
+        </td>
+        <td>If an area was not inspected (access denied, PTW not obtained), record that explicitly.</td>
+      </tr>
+      <tr>
+        <td><strong>4 · Observations and findings</strong></td>
+        <td>
+          One row per observation: observation number; area; asset tag; what was observed;
+          the FM-ID of the FMECA row it seeds. Each observation must be factual — describe
+          what you saw, not an assessment of its risk (risk belongs in the FMECA).
+        </td>
+        <td>
+          Transfer directly from your site notes. Every FMECA row should trace back to at
+          least one SF-04 observation or a SF-01 document gap.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>5 · Photo log</strong></td>
+        <td>
+          Index of all photographs: photo ID, caption, asset tag, what it shows, finding
+          reference. A minimum of the 12 mandatory photos from the
+          <a href="#t-vc-photolog">Photolog checklist</a>.
+        </td>
+        <td>
+          Caption every photo at the time of indexing — do not rely on memory 48 hours later.
+          If photos were not permitted, state why.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>6 · Safety / access notes</strong></td>
+        <td>
+          PTW conditions observed; any QHSE concerns identified on site (e.g. absent arc-flash
+          labels, missing fire extinguisher, inadequate lighting); the non-intrusive rule
+          adherence statement; heat-stress or other environmental controls applied.
+        </td>
+        <td>
+          The arc-flash label finding (if raised) is both a QHSE entry here and an FMECA row
+          — cross-reference the FM-ID.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>7 · Sign-off</strong></td>
+        <td>
+          Prepared-by (engineer name, organisation, date); acknowledgement by the host escort
+          (name, signature or email confirmation); PM review date (leave blank until PM signs).
+        </td>
+        <td>Obtain escort acknowledgement on the day, even if only by email confirmation.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 id="t-report-photos">Photo selection for the report</h3>
+
+  <p>
+    Include in SF-04 all 12 mandatory photos plus any additional photos that directly support
+    an observation in the findings table. The following photos carry the most evidential weight
+    and should always be included if captured:
+  </p>
+
+  <ul>
+    <li>Bus-tie breaker position indicator — confirms normal operating mode (open or closed).</li>
+    <li>Arc-flash label (or its absence) — supports the PPE / incident-energy FMECA finding.</li>
+    <li>DC / battery charger condition — supports the latent DC-supply SPOF finding.</li>
+    <li>Earth test point with date tag — confirms when the earthing system was last tested.</li>
+    <li>Any visible defect: tracking on cable terminations, corrosion on connections,
+        dust-clogged VFD filters, missing fire-protection equipment — each defect photo
+        must link to an observation row.</li>
+  </ul>
+
+  <h3 id="t-report-tone">Tone and accuracy</h3>
+
+  <ul>
+    <li>
+      <strong>Factual, not inferential.</strong> SF-04 records what you observed; the inference
+      ("this is a SPOF because…") belongs in SF-02 FMECA. Example:
+      <em>Good SF-04 text:</em> "Bus-tie CB confirmed by escort as manually operated only;
+      no automatic transfer relay fitted."
+      <em>Not for SF-04:</em> "The manual bus-tie is a critical single point of failure."
+    </li>
+    <li>
+      <strong>Attribute verbal information to the escort.</strong> If the plant supervisor
+      tells you something that is not visible on a nameplate or SLD (e.g. "we last tested
+      the battery three years ago"), attribute it: "Confirmed by [Escort Name] on [date]".
+    </li>
+    <li>
+      <strong>Report absences explicitly.</strong> "No arc-flash label observed on MV-SWGR
+      incomer cubicle" is a valid finding. Do not omit negative observations.
+    </li>
+  </ul>
+
+  <div class="key">Key takeaway: SF-04 is a factual record, not a risk assessment. Write it within 48 hours of the visit. Every FMECA row must trace to a SF-04 observation or a SF-01 gap. The photo log is mandatory — index all photos the same day they are taken.</div>
+</section>
+
+<!-- ============================================================ -->
+<section id="t-jubail" data-title="Case Study — Jubail SWRO Plant" data-part="Part 5 — Field Tools &amp; Case Study">
+  <h2>Case Study — Jubail SWRO Desalination Plant</h2>
+
+  <p><em>Where you are in the workflow: the methods are taught; now see all four forms filled in for one complete plant.</em></p>
+
+  <h3 id="t-jubail-intro">Introduction</h3>
+
+  <p>
+    The embedded document below is a <strong>simulated, end-to-end example</strong> showing all
+    four assessment forms completed for a single imagined plant: the Jubail Seawater Reverse
+    Osmosis (SWRO) desalination plant (reference P01). It has been deliberately constructed
+    to exercise every form section and to illustrate the full range of SPOF types, priorities,
+    and recommendation categories that an engineer is likely to encounter across the 21-plant
+    campaign.
+  </p>
+
+  <div class="note">
+    <strong>Note — simulated data.</strong>
+    Every value, observation, equipment tag, document reference, personnel name, and cost band
+    in this study is fictitious. Data items are tagged <code>SIM-…</code> throughout to confirm
+    their illustrative-only status. Nothing in this document represents real Saudi Water Authority
+    asset data, real equipment condition, or a real cost estimate. The study has been built to
+    demonstrate the <em>method</em> — not to describe a real plant. All costs shown are
+    indicative bands only (L / M / H) and must never be cited as a quote or an estimate.
+  </div>
+
+  <h3 id="t-jubail-reading">Reading guide</h3>
+
+  <p>
+    Use the table below to navigate between the four embedded forms and the manual sections that
+    taught the underlying method. Read each form, then return to the referenced section to confirm
+    you understand why the form looks the way it does.
+  </p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Form</th>
+        <th>What it demonstrates</th>
+        <th>Taught in</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>SF-01 — Document Inventory</strong></td>
+        <td>
+          15 documents logged; 7 Received, 6 Partial, 2 Missing, 1 Obsolete. Shows how
+          document gaps (Missing DGA, Missing battery test, Obsolete arc-flash study)
+          directly feed FMECA Detection ratings. The gap summary is the data-call agenda.
+        </td>
+        <td><a href="#t-desk">Desk Study Procedure</a> (this Part)</td>
+      </tr>
+      <tr>
+        <td><strong>SF-02 — FMECA</strong></td>
+        <td>
+          16 failure-mode rows covering the full spectrum: SPOF bus-tie, protection
+          selectivity gap, DC supply latent failure (top RPN = 60), arc-flash PPE boundary,
+          single service transformer SPOF, earthing untested, genset hidden failure.
+          Three SPOF=Y rows; priority derivation from RPN and SPOF flags demonstrated.
+        </td>
+        <td>
+          <a href="#s-fmeca">Part 3 — FMECA Method</a>;
+          <a href="#s-checklist">Part 3 — SPOF Checklist</a>
+        </td>
+      </tr>
+      <tr>
+        <td><strong>SF-03 — Recommendations</strong></td>
+        <td>
+          16 recommendations closing the loop from every FMECA row. Shows the mechanical
+          priority rule, the cost-band method, and the distinction between modification
+          recommendations and monitor-only findings. Dependency / sequencing column
+          demonstrates how recommendations can create critical-path constraints.
+        </td>
+        <td><a href="#p-modifications">Part 4 — Modifications Catalogue</a></td>
+      </tr>
+      <tr>
+        <td><strong>SF-04 — Site Visit Report</strong></td>
+        <td>
+          Full MOM, 12 observation rows each linked to an FM-ID, 10 photo-log entries,
+          QHSE notes. Demonstrates the factual (non-inferential) tone and the traceability
+          chain: observation → FM-ID → REC-ID.
+        </td>
+        <td><a href="#t-report">Writing the Site Visit Report</a> (this Part)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 id="t-jubail-embedded">Jubail SWRO study — all four forms</h3>
+
+  <div class="doc-embed" data-src="Forms Examples/P01_JUBAIL_DESAL_STUDY.html"></div>
+
+  <h3 id="t-jubail-review">Peer-review commentary — what an experienced engineer notices</h3>
+
+  <div class="worked">
+    <h4>What an experienced engineer notices when reviewing this study</h4>
+
+    <p>
+      The following observations are the kind of quality-check commentary that a senior reviewer
+      or the PM would raise when reviewing the Jubail study. Use them as a self-check when
+      you produce your own forms.
+    </p>
+
+    <ul>
+      <li>
+        <strong>The highest RPN row (FM-006, DC charger, RPN = 60) is rated P1 immediately —
+        not because the occurrence is high, but because the Detection rating is 5 (hidden).</strong>
+        The DC supply feeds the protection and trip circuits; a failure that is undetected until
+        a fault occurs is the most dangerous class of latent SPOF. The study correctly assigns
+        "Immediate" urgency and cross-links to the missing battery capacity-discharge test in SF-01.
+        On your own plants, always check whether the DC charger / battery-test record is in SF-01
+        before assigning a D rating — if it is missing, D = 5, and the row will likely be P1.
+      </li>
+      <li>
+        <strong>The protection-selectivity finding (FM-002, RPN = 36) exploits the document gap
+        in SF-01 (P01-DOC-03 Partial, pre-dates expansion) to justify a high Detection = 4.</strong>
+        This is the correct method: a protection study that predates a plant modification is not
+        evidence that grading is correct — it is evidence that grading is <em>unknown</em>.
+        The study appropriately flags this as Partial in SF-01 and elevates D accordingly.
+        When you see a protection study dated before a major expansion on any of your plants,
+        treat grading as unverified until proved otherwise.
+      </li>
+      <li>
+        <strong>Three SPOF=Y rows are identified: FM-001 (manual bus-tie), FM-005 (single service
+        transformer), and FM-012 (common MV bus).</strong>
+        Notice the difference in severity: FM-001 and FM-012 carry S = 4 (significant production
+        impact), while FM-005 carries S = 3 (sub-area only, not on RO critical path). Priority
+        is assigned accordingly (FM-001 and FM-012 → P1; FM-005 → P2). When you identify a SPOF
+        on your plants, always ask: does loss of this single component cause a plant-wide outage
+        (S = 4 or 5) or only a partial / sub-system outage (S = 2 or 3)? The answer sets the
+        priority class.
+      </li>
+      <li>
+        <strong>The recommendation for the manual bus-tie (REC-01) specifies "add automatic
+        bus-tie transfer scheme with interlocks" — not just "close the bus-tie".</strong>
+        Simply closing the bus-tie permanently would eliminate the N+1 architectural benefit.
+        The correct fix is an automatic transfer scheme that closes the tie on a monitored event
+        (transformer loss or incomer undervoltage) and re-opens it once the fault is cleared.
+        The study correctly notes that grading must be revalidated in parallel, because closing
+        the bus-tie changes the fault-current contribution seen by each relay.
+      </li>
+      <li>
+        <strong>The earthing finding (FM-014) carries a moderate RPN (24) but a note that the
+        last test was in 2013 — 13 years prior to the study date.</strong>
+        The study correctly escalates the Detection rating on the basis that no re-test has
+        been performed since the original commissioning. Corrosion in a coastal (saline)
+        environment like Jubail is significantly faster than in an inland site, making the
+        time-since-test argument even stronger. On coastal plants, any earthing test older
+        than five years should be treated as Partial or Obsolete in SF-01.
+      </li>
+      <li>
+        <strong>Seven of the 16 recommendation rows are "monitor — no modification".</strong>
+        This is disciplined use of the recommendations register: not every FMECA finding
+        requires a capital modification. Items with low RPN and adequate existing safeguards
+        are closed with a monitoring action and a cost band of L. A recommendations register
+        that lists modifications for every single failure mode is a sign of under-calibrated
+        FMECA scoring, not thoroughness.
+      </li>
+      <li>
+        <strong>The VFD cooling-filter dust loading (O-08 in SF-04) seeds FM-008, but the
+        recommendation is to clean and replace filters rather than a capital modification.</strong>
+        The study correctly distinguishes between an O&amp;M action (P3, cost band L) and a
+        capital modification. On your own plants, always separate the "do now — O&amp;M"
+        actions from the "invest in — capital" recommendations, and be explicit about which
+        is which in SF-03.
+      </li>
+      <li>
+        <strong>SF-04 Observation O-04 (arc-flash study predates switchgear upgrade) appears
+        in Section 6 (Safety notes) as well as in the findings table.</strong>
+        This is correct practice: an unverified arc-flash boundary is both a FMECA finding
+        (FM-004) and a QHSE concern that must be documented separately in the safety section
+        of SF-04. On your own site visit reports, always copy any arc-flash label absence or
+        outdated study finding into the QHSE section as well as the findings table.
+      </li>
+      <li>
+        <strong>The study's cost-band summary (L/M/H = 9/6/1) is stated explicitly in the
+        SF-03 footer.</strong>
+        This is useful for the client's budget planning. On your own plants, include this
+        summary line in the SF-03 footer — it helps the PM aggregate across all 21 plants
+        for the campaign summary report.
+      </li>
+    </ul>
+  </div>
+
+  <div class="key">Key takeaway: Read the Jubail study as a worked example of the complete method — not as a template to copy blindly. The peer-review commentary above identifies the reasoning behind the scoring decisions. Apply that reasoning, not just the scores, on your own plants.</div>
+</section>
+
+<!-- ============================================================ -->
+<section id="t-walkthrough" data-title="First-Assignment Walk-Through" data-part="Part 5 — Field Tools &amp; Case Study">
+  <h2>First-Assignment Walk-Through</h2>
+
+  <p><em>Where you are in the workflow: you have received your first plant assignment. Follow this day-by-day sequence from first notification to submission.</em></p>
+
+  <p>
+    This walk-through narrates a typical plant cycle from Day −5 (desk study begins) to Day 4
+    (quality assurance and submission). The timeline is indicative — a simple plant may compress
+    to five days total; a complex plant with many document gaps may expand to eight or ten.
+    Adjust as needed, but keep the sequence.
+  </p>
+
+  <!-- ── DAY −5 ── -->
+  <h3 id="t-wt-dayminus5">Day −5 — Desk study begins</h3>
+
+  <h4>Morning — receive the plant package and issue the document request</h4>
+
+  <ol>
+    <li>
+      Open the four blank assessment forms from <a href="#a-blankforms">Appendix — Blank Forms</a>.
+      Fill in the header of each form: plant name, plant reference number, engineer name,
+      date, and status ("In preparation"). Save as working copies with the plant reference
+      in the filename.
+    </li>
+    <li>
+      Issue the document request to the plant O&amp;M contact using the standard request
+      template. Request all ten document categories listed in
+      <a href="#t-desk">the Desk Study section</a>. Log each requested item in SF-01 with
+      status "Requested".
+    </li>
+    <li>
+      Obtain the logistics information: site address, visitor access procedure, site safety
+      induction requirements, escort contact details, and whether a PTW must be pre-arranged.
+      Block the site visit date in your calendar.
+    </li>
+  </ol>
+
+  <h4>Afternoon — first document review</h4>
+
+  <ol>
+    <li>
+      As documents arrive, update SF-01 status (Received / Partial). If documents are already
+      available in the campaign document store, retrieve them immediately.
+    </li>
+    <li>
+      Study the master SLD first. Trace the power path: utility → MV-MET → MV-SWGR →
+      TX-1/TX-2 → LV-MSB (Bus A/B with bus-tie BT) → MCC-1 … MCC-n, VFD, DG/ATS, UPS/DCDB.
+      Annotate: how many transformers? Is the bus-tie N/O? Is there an auto-transfer scheme?
+      Any single-feed sub-areas?
+    </li>
+    <li>
+      On a printed copy of the SLD, mark with a red pencil every component whose failure you
+      believe might cause a plant-wide or significant partial outage. These are your
+      preliminary SPOF candidates — you will verify them on site and refine them in the FMECA.
+    </li>
+  </ol>
+
+  <!-- ── DAY −2 ── -->
+  <h3 id="t-wt-dayminus2">Day −2 — Desk calculations and pre-visit preparation</h3>
+
+  <h4>Morning — desk calculations</h4>
+
+  <p>
+    With the equipment schedule and load list in hand, build the calculation model shell and
+    run the following desk-based checks (see <a href="#c-transformer">Part 2</a> for all methods):
+  </p>
+
+  <ul>
+    <li>
+      <strong>Transformer sizing check</strong> (<a href="#c-transformer">Part 2</a>):
+      total active load (kW) ÷ assumed power factor → apparent power (kVA); divide by
+      number of transformers; compare to installed transformer kVA. If &gt;80 % loaded in
+      normal operation, flag as a SPOF candidate.
+    </li>
+    <li>
+      <strong>FLC check</strong> (<a href="#c-flc">Part 2</a>):
+      for the largest motor on each MCC, calculate rated FLC; compare to MCC overload relay
+      setting from the schedule. Note any that appear set ≥ 115 % FLC.
+    </li>
+    <li>
+      <strong>Indicative short-circuit level</strong> (<a href="#c-shortcircuit">Part 2</a>):
+      using transformer impedance and utility fault level (if known), estimate the maximum
+      fault current at the LV main busbar. Compare to switchgear rated fault-withstand current.
+      If utility fault level is not yet available, note this as a data-call.
+    </li>
+    <li>
+      <strong>Genset sizing check</strong> (<a href="#c-genset">Part 2</a>):
+      sum the essential-load list; compare to DG rated kVA at the assumed power factor. Confirm
+      whether the DG covers full production or essential loads only. If the load list has gaps,
+      note as a site question.
+    </li>
+  </ul>
+
+  <h4>Afternoon — pre-visit preparation</h4>
+
+  <ol>
+    <li>
+      Print two A3 copies of the master SLD. Label one "RED-LINE COPY" and one "REFERENCE COPY".
+      On the red-line copy, mark all preliminary SPOF candidates with a pencilled circle.
+    </li>
+    <li>
+      Print the <a href="#t-visual-checklist">Visual Inspection Checklist</a> and the
+      <a href="#t-drawing-checklist">Drawing Availability and SLD Verification Checklist</a>
+      from this manual. These are your primary field tools.
+    </li>
+    <li>
+      Print a blank SF-04 Site Visit Report header and MOM template. Fill in the plant name,
+      date, and visit agenda.
+    </li>
+    <li>
+      Confirm with the escort: PTW for switchroom entry (confirm time), induction
+      requirements, photography restrictions, and any areas that will not be accessible.
+    </li>
+    <li>
+      Check PPE: arc-rated coveralls, hard hat, safety glasses, safety shoes, and gloves
+      (confirm PPE category required by the PTW if known in advance).
+    </li>
+  </ol>
+
+  <!-- ── DAY 0 ── -->
+  <h3 id="t-wt-day0">Day 0 — Arrival and QHSE induction</h3>
+
+  <h4>On arrival</h4>
+
+  <ol>
+    <li>
+      Report to the plant control room or administration office. Sign in. Confirm the escort
+      is present and the site induction is ready.
+    </li>
+    <li>
+      Complete the site QHSE induction: emergency muster points, emergency contact numbers,
+      permit-to-work procedure, specific hazards (process plant hazards are in addition to
+      electrical hazards — confirm chemical, pressure, and process risks with the escort).
+    </li>
+    <li>
+      Collect the PTW for switchroom entry. Read it in full. Confirm the scope, validity
+      period, and conditions. Sign it.
+    </li>
+    <li>
+      Attend the kick-off meeting with the escort and any other O&amp;M staff available.
+      Confirm the visit agenda, areas to be walked, and documents not yet received.
+      Record attendees in SF-04 Section 2 (MOM). Confirm in writing (meeting minutes or email)
+      the key verbal facts: bus-tie operating philosophy, genset scope, last arc-flash study date.
+    </li>
+  </ol>
+
+  <!-- ── DAY 1 ── -->
+  <h3 id="t-wt-day1">Day 1 — Site visit</h3>
+
+  <h4>Morning — MV and transformer walk-down</h4>
+
+  <ol>
+    <li>
+      Enter the MV switchroom under the PTW with the escort. Work through
+      <strong>Zones 1–3</strong> of the <a href="#t-visual-checklist">Visual Inspection Checklist</a>:
+      switchroom general, MV-SWGR / MV-MET / MV-NER, then TX-1 and TX-2.
+    </li>
+    <li>
+      Photograph PH-01 (switchroom general), PH-02 (MV switchgear line-up and arc-flash labels),
+      PH-03 (bus-tie position indicator), PH-04 (TX-1 nameplate), PH-05 (TX-2 nameplate) from
+      the mandatory photo list.
+    </li>
+    <li>
+      On the red-line SLD, confirm every item visible in the switchroom. Mark confirmed items
+      with a tick; mark discrepancies in red. Note the as-found breaker positions.
+    </li>
+    <li>
+      Ask the escort specifically: When was the protection coordination study last updated?
+      Has the plant been expanded since that date? When was the arc-flash study last performed?
+      Note answers in SF-04 Section 2.
+    </li>
+  </ol>
+
+  <h4>Afternoon — LV, standby, DC, and earthing walk-down</h4>
+
+  <ol>
+    <li>
+      Work through <strong>Zones 4–9</strong> of the
+      <a href="#t-visual-checklist">Visual Inspection Checklist</a>:
+      LV-MSB and BT; MCCs and VFDs; PFC and DBs; DG and ATS; UPS and DCDB; visible earthing.
+    </li>
+    <li>
+      Capture remaining mandatory photographs: PH-06 (LV-MSB), PH-07 (DG), PH-08 (ATS),
+      PH-09 (DCDB), PH-10 (UPS), PH-11 (earth test point), PH-12 (any defect or discrepancy).
+    </li>
+    <li>
+      Collect any documents not previously received: relay setting records, genset test log,
+      battery test record, asset register pages. Log each new document in SF-01.
+    </li>
+    <li>
+      Before leaving site: review your checklist — have all mandatory photographs been taken?
+      Have all zones been walked? Are there open questions for the escort that can still be
+      answered today? Ask them now.
+    </li>
+    <li>
+      Agree the data-call action list with the escort (documents to be sent within agreed
+      timescales). Record in SF-04 Section 2, decisions and actions table.
+    </li>
+  </ol>
+
+  <!-- ── DAY 2–3 ── -->
+  <h3 id="t-wt-day23">Days 2–3 — Analysis and form completion</h3>
+
+  <h4>Day 2 — SF-04, SF-01, FMECA build</h4>
+
+  <ol>
+    <li>
+      <strong>Finalise SF-04 first</strong> — while the visit is fresh. Complete all sections:
+      metadata, MOM, survey scope, observations (one row per finding with tag and FM-ID),
+      photo log (index and caption all photos), safety notes, and sign-off. Target: completed
+      within 24 hours of the site visit.
+    </li>
+    <li>
+      Update SF-01: change the status of any documents collected on site; add any new documents
+      to the register; update the gap summary. Mark any remaining Missing or Partial items
+      as data-call actions.
+    </li>
+    <li>
+      Build the FMECA (SF-02): open a row for each SF-04 observation and for each SF-01 gap
+      that represents a failure mode. Assign S, O, D; compute RPN and Crit; flag SPOFs.
+      Cross-check: every SF-04 observation with an FM-ID should have a corresponding FMECA row.
+      See <a href="#s-fmeca">Part 3 — FMECA Method</a> for the S/O/D scale anchors.
+    </li>
+    <li>
+      Update D ratings for all FMECA rows affected by SF-01 gaps (as described in
+      <a href="#t-analysis">the Post-Site Analysis section</a>).
+    </li>
+  </ol>
+
+  <h4>Day 3 — Calculations update and SF-03 recommendations</h4>
+
+  <ol>
+    <li>
+      Update the calculation model with the as-found nameplate data from the site visit.
+      Re-run the transformer sizing, FLC, short-circuit, genset, and load-flow checks.
+      Note any calculations that cannot be completed without outstanding data-call responses
+      — flag these clearly in the calculation package.
+    </li>
+    <li>
+      Build SF-03 Recommendations: one row per FM-ID from the FMECA. Assign priority
+      mechanically from the RPN / SPOF rule. Write the recommended modification or action.
+      Assign cost band (L/M/H). Note monitor-only rows explicitly.
+      See <a href="#p-modifications">Part 4 — Modifications Catalogue</a> for standard
+      modification types and their descriptions.
+    </li>
+    <li>
+      Cross-check the traceability chain: every SF-03 row should carry an FM-ID from SF-02;
+      every SF-02 row should carry a reference to an SF-04 observation or SF-01 gap. If any
+      row is untraceable, either remove it or add the missing link.
+    </li>
+  </ol>
+
+  <!-- ── DAY 4 ── -->
+  <h3 id="t-wt-day4">Day 4 — Quality assurance and submission</h3>
+
+  <ol>
+    <li>
+      <strong>Self-check all four forms</strong> using this list:
+      <ul class="checklist">
+        <li>SF-01: every row has a Status; gap summary count is correct; all data-call actions have owners and due dates.</li>
+        <li>SF-02: every row has S, O, D, RPN, Crit, and SPOF flag; every SPOF=Y row has a P1 or P2 recommendation in SF-03; no RPN cell is blank.</li>
+        <li>SF-03: every FM-ID from SF-02 has exactly one recommendation row; priority is consistent with the RPN/SPOF rule; cost band is L/M/H (no SAR figures).</li>
+        <li>SF-04: all seven sections are complete; MOM action list has owners and due dates; all 12 mandatory photos are indexed; escort acknowledgement received.</li>
+        <li>Calculation package: all required studies completed or flagged as pending data; indicative label on all values.</li>
+        <li>Traceability check: any FMECA row that cannot be traced to either an SF-04 observation or an SF-01 gap has been reviewed and either removed or sourced.</li>
+      </ul>
+    </li>
+    <li>
+      Send the completed forms and calculation package to the PM for review. Attach the
+      indexed photo library. Note any items that are still outstanding (pending data-call
+      responses) and their expected resolution dates.
+    </li>
+    <li>
+      File the red-lined SLD with the plant document package. Note any SLD revision that the
+      plant owner needs to carry out, and reference this in SF-03 as an action (if applicable).
+    </li>
+  </ol>
+
+  <div class="key">
+    You are now ready. You have completed one full plant cycle: desk study → site visit → analysis → recommendations → submission. Repeat this sequence for each of the 21 plants in the campaign, adjusting the timeline as plant complexity and document availability dictate. Blank forms for every new plant are in <a href="#a-blankforms">Appendix — Blank Forms</a>.
+  </div>
+</section>
