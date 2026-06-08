@@ -27,6 +27,16 @@ SF-04 Site Visit Report.
 **Standards:** IEC, IEEE (incl. 1584 / 493), NFPA 70E, ANSI, NEMA; IEC 60812 (FMECA);
 ISO 20815 / ISO 14224.
 
+## Site logistics map
+
+The 21 assessment units span four hubs in the Central & Eastern sector. The map below
+combines a national overview with a zoomed sector view in a single drawing.
+
+![WSM site logistics map — Central & Eastern sector, 21 assessment units](../diagrams/svg/wsm-site-logistics-map.svg)
+
+*Schematic / indicative only — geometry not to scale and the per-hub unit split
+(7 + 4 + 4 + 6 = 21) is indicative. Rendered from `diagrams/src/build_map.py`.*
+
 > The spec headcount is **1 PM + 2 Electrical Engineers**; the technician profile is
 > provided per request as an optional site-survey support role and is not part of the
 > fixed personnel supply.
