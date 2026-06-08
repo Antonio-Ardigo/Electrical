@@ -1,8 +1,7 @@
 # Job Description — Electrical Engineer (SPOF Assessment & Calculations)
 
 **Engagement:** Electrical **Single Point of Failure (SPOF) Assessment** of 21 water /
-desalination plants across the Central & Eastern sector (Riyadh, Madinah, Qassim,
-Eastern Region), full-time over a **4-month** campaign. **Positions: 2.**
+desalination plants across the Central & Eastern sector (19 in Riyadh Province + 2 in the Eastern Province), full-time over a **4-month** campaign. **Positions: 2.**
 
 | | |
 |---|---|
