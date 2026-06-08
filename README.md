@@ -90,6 +90,7 @@ outcomes, suggested study times, the team roles, the self-check approach, and a 
 ```text
 Electrical/
 ├── README.md                                  ← course landing page (this file)
+├── CLAUDE.md                                   ← repo guidance, roles, tag scheme, conventions
 ├── docs/
 │   └── main-electrical-equipment-2MW-process-plant.md   ← reference / basis of design
 ├── training/
@@ -98,12 +99,18 @@ Electrical/
 │   ├── module-02-calculations.md              ← Module 2: main electrical calculations
 │   └── module-03-spof-analysis.md             ← Module 3: single-points-of-failure analysis
 └── diagrams/
-    ├── sld-master-2MW.md                       ← master reference single-line diagram
-    └── spof-examples/                          ← alternative SLDs for SPOF analysis
+    ├── DRAWING-STANDARD.md                     ← SLD format/style spec (schemdraw, IEC 60617)
+    ├── sld-master-2MW.md                       ← master reference SLD (embeds the SVG figure)
+    ├── spof-examples/                          ← five SPOF example SLDs (A–E)
+    ├── src/                                    ← schemdraw source: slddraw.py + build_*.py
+    └── svg/                                    ← rendered vector figures (SVG)
 ```
 
-> Module content and diagrams are authored by other team members (electrical engineer and
-> technical draftsman); this index and the course front matter define the structure they fill in.
+> Diagrams are **professional IEC 60617 vector single-line diagrams**, authored as reproducible
+> [schemdraw](https://schemdraw.readthedocs.io) Python source in `diagrams/src/` and rendered to
+> **SVG** — the source script is the master, never hand-edit the SVG. See
+> [diagrams/DRAWING-STANDARD.md](diagrams/DRAWING-STANDARD.md). SLD work uses the reusable
+> `electrical-draftsman` agent in `.claude/agents/`.
 
 ---
 
