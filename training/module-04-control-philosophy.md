@@ -221,6 +221,7 @@ requirements for connected resources, IEC 60034 / 61800 (motors & drives ride-th
 
 ---
 
-*This module completes the core course (Modules 1–4). Every figure and practice here is
-indicative and to be confirmed by detailed study, vendor selection and the governing grid
-code.*
+*Every figure and practice here is indicative and to be confirmed by detailed study, vendor
+selection and the governing grid code.*
+
+*Next: [Module 5 — Reliability Engineering: FMECA & RAM/RBD](module-05-reliability-fmeca.md).*

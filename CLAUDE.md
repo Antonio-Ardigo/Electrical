@@ -37,7 +37,8 @@ Electrical/
 │   ├── module-01-equipment-identification.md  identify equipment + function table (linked to tags)
 │   ├── module-02-calculations.md              core electrical calculations + worked examples
 │   ├── module-03-spof-analysis.md              single-point-of-failure analysis
-│   └── module-04-control-philosophy.md         control philosophy & power management (DCS/PMS, renewables)
+│   ├── module-04-control-philosophy.md         control philosophy & power management (DCS/PMS, renewables)
+│   └── module-05-reliability-fmeca.md          reliability engineering: FMECA & RAM/RBD
 └── diagrams/
     ├── DRAWING-STANDARD.md                     SLD format/style spec (schemdraw, IEC 60617)
     ├── sld-master-2MW.md                       master reference SLD (embeds svg/, anchored legend)

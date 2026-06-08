@@ -54,6 +54,7 @@ By the end of this course you will be able to:
 | 2 | **Electrical Calculations** | Work through the main electrical **calculations** (demand, transformer sizing, FLC, short-circuit, voltage drop, PFC, cable selection) with worked examples. | [training/module-02-calculations.md](training/module-02-calculations.md) |
 | 3 | **Single Points of Failure (SPOF)** | Identify and assess **single points of failure** across several example single-line diagrams and propose mitigations. | [training/module-03-spof-analysis.md](training/module-03-spof-analysis.md) |
 | 4 | **Control Philosophy & Power Management** | Continuity-of-supply philosophies, **DCS/SCADA/PMS** integration (IEC 61850), best-practice technologies, and coping with **renewable-driven grid voltage instability**. | [training/module-04-control-philosophy.md](training/module-04-control-philosophy.md) |
+| 5 | **Reliability Engineering: FMECA & RAM/RBD** | Formalise the SPOF hunt: reliability metrics, **RBD** availability, **FMECA** (IEC 60812) criticality and a risk-ranked recommendations method (IEEE 493 / ISO 14224). | [training/module-05-reliability-fmeca.md](training/module-05-reliability-fmeca.md) |
 
 Start with the **[Course Overview](training/00-course-overview.md)** for detailed per-module
 outcomes, suggested study times, the team roles, the self-check approach, and a glossary.
@@ -99,7 +100,8 @@ Electrical/
 │   ├── module-01-equipment-identification.md  ← Module 1: identify equipment + function table
 │   ├── module-02-calculations.md              ← Module 2: main electrical calculations
 │   ├── module-03-spof-analysis.md              ← Module 3: single-points-of-failure analysis
-│   └── module-04-control-philosophy.md         ← Module 4: control philosophy & power management
+│   ├── module-04-control-philosophy.md         ← Module 4: control philosophy & power management
+│   └── module-05-reliability-fmeca.md          ← Module 5: reliability engineering (FMECA, RAM/RBD)
 └── diagrams/
     ├── DRAWING-STANDARD.md                     ← SLD format/style spec (schemdraw, IEC 60617)
     ├── sld-master-2MW.md                       ← master reference SLD (embeds the SVG figure)
