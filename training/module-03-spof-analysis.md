@@ -252,3 +252,5 @@ Use the example diagrams to answer.
 [reference design document](../docs/main-electrical-equipment-2MW-process-plant.md)
 §6 checklist as a capstone, and confirm you can justify each redundancy choice in
 the [master SLD](../diagrams/sld-master-2MW.md). All figures indicative.*
+
+*Next: [Module 4 — Control Philosophy & Power Management](module-04-control-philosophy.md).*

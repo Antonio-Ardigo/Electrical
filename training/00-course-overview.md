@@ -78,6 +78,23 @@ On completion you will be able to:
   generation (**DG + ATS**), and **UPS** for control/critical loads — and articulate their
   trade-offs (cost, complexity, footprint).
 
+### Module 4 — Control Philosophy & Power Management
+*File:* [module-04-control-philosophy.md](module-04-control-philosophy.md) ·
+*Diagram:* [control architecture](../diagrams/svg/control-architecture.svg)
+
+On completion you will be able to:
+
+- State the main **continuity-of-supply philosophies** (redundancy/segregation, automatic
+  bus transfer, DG/ATS, load shedding, no-break supplies, motor re-acceleration) that avoid
+  service interruption.
+- Describe **DCS / SCADA / PMS** integration and the role of **IEC 61850** (GOOSE for fast
+  load shedding & bus transfer, MMS for monitoring), and when to **hardwire** vs network.
+- Identify **best-practice technologies** — digital substation, intelligent load shedding,
+  condition monitoring/digital twin, **BESS** / grid-forming inverters, cybersecurity.
+- Explain how **renewable-driven grid voltage instability** affects the plant and the
+  **ride-through** (UVRT, VFD kinetic buffering) and **dynamic support** (STATCOM/SVC, DVR,
+  BESS) measures that mitigate it.
+
 ---
 
 ## Suggested Study Time
@@ -88,7 +105,8 @@ On completion you will be able to:
 | 1 — Equipment Identification | 1.5 h | 0.5 h | **~2 h** |
 | 2 — Electrical Calculations | 2.5 h | 1.0 h | **~3.5 h** |
 | 3 — SPOF Analysis | 1.5 h | 1.0 h | **~2.5 h** |
-| **Course total** | | | **~8.5 h** |
+| 4 — Control Philosophy & Power Management | 2.0 h | 0.5 h | **~2.5 h** |
+| **Course total** | | | **~11 h** |
 
 Times are indicative for a learner meeting the prerequisites; allow more if the electrical
 fundamentals are new.
@@ -147,6 +165,15 @@ and identify the major SPOFs in an unfamiliar diagram.
 | **ACB** | Air Circuit Breaker | Large LV breaker, typically the switchboard incomer / bus-tie. |
 | **MCCB** | Moulded-Case Circuit Breaker | Compact LV breaker for outgoing feeders and smaller circuits. |
 | **DOL** | Direct-On-Line | Simplest motor starter — connects the motor straight to the supply (small motors). |
+| **DCS** | Distributed Control System | Plant process-control system with operator HMI; receives electrical status and issues high-level commands. |
+| **SCADA** | Supervisory Control & Data Acquisition | Supervisory monitoring/control layer for the power system. |
+| **PMS** | Power Management System | Dedicated electrical controller: load shedding, bus transfer, generator control/synchronisation, energy management. |
+| **IEC 61850** | Substation comms standard | Defines station/process-bus messaging — **MMS** (monitoring) and **GOOSE** (fast peer-to-peer trips/transfers). |
+| **IED** | Intelligent Electronic Device | Numerical multifunction relay (protection + measurement + control) at each bay. |
+| **LVRT/UVRT** | (Low/Under) Voltage Ride-Through | Capability/settings that let the plant ride through short voltage dips instead of tripping. |
+| **STATCOM/SVC** | Static (synchronous) compensator / SVC | Fast dynamic reactive-power source for voltage stabilisation and flicker control. |
+| **BESS** | Battery Energy Storage System | Storage (often grid-forming) giving ride-through, inertia emulation, fast frequency/voltage support, islanding. |
+| **ROCOF** | Rate of Change of Frequency | Measure of frequency volatility; rises as grid inertia falls with more renewables. |
 
 **Other tags used (from the reference design):** `MV-SWGR` (MV switchgear), `MV-MET` (metering),
 `MV-PROT` (MV protection relays), `TX-1`/`TX-2` (MV/LV transformers), `LV-MSB` (main LV
