@@ -95,6 +95,17 @@ On completion you will be able to:
   **ride-through** (UVRT, VFD kinetic buffering) and **dynamic support** (STATCOM/SVC, DVR,
   BESS) measures that mitigate it.
 
+### Module 5 — Reliability Engineering: FMECA & RAM/RBD
+*File:* [module-05-reliability-fmeca.md](module-05-reliability-fmeca.md)
+
+On completion you will be able to:
+
+- Define and compute the core reliability metrics — **λ, MTBF, MTTR, availability**.
+- Build a **reliability block diagram (RBD)** and quantify **series vs redundant** availability.
+- Perform an **FMECA** (IEC 60812): failure modes → effects → **criticality / RPN**.
+- Rank findings on a **risk matrix** and produce prioritised recommendations, following the
+  **SF-01…SF-04** study method (IEEE 493 / ISO 20815 / ISO 14224).
+
 ---
 
 ## Suggested Study Time
@@ -106,7 +117,8 @@ On completion you will be able to:
 | 2 — Electrical Calculations | 2.5 h | 1.0 h | **~3.5 h** |
 | 3 — SPOF Analysis | 1.5 h | 1.0 h | **~2.5 h** |
 | 4 — Control Philosophy & Power Management | 2.0 h | 0.5 h | **~2.5 h** |
-| **Course total** | | | **~11 h** |
+| 5 — Reliability Engineering (FMECA & RAM/RBD) | 1.5 h | 0.5 h | **~2 h** |
+| **Course total** | | | **~13 h** |
 
 Times are indicative for a learner meeting the prerequisites; allow more if the electrical
 fundamentals are new.
@@ -174,6 +186,12 @@ and identify the major SPOFs in an unfamiliar diagram.
 | **STATCOM/SVC** | Static (synchronous) compensator / SVC | Fast dynamic reactive-power source for voltage stabilisation and flicker control. |
 | **BESS** | Battery Energy Storage System | Storage (often grid-forming) giving ride-through, inertia emulation, fast frequency/voltage support, islanding. |
 | **ROCOF** | Rate of Change of Frequency | Measure of frequency volatility; rises as grid inertia falls with more renewables. |
+| **FMECA** | Failure Mode, Effects & Criticality Analysis | Structured method (IEC 60812) listing failure modes, effects and criticality per component. |
+| **RAM** | Reliability, Availability, Maintainability | The quantitative analysis of how often/long a system is unavailable. |
+| **RBD** | Reliability Block Diagram | Series/parallel model used to compute system availability from component data. |
+| **MTBF / MTTR** | Mean Time Between Failures / To Repair | Average up-time between failures / average restore time; set availability A = MTBF/(MTBF+MTTR). |
+| **RPN** | Risk Priority Number | FMECA score = Severity × Occurrence × Detection, used to rank risks. |
+| **ISO 14224** | Reliability data taxonomy | Standard equipment taxonomy and failure-data classification used in the study. |
 
 **Other tags used (from the reference design):** `MV-SWGR` (MV switchgear), `MV-MET` (metering),
 `MV-PROT` (MV protection relays), `TX-1`/`TX-2` (MV/LV transformers), `LV-MSB` (main LV
