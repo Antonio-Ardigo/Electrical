@@ -1,0 +1,78 @@
+<section id="cover" data-title="Cover" data-part="Front matter">
+  <div style="text-align:center; padding: 1rem 0 2rem;">
+    <h1 style="font-family:system-ui,-apple-system,'Segoe UI',Arial,sans-serif; font-size:2rem; font-weight:800; color:#11457e; line-height:1.2; margin-bottom:0.5rem;">
+      Field Manual<br>Electrical Assessments, SPOF Analysis &amp; Recommendations<br>for MV/LV Process Plants
+    </h1>
+    <p class="subtitle" style="font-family:system-ui,-apple-system,Arial,sans-serif; font-size:1.05rem; color:#4a5260; margin-bottom:1.5rem;">
+      Medium-Voltage / Low-Voltage Industrial Plant — Indicative ~2 MW Demand
+    </p>
+
+    <div style="display:flex; gap:1.5rem; justify-content:center; flex-wrap:wrap; font-family:system-ui,Arial,sans-serif; font-size:0.82rem; color:#9aa0ad; border-top:1px solid #e2e4e9; border-bottom:1px solid #e2e4e9; padding:0.7rem 0; margin:0 auto 1.5rem; max-width:540px;">
+      <span>Standard: <strong>IEC</strong></span>
+      <span>Voltage: <strong>11 kV MV / 400–415 V LV</strong></span>
+      <span>Frequency: <strong>50 Hz</strong></span>
+      <span>Demand: <strong>~2 MW / ~2.35 MVA</strong></span>
+    </div>
+
+    <div class="disclaimer" style="background:#fff3d6; border:1px solid #f0c060; border-radius:4px; padding:0.8rem 1.2rem; font-size:0.85rem; line-height:1.6; max-width:640px; margin:0 auto 1.5rem; text-align:left; font-family:system-ui,Arial,sans-serif;">
+      <strong>Indicative / Training Material.</strong> All values, equipment ratings, and
+      configurations in this manual are <em>indicative only</em> and are provided for
+      training and familiarisation purposes. They do not constitute a design, specification,
+      or safety document. All numeric values must be confirmed by detailed engineering studies
+      before use in any real installation. Follow all applicable national and IEC standards,
+      site safety rules, and employer procedures at all times.
+    </div>
+  </div>
+
+  <h2>About This Manual</h2>
+
+  <p>
+    This field manual is a self-paced reference for a junior electrical engineer assigned to
+    assess the main electrical equipment of a medium-voltage / low-voltage (MV/LV) industrial
+    process plant with an indicative demand of approximately 2 MW. It covers equipment
+    identification, core electrical calculations, single-point-of-failure (SPOF) analysis,
+    and practical recommendations.
+  </p>
+
+  <h3 id="cover-how-to-use">How to Use This Manual</h3>
+
+  <p>
+    Work through the parts in order. Each part builds on the previous: start by identifying
+    the equipment and understanding its function (Part 1), apply the key calculations
+    (Part 2), then conduct the SPOF analysis (Part 3) and formulate recommendations (Part 4).
+  </p>
+
+  <p>
+    Use the sidebar to navigate between sections. Checklists in each part track your
+    progress — tick items as you complete them; your progress is saved automatically in the
+    browser. Print the manual (use the <strong>Print</strong> button) for field use; the
+    sidebar is hidden and each section starts on a new page.
+  </p>
+
+  <div class="note">
+    This manual is a single offline HTML file. It requires no internet connection and no
+    installed software beyond a modern web browser. Checklist state is stored in the
+    browser's local storage — use the same browser session to preserve progress.
+  </div>
+
+  <h3 id="cover-scope">Scope and Plant Configuration</h3>
+
+  <p>
+    The indicative plant configuration used throughout this manual is:
+  </p>
+
+  <table class="form">
+    <tr><td>Supply</td><td>11 kV utility incomer, metered at MV level</td></tr>
+    <tr><td>MV switchgear</td><td>11 kV ring-main unit (RMU) with protection relay</td></tr>
+    <tr><td>Transformers</td><td>2 × 1600 kVA, Dyn11, 11 kV / 415 V (TX-1 and TX-2)</td></tr>
+    <tr><td>LV main switchboard</td><td>Split-bus, 415 V, with normally-open bus-tie (LV-MSB)</td></tr>
+    <tr><td>Motor control</td><td>Multiple MCCs fed from LV-MSB sections</td></tr>
+    <tr><td>Standby generation</td><td>Diesel generator (DG) with automatic transfer switch (ATS)</td></tr>
+    <tr><td>Total demand</td><td>~2 MW (indicative); apparent power ~2.35 MVA at pf 0.85</td></tr>
+  </table>
+
+  <p>
+    Refer to the master single-line diagram (SLD) throughout for equipment locations and tag
+    references.
+  </p>
+</section>

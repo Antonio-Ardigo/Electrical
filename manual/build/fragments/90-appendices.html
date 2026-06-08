@@ -1,0 +1,1309 @@
+<!-- ============================================================
+     Appendices — quick-reference and printable tools
+     Sections: a-glossary | a-standards | a-formula | a-tags |
+               a-blankforms | a-hardening | a-mtbf
+     ============================================================ -->
+
+<div class="note" style="margin-bottom:1em;">
+  <strong>Note:</strong> These appendices are quick-reference and printable tools — concise
+  distillations of the manual's technical content intended for use in the field and at the
+  desk. All figures are <em>indicative</em>; confirm against plant-specific data and the
+  governing standards before acting on them.
+</div>
+
+<!-- ============================================================ -->
+
+<section id="a-glossary" data-title="A — Glossary" data-part="Appendices">
+  <h2>A — Glossary of Terms and Abbreviations</h2>
+
+  <p>
+    Alphabetical table of abbreviations and terms used across this manual.
+    Expand from the course overview glossary and includes terms introduced in Parts 4 and 5.
+    All voltage and frequency references follow the IEC basis of this manual (11 kV MV, 400/415 V LV, 50 Hz).
+  </p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Term / Abbreviation</th>
+        <th>Meaning and context in this manual</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>ACB</strong></td><td>Air Circuit Breaker. Large LV breaker used for switchboard incomers and the bus-tie on <code>LV-MSB</code>. Ratings typically 1600–6300 A; short-time withstand up to 65–100 kA (1 s).</td></tr>
+      <tr><td><strong>AFB</strong></td><td>Arc-Flash Boundary. The working distance at which incident energy falls to 1.2 cal/cm² (the onset-of-a-second-degree-burn threshold). Determined per IEEE 1584-2018.</td></tr>
+      <tr><td><strong>ANSI</strong></td><td>American National Standards Institute. Device numbering scheme (e.g. 50/51, 87T) used on SLD relay/breaker labels as industry convention alongside IEC.</td></tr>
+      <tr><td><strong>ATS</strong></td><td>Automatic Transfer Switch. Monitors the utility supply and, on failure, automatically transfers the essential bus to the standby <code>DG</code>. A failed-to-transfer ATS is one of the highest-RPN items in a typical FMECA.</td></tr>
+      <tr><td><strong>Availability (A)</strong></td><td>A = MTBF / (MTBF + MTTR). The fraction of calendar time a component or system is in its functioning state. Expressed as a decimal (e.g. 0.9992) or as annual downtime hours.</td></tr>
+      <tr><td><strong>AVR</strong></td><td>Automatic Voltage Regulator. Controls the excitation of the diesel generator alternator to maintain output voltage within limits during load changes.</td></tr>
+      <tr><td><strong>BESS</strong></td><td>Battery Energy Storage System. Grid-connected or plant-connected battery system providing ride-through energy, inertia emulation, fast frequency / voltage support, or islanding capability.</td></tr>
+      <tr><td><strong>BT (or B/T)</strong></td><td>Bus-Tie. The normally-open ACB (or contactor) connecting Bus A and Bus B of the <code>LV-MSB</code> split busbar. Closes automatically on loss of one incomer to allow the healthy transformer to back-feed the dead bus. A critical SPOF-mitigation element.</td></tr>
+      <tr><td><strong>Cable ampacity</strong></td><td>The continuous current-carrying capacity of a cable under defined installation conditions (temperature, grouping, burial). Determined from IEC 60364 / manufacturer tables after applying derating factors.</td></tr>
+      <tr><td><strong>CT / VT</strong></td><td>Current Transformer / Voltage Transformer. Instrument transformers that step down MV/LV currents and voltages to safe measurement levels (e.g. 5 A / 110 V secondary). Feed protection relays, metering and SCADA.</td></tr>
+      <tr><td><strong>DB</strong></td><td>Distribution Board. Final-circuit LV panel fed from the <code>LV-MSB</code> or an MCC; supplies lighting, small power and HVAC loads via MCBs/RCBOs.</td></tr>
+      <tr><td><strong>DCDB</strong></td><td>DC Distribution Board (battery and charger system). Provides 110 V DC (typical) for MV switchgear trip/close coils and protection relay auxiliary supplies. A DCDB failure silences protection — very high severity in the FMECA.</td></tr>
+      <tr><td><strong>DCS</strong></td><td>Distributed Control System. Plant-wide process control system with operator HMI. Receives electrical status (breaker position, voltages, currents) and issues high-level electrical commands.</td></tr>
+      <tr><td><strong>DG</strong></td><td>Diesel Generator set. Standby power source sized for the essential-load bus (~800–1250 kVA indicative). Includes AVR, governor, fuel day-tank, battery starting and acoustic enclosure.</td></tr>
+      <tr><td><strong>DOL</strong></td><td>Direct-On-Line. Simplest motor starting method — motor connected straight to supply. Starting current typically 5–7 × FLC; suitable for motors up to ~7.5 kW or where the bus can absorb the inrush.</td></tr>
+      <tr><td><strong>DVR</strong></td><td>Dynamic Voltage Restorer. Series power-electronics device injecting a compensating voltage to protect plant loads against upstream voltage sags and swells.</td></tr>
+      <tr><td><strong>EDB</strong></td><td>Essential Distribution Board. Fed via the <code>ATS</code> from the <code>DG</code> (or utility essential bus). Supplies safety-critical loads that must remain energised during a utility outage.</td></tr>
+      <tr><td><strong>FMECA</strong></td><td>Failure Mode, Effects and Criticality Analysis. Structured IEC 60812 method: list failure modes for each component, assess effects on the system, score Severity (S), Occurrence (O), Detectability (D), compute RPN = S × O × D, and rank for action. The primary SPOF quantification tool in this campaign.</td></tr>
+      <tr><td><strong>FLC</strong></td><td>Full-Load Current. The rated continuous current at full load: I = S / (√3 · V) for 3-phase. Basis for breaker sizing, cable selection and protection relay pickup settings.</td></tr>
+      <tr><td><strong>GOOSE</strong></td><td>Generic Object-Oriented Substation Event. IEC 61850 fast peer-to-peer message over the station bus used for inter-IED tripping, bus-transfer logic and load-shedding. Latency typically &lt;4 ms.</td></tr>
+      <tr><td><strong>IED</strong></td><td>Intelligent Electronic Device. Numerical multifunction protection relay performing overcurrent (50/51), earth-fault (50N/51N), differential (87T), voltage (27/59) and other protection functions, plus measurement and control.</td></tr>
+      <tr><td><strong>Isc</strong></td><td>Short-Circuit Current (symmetrical). The prospective fault current at a bus under bolted three-phase conditions. Used to specify the breaking capacity (Icu) of switchgear. Indicative: ~38.5 kA per 1600 kVA, Z = 6 % transformer.</td></tr>
+      <tr><td><strong>LPL</strong></td><td>Lightning Protection Level. Classes I–IV per IEC 62305, determined by risk assessment. Sets air-termination geometry, down-conductor spacing and earth-electrode requirements.</td></tr>
+      <tr><td><strong>LPS</strong></td><td>Lightning Protection System. The complete system of air terminations, down conductors and earth electrodes protecting the plant structure and equipment against direct lightning strikes.</td></tr>
+      <tr><td><strong>LV</strong></td><td>Low Voltage. Utilisation voltage; in this manual <strong>400/415 V, 3-phase, 50 Hz</strong> (IEC: ≤ 1 kV AC). Confirm per plant.</td></tr>
+      <tr><td><strong>LVRT / UVRT</strong></td><td>Low / Under Voltage Ride-Through. The capability or protection settings that allow plant equipment (particularly VFD-driven loads) to remain connected through a defined voltage dip rather than tripping and exacerbating the disturbance.</td></tr>
+      <tr><td><strong>MCC</strong></td><td>Motor Control Centre. LV assembly of motor starter bays (DOL, star-delta, soft-starter, VFD) feeding process motors. Tags <code>MCC-1</code> … <code>MCC-n</code> per the plant scheme.</td></tr>
+      <tr><td><strong>MCCB</strong></td><td>Moulded-Case Circuit Breaker. Compact LV protective device for outgoing feeders and motor circuits. Breaking capacity ratings from ~10 kA to 85 kA; motor-protection versions incorporate thermal/magnetic or electronic trip units.</td></tr>
+      <tr><td><strong>MMS</strong></td><td>Manufacturing Message Specification. IEC 61850 protocol for client–server monitoring, control and data exchange between IEDs and SCADA/EMS. Complements GOOSE for non-time-critical data.</td></tr>
+      <tr><td><strong>MTBF</strong></td><td>Mean Time Between Failures. MTBF = 1/λ (h). Average operating time between successive failures. Higher MTBF = lower failure rate = more reliable. See <a href="#a-mtbf">Appendix G</a> for indicative values.</td></tr>
+      <tr><td><strong>MTTR</strong></td><td>Mean Time To Repair / Restore. Average time from failure occurrence to return to service (detection + logistics + repair + recommissioning). MTTR is the key lever that automation (auto bus-tie, ATS) acts on — reducing it from hours (manual) to seconds (auto-transfer) dramatically raises availability.</td></tr>
+      <tr><td><strong>MV</strong></td><td>Medium Voltage. Higher distribution voltage; in this manual <strong>11 kV</strong> (IEC: 1 kV &lt; MV ≤ 36 kV). Actual utility voltage must be confirmed per plant.</td></tr>
+      <tr><td><strong>MV-MET</strong></td><td>MV Utility Revenue Metering Cubicle. Contains utility-grade CTs/VTs and the tariff meter at the point of supply. Not a protection device — verify its presence and metering-point location during desk study.</td></tr>
+      <tr><td><strong>MV-NER</strong></td><td>Neutral Earthing Resistor. Connected between the MV transformer neutral and earth to limit earth-fault current (typically 300–400 A) while keeping faults detectable. R ≈ 21 Ω for 300 A at 11 kV (indicative).</td></tr>
+      <tr><td><strong>MV-SWGR</strong></td><td>MV Metal-Clad (or metal-enclosed) Switchgear. 11 kV bus with vacuum circuit breakers; incomer, bus-section and transformer-feeder panels. Rated for prospective fault level (indicative: 25 kA/1 s).</td></tr>
+      <tr><td><strong>N+1 / N-1</strong></td><td>N+1: one more capacity unit than the minimum required — so one can be lost without losing the function. N-1: the condition after one unit has failed; the system must still serve the essential load. The 2 × 1600 kVA + bus-tie arrangement is N-1 secure for essential load (~55 % of total).</td></tr>
+      <tr><td><strong>NER</strong></td><td>Neutral Earthing Resistor — see <code>MV-NER</code>.</td></tr>
+      <tr><td><strong>PCC</strong></td><td>Power Control Centre. The main LV switchboard that distributes power to MCCs and outgoing feeders. In this manual, <code>LV-MSB</code> is the PCC. Distinct from an MCC (which only controls motors).</td></tr>
+      <tr><td><strong>PFC</strong></td><td>Power Factor Correction. Automatic capacitor bank (with 7 % detuned reactors to handle VFD harmonics) that raises plant power factor from ~0.85 to ≥ 0.95, reducing reactive demand and transformer / cable loading.</td></tr>
+      <tr><td><strong>PMS</strong></td><td>Power Management System. Dedicated electrical controller responsible for: load shedding on generation failure, automatic bus transfer (bus-tie / ATS), generator synchronisation, and energy management. Interfaces with the DCS.</td></tr>
+      <tr><td><strong>PPE</strong></td><td>Personal Protective Equipment. Arc-rated PPE is required for work on or near energised electrical equipment; the required category is set by the arc-flash study (incident energy in cal/cm²). Non-intrusive site surveys in this campaign do not require arc-rated PPE if live-panel access is not needed — but confirm with the host's QHSE procedure.</td></tr>
+      <tr><td><strong>QHSE</strong></td><td>Quality, Health, Safety and Environment. Management system framework (ISO 9001 / 14001 / 45001) applied to all site activities. All surveys in this campaign are non-intrusive; QHSE and permit-to-work rules of the host facility always take precedence.</td></tr>
+      <tr><td><strong>RAM</strong></td><td>Reliability, Availability, Maintainability. The quantitative study of system uptime: how often failures occur (R), what fraction of time the system works (A), and how quickly it is restored (M). See <a href="#s-fmeca">Part 3 — FMECA / RAM</a>.</td></tr>
+      <tr><td><strong>RBD</strong></td><td>Reliability Block Diagram. Series / parallel model used to compute system availability from component data. Series elements degrade availability; parallel (redundant) paths multiply it up. See <a href="#s-fmeca">Part 3</a>.</td></tr>
+      <tr><td><strong>ROCOF</strong></td><td>Rate of Change of Frequency. Measure of frequency volatility on the grid (Hz/s). Increases as synchronous generation (with inertia) is displaced by inverter-based renewables. High ROCOF can trip plant protection (df/dt relays) prematurely.</td></tr>
+      <tr><td><strong>RPN</strong></td><td>Risk Priority Number. FMECA criticality score = Severity (S) × Occurrence (O) × Detection (D), each scored 1–5 (higher = worse outcome / more frequent / harder to detect). RPN max = 125. Used to rank FMECA findings for action priority. Priority bands: P1 = SPOF with S ≥ 4 or RPN ≥ 60; P2 = RPN 36–59; P3 = RPN 16–35; P4 &lt; 16. See <a href="#a-formula">Appendix C</a>.</td></tr>
+      <tr><td><strong>SCADA</strong></td><td>Supervisory Control and Data Acquisition. Supervisory monitoring and control layer for the power system; aggregates IED data, trends energy, and provides alarm management to operators.</td></tr>
+      <tr><td><strong>SLD</strong></td><td>Single-Line Diagram. One-line schematic showing the power system's main components and their electrical connections, using IEC 60617 symbols. The primary document for SLD verification on site and for SPOF hunting.</td></tr>
+      <tr><td><strong>SPOF</strong></td><td>Single Point of Failure. A component or path whose failure alone disables a function or supply that must remain available. The central concept of this assessment campaign. See <a href="#s-checklist">Part 3</a> and <a href="#a-hardening">Appendix F</a>.</td></tr>
+      <tr><td><strong>STATCOM / SVC</strong></td><td>Static Synchronous Compensator / Static VAr Compensator. Fast dynamic reactive-power devices used for voltage stabilisation and flicker / voltage-sag mitigation on weak or renewable-heavy grids.</td></tr>
+      <tr><td><strong>TN-S</strong></td><td>TN-S earthing system. IEC 60364 LV earthing arrangement where the neutral (N) and protective earth (PE) conductors are kept separate throughout. Used at 400 V LV in this plant.</td></tr>
+      <tr><td><strong>TX-1 / TX-2</strong></td><td>MV/LV power transformers 1 and 2. Each indicatively 1600 kVA, 11 kV / 0.4 kV, Dyn11, Z ≈ 6 %, feeding the split <code>LV-MSB</code> busbar. Both together provide N-1 redundancy via the bus-tie.</td></tr>
+      <tr><td><strong>UPS</strong></td><td>Uninterruptible Power Supply. Battery-backed, no-break clean AC supply for the DCS/PLC/SCADA, field instrumentation and critical communications. Typical battery autonomy 15–30 min (to be specified per plant).</td></tr>
+      <tr><td><strong>VFD / VSD</strong></td><td>Variable Frequency Drive / Variable Speed Drive. Power-electronic converter providing continuously variable speed control of AC motors (pumps, fans, compressors). Reduces starting current to near FLC; generates harmonics requiring detuned PFC.</td></tr>
+      <tr><td><strong>ZSI</strong></td><td>Zone-Selective Interlocking. Communication scheme between LV ACBs and MCCBs that allows the faulted zone's device to trip instantaneously while upstream devices remain on their normal graded delay — achieving both selectivity and fast arc-flash clearance.</td></tr>
+      <tr><td><strong>λ (lambda)</strong></td><td>Failure rate (failures per hour). λ = 1/MTBF. The primary input to reliability calculations. See <a href="#a-mtbf">Appendix G</a> for indicative values per equipment class.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="key">Key takeaway: 46 terms defined. Use this table when reading the manual in the field or when completing FMECA and report forms. Cross-references to the relevant manual sections are embedded in key definitions.</div>
+</section>
+
+<!-- ============================================================ -->
+
+<section id="a-standards" data-title="B — Standards Reference" data-part="Appendices">
+  <h2>B — IEC / IEEE Standards Reference</h2>
+
+  <p>
+    The table below lists the principal standards cited across this manual and the reference
+    training material. The "Where it applies" column states the specific use in an MV/LV
+    process-plant SPOF assessment context.
+    This manual is standalone — the descriptions below are sufficient context; you do not need
+    to hold copies of these standards in the field, but you should be aware of their scope.
+  </p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Standard</th>
+        <th>Title / Scope</th>
+        <th>Where it applies in this manual</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>IEC 60034</strong> (series)</td>
+        <td>Rotating electrical machines — general requirements and ratings for AC motors.</td>
+        <td>Motor nameplate data verification; LV-vs-MV feed threshold (~150–200 kW); MCC starter selection.</td>
+      </tr>
+      <tr>
+        <td><strong>IEC 60076</strong> (series)</td>
+        <td>Power transformers — ratings, losses, impedance, tap changers, test methods.</td>
+        <td>Transformer rating and Z% verification (<code>TX-1</code>/<code>TX-2</code>); N-1 loading check; fault-level calculation input.</td>
+      </tr>
+      <tr>
+        <td><strong>IEC 60364</strong> (series)</td>
+        <td>Low-voltage electrical installations — design, protection, cable selection, earthing (TN-S, TT, IT), derating rules.</td>
+        <td>Cable sizing and derating (§6, Module 2); LV TN-S earthing; distribution board design. Applied to <code>LV-MSB</code>, <code>MCC</code>, <code>DB</code>/<code>EDB</code>.</td>
+      </tr>
+      <tr>
+        <td><strong>IEC 60812</strong></td>
+        <td>Analysis techniques for system reliability — FMEA / FMECA procedure, including criticality analysis and RPN scoring.</td>
+        <td>The FMECA form (Appendix E, Form 2) follows IEC 60812 column structure. All FMECA worksheets in the campaign use this method. See <a href="#s-fmeca">Part 3 — FMECA</a>.</td>
+      </tr>
+      <tr>
+        <td><strong>IEC 60831</strong></td>
+        <td>Shunt power capacitors for AC power systems — capacitor bank ratings, protection.</td>
+        <td>PFC bank specification and protection (<code>PFC</code> tag); detuned reactor sizing for VFD harmonic environment.</td>
+      </tr>
+      <tr>
+        <td><strong>IEC 60909</strong></td>
+        <td>Short-circuit currents in three-phase AC systems — calculation method for prospective fault currents.</td>
+        <td>Short-circuit study (§4, Module 2). Used with power-system software (ETAP / DIgSILENT) to size breaking capacity of <code>LV-MSB</code>, <code>MCC</code> and all ACB/MCCB.</td>
+      </tr>
+      <tr>
+        <td><strong>IEC 60947-2</strong></td>
+        <td>Low-voltage switchgear and controlgear — circuit breakers (ACB and MCCB ratings, breaking capacity Icu/Ics, trip-unit types).</td>
+        <td>ACB / MCCB specification for <code>LV-MSB</code> incomers, bus-tie and outgoing feeders; breaking-capacity verification against fault level from IEC 60909 study.</td>
+      </tr>
+      <tr>
+        <td><strong>IEC 61078</strong></td>
+        <td>Reliability block diagrams — construction rules, series/parallel formulae, system availability computation.</td>
+        <td>RBD analysis in Module 5 and Part 3; quantifying availability benefit of N+1 transformer + bus-tie redundancy.</td>
+      </tr>
+      <tr>
+        <td><strong>IEC 61439-1/-2</strong></td>
+        <td>Low-voltage switchgear assemblies — type-tested assemblies: Form segregation, busbar bracing, temperature rise, short-circuit withstand.</td>
+        <td>Specification and verification of <code>LV-MSB</code> (Form 4b) and <code>MCC</code> assemblies. Check form segregation during site visit.</td>
+      </tr>
+      <tr>
+        <td><strong>IEC 61800</strong> (series)</td>
+        <td>Adjustable speed electrical power drive systems — ratings, EMC, protection, safety.</td>
+        <td><code>VFD</code> specification; harmonic emission from VFD drives (input to PFC detuning requirement).</td>
+      </tr>
+      <tr>
+        <td><strong>IEC 61850</strong></td>
+        <td>Communication networks and systems for power utility automation — station bus, GOOSE (fast tripping/transfer), MMS (monitoring). Defines data models for IED interoperability.</td>
+        <td>PMS integration; GOOSE-based fast bus-transfer and load shedding (Module 4). Present on digital substations; check whether IEC 61850 is deployed during desk study.</td>
+      </tr>
+      <tr>
+        <td><strong>IEC 62271-100</strong></td>
+        <td>High-voltage AC circuit breakers — ratings, making/breaking capacity, tests.</td>
+        <td>MV circuit breaker specification (vacuum CBs in <code>MV-SWGR</code>).</td>
+      </tr>
+      <tr>
+        <td><strong>IEC 62271-200</strong></td>
+        <td>AC metal-enclosed switchgear and controlgear for rated voltages above 1 kV and up to and including 52 kV — construction, type testing, internal arc classification (IAC).</td>
+        <td>Specification and condition assessment of <code>MV-SWGR</code> during site visit; IAC rating relevant to arc-flash risk at MV level.</td>
+      </tr>
+      <tr>
+        <td><strong>IEC 62305</strong> (series)</td>
+        <td>Protection against lightning — risk assessment (Part 2), physical damage (Part 3), electrical and electronic systems (Part 4).</td>
+        <td>Lightning protection assessment (§12, Module 2); LPS class selection; bonding to earth grid. Applies to all plant buildings and outdoor structures.</td>
+      </tr>
+      <tr>
+        <td><strong>IEEE 80</strong></td>
+        <td>Guide for safety in AC substation grounding — touch voltage, step voltage, earth grid design.</td>
+        <td>Earth-grid design and touch/step voltage compliance (§12, Module 2); MV substation earthing verification.</td>
+      </tr>
+      <tr>
+        <td><strong>IEEE 493</strong></td>
+        <td>Recommended practice for the design of reliable industrial and commercial power systems ("Gold Book") — reliability data, design methods, redundancy principles, RBD analysis.</td>
+        <td>Primary source of indicative equipment failure-rate and MTBF data (see <a href="#a-mtbf">Appendix G</a>). Referenced in Module 5 (FMECA &amp; RAM) and the FMECA form.</td>
+      </tr>
+      <tr>
+        <td><strong>IEEE 1584</strong></td>
+        <td>Guide for performing arc-flash hazard calculations — empirical model for incident energy and arc-flash boundary at AC equipment.</td>
+        <td>Arc-flash / incident-energy study (§11, Module 2). Preferable (not required) in this campaign. Determines PPE category and arc-flash boundary at <code>LV-MSB</code> and <code>MCC</code>.</td>
+      </tr>
+      <tr>
+        <td><strong>ISO 14224</strong></td>
+        <td>Petroleum, petrochemical and natural gas industries — collection and exchange of reliability and maintenance data for equipment. Defines equipment taxonomy, failure modes and data formats.</td>
+        <td>Equipment taxonomy for populating the FMECA and Document Inventory (SF-01). Cross-referenced for failure-rate data alongside IEEE 493.</td>
+      </tr>
+      <tr>
+        <td><strong>ISO 20815</strong></td>
+        <td>Petroleum, petrochemical and natural gas industries — production assurance and reliability technology.</td>
+        <td>RAM / RBD availability analysis methodology (Module 5); preferable study deliverable in this campaign.</td>
+      </tr>
+      <tr>
+        <td><strong>NFPA 70E</strong></td>
+        <td>Standard for Electrical Safety in the Workplace (USA/ANSI). Arc-flash PPE categories, boundary definitions, energised work permits.</td>
+        <td>Arc-flash PPE selection and labelling (§11, Module 2); host QHSE requirements may reference NFPA 70E even in IEC-governed plants. Non-intrusive surveys should not trigger NFPA 70E energised-work requirements.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    <strong>Note:</strong> Standard numbers and editions are indicative. Always confirm the governing edition with the project specification and local regulatory authority. For Saudi Arabia plants, NEC/Saudi Electricity Company (SEC) technical standards may also apply and take precedence over the IEC defaults listed above.
+  </div>
+
+  <div class="key">Key takeaway: 20 standards referenced. IEC 60812 (FMECA), IEC 60909 (fault level), IEC 62271-200 (MV switchgear) and IEEE 493 (reliability data) are the four you will use most in this campaign.</div>
+</section>
+
+<!-- ============================================================ -->
+
+<section id="a-formula" data-title="C — Formula Reference Card" data-part="Appendices">
+  <h2>C — Formula Reference Card</h2>
+
+  <p>
+    Consolidated printable reference of every key electrical calculation formula used in this manual.
+    For worked examples and derivations see <a href="#c-formula-card">Part 2 — Calculations</a>.
+    All quantities are SI; constants: &radic;3 = 1.732, 1 pu = 100 %.
+    All values are <em>indicative</em>.
+  </p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Quantity</th>
+        <th>Formula</th>
+        <th>Symbols</th>
+        <th>Indicative example (this plant)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Apparent power</strong></td>
+        <td><code>S = P / pf</code></td>
+        <td>S: apparent power (kVA/MVA); P: active power (kW/MW); pf: power factor.</td>
+        <td>2.0 MW / 0.85 = 2.35 MVA</td>
+      </tr>
+      <tr>
+        <td><strong>3-phase current (from S)</strong></td>
+        <td><code>I = S / (&radic;3 &times; V)</code></td>
+        <td>I: line current (A); S: apparent power (VA); V: line-to-line voltage (V).</td>
+        <td>1600 kVA @ 400 V &rarr; 2310 A (TX LV FLC)</td>
+      </tr>
+      <tr>
+        <td><strong>Motor full-load current</strong></td>
+        <td><code>I_fl = P / (&radic;3 &times; V &times; pf &times; &eta;)</code></td>
+        <td>P: shaft power (W); V: line voltage (V); pf: motor pf; &eta;: efficiency.</td>
+        <td>110 kW, 400 V, pf 0.86, &eta; 0.95 &rarr; 194 A</td>
+      </tr>
+      <tr>
+        <td><strong>DOL starting current</strong></td>
+        <td><code>I_start &asymp; 6–7 &times; I_fl</code></td>
+        <td>Use 6.5 &times; as indicative; confirm with motor manufacturer's data.</td>
+        <td>6.5 &times; 194 A = 1260 A</td>
+      </tr>
+      <tr>
+        <td><strong>Transformer loading (pu)</strong></td>
+        <td><code>Loading = S_load / S_rated</code></td>
+        <td>Values &gt; 1.0 pu indicate overload; N-1 loading must be &le; 1.0 pu (continuous).</td>
+        <td>1.175 / 1.600 = 0.73 pu (normal); 1.29 / 1.60 = 0.81 pu (N-1)</td>
+      </tr>
+      <tr>
+        <td><strong>Short-circuit current</strong></td>
+        <td><code>I_sc = I_fl / Z(pu)</code></td>
+        <td>I_fl: transformer LV FLC (A); Z(pu): transformer impedance as decimal (e.g. 0.06). Assumes infinite upstream source — conservative.</td>
+        <td>2310 / 0.06 = 38.5 kA per TX</td>
+      </tr>
+      <tr>
+        <td><strong>Cable derating — required rating</strong></td>
+        <td><code>I_z(req) = I_B / (k_g &times; k_t)</code></td>
+        <td>I_B: design (load) current (A); k_g: grouping factor; k_t: temperature factor. Select cable with tabulated I_z &ge; I_z(req).</td>
+        <td>194 / (0.80 &times; 0.94) = 258 A &rarr; 95 mm&sup2; Cu XLPE</td>
+      </tr>
+      <tr>
+        <td><strong>Voltage drop (3-phase feeder)</strong></td>
+        <td><code>&Delta;V = &radic;3 &times; I &times; (R&middot;cos&phi; + X&middot;sin&phi;) &times; L</code></td>
+        <td>I: current (A); R, X: conductor resistance / reactance (&Omega;/km); L: length (km); cos&phi;/sin&phi; from load pf.</td>
+        <td>194 A, 120 m, 95 mm&sup2; Cu &rarr; 9.6 V = 2.4 % (limit &le; 5 %)</td>
+      </tr>
+      <tr>
+        <td><strong>PFC reactive power required</strong></td>
+        <td><code>Q_c = P &times; (tan&phi;<sub>1</sub> &minus; tan&phi;<sub>2</sub>)</code></td>
+        <td>P: active power (kW); &phi;<sub>1</sub>: present pf angle; &phi;<sub>2</sub>: target pf angle.</td>
+        <td>2000 &times; (0.620 &minus; 0.329) = 582 kVAr &rarr; ~600 kVAr bank</td>
+      </tr>
+      <tr>
+        <td><strong>Generator sizing (essential load)</strong></td>
+        <td><code>S_DG &ge; (P_ess / pf) &times; k_step</code></td>
+        <td>P_ess: essential active power (kW); pf: generator operating pf (0.8); k_step: step-load factor (~1.25).</td>
+        <td>(0.65 MW / 0.8) &times; 1.25 = 1.01 MVA &rarr; ~1000 kVA DG</td>
+      </tr>
+      <tr>
+        <td><strong>Transformer voltage regulation</strong></td>
+        <td><code>&Delta;V% &asymp; load_pu &times; (R%&middot;cos&phi; + X%&middot;sin&phi;)</code></td>
+        <td>load_pu: per-unit loading; R%, X%: transformer resistance and reactance in percent.</td>
+        <td>0.73 &times; (1.2&times;0.9 + 5.9&times;0.436) = 2.7 %</td>
+      </tr>
+      <tr>
+        <td><strong>Protection grading margin</strong></td>
+        <td><code>t_up = t_down + &Delta;t</code></td>
+        <td>&Delta;t: grading margin (typically 0.3 s) accounting for CB opening time, relay overshoot, CT error and safety margin.</td>
+        <td>LV incomer 0.20 s &rarr; MV feeder relay 0.50 s</td>
+      </tr>
+      <tr>
+        <td><strong>Arc-flash boundary</strong></td>
+        <td><code>AFB &asymp; D &times; &radic;(E / 1.2)</code></td>
+        <td>D: working distance (m); E: incident energy at D (cal/cm&sup2;); 1.2 cal/cm&sup2; = onset-of-burn threshold. Simplified inverse-square scaling (full IEEE 1584 model required for labelling).</td>
+        <td>0.6 m &times; &radic;(10/1.2) = 1.7 m</td>
+      </tr>
+      <tr>
+        <td><strong>NER resistance</strong></td>
+        <td><code>R_NER = (V_LL / &radic;3) / I_ef</code></td>
+        <td>V_LL: MV line-to-line voltage (V); I_ef: target earth-fault current (A). Rate the NER for the fault duration (e.g. 10 s).</td>
+        <td>(11,000 / 1.732) / 300 &asymp; 21 &Omega;</td>
+      </tr>
+      <tr>
+        <td><strong>Earth conductor (adiabatic)</strong></td>
+        <td><code>A = I &times; &radic;t / k</code></td>
+        <td>A: conductor cross-section (mm&sup2;); I: fault current (A); t: clearing time (s); k: material constant (143 for Cu/PVC).</td>
+        <td>38,500 &times; &radic;0.2 / 143 = 120 mm&sup2; Cu</td>
+      </tr>
+      <tr>
+        <td><strong>Availability</strong></td>
+        <td><code>A = MTBF / (MTBF + MTTR)</code></td>
+        <td>MTBF: mean time between failures (h); MTTR: mean time to repair (h). Annual downtime = (1 &minus; A) &times; 8760 h.</td>
+        <td>TX: 200,000 / (200,000 + 168) = 0.99916 &rarr; ~7.4 h/yr</td>
+      </tr>
+      <tr>
+        <td><strong>Series availability (RBD)</strong></td>
+        <td><code>A_sys = A<sub>1</sub> &times; A<sub>2</sub> &times; &hellip; &times; A<sub>n</sub></code></td>
+        <td>All elements must function; system availability is always lower than the worst individual element.</td>
+        <td>0.9992 &times; 0.9994 = 0.9986 (e.g. incomer + TX in series)</td>
+      </tr>
+      <tr>
+        <td><strong>Parallel availability 1-of-2 (RBD)</strong></td>
+        <td><code>A_par = 1 &minus; (1 &minus; A<sub>1</sub>)(1 &minus; A<sub>2</sub>)</code></td>
+        <td>Function survives if at least one element works. Much higher than series for the same components.</td>
+        <td>1 &minus; (1&minus;0.99916)&sup2; = 0.99999929 &rarr; ~22 s/yr down</td>
+      </tr>
+      <tr>
+        <td><strong>FMECA Risk Priority Number</strong></td>
+        <td><code>RPN = S &times; O &times; D</code></td>
+        <td>S: Severity (1–5); O: Occurrence (1–5); D: Detection difficulty (1–5; 5 = hardest to detect). RPN max = 125. Higher RPN = higher risk. Priority bands: P1 = SPOF with S ≥ 4 or RPN ≥ 60; P2 = RPN 36–59; P3 = RPN 16–35; P4 &lt; 16. Rank and act top-down.</td>
+        <td>ATS: S=5, O=3, D=4 &rarr; RPN = 60 (P1 in example FMECA)</td>
+      </tr>
+      <tr>
+        <td><strong>Reliability (survival function)</strong></td>
+        <td><code>R(t) = e<sup>(&minus;&lambda;t)</sup></code></td>
+        <td>&lambda;: failure rate (failures/h) = 1/MTBF; t: mission time (h). R(t) = probability no failure in time t.</td>
+        <td>&lambda; = 5&times;10<sup>-6</sup>/h, t = 8760 h &rarr; R = e<sup>&minus;0.044</sup> = 0.957</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="tip">
+    <strong>Tip:</strong> For arc-flash and short-circuit studies, always use recognised power-system software (ETAP, DIgSILENT, SKM or equivalent) with the full IEC 60909 / IEEE 1584 models. The simplified formulas above are for quick manual checks and teaching purposes only.
+  </div>
+
+  <div class="key">Key takeaway: 20 formulas on one page. The three you will use most in the field are the FLC formula, the short-circuit formula (I_sc = I_fl / Z), and the availability formula (A = MTBF / (MTBF + MTTR)). For full calculations, use the Part 2 worked examples.</div>
+</section>
+
+<!-- ============================================================ -->
+
+<section id="a-tags" data-title="D — Tag Scheme &amp; SLD Conventions" data-part="Appendices">
+  <h2>D — Tag Scheme and SLD Conventions</h2>
+
+  <p>
+    Full tag table and IEC 60617 symbol key used across this manual, the training modules,
+    and the master single-line diagram. Use only these tags when completing assessment forms.
+    Source: the reference design document and <a href="#f-equipment-table">Part 1 — Equipment Function Table</a>.
+  </p>
+
+  <h3 id="a-tags-table">Full Equipment Tag Table</h3>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Tag</th>
+        <th>Equipment</th>
+        <th>Voltage level</th>
+        <th>Function in this plant</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>MV-MET</code></td>
+        <td>Utility revenue metering cubicle</td>
+        <td>11 kV (MV)</td>
+        <td>Utility billing / revenue metering point. Contains utility-grade CTs and VTs and the tariff meter. Not a protection or switching device.</td>
+      </tr>
+      <tr>
+        <td><code>MV-SWGR</code></td>
+        <td>MV metal-clad switchgear</td>
+        <td>11 kV (MV)</td>
+        <td>The main 11 kV distribution assembly. Houses the utility incomer CB (52-I), MV bus-section CB, transformer-feeder CBs (52-T1, 52-T2) with protection IEDs (50/51, 50N/51N, 87T). Rated ~25 kA/1 s. Fault level basis for all downstream short-circuit ratings.</td>
+      </tr>
+      <tr>
+        <td><code>MV-PROT</code></td>
+        <td>MV protection and control IEDs</td>
+        <td>11 kV (MV)</td>
+        <td>Numerical IEDs providing overcurrent (50/51), earth-fault (50N/51N), transformer differential (87T), and under/over-voltage (27/59) protection. Relays are supplied from the DCDB so they remain operative even on AC failure. A latent FMECA row — loss of DC supply to MV-PROT disables protection.</td>
+      </tr>
+      <tr>
+        <td><code>MV-NER</code></td>
+        <td>Neutral Earthing Resistor</td>
+        <td>11 kV (MV)</td>
+        <td>Resistance-earthing of the MV system neutral. Limits earth-fault current to ~300–400 A (indicative), controlling arc damage while keeping faults detectable. R &asymp; 21 &Omega; (indicative at 11 kV, 300 A). Rated for fault duration (e.g. 10 s).</td>
+      </tr>
+      <tr>
+        <td><code>TX-1</code></td>
+        <td>MV/LV power transformer 1</td>
+        <td>11 kV / 400 V boundary</td>
+        <td>Steps down 11 kV to 400 V for LV distribution. Indicative: 1600 kVA, Dyn11, Z &asymp; 6 %, ONAN or cast-resin. Feeds Bus A of <code>LV-MSB</code>. Normal loading ~73 % (indicative).</td>
+      </tr>
+      <tr>
+        <td><code>TX-2</code></td>
+        <td>MV/LV power transformer 2</td>
+        <td>11 kV / 400 V boundary</td>
+        <td>As TX-1. Feeds Bus B of <code>LV-MSB</code>. Together with TX-1, the two transformers provide N-1 redundancy via the bus-tie (BT).</td>
+      </tr>
+      <tr>
+        <td><code>LV-MSB</code></td>
+        <td>Main LV switchboard / PCC</td>
+        <td>400 V (LV)</td>
+        <td>The Power Control Centre. Split busbar (Bus A / Bus B) with ACB incomers from TX-1 and TX-2, a motorised normally-open bus-tie (BT), and MCCB outgoing feeders to MCCs, VFDs, PFC, UPS and DBs. Form 4b segregation (indicative). Bus rated ~2500–3200 A, 50–65 kA withstand.</td>
+      </tr>
+      <tr>
+        <td><code>BT</code></td>
+        <td>Bus-tie circuit breaker</td>
+        <td>400 V (LV)</td>
+        <td>The normally-open ACB (or contactor) connecting Bus A and Bus B of LV-MSB. Closes automatically (via PMS/ATS logic) on loss of one LV incomer to allow the surviving transformer to back-feed the dead bus. The bus-tie is a critical SPOF-mitigation element; verify its auto-transfer scheme is commissioned and periodically tested.</td>
+      </tr>
+      <tr>
+        <td><code>MCC-1 … MCC-n</code></td>
+        <td>Motor Control Centres</td>
+        <td>400 V (LV)</td>
+        <td>LV assemblies of motor starter bays (DOL, star-delta, soft-starter, VFD). Compartmentalised to IEC 61439; withdrawable or fixed. Each MCC feeds a group of process motors. For SPOF assessment: check whether duty and standby motors share the same MCC (common element — see Appendix F).</td>
+      </tr>
+      <tr>
+        <td><code>VFD</code></td>
+        <td>Variable Frequency Drive(s)</td>
+        <td>400 V (LV)</td>
+        <td>Power-electronic speed controllers for pumps, fans and compressors. Injects harmonics into the supply — requiring detuned PFC capacitors. Also provides LVRT capability and kinetic buffering through voltage sags.</td>
+      </tr>
+      <tr>
+        <td><code>PFC</code></td>
+        <td>Power factor correction bank</td>
+        <td>400 V (LV)</td>
+        <td>Automatic capacitor bank with 7 % detuned reactors. Corrects plant pf from ~0.85 to ~0.95+. Sized ~580–600 kVAr (indicative). Detuning prevents resonance with VFD harmonic currents. Loss of PFC causes reactive demand increase and potential utility penalty.</td>
+      </tr>
+      <tr>
+        <td><code>DG</code></td>
+        <td>Diesel generator set</td>
+        <td>400 V (LV)</td>
+        <td>Standby power source for the essential bus. Indicative rating ~800–1250 kVA; includes AVR, governor, day-tank, battery starting. Connected via the ATS. Verify weekly auto-test-on-load schedule, fuel level and battery condition during site visit.</td>
+      </tr>
+      <tr>
+        <td><code>ATS</code></td>
+        <td>Automatic Transfer Switch</td>
+        <td>400 V (LV)</td>
+        <td>Detects loss of utility supply and automatically starts and connects the DG to the essential bus. A P1-priority item (RPN 60) in the example FMECA. A failed-to-transfer ATS on a utility outage = total loss of essential load. Verify commissioning records and test schedule.</td>
+      </tr>
+      <tr>
+        <td><code>UPS</code></td>
+        <td>Uninterruptible Power Supply</td>
+        <td>400 V AC / battery</td>
+        <td>No-break, clean AC supply for DCS/PLC/SCADA, field instrumentation and critical communications. Battery autonomy typically 15–30 min (to be specified per plant). Loss of UPS during a supply disturbance can cause a DCS/PLC crash — verify battery condition and bypass availability.</td>
+      </tr>
+      <tr>
+        <td><code>DCDB</code></td>
+        <td>DC distribution board (battery and charger)</td>
+        <td>110 V DC</td>
+        <td>Provides DC supply for MV switchgear trip / close coils and protection relay auxiliary circuits. A DCDB failure can silence all MV protection — extremely high severity. Verify battery condition (float voltage, impedance test) and charger operation.</td>
+      </tr>
+      <tr>
+        <td><code>DB</code></td>
+        <td>Distribution board (normal)</td>
+        <td>400 V (LV)</td>
+        <td>Final-circuit panel for lighting, small power, HVAC, and sockets. Fed from LV-MSB or MCC outgoing feeders. MCB/RCBO protection.</td>
+      </tr>
+      <tr>
+        <td><code>EDB</code></td>
+        <td>Essential distribution board</td>
+        <td>400 V (LV)</td>
+        <td>As DB, but supplied via the ATS from the essential bus (DG-backed). Feeds safety-critical loads that must remain live during a utility outage (e.g. emergency lighting, fire-alarm panel, safety system auxiliaries).</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 id="a-tags-symbols">IEC 60617 Symbol Key</h3>
+
+  <p>
+    The master SLD and all SPOF example diagrams use IEC 60617 symbols rendered by the
+    <code>slddraw.py</code> library. The table below summarises the symbols you will encounter
+    when reading or red-lining the drawings on site.
+  </p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Symbol description</th>
+        <th>IEC 60617 representation (text description for field use)</th>
+        <th>Used in this plant for</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Utility / grid source</td>
+        <td>Circle with AC sine-wave mark inside</td>
+        <td>11 kV utility feeder supply connection</td>
+      </tr>
+      <tr>
+        <td>Circuit breaker (closed)</td>
+        <td>Solid filled square on conductor</td>
+        <td>All normally-closed breakers: MV CBs, LV ACBs (incomers), MCCB feeders</td>
+      </tr>
+      <tr>
+        <td>Circuit breaker (open / N.O.)</td>
+        <td>Hollow (outline) square on conductor</td>
+        <td>Bus-tie (BT) — normally open; auto-closes on N-1</td>
+      </tr>
+      <tr>
+        <td>Isolator / disconnector</td>
+        <td>Open knife-contact symbol on conductor</td>
+        <td>Maintenance isolation points upstream of CBs</td>
+      </tr>
+      <tr>
+        <td>Fuse</td>
+        <td>Rectangle on conductor</td>
+        <td>MV HRC fuses (where used); LV MCB/fuse in final circuits</td>
+      </tr>
+      <tr>
+        <td>Two-winding transformer</td>
+        <td>Two interlinked circles (Dyn11 — delta primary, star secondary with neutral)</td>
+        <td>TX-1 and TX-2</td>
+      </tr>
+      <tr>
+        <td>Neutral earthing resistor</td>
+        <td>Resistor symbol in series to earth on the transformer neutral conductor</td>
+        <td>MV-NER (resistance earthing of the 11 kV neutral)</td>
+      </tr>
+      <tr>
+        <td>Earth / ground</td>
+        <td>Three horizontal bars of diminishing length</td>
+        <td>All earth connections; transformer neutral solidly earthed at 400 V (TN-S)</td>
+      </tr>
+      <tr>
+        <td>Capacitor bank (PFC)</td>
+        <td>Two parallel plates (capacitor symbol)</td>
+        <td>PFC detuned capacitor bank on LV-MSB Bus A or B</td>
+      </tr>
+      <tr>
+        <td>Motor</td>
+        <td>Circle with letter M</td>
+        <td>Process motors (pumps, fans, compressors) fed from MCCs</td>
+      </tr>
+      <tr>
+        <td>Generator</td>
+        <td>Circle with letter G</td>
+        <td>DG alternator symbol</td>
+      </tr>
+      <tr>
+        <td>Labelled equipment block</td>
+        <td>Rectangle with tag name and sub-label</td>
+        <td>MCC, VFD, UPS, ATS, DB, EDB, DCDB</td>
+      </tr>
+      <tr>
+        <td>Busbar</td>
+        <td>Bold horizontal line</td>
+        <td>MV bus (firebrick colour); LV Bus A / Bus B (navy colour) in the SLD</td>
+      </tr>
+      <tr>
+        <td>SPOF indicator (red-lined SLD)</td>
+        <td>Red dashed ring around the failure-point element with red caption</td>
+        <td>Used on red-line mark-ups to flag identified SPOFs. Not a standard IEC symbol.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="tip">
+    <strong>Tip — reading the SLD on site:</strong> When verifying the drawing against the as-found plant, check: (1) bus-tie switch — is it normally open and does it have an auto-transfer scheme? (2) transformer taps — what position are they set at? (3) ATS — is the transfer scheme commissioned? (4) DG — is the auto-start enabled? These four items account for most SPOF findings on routine site visits.
+  </div>
+
+  <div class="key">Key takeaway: 17 equipment tags (including MV-PROT), 14 IEC 60617 symbols. The tag scheme is fixed — do not invent new tags; update the reference document if a new item is found on a plant that does not fit any existing tag.</div>
+</section>
+
+<!-- ============================================================ -->
+
+<section id="a-blankforms" data-title="E — Blank Assessment Forms" data-part="Appendices">
+  <h2>E — Blank Assessment Forms</h2>
+
+  <p>
+    Printable blank versions of the four per-plant deliverable forms.
+    Open all four as soon as a plant is assigned; fill the header during desk study so the form is
+    ready on site. See <a href="#orientation-forms">Part 0 — The Four Deliverable Forms</a> for
+    descriptions of what each form contains and when it is completed.
+    The filled-in example in <a href="#t-analysis">Part 5</a> shows how a completed set looks.
+  </p>
+
+  <!-- ── FORM 1: DOCUMENT INVENTORY ───────────────────────────── -->
+  <h3 id="a-blankforms-docrev">SF-01 — Document Inventory</h3>
+
+  <p>
+    Record all electrical documents requested, received and reviewed. Add rows as required.
+    Documents not received should be chased via the site contact before or during the site visit.
+    <em>Form IDs SF-01…SF-04 match the worked example in <a href="#t-jubail">Part 5 — Jubail Case Study</a>.</em>
+  </p>
+
+  <table class="form">
+    <tr><td>Plant name</td><td></td></tr>
+    <tr><td>Plant reference / ID</td><td></td></tr>
+    <tr><td>Assessment reference</td><td></td></tr>
+    <tr><td>Engineer (lead)</td><td></td></tr>
+    <tr><td>Date desk study started</td><td></td></tr>
+    <tr><td>Date last updated</td><td></td></tr>
+  </table>
+
+  <table class="tbl" style="margin-top:0.8em;">
+    <thead>
+      <tr>
+        <th>Ref.</th>
+        <th>Document title</th>
+        <th>Drawing / document number</th>
+        <th>Revision</th>
+        <th>Date</th>
+        <th>Source (client / site / engineer)</th>
+        <th>Status (received / requested / missing)</th>
+        <th>Verified on site (Y / N / N/A)</th>
+        <th>Discrepancies / notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>DOC-01</td><td>Master Single-Line Diagram</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>DOC-02</td><td>MV Switchgear Single-Line Diagram</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>DOC-03</td><td>LV Switchboard (LV-MSB) Single-Line Diagram</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>DOC-04</td><td>MCC-1 Single-Line / Schematic</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>DOC-05</td><td>MCC-2 Single-Line / Schematic (if present)</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>DOC-06</td><td>Equipment schedule / load list</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>DOC-07</td><td>Transformer test certificates (TX-1, TX-2)</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>DOC-08</td><td>Protection relay settings (MV-SWGR IEDs)</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>DOC-09</td><td>Protection coordination study</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>DOC-10</td><td>Short-circuit study</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>DOC-11</td><td>Load-flow study</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>DOC-12</td><td>Earthing / lightning protection study</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>DOC-13</td><td>Arc-flash study (if available)</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>DOC-14</td><td>DG / ATS commissioning records</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>DOC-15</td><td>UPS / DCDB battery maintenance records</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>DOC-16</td><td>Previous SPOF / reliability assessment (if any)</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td>(add rows as required)</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+    </tbody>
+  </table>
+
+  <table class="form" style="margin-top:0.8em;">
+    <tr><td>Documents outstanding at site-visit date</td><td></td></tr>
+    <tr><td>Data calls issued (number)</td><td></td></tr>
+    <tr><td>Form status</td><td>&#9744; Draft &nbsp; &#9744; For review &nbsp; &#9744; Final</td></tr>
+  </table>
+
+  <!-- ── FORM 2: FMECA WORKSHEET ──────────────────────────────── -->
+  <h3 id="a-blankforms-fmeca">SF-02 — FMECA Worksheet</h3>
+
+  <p>
+    Failure Mode, Effects and Criticality Analysis per IEC 60812.
+    One row per item / failure mode. Score S, O, D on a <strong>1–5 scale</strong> (5 = worst); RPN = S × O × D (max 125).
+    Priority bands: P1 = SPOF with S ≥ 4 or RPN ≥ 60; P2 = RPN 36–59; P3 = RPN 16–35; P4 &lt; 16.
+    See <a href="#s-fmeca">Part 3 — FMECA method</a> for scale definitions.
+    Scores are indicative; calibrate scales using IEEE 493 / ISO 14224 data for real studies.
+  </p>
+
+  <table class="form">
+    <tr><td>Plant name</td><td></td></tr>
+    <tr><td>Assessment reference</td><td></td></tr>
+    <tr><td>Engineer</td><td></td></tr>
+    <tr><td>FMECA revision</td><td></td></tr>
+    <tr><td>Date</td><td></td></tr>
+  </table>
+
+  <table class="tbl" style="margin-top:0.8em;">
+    <thead>
+      <tr>
+        <th>Item ref.</th>
+        <th>Tag</th>
+        <th>Function</th>
+        <th>Failure mode</th>
+        <th>Local effect</th>
+        <th>System effect (worst case)</th>
+        <th>Existing controls / detection</th>
+        <th>S (1–5)</th>
+        <th>O (1–5)</th>
+        <th>D (1–5)</th>
+        <th>RPN</th>
+        <th>Recommended action</th>
+        <th>Rec. ref.</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>FM-01</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>FM-02</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>FM-03</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>FM-04</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>FM-05</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>FM-06</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>FM-07</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>FM-08</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>FM-09</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>FM-10</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td colspan="12">(add rows as required — one row per item/failure-mode combination)</td></tr>
+    </tbody>
+  </table>
+
+  <table class="form" style="margin-top:0.8em;">
+    <tr><td>Total items assessed</td><td></td></tr>
+    <tr><td>P1 items (SPOF S &ge; 4 or RPN &ge; 60)</td><td></td></tr>
+    <tr><td>P2 items (RPN 36–59)</td><td></td></tr>
+    <tr><td>Form status</td><td>&#9744; Draft &nbsp; &#9744; For review &nbsp; &#9744; Final</td></tr>
+  </table>
+
+  <!-- ── FORM 3: RECOMMENDATIONS REGISTER ─────────────────────── -->
+  <h3 id="a-blankforms-recreg">SF-03 — Recommendations Register</h3>
+
+  <p>
+    Ranked list of recommended modifications and improvements derived from the FMECA.
+    One row per recommendation. Link each row back to the FMECA reference (Rec. ref. = FM-xx).
+    Risk ratings: H = High, M = Medium, L = Low. Cost: H / M / L indicative only.
+  </p>
+
+  <table class="form">
+    <tr><td>Plant name</td><td></td></tr>
+    <tr><td>Assessment reference</td><td></td></tr>
+    <tr><td>Engineer</td><td></td></tr>
+    <tr><td>Register revision</td><td></td></tr>
+    <tr><td>Date</td><td></td></tr>
+  </table>
+
+  <table class="tbl" style="margin-top:0.8em;">
+    <thead>
+      <tr>
+        <th>Rec. ref.</th>
+        <th>Finding / SPOF description</th>
+        <th>Recommended modification</th>
+        <th>Affected tag(s)</th>
+        <th>FMECA ref.</th>
+        <th>Risk before (H/M/L)</th>
+        <th>Risk after (H/M/L)</th>
+        <th>Cost (H/M/L)</th>
+        <th>Priority (1/2/3)</th>
+        <th>Status</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>REC-01</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>REC-02</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>REC-03</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>REC-04</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>REC-05</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>REC-06</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>REC-07</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>REC-08</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td colspan="10">(add rows as required)</td></tr>
+    </tbody>
+  </table>
+
+  <table class="form" style="margin-top:0.8em;">
+    <tr><td>Total recommendations</td><td></td></tr>
+    <tr><td>Priority 1 (High risk, act now)</td><td></td></tr>
+    <tr><td>Priority 2 (Medium risk, plan)</td><td></td></tr>
+    <tr><td>Priority 3 (Low risk, monitor)</td><td></td></tr>
+    <tr><td>Form status</td><td>&#9744; Draft &nbsp; &#9744; For review &nbsp; &#9744; Final</td></tr>
+  </table>
+
+  <!-- ── FORM 4: SITE-VISIT REPORT ────────────────────────────── -->
+  <h3 id="a-blankforms-svr">SF-04 — Site-Visit Report</h3>
+
+  <p>
+    Factual record of the site visit. Non-intrusive only — do not open energised panels,
+    operate switches or perform live tests. Complete on the day of the visit; review with PM before issue.
+  </p>
+
+  <h4>Section A — Site and Visit Details</h4>
+  <table class="form">
+    <tr><td>Plant name / location</td><td></td></tr>
+    <tr><td>Plant reference / ID</td><td></td></tr>
+    <tr><td>Assessment reference</td><td></td></tr>
+    <tr><td>Site visit date(s)</td><td></td></tr>
+    <tr><td>Lead engineer (assessor)</td><td></td></tr>
+    <tr><td>Accompanying engineer / technician</td><td></td></tr>
+    <tr><td>Plant contact / host representative</td><td></td></tr>
+    <tr><td>Host organisation</td><td></td></tr>
+    <tr><td>Permit-to-work reference(s)</td><td></td></tr>
+    <tr><td>Areas of plant accessed</td><td></td></tr>
+    <tr><td>Areas NOT accessed (reason)</td><td></td></tr>
+  </table>
+
+  <h4>Section B — Scope and Non-Intrusive Statement</h4>
+  <table class="form">
+    <tr><td>Survey scope (tick all that apply)</td>
+      <td>&#9744; MV switchroom &nbsp; &#9744; LV switchroom &nbsp; &#9744; Transformer yard / enclosure<br>
+          &#9744; MCC room &nbsp; &#9744; Generator room / enclosure &nbsp; &#9744; UPS / battery room<br>
+          &#9744; Control room / DCS panels &nbsp; &#9744; Earthing / earth pits &nbsp; &#9744; Other: ___________
+      </td>
+    </tr>
+    <tr><td>Non-intrusive confirmation</td>
+      <td>&#9744; Confirmed — no live panels opened, no switching operations performed, no live electrical testing. Visual inspection, nameplate reading and photographic documentation only.</td>
+    </tr>
+    <tr><td>Thermographic survey performed</td><td>&#9744; Yes (host permit obtained) &nbsp; &#9744; No</td></tr>
+  </table>
+
+  <h4>Section C — Key Findings</h4>
+  <table class="form">
+    <tr><td>Overall as-found condition (brief)</td><td></td></tr>
+    <tr><td>SLD discrepancies found</td><td></td></tr>
+    <tr><td>Equipment nameplate data confirming SLD (Y / N / partial)</td><td></td></tr>
+    <tr><td>Bus-tie (BT) status observed</td><td>&#9744; N.O. (correct) &nbsp; &#9744; Closed &nbsp; &#9744; Locked out &nbsp; &#9744; Not verified</td></tr>
+    <tr><td>ATS auto-transfer status</td><td>&#9744; Auto enabled &nbsp; &#9744; Manual only &nbsp; &#9744; Not verified</td></tr>
+    <tr><td>DG auto-start status</td><td>&#9744; Auto enabled &nbsp; &#9744; Manual only &nbsp; &#9744; Not verified</td></tr>
+    <tr><td>UPS battery condition observation</td><td></td></tr>
+    <tr><td>DCDB / battery charger observation</td><td></td></tr>
+    <tr><td>Visible housekeeping / condition concerns</td><td></td></tr>
+    <tr><td>Thermographic hot-spots noted (if surveyed)</td><td></td></tr>
+  </table>
+
+  <h4>Section D — Photolog Index</h4>
+  <p>
+    The 12 mandatory photographs (PH-01 through PH-12) match the photolog defined in the
+    <a href="#t-vc-photolog">Visual Inspection Checklist, Part 5</a>. Tick each row when the
+    photo is captured and indexed.
+  </p>
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>&#9744;</th>
+        <th>Photo ref.</th>
+        <th>File name</th>
+        <th>Equipment / location</th>
+        <th>Description / relevance to assessment</th>
+        <th>OBS-ref (if finding)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>&#9744;</td><td>PH-01</td><td></td><td>Switchroom / main entry</td><td>Overall switchroom general view — panel line-up and housekeeping</td><td></td></tr>
+      <tr><td>&#9744;</td><td>PH-02</td><td></td><td>MV-SWGR line-up</td><td>MV switchgear line-up and arc-flash labels (or their absence)</td><td></td></tr>
+      <tr><td>&#9744;</td><td>PH-03</td><td></td><td>Bus-tie (BT / MV bus-section)</td><td>Bus-tie breaker cubicle front — position indicator (O/I) clearly visible</td><td></td></tr>
+      <tr><td>&#9744;</td><td>PH-04</td><td></td><td>TX-1 nameplate</td><td>TX-1 rating plate: kVA, voltage ratio, vector group, impedance, year</td><td></td></tr>
+      <tr><td>&#9744;</td><td>PH-05</td><td></td><td>TX-2 nameplate</td><td>TX-2 rating plate (same fields as PH-04)</td><td></td></tr>
+      <tr><td>&#9744;</td><td>PH-06</td><td></td><td>LV-MSB incomer and bus-tie section</td><td>LV-MSB front: incomer A, incomer B, bus-tie breaker with position indicators and labels</td><td></td></tr>
+      <tr><td>&#9744;</td><td>PH-07</td><td></td><td>DG nameplate and starting battery</td><td>Generator rating plate and battery / charger in same frame if possible</td><td></td></tr>
+      <tr><td>&#9744;</td><td>PH-08</td><td></td><td>ATS panel front</td><td>ATS source labels (Normal/Standby) and transfer-switch position indicator</td><td></td></tr>
+      <tr><td>&#9744;</td><td>PH-09</td><td></td><td>DCDB / battery charger</td><td>Charger nameplate, battery type label, front-panel fault/alarm indicators</td><td></td></tr>
+      <tr><td>&#9744;</td><td>PH-10</td><td></td><td>UPS front panel</td><td>UPS nameplate and status indicators: mains-OK, battery-OK, any active alarms</td><td></td></tr>
+      <tr><td>&#9744;</td><td>PH-11</td><td></td><td>Main earth test point / pit</td><td>Test disconnect link, test tag (last test date), earth bar bonding connections</td><td></td></tr>
+      <tr><td>&#9744;</td><td>PH-12</td><td></td><td>Notable defect or discrepancy</td><td>Specific item seeding an FMECA finding (one photo per distinct finding; add rows as needed)</td><td></td></tr>
+      <tr><td></td><td>(add)</td><td></td><td></td><td>(additional photos beyond mandatory 12)</td><td></td></tr>
+    </tbody>
+  </table>
+
+  <h4>Section E — Actions and Data Calls</h4>
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Action ref.</th>
+        <th>Action / data call description</th>
+        <th>Owner</th>
+        <th>Required by date</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>A-01</td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>A-02</td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>A-03</td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>A-04</td><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td colspan="4">(add rows as required)</td></tr>
+    </tbody>
+  </table>
+
+  <table class="form" style="margin-top:0.8em;">
+    <tr><td>Report prepared by</td><td></td></tr>
+    <tr><td>Date</td><td></td></tr>
+    <tr><td>Reviewed by (PM)</td><td></td></tr>
+    <tr><td>Review date</td><td></td></tr>
+    <tr><td>Form status</td><td>&#9744; Draft &nbsp; &#9744; For review &nbsp; &#9744; Final</td></tr>
+  </table>
+
+  <div class="warning">
+    <strong>Warning — NON-INTRUSIVE surveys only.</strong>
+    Do not open energised panels, operate switches or breakers, or conduct any live electrical
+    test. Visual inspection, nameplate reading and photography (where permitted) are the only
+    permitted activities. Observe host permit-to-work, LOTO and QHSE rules at all times.
+  </div>
+
+  <div class="note">
+    <strong>Form ID mapping — blank forms to worked example (Jubail, Part 5):</strong>
+    SF-01 = Document Inventory (rows: DOC-xx); SF-02 = FMECA Worksheet (rows: FM-xx);
+    SF-03 = Recommendations Register (rows: REC-xx); SF-04 = Site-Visit Report (observations: OBS-xx, photos: PH-xx, actions: ACT-xx).
+    These IDs align with the Part 5 Jubail case study.
+  </div>
+  <div class="key">Key takeaway: Four blank forms — SF-01 Document Inventory, SF-02 FMECA Worksheet, SF-03 Recommendations Register, SF-04 Site-Visit Report. Open them at plant assignment, fill the header during desk study, and update iteratively through site visit, analysis and recommendations stages.</div>
+
+  <!-- ── FORM 5: AS-FOUND VERIFICATION SHEET ───────────────────── -->
+  <h3 id="a-blankforms-verif">As-Found Verification Sheet</h3>
+
+  <p>
+    Use this sheet during post-site analysis to verify that nameplate data captured on site
+    matches the calculated parameters and to record a Pass/Fail verdict for each key item.
+    This directly supports the "assessment = verification" thesis: every FMECA row for a
+    sizing or rating finding must trace to a completed row here.
+    <em>All calculations are indicative; confirm with project-specific studies.</em>
+  </p>
+
+  <table class="form">
+    <tr><td>Plant name</td><td></td></tr>
+    <tr><td>Assessment reference</td><td></td></tr>
+    <tr><td>Engineer</td><td></td></tr>
+    <tr><td>Date completed</td><td></td></tr>
+  </table>
+
+  <table class="tbl" style="margin-top:0.8em;">
+    <thead>
+      <tr>
+        <th>Tag</th>
+        <th>Nameplate: kVA (or kW)</th>
+        <th>Nameplate: Z% (TX) or FLC (motor)</th>
+        <th>Nameplate: V (primary / secondary)</th>
+        <th>Nameplate: rated A (LV FLC)</th>
+        <th>Nameplate: Icu (kA) — switchgear / cable</th>
+        <th>Calculated FLC (A) [I = S / (√3·V)]</th>
+        <th>Calculated Isc (kA) [FLC / Z%]</th>
+        <th>Pass / Fail / Flag</th>
+        <th>Notes / FM-ID if finding</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>TX-1</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>&#9744; Pass &nbsp;&#9744; Fail</td><td></td></tr>
+      <tr><td>TX-2</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>&#9744; Pass &nbsp;&#9744; Fail</td><td></td></tr>
+      <tr><td>LV-MSB Bus A incomer ACB</td><td></td><td>—</td><td>400 V</td><td></td><td></td><td>(from TX-1 FLC)</td><td>(from TX-1 Isc)</td><td>&#9744; Pass &nbsp;&#9744; Fail</td><td></td></tr>
+      <tr><td>LV-MSB Bus B incomer ACB</td><td></td><td>—</td><td>400 V</td><td></td><td></td><td>(from TX-2 FLC)</td><td>(from TX-2 Isc)</td><td>&#9744; Pass &nbsp;&#9744; Fail</td><td></td></tr>
+      <tr><td>BT bus-tie ACB</td><td></td><td>—</td><td>400 V</td><td></td><td></td><td>(essential load A)</td><td>(N-1 Isc)</td><td>&#9744; Pass &nbsp;&#9744; Fail</td><td></td></tr>
+      <tr><td>DG</td><td></td><td>—</td><td>400 V / 415 V</td><td></td><td>—</td><td>(essential load A)</td><td>—</td><td>&#9744; Pass &nbsp;&#9744; Fail</td><td></td></tr>
+      <tr><td>MCC-1 incomer MCCB</td><td></td><td>—</td><td>400 V</td><td></td><td></td><td>(MCC load A)</td><td>(MCC Isc)</td><td>&#9744; Pass &nbsp;&#9744; Fail</td><td></td></tr>
+      <tr><td>MCC-2 incomer MCCB</td><td></td><td>—</td><td>400 V</td><td></td><td></td><td>(MCC load A)</td><td>(MCC Isc)</td><td>&#9744; Pass &nbsp;&#9744; Fail</td><td></td></tr>
+      <tr><td>UPS</td><td></td><td>—</td><td>230/400 V</td><td></td><td>—</td><td>(DCS/relay load A)</td><td>—</td><td>&#9744; Pass &nbsp;&#9744; Fail</td><td></td></tr>
+      <tr><td>DCDB charger</td><td></td><td>—</td><td>110/48/24 V DC</td><td></td><td>—</td><td>(trip coil load A)</td><td>—</td><td>&#9744; Pass &nbsp;&#9744; Fail</td><td></td></tr>
+      <tr><td>(add rows)</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+    </tbody>
+  </table>
+
+  <p style="font-size:0.85em;"><em>
+    Pass criteria (indicative): TX loading ≤ 80 % nameplate kVA in normal; ≤ 100 % in N-1.
+    ACB / MCCB rated current ≥ calculated FLC × 1.25 (service factor). Switchgear Icu ≥ calculated Isc.
+    Cable ampacity ≥ FLC after derating. DG kVA ≥ essential load kVA × 1.1. UPS autonomy ≥ 15 min.
+    DCDB autonomy ≥ 2 h. All criteria indicative — confirm against governing specification.
+  </em></p>
+
+</section>
+
+<!-- ============================================================ -->
+
+<section id="a-hardening" data-title="F — SPOF-Hardening Principles" data-part="Appendices">
+  <h2>F — SPOF-Hardening Principles (One-Page Summary)</h2>
+
+  <p>
+    Distilled from <a href="#s-principles">Part 3 — SPOF Analysis</a> and Module 3.
+    Use this page as a rapid scan-reference when reviewing an SLD or writing recommendations.
+    Every principle has a trade-off in cost, complexity and footprint — apply redundancy where
+    the consequence of failure justifies it (critical / essential loads first).
+    All values and configurations are indicative.
+  </p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Principle</th>
+        <th>What it means in practice</th>
+        <th>Typical implementation (tags)</th>
+        <th>SPOF it eliminates</th>
+        <th>Cost / complexity</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>N+1 redundancy</strong></td>
+        <td>Provide at least one more capacity unit than the minimum. The surviving unit(s) must carry the essential load on loss of one unit.</td>
+        <td>2 × <code>TX-1</code>/<code>TX-2</code> (each capable of carrying essential load at ~81 % loading on N-1); N+1 MCC feeders for critical motors.</td>
+        <td>Single transformer / single source</td>
+        <td>H capital; H benefit for critical loads</td>
+      </tr>
+      <tr>
+        <td><strong>Bus segregation</strong></td>
+        <td>Split the LV busbar into independent sections (Bus A / Bus B) so a bus fault or maintenance on one section does not take the whole plant.</td>
+        <td><code>LV-MSB</code> split bus; Form 4b compartmentalisation of <code>MCC</code> assemblies.</td>
+        <td>Single un-split LV bus (Diagram A)</td>
+        <td>M capital; H benefit (contained fault zone)</td>
+      </tr>
+      <tr>
+        <td><strong>Bus-tie with auto-transfer</strong></td>
+        <td>The normally-open bus-tie closes automatically within seconds on loss of one LV incomer, connecting the healthy transformer to the dead bus. N-1 loading must be verified (&le; 1.0 pu continuous).</td>
+        <td><code>BT</code> ACB with auto-transfer scheme via <code>PMS</code> or hard-wired interlock; loss-of-voltage / breaker-position logic. Periodic on-load test required.</td>
+        <td>Two buses with no tie (Diagram B)</td>
+        <td>M capital; very H benefit (MTTR reduced from hours to seconds)</td>
+      </tr>
+      <tr>
+        <td><strong>Dual utility incomers</strong></td>
+        <td>Two independent utility feeds to the MV bus from different utility substations or circuits, with a closeable MV bus-section between them.</td>
+        <td>Two incomer panels in <code>MV-SWGR</code> (52-I1, 52-I2); MV bus-section CB (52-BS).</td>
+        <td>Single utility feeder / single MV incomer (Diagram C)</td>
+        <td>H capital (utility connection); H benefit for essential-load continuity</td>
+      </tr>
+      <tr>
+        <td><strong>Separate routing — duty vs standby</strong></td>
+        <td>Duty and standby motors / loads must be fed from <em>different</em> sources, MCCs and cable routes. A single cable, MCC bus or MCC incomer serving both duty and standby is a common-element SPOF.</td>
+        <td>Duty pump on <code>MCC-1</code> (Bus A), standby pump on <code>MCC-2</code> (Bus B); cables in separate trays on opposite sides of plant.</td>
+        <td>Shared cable / single MCC for duty + standby (Diagram D)</td>
+        <td>M capital; H benefit (eliminates common-mode failure)</td>
+      </tr>
+      <tr>
+        <td><strong>Standby generation (DG + ATS)</strong></td>
+        <td>A standby diesel generator, automatically started and connected via the ATS on utility loss, backs up the essential bus for safety-critical and process-critical loads.</td>
+        <td><code>DG</code> set (~1000 kVA indicative) + <code>ATS</code> + <code>EDB</code>. ATS transfer time typically &lt; 10 s (depends on DG run-up time). Auto-test on load weekly; fuel and battery monitoring continuous.</td>
+        <td>Total loss of supply to essential loads on utility outage</td>
+        <td>H capital per kVA; H benefit for safety loads</td>
+      </tr>
+      <tr>
+        <td><strong>UPS for control / protection</strong></td>
+        <td>No-break, clean AC supply for the DCS/PLC/SCADA and instrumentation. Prevents a supply disturbance from crashing the control system and causing a process trip or safety incident.</td>
+        <td><code>UPS</code> (battery autonomy 15–30 min indicative) + <code>DCDB</code> (110 V DC for MV switchgear trip / close coils).</td>
+        <td>Loss of control / protection on any supply disturbance</td>
+        <td>M capital; H benefit for control continuity and protection dependability</td>
+      </tr>
+      <tr>
+        <td><strong>Condition monitoring and testing</strong></td>
+        <td>Scheduled on-load testing (DG / ATS weekly; bus-tie transfer periodically) and continuous condition monitoring (transformer oil / temperature, battery impedance, UPS health) reduces Detection score (D) in the FMECA without changing failure rate.</td>
+        <td>Monitored via <code>PMS</code> / <code>DCS</code>; oil/temperature sensors on <code>TX-1</code>/<code>TX-2</code>; battery monitoring on <code>UPS</code> and <code>DCDB</code>.</td>
+        <td>Latent failures in standby equipment (DG fails to start; bus-tie fails to close)</td>
+        <td>L–M capital; H benefit (lowers RPN through better detection)</td>
+      </tr>
+      <tr>
+        <td><strong>Fault containment and selectivity</strong></td>
+        <td>Graded protection (time-current coordination) ensures the device closest to a fault trips first, isolating the smallest possible zone. Zone-selective interlocking (ZSI) maintains both selectivity and fast arc-flash clearance.</td>
+        <td>Relay / trip-unit settings in <code>MV-SWGR</code> IEDs and <code>LV-MSB</code> ACBs; ZSI between ACB and outgoing MCCBs.</td>
+        <td>Upstream breaker trips on a downstream fault (wider zone lost than necessary)</td>
+        <td>L capital (settings only, unless extra relays); H benefit for zone containment</td>
+      </tr>
+      <tr>
+        <td><strong>Earthing integrity</strong></td>
+        <td>A continuous, low-impedance earth system (grid + bonding + NER) ensures earth faults are reliably detected, current limited, and touch/step voltages kept safe.</td>
+        <td><code>MV-NER</code> (R &asymp; 21 &Omega; indicative); LV TN-S; earth grid (&le; 1 &Omega; indicative); 120 mm&sup2; Cu earth conductors (indicative); bonding to <code>LV-MSB</code>, <code>MCC</code>, cable armour.</td>
+        <td>Undetected earth faults; personnel electrocution; equipment damage from high fault energy</td>
+        <td>M capital; safety-critical</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 id="a-hardening-checklist">SPOF-Hunt Checklist — Quick Scan of an SLD</h3>
+
+  <ul class="checklist">
+    <li>Is there a single utility incomer / single MV bus? (Diagram C SPOF — check for dual incomers or DG/ATS coverage).</li>
+    <li>Is there only one transformer? (Diagram A SPOF — check for N+1 or bus-tie capability).</li>
+    <li>Is the LV bus split into sections A and B? If not, the whole LV plant is a single zone.</li>
+    <li>Is there a bus-tie (BT) between Bus A and Bus B? Is it normally open with auto-transfer?</li>
+    <li>Are duty and standby motors fed from different MCCs on different buses, via separately routed cables? (Diagram D SPOF).</li>
+    <li>Is the DG connected via an ATS? Is the ATS auto-transfer commissioned and tested regularly?</li>
+    <li>Is there a UPS for DCS/PLC/SCADA? Is there a DCDB for MV switchgear trip/close supplies?</li>
+    <li>Are transformer differential protection (87T) and earth-fault protection (50N/51N) commissioned on both TX-1 and TX-2?</li>
+    <li>Is the NER present and rated correctly? (Check neutral CT and earth-fault relay are connected).</li>
+    <li>Is protection coordination current — does the study reflect the as-found breaker / relay configuration?</li>
+  </ul>
+
+  <div class="key">Key takeaway: Ten hardening principles; ten SPOF-hunt checklist items. The five most common findings are: no bus-tie auto-transfer, duty and standby on the same MCC, single utility incomer with no DG coverage, ATS not commissioned, and outdated protection coordination study. Address these first.</div>
+</section>
+
+<!-- ============================================================ -->
+
+<section id="a-mtbf" data-title="G — Indicative MTBF Data" data-part="Appendices">
+  <h2>G — Indicative Failure-Rate and MTBF Data</h2>
+
+  <p>
+    Indicative &lambda; (failure rate), MTBF and MTTR figures per equipment class, drawn from the
+    reliability analysis in Module 5 and typical industrial power-system data. Use these values
+    for preliminary FMECA scoring and RBD availability estimates only.
+  </p>
+
+  <div class="warning">
+    <strong>Warning — indicative values only.</strong>
+    The figures in this table are <em>indicative and tentative</em>. They are representative of
+    industrial power-system equipment in good condition under reasonable maintenance regimes.
+    Actual failure rates vary significantly with age, maintenance history, environment (tropical,
+    desert, coastal), load factor, manufacturer and installation quality.
+    <strong>For any real reliability or availability study, these figures must be replaced with
+    values confirmed against IEEE 493 (Gold Book), ISO 14224, or plant-specific historical
+    maintenance data.</strong> Do not cite this table as a primary source in a formal study.
+  </div>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Equipment class</th>
+        <th>Tag(s)</th>
+        <th>Indicative &lambda; (failures/yr)</th>
+        <th>Indicative MTBF (h)</th>
+        <th>Indicative MTTR (h)</th>
+        <th>Indicative Availability A</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>MV metal-clad switchgear (panel)</td>
+        <td><code>MV-SWGR</code></td>
+        <td>~0.006 / yr</td>
+        <td>~150,000 h</td>
+        <td>168 h</td>
+        <td>~0.99889</td>
+        <td>Per panel (bus section, incomer or TX feeder). Includes vacuum CB and protection relay. MTTR includes spares logistics.</td>
+      </tr>
+      <tr>
+        <td>MV/LV power transformer</td>
+        <td><code>TX-1</code>, <code>TX-2</code></td>
+        <td>~0.004 / yr</td>
+        <td>~200,000 h</td>
+        <td>168–720 h</td>
+        <td>~0.99916 (at 168 h MTTR)</td>
+        <td>Cast-resin units have lower fire risk but similar electrical failure rate to oil-filled. MTTR can extend to 720+ h if rewinding required. Oil/temp monitoring reduces latent failure.</td>
+      </tr>
+      <tr>
+        <td>LV switchboard / PCC (complete assembly)</td>
+        <td><code>LV-MSB</code></td>
+        <td>~0.010 / yr</td>
+        <td>~90,000 h</td>
+        <td>8–72 h</td>
+        <td>~0.99920 (at 72 h MTTR)</td>
+        <td>Busbar fault rare but high severity; most failures are in individual breakers or auxiliaries. Form 4b segregation limits fault zone and reduces effective MTTR.</td>
+      </tr>
+      <tr>
+        <td>Air Circuit Breaker (ACB)</td>
+        <td><code>LV-MSB</code> incomer / BT</td>
+        <td>~0.015 / yr</td>
+        <td>~60,000 h</td>
+        <td>4–24 h</td>
+        <td>~0.99960 (at 24 h MTTR)</td>
+        <td>Includes failure-to-trip (most critical mode) and failure-to-close (bus-tie BT failure on auto-transfer). Regular trip testing improves Detection (D) score.</td>
+      </tr>
+      <tr>
+        <td>Moulded-Case Circuit Breaker (MCCB)</td>
+        <td>Feeders in <code>LV-MSB</code>, <code>MCC</code></td>
+        <td>~0.020 / yr</td>
+        <td>~45,000 h</td>
+        <td>2–8 h</td>
+        <td>~0.99982 (at 8 h MTTR)</td>
+        <td>Higher failure rate reflects larger population; most failures affect only the individual feeder. Selectivity (coordination) prevents upstream trip.</td>
+      </tr>
+      <tr>
+        <td>Motor Control Centre (MCC, complete)</td>
+        <td><code>MCC-1</code> … <code>MCC-n</code></td>
+        <td>~0.030 / yr</td>
+        <td>~30,000 h</td>
+        <td>4–24 h</td>
+        <td>~0.99920 (at 24 h MTTR)</td>
+        <td>Aggregate figure for the assembly including contactors, overloads and starters. A single starter failure affects only one motor; a bus fault or incomer failure affects all motors on that MCC.</td>
+      </tr>
+      <tr>
+        <td>Variable Frequency Drive (VFD)</td>
+        <td><code>VFD</code></td>
+        <td>~0.050 / yr</td>
+        <td>~18,000 h</td>
+        <td>4–48 h</td>
+        <td>~0.99733 (at 48 h MTTR)</td>
+        <td>Higher failure rate than simple contactors; power electronics are sensitive to temperature, harmonics and humidity. MTTR can be long if a power module must be ordered. Consider bypass contactor for critical drives.</td>
+      </tr>
+      <tr>
+        <td>Power factor correction bank (PFC)</td>
+        <td><code>PFC</code></td>
+        <td>~0.020 / yr</td>
+        <td>~45,000 h</td>
+        <td>8–48 h</td>
+        <td>~0.99893 (at 48 h MTTR)</td>
+        <td>Capacitor element failure is the dominant mode; detuned reactors are generally more reliable. Failure increases reactive demand but does not typically cause a supply outage — Medium severity.</td>
+      </tr>
+      <tr>
+        <td>Diesel generator set (complete)</td>
+        <td><code>DG</code></td>
+        <td>~0.060 / yr (start-to-run)</td>
+        <td>~15,000 h (run)</td>
+        <td>4–48 h</td>
+        <td>Conditional: P(start success) ~0.95 per demand</td>
+        <td>Distinguish between failure-to-start (~5 % demand rate indicative) and failure-while-running (&lt; 1 %/h). Weekly tested-on-load reduces P(fail to start). Fuel, battery and coolant condition are the main latent risks.</td>
+      </tr>
+      <tr>
+        <td>Automatic Transfer Switch (ATS)</td>
+        <td><code>ATS</code></td>
+        <td>~0.030 / yr</td>
+        <td>~30,000 h</td>
+        <td>2–24 h</td>
+        <td>~0.99920 (at 24 h MTTR)</td>
+        <td>Failure-to-transfer on demand is the critical mode (highest RPN in typical FMECA). Redundant control logic, position monitoring and monthly on-load tests materially reduce the Occurrence and Detection scores.</td>
+      </tr>
+      <tr>
+        <td>UPS (online, double-conversion)</td>
+        <td><code>UPS</code></td>
+        <td>~0.030 / yr</td>
+        <td>~30,000 h</td>
+        <td>2–24 h</td>
+        <td>~0.99920 (at 24 h MTTR)</td>
+        <td>Battery ageing is the dominant long-term failure mode; inverter electronics also fail. Battery impedance testing (annually) identifies degraded cells before failure. A bypass path and redundant UPS greatly improve system availability.</td>
+      </tr>
+      <tr>
+        <td>DC battery and charger (DCDB)</td>
+        <td><code>DCDB</code></td>
+        <td>~0.020 / yr</td>
+        <td>~45,000 h</td>
+        <td>4–48 h</td>
+        <td>~0.99893 (at 48 h MTTR)</td>
+        <td>Battery failure can silence all MV protection — extremely high severity. Float-voltage monitoring and annual discharge testing are essential. Keep a spare battery module on site for critical plants.</td>
+      </tr>
+      <tr>
+        <td>Neutral Earthing Resistor (NER)</td>
+        <td><code>MV-NER</code></td>
+        <td>~0.002 / yr</td>
+        <td>~500,000 h</td>
+        <td>8–24 h</td>
+        <td>~0.99998</td>
+        <td>Passive element; low failure rate. Open-circuit or short-circuit failure both change earth-fault protection behaviour. Verify resistance and neutral CT integrity during assessment.</td>
+      </tr>
+      <tr>
+        <td>MV/LV feeder cable (per km)</td>
+        <td>Feeders between tagged equipment</td>
+        <td>~0.003 / yr / km (LV XLPE)</td>
+        <td>~300,000 h / km</td>
+        <td>8–72 h</td>
+        <td>~0.99976 (at 72 h MTTR)</td>
+        <td>Buried LV cable; failure rate increases with age, installation damage and proximity to other services. A single cable shared by duty and standby loads is a common-element SPOF (Diagram D): use separately routed cables.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 id="a-mtbf-availability">RBD Availability Examples</h3>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Configuration</th>
+        <th>Formula</th>
+        <th>Indicative result</th>
+        <th>Annual downtime</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Single transformer (series)</td>
+        <td>A = 0.99916</td>
+        <td>0.99916</td>
+        <td>~7.4 h/yr</td>
+      </tr>
+      <tr>
+        <td>Two transformers 1-of-2 (parallel)</td>
+        <td>A = 1 &minus; (1&minus;0.99916)<sup>2</sup></td>
+        <td>0.99999929</td>
+        <td>~22 s/yr</td>
+      </tr>
+      <tr>
+        <td>Transformer + ACB in series</td>
+        <td>A = 0.99916 &times; 0.99960</td>
+        <td>0.99876</td>
+        <td>~10.9 h/yr</td>
+      </tr>
+      <tr>
+        <td>ATS (manual MTTR ~8 h vs auto ~0.003 h)</td>
+        <td>Manual: A = 30000/(30000+8) = 0.99973<br>Auto: A = 30000/(30000+0.003) = 0.99999990</td>
+        <td>Manual: 0.99973<br>Auto: ~1.000</td>
+        <td>Manual: ~2.3 h/yr<br>Auto: ~90 s/yr</td>
+      </tr>
+      <tr>
+        <td>DG + ATS (both must work)</td>
+        <td>A = A_DG &times; A_ATS = 0.9980 &times; 0.99973<br>
+        <em>A_DG derivation: DG failure-to-start probability &asymp; 5% per demand (1 demand/yr); MTBF running &asymp; 15,000 h; MTTR &asymp; 24 h.
+        Effective A_DG = 1 &minus; P(fail-to-start) &asymp; 0.9980 (indicative — dominated by start-reliability; full RAM model needed for real studies).</em></td>
+        <td>~0.99773</td>
+        <td>~19.6 h/yr (manual ATS)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    <strong>Note — MTTR as the key lever:</strong> The ATS example illustrates why auto-transfer
+    (MTTR reduced from 8 h to ~10 s) delivers a far larger availability improvement than any
+    realistic reduction in failure rate. Auto-close bus-tie and auto-transfer ATS are the
+    highest-value reliability upgrades in a typical MV/LV plant. This principle is central to
+    the recommendations generated by this campaign.
+  </div>
+
+  <div class="key">Key takeaway: 14 equipment classes tabulated. Use these indicative figures for initial FMECA scoring only. Replace with IEEE 493 / ISO 14224 / plant maintenance records for formal studies. The single most impactful design choice visible in the MTBF data is the auto-transfer MTTR reduction: from ~8 h (manual) to seconds (auto), turning ~2 h/yr loss into &lt; 2 min/yr.</div>
+</section>

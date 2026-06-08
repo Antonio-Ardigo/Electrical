@@ -1,0 +1,1023 @@
+<!-- ============================================================
+     Part 4 — Philosophies, Modifications & Control
+     Sections: p-templates | p-dcs | p-bestpractice |
+               p-grid | p-modifications | p-selfcheck
+     ============================================================ -->
+
+<section id="p-templates" data-title="Continuity-of-Supply Philosophy Templates" data-part="Part 4 — Philosophies, Modifications &amp; Control">
+  <h2>Continuity-of-Supply Philosophy Templates</h2>
+
+  <p><em>Where you are in the workflow: you have identified the SPOFs and calculated the numbers (Parts 2–3); now apply the standard philosophies to judge whether each plant's design is sound, and to specify what must change.</em></p>
+
+  <div class="note">
+    <strong>First assignment?</strong> On day one you mainly need the
+    <a href="#p-modifications">Modifications Catalogue</a> (below); it gives you the
+    ready-made rows to copy into your Recommendations Register. The eight philosophy
+    templates in this section are reference material for deeper assessments and peer review —
+    return to them once you have completed your first plant cycle.
+  </div>
+
+  <p>
+    The eight templates below form a reusable reference. Each one can be applied directly to a
+    plant you are assessing: scan the philosophy, locate the matching equipment on the SLD, and
+    use the <strong>How to verify</strong> and <strong>What a deficiency looks like</strong>
+    checklists to produce a rapid, defensible finding. Templates P-1 to P-8 are cumulative layers
+    of the same goal — <strong>no single event interrupts the process</strong>.
+  </p>
+
+  <div class="note">
+    <strong>Note — indicative figures:</strong> All ratings, times and settings in this section
+    are indicative and to be confirmed by project-specific studies, vendor data and the governing
+    grid code.
+  </div>
+
+  <!-- ─── P-1 ──────────────────────────────────────────────── -->
+  <h3 id="p1-n1-split-bus">P-1 — N+1 Transformers, Split Bus &amp; Normally-Open Bus-Tie (Baseline)</h3>
+
+  <p><strong>Principle.</strong> Provide two full-rated MV/LV transformers (<code>TX-1</code>,
+  <code>TX-2</code>) feeding a <em>split</em> LV main switchboard (<code>LV-MSB</code>) with a
+  normally-open bus-tie (<code>BT</code>). Each transformer is rated to carry the entire essential
+  plant load alone — N-1 capability. Under normal conditions, both incomers are closed and the
+  bus-tie is open (split-bus, approximately equal loading). On loss of one incomer, the bus-tie
+  closes to back-feed the dead bus from the surviving transformer.</p>
+
+  <p><strong>When it applies.</strong> Every MV/LV industrial plant with a continuous or
+  semi-continuous process. It is the baseline — all other philosophies build on top of it.</p>
+
+  <p><strong>How to verify on a site visit.</strong></p>
+  <ul class="checklist">
+    <li>Confirm two separate transformers (<code>TX-1</code>, <code>TX-2</code>) are installed and both in service.</li>
+    <li>Check <code>LV-MSB</code> is genuinely split — two bus sections, each fed by one transformer incomer.</li>
+    <li>Verify the bus-tie (<code>BT</code>) is normally <em>open</em> (breaker in "OPEN" position, padlocked or interlocked in NOP state).</li>
+    <li>Confirm nameplate kVA of each transformer ≥ full essential load (N-1 loading check — see <a href="#c-loadflow">Part 2 — Load Flow</a>).</li>
+    <li>Check that the bus-tie has an <em>auto-close</em> relay or PMS function enabled (not just manual).</li>
+    <li>Review protection study to confirm auto-close interlocks prevent parallel running during fault (bus-tie must not close onto a fed fault).</li>
+  </ul>
+
+  <p><strong>What a deficiency looks like.</strong></p>
+  <ul>
+    <li>Single transformer feeding an un-split bus (SPOF type A — see <a href="#s-library-a">Part 3 — Variant A</a>).</li>
+    <li>Two transformers present but bus-tie has no auto-close function — bus-tie is a manual-only switch.</li>
+    <li>N-1 loading check fails: one transformer cannot carry the essential load; loss of one source will shed critical process motors.</li>
+    <li>Bus-tie permanently closed (running in parallel) without differential protection — a fault on one bus propagates to both.</li>
+    <li>Single main incoming breaker at LV-MSB feeding an un-sectioned bus (common to small plants).</li>
+  </ul>
+
+  <!-- ─── P-2 ──────────────────────────────────────────────── -->
+  <h3 id="p2-auto-bus-transfer">P-2 — Automatic Bus Transfer (Fast / In-Phase / Residual-Voltage)</h3>
+
+  <p><strong>Principle.</strong> On loss of an LV incomer (voltage collapse, transformer trip, MV
+  feeder loss), the <code>BT</code> bus-tie closes <em>automatically</em> to restore supply to
+  the dead bus without operator intervention. Three transfer modes exist — select the fastest that
+  the plant process tolerates:</p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Mode</th>
+        <th>Transfer time</th>
+        <th>How it works</th>
+        <th>Process impact</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Fast transfer</strong></td>
+        <td>&lt; ~100 ms</td>
+        <td>Bus-tie closes before residual motor voltage drifts out of phase with the incoming source. Requires synchronism-check relay or PMS pre-authorisation.</td>
+        <td>Motors keep spinning; minimal process dip. <strong>Preferred where possible.</strong></td>
+      </tr>
+      <tr>
+        <td><strong>In-phase transfer</strong></td>
+        <td>~100 ms – 1 s</td>
+        <td>Waits for the instant the residual bus voltage and incoming voltage are in phase (synchro-check). Slower but avoids high re-acceleration inrush.</td>
+        <td>Moderate speed dip on large motors; process may dip but typically not trip.</td>
+      </tr>
+      <tr>
+        <td><strong>Residual-voltage (time-delayed) transfer</strong></td>
+        <td>~2 – 10 s</td>
+        <td>Waits for residual motor voltage to decay below a threshold (e.g. &lt; 25 % rated) before closing. Avoids out-of-phase closing but allows motors to coast to near-stop.</td>
+        <td>Large process dip; motors will require re-acceleration (see P-6). <strong>Least preferred.</strong></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p><strong>When it applies.</strong> Any plant that has a split bus with a bus-tie. The mode
+  selection depends on motor inertia, process sensitivity and relay capability.</p>
+
+  <p><strong>How to verify on a site visit.</strong></p>
+  <ul class="checklist">
+    <li>Confirm the bus-tie protection relay (or PMS) has an auto-transfer function enabled.</li>
+    <li>Ask the operations team or consult the relay settings: what triggers the auto-transfer (UV relay pick-up level and time delay)?</li>
+    <li>Confirm transfer mode is documented (fast / in-phase / residual-voltage) and matches the relay configuration.</li>
+    <li>Check that the transfer logic includes a check that the receiving bus has a live healthy source before closing the bus-tie.</li>
+    <li>Review event logs or test records: has the auto-transfer been tested in the last 12 months?</li>
+  </ul>
+
+  <p><strong>What a deficiency looks like.</strong></p>
+  <ul>
+    <li>Bus-tie auto-transfer function is <em>disabled</em> in relay settings — only manual transfer possible (SPOF type B — see <a href="#s-library-b">Part 3 — Variant B</a>).</li>
+    <li>Residual-voltage transfer configured when fast transfer is achievable — unnecessarily slow, causing motor stalls.</li>
+    <li>No UV relay on the incomer — bus-tie has no trigger condition and will not operate automatically on loss of incomer.</li>
+    <li>Transfer logic closes the bus-tie regardless of whether the surviving source is healthy — risk of cascading a fault onto the remaining bus.</li>
+    <li>No evidence of regular test records for the auto-transfer function.</li>
+  </ul>
+
+  <!-- ─── P-3 ──────────────────────────────────────────────── -->
+  <h3 id="p3-standby-generation">P-3 — Standby Generation &amp; ATS Load Build-Up</h3>
+
+  <p><strong>Principle.</strong> On total utility supply loss, a diesel generator set (<code>DG</code>)
+  starts automatically, runs up to rated voltage and frequency (typically 10–20 s), and the
+  automatic transfer switch (<code>ATS</code>) connects it to the essential bus
+  (<code>EDB</code> / <code>DB</code>). Loads are reconnected in a <em>staged priority sequence</em>
+  (black-start load build-up) to avoid collapsing the DG bus with simultaneous motor starting
+  inrush. The DG is sized for the essential load — not the full plant load.</p>
+
+  <p><strong>When it applies.</strong> All plants with safety-critical or continuous-process
+  loads that cannot tolerate a total utility blackout for more than the DG start-up period.</p>
+
+  <p><strong>How to verify on a site visit.</strong></p>
+  <ul class="checklist">
+    <li>Confirm <code>DG</code> nameplate kVA ≥ essential load (confirm essential load list exists and is current).</li>
+    <li>Check the <code>ATS</code> is set to auto-mode and confirm the utility-loss trigger setpoint (UV and time delay).</li>
+    <li>Verify the DG auto-start sequence: is the start signal hardwired from the <code>ATS</code> or via the PMS?</li>
+    <li>Locate the load build-up sequence document — priority groups, inter-step time delays, and total reconnect time. Does the DG have adequate kVA headroom for each step?</li>
+    <li>Check fuel level indicator and fuel tank capacity (days of autonomy at full essential load).</li>
+    <li>Review DG test log: monthly no-load test and quarterly on-load test are minimum good practice.</li>
+    <li>Confirm the DG output breaker interlock prevents parallel operation with the utility (anti-paralleling relay or mechanical interlock on the ATS).</li>
+  </ul>
+
+  <p><strong>What a deficiency looks like.</strong></p>
+  <ul>
+    <li>DG present but <code>ATS</code> is in manual mode — operator must manually transfer during an emergency.</li>
+    <li>No documented essential load list or load build-up sequence; DG may be overloaded on reconnect.</li>
+    <li>DG kVA less than the verified essential load — DG will trip on overload when all essential motors reconnect.</li>
+    <li>No anti-paralleling interlock — DG can be connected in parallel with a live utility supply without a synchroniser, risking DG damage or backfeed.</li>
+    <li>DG is the only source for the bus-tie control power — loss of utility before DG starts blacks out the bus-tie relay itself.</li>
+  </ul>
+
+  <!-- ─── P-4 ──────────────────────────────────────────────── -->
+  <h3 id="p4-load-shedding">P-4 — Load Shedding / Load Management Philosophy</h3>
+
+  <p><strong>Principle.</strong> When available generation is less than demand (utility loss,
+  N-1 transformer loading, running on DG), a <em>load-shedding</em> scheme automatically
+  disconnects <strong>non-essential loads</strong> in a defined priority order to protect
+  the power supply to the essential process. Load shedding is triggered by
+  under-frequency (UF), under-voltage (UV), or source overload detection, and acts
+  <em>before</em> the supply collapses — typically within 1–5 cycles on a GOOSE-based
+  system or 2–5 s on a traditional under-frequency relay scheme.</p>
+
+  <p><strong>Priority tiers (indicative — confirm per plant):</strong></p>
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Tier</th>
+        <th>Examples</th>
+        <th>Action on shed trigger</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Essential (never shed)</strong></td>
+        <td>Safety systems, fire pump, emergency lighting, DCS, <code>UPS</code>, <code>DCDB</code>, ventilation for hazardous areas</td>
+        <td>Never disconnected by automatic shedding</td>
+      </tr>
+      <tr>
+        <td><strong>Priority 1 — shed last</strong></td>
+        <td>Critical process pumps, compressors, main product line drives</td>
+        <td>Shed only on deepest overload (Stage 3+)</td>
+      </tr>
+      <tr>
+        <td><strong>Priority 2</strong></td>
+        <td>Utility services (cooling towers, HVAC compressors, secondary pumps)</td>
+        <td>Shed at Stage 2 of the scheme</td>
+      </tr>
+      <tr>
+        <td><strong>Priority 3 — shed first</strong></td>
+        <td>Non-essential loads, office buildings, workshops, site lighting (non-safety)</td>
+        <td>Shed immediately at Stage 1 (first trigger)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p><strong>When it applies.</strong> Any plant with more load than a single source can carry
+  (N-1 condition) or with a standby DG that is smaller than the total load.</p>
+
+  <p><strong>How to verify on a site visit.</strong></p>
+  <ul class="checklist">
+    <li>Confirm a written load-shedding philosophy document exists and is current.</li>
+    <li>Verify priority assignments match the actual process criticality — ask the plant engineer.</li>
+    <li>Check relay/PMS settings: UF setpoints (e.g. 49.0 / 48.5 Hz staged), UV setpoints and time delays.</li>
+    <li>Confirm load-shedding actuators (trip coils on MCC feeders or contactors) are wired and commissioned.</li>
+    <li>Review test records showing the scheme has been function-tested within the last year.</li>
+    <li>Check that critical <code>VFD</code>-driven loads are not shed before the drives have had time to attempt ride-through (coordinate with P-6).</li>
+  </ul>
+
+  <p><strong>What a deficiency looks like.</strong></p>
+  <ul>
+    <li>No load-shedding scheme — on N-1 transformer loading the surviving transformer simply overloads and trips, causing a total blackout.</li>
+    <li>Priority list is notional only (written on a diagram note) but not wired to any relay output.</li>
+    <li>Essential loads (fire pump, DCS) included in the auto-shed trip chain — risk of shutting down safety systems automatically.</li>
+    <li>Single-stage shedding only — all non-essential loads shed simultaneously, causing a large load step that overshoots and sheds essential loads too.</li>
+    <li>UF/UV setpoints not coordinated with the generator AVR/governor response time — scheme sheds before the generator has had time to respond.</li>
+  </ul>
+
+  <!-- ─── P-5 ──────────────────────────────────────────────── -->
+  <h3 id="p5-ups-dcdb">P-5 — No-Break Supplies: UPS &amp; DC Control Battery (DCDB)</h3>
+
+  <p><strong>Principle.</strong> The control system, protection relays, DCS/PLC I/O and critical
+  instrumentation must remain energised through <em>any</em> supply disturbance — bus transfer,
+  DG start-up, voltage dip, or total blackout. Two independent no-break systems serve this:</p>
+
+  <ul>
+    <li><strong><code>UPS</code></strong> — online double-conversion UPS providing clean 230/400 V AC
+    with zero-interruption transfer to battery. Feeds DCS/SCADA servers, PMS, operator consoles,
+    critical instrumentation, communications, and emergency lighting.</li>
+    <li><strong><code>DCDB</code></strong> — 110 V DC (or 48/24 V DC) battery-backed charger panel
+    feeding MV and LV protection relay trip/close coils, circuit-breaker charging motors, and
+    switchgear indication. Remains live even when the AC bus is dead.</li>
+  </ul>
+
+  <p>Both systems must have sufficient battery autonomy to ride through the longest credible outage
+  before DG pick-up and reconnection (minimum 30 min autonomy for DCS; 2 h or more for DCDB
+  is common good practice — confirm per plant requirement).</p>
+
+  <p><strong>When it applies.</strong> All plants — without this layer, protection relays cannot
+  operate during a blackout and the DG/ATS sequence cannot be supervised.</p>
+
+  <p><strong>How to verify on a site visit.</strong></p>
+  <ul class="checklist">
+    <li>Locate <code>UPS</code> and <code>DCDB</code> panels — confirm they are energised and alarms clear.</li>
+    <li>Check <code>UPS</code> battery age against manufacturer's recommended replacement interval (typically 5 years for VRLA).</li>
+    <li>Read the <code>DCDB</code> charger panel: float voltage, battery condition indicator, last discharge test date.</li>
+    <li>Confirm <code>UPS</code> and <code>DCDB</code> are fed from the essential bus (<code>EDB</code>) or the <code>ATS</code> output, not from the bus that goes dark on utility loss.</li>
+    <li>Review battery discharge test records — a full autonomy test (simulate mains loss, run on battery, confirm hold-up time) should be completed annually.</li>
+    <li>Verify that protection relay DC supplies are from <code>DCDB</code>, not from a 230 V AC adapter that dies with the bus.</li>
+  </ul>
+
+  <p><strong>What a deficiency looks like.</strong></p>
+  <ul>
+    <li>No <code>DCDB</code> — protection relay trip coils fed from AC 230 V adapters; on total blackout, relays cannot operate and breakers cannot be closed.</li>
+    <li><code>UPS</code> present but fed from the non-essential bus — goes dark precisely when it is needed most.</li>
+    <li>Battery age &gt; 7 years and no recent discharge test — capacity may be well below nameplate; hold-up time is unknown.</li>
+    <li><code>UPS</code> in static-bypass mode (common after a fault) — inverter is not running; next mains dip causes an outage to the "protected" DCS loads.</li>
+    <li><code>DCDB</code> charger alarm active (e.g. "battery fault" LED) but left unattended — plant is unaware the DC backup is compromised.</li>
+  </ul>
+
+  <!-- ─── P-6 ──────────────────────────────────────────────── -->
+  <h3 id="p6-motor-reacceleration">P-6 — Motor Re-Acceleration After Transfer or Voltage Dip</h3>
+
+  <p><strong>Principle.</strong> When supply is restored after a bus transfer or a voltage dip,
+  multiple large motors will attempt to accelerate simultaneously. Their combined locked-rotor
+  inrush (up to 6–7 × F.L.C. per motor) can collapse the restored bus voltage and prevent any
+  motor from accelerating — a re-acceleration failure. The remedy is a <em>sequenced
+  re-acceleration</em> scheme: motors restart in priority groups with time delays between groups,
+  so each group reaches running current before the next group is connected.</p>
+
+  <p>Variable-frequency drives (<code>VFD</code>) offer additional protection: <em>kinetic
+  buffering</em> (regenerating energy from the spinning load into the DC bus) and
+  <em>flying-restart</em> (re-synchronising to the spinning motor) allow VFDs to ride through
+  short dips (100–500 ms) and reconnect without a process stop.</p>
+
+  <p><strong>When it applies.</strong> Any plant with multiple large motors (&gt; ~30 kW
+  individually, or significant aggregate DOL starting current) and a bus transfer or DG
+  start-up sequence.</p>
+
+  <p><strong>How to verify on a site visit.</strong></p>
+  <ul class="checklist">
+    <li>Confirm a re-acceleration sequence document exists listing motor groups and inter-step time delays.</li>
+    <li>Check MCC starters: are auto-restart relay modules fitted (e.g. time-delay undervoltage restart relays)?</li>
+    <li>For <code>VFD</code>-driven loads, confirm flying-restart and kinetic-buffering functions are enabled in the drive parameter settings.</li>
+    <li>Verify that the DG's voltage and frequency stabilisation time is accounted for before the first motor group reconnects.</li>
+    <li>Review motor control philosophy: "auto-restart enabled / disabled" status for each motor — safety-critical loads (e.g. agitators in vessels) may require manual restart.</li>
+  </ul>
+
+  <p><strong>What a deficiency looks like.</strong></p>
+  <ul>
+    <li>No re-acceleration sequence — all motors attempt to restart simultaneously after a transfer, collapsing the restored bus and tripping the bus-tie or DG on overload.</li>
+    <li>Auto-restart disabled globally as a blanket safety measure — operators must manually restart every motor after any supply event, causing extended process downtime.</li>
+    <li>VFD kinetic-buffering disabled or trip-on-undervoltage set to &lt; 50 ms — drives trip on every short utility dip, stopping the process when there was no real fault in the plant.</li>
+    <li>Re-acceleration time between groups too short — bus voltage collapses during step 2 and starves subsequent groups.</li>
+  </ul>
+
+  <!-- ─── P-7 ──────────────────────────────────────────────── -->
+  <h3 id="p7-protection-coordination">P-7 — Protection Coordination Philosophy (Selectivity &amp; Clearing Time)</h3>
+
+  <p><strong>Principle.</strong> Protection must be <em>selective</em>: the device closest to the
+  fault (the "discriminating" relay or fuse) clears before any upstream device operates. This
+  isolates only the faulted zone and leaves the rest of the plant energised. Without selectivity,
+  a fault on one MCC feeder can cascade to trip the whole LV bus or even the MV incomer.
+  Equally, <em>clearing time</em> must be fast enough to limit fault damage and arc-flash
+  incident energy (see <a href="#c-arcflash">Part 2 — Arc Flash</a>) while remaining slow enough
+  to discriminate from the zone below.</p>
+
+  <p>The protection coordination study must cover: MV fuses / IDMT relays (at <code>MV-SWGR</code>),
+  LV ACBs (incomers, bus-tie and main feeders at <code>LV-MSB</code>), MCC MCCBs and fuses, and
+  motor overload/short-circuit protection at every starter — full top-to-bottom cascade.</p>
+
+  <p><strong>For a full treatment of protection, refer to <a href="#c-protection">Part 2 — Protection Coordination</a>.</strong></p>
+
+  <p><strong>How to verify on a site visit.</strong></p>
+  <ul class="checklist">
+    <li>Confirm a current protection coordination study exists and has been updated after any major plant modification.</li>
+    <li>Check relay settings against the study: IDMT curves, pick-up current, time-multiplier settings. Do they match?</li>
+    <li>Verify grading margins: upstream relay should have ≥ 0.25–0.4 s margin over the downstream relay at the maximum fault current (confirm with the study).</li>
+    <li>Check that bus-tie relay settings do not conflict with the incomer relay — bus-tie overcurrent must grade with both incomers.</li>
+    <li>Review incident energy calculations at key buses — if incident energy &gt; 40 cal/cm² at any working position, this is a critical finding. See <a href="#c-arcflash">Part 2</a>.</li>
+    <li>Confirm relay test records: IEC 60255 relay testing at commissioning and periodic functional tests (at least every 3 years for numerical relays).</li>
+  </ul>
+
+  <p><strong>What a deficiency looks like.</strong></p>
+  <ul>
+    <li>Protection settings have not been reviewed since commissioning; plant load has grown and the original study is no longer valid.</li>
+    <li>Upstream relay grading margin &lt; 0.2 s — risk of sympathetic tripping of the whole bus on a downstream feeder fault.</li>
+    <li>All LV MCCBs rated the same as the incomer ACB — no discrimination; the incomer trips before the MCCB on a feeder fault.</li>
+    <li>MV incomer IDMT relay time-multiplier set to minimum (fast) — clears every disturbance including downstream faults before the LV protection has time to operate.</li>
+    <li>No record of relay test since commissioning — relay may be mal-set or defective.</li>
+  </ul>
+
+  <!-- ─── P-8 ──────────────────────────────────────────────── -->
+  <h3 id="p8-earthing-philosophy">P-8 — Earthing Philosophy (MV Resistance Earth via MV-NER; LV TN-S)</h3>
+
+  <p><strong>Principle.</strong> The earthing philosophy governs fault current magnitudes, touch
+  voltages, EPR (earth potential rise) and protection sensitivity — it underpins all
+  ground-fault detection. This plant uses two distinct earthing regimes:</p>
+
+  <ul>
+    <li><strong>MV system (11 kV) — resistance earthed via <code>MV-NER</code>:</strong> the
+    neutral of each MV/LV transformer (<code>TX-1</code>, <code>TX-2</code>) star winding is
+    connected to earth through a neutral earthing resistor. The NER limits the single-phase
+    earth-fault current to a defined level (indicatively 200–400 A for 30 s) — high enough
+    for sensitive earth-fault relays to detect, low enough to limit damage and EPR.
+    A running earth fault is detectable and the system can remain in service for a short period
+    while the fault is located and isolated.</li>
+    <li><strong>LV system (400/415 V) — TN-S (solid neutral earth):</strong> the LV transformer
+    neutral is solidly earthed at the transformer; the protective earth (PE) and neutral (N)
+    conductors are separate throughout the installation. Earth-fault current is high (limited
+    only by loop impedance), enabling fast fuse/MCB/RCCB operation.
+    See <a href="#c-earthing">Part 2 — Earthing</a> for calculation method.</li>
+  </ul>
+
+  <p><strong>When it applies.</strong> All plants — earthing regime affects protection relay
+  settings, cable insulation requirements, touch-voltage compliance and arc-flash severity.</p>
+
+  <p><strong>How to verify on a site visit.</strong></p>
+  <ul class="checklist">
+    <li>Locate <code>MV-NER</code>: confirm resistance value (stamped on nameplate), voltage rating, continuous and timed current rating.</li>
+    <li>Check that the MV earth-fault relay (51G/64) pickup current is correctly set for the NER fault current (typically ≈ 10–20 % of NER rated current for sensitive detection).</li>
+    <li>At the LV transformer neutral, verify the neutral earthing point is accessible, bolted solid to the earth electrode, and clearly labelled. Check earth electrode condition if visible.</li>
+    <li>Confirm PE and N conductors are kept separate (TN-S): check at the main earth terminal in <code>LV-MSB</code> — PEN conductors (combined PE+N, TN-C) must not appear downstream of the MSB.</li>
+    <li>Check earth grid continuity: main earth bar, building structural earth, MV cable screen earths, and equipment frames all bonded to the same grid.</li>
+    <li>Review most recent earth electrode resistance test value (target typically &lt; 1 Ω for a large plant; confirm per plant specification).</li>
+  </ul>
+
+  <p><strong>What a deficiency looks like.</strong></p>
+  <ul>
+    <li>MV-NER absent or bypassed — MV system is either unearthed (high transient overvoltages on earth fault) or solidly earthed (very high fault currents, equipment damage).</li>
+    <li>NER resistance value incorrect for the system voltage: too high → earth-fault protection insensitive; too low → defeats the purpose of resistance earthing.</li>
+    <li>LV neutral not earthed (floating neutral) — TN-S system undefined; touch voltages uncontrolled; MCBs and RCCBs may not trip on earth fault.</li>
+    <li>TN-C wiring present downstream of the MSB (PEN conductors in sub-distribution) — earth-fault protection sensitivity is reduced; shock risk is increased.</li>
+    <li>Earth electrode resistance &gt; 10 Ω — substation EPR on fault will exceed 430 V touch-voltage limit; personnel hazard.</li>
+    <li>MV cable screen not bonded at both ends — circulating currents and touch voltage on screen during a cable fault.</li>
+  </ul>
+
+  <div class="key">Key takeaway — the eight templates form a stack: P-1 (redundancy) makes the topology robust; P-2 (auto-transfer) and P-3 (DG/ATS) restore supply on a source failure; P-4 (load shedding) prevents an overloaded source from collapsing; P-5 (UPS/DCDB) keeps the brain alive through any disturbance; P-6 (motor re-acceleration) reconnects the process without overloading the restored source; P-7 and P-8 underpin all of the above with selective protection and a safe earth reference. A plant that fully implements all eight templates has no credible single event that interrupts the essential process.</div>
+
+</section>
+
+<!-- ============================================================ -->
+
+<section id="p-dcs" data-title="DCS / SCADA / PMS Integration &amp; IEC 61850" data-part="Part 4 — Philosophies, Modifications &amp; Control">
+  <h2>DCS / SCADA / PMS Integration &amp; IEC 61850</h2>
+
+  <p><em>Where you are in the workflow: having assessed the power-system hardware, now evaluate the intelligence layer that automates transfers, sheds loads and monitors the plant in real time.</em></p>
+
+  <p>
+    The electrical system is not an island. It is supervised by a layered control architecture
+    linking field devices through a Power Management System (PMS) to the plant DCS and SCADA.
+    Understanding this architecture is essential because a SPOF in the control layer can
+    neutralise expensive hardware redundancy — a bus-tie that cannot close automatically because
+    the PMS has failed is no different from a bus-tie that was never installed.
+  </p>
+
+  <figure class="fig">
+    <div class="svg-embed" data-src="diagrams/svg/control-architecture.svg"></div>
+    <figcaption>Fig 4-1 — Layered control architecture: field IEDs and devices, IEC 61850 station bus, Power Management System (PMS), and DCS/SCADA supervisory level (indicative)</figcaption>
+  </figure>
+
+  <h3 id="p-dcs-layers">The Four Layers</h3>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Layer</th>
+        <th>Equipment / function</th>
+        <th>Relevant tags</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Layer 4 — DCS / SCADA</strong></td>
+        <td>Process control and operator HMI. Receives electrical status, alarms and metering from the PMS. Issues high-level commands ("start DG", "shed non-essential bus") — does not directly operate individual breakers in normal operation.</td>
+        <td>Plant-wide; communicates via OPC-UA or Modbus TCP gateway from the PMS</td>
+      </tr>
+      <tr>
+        <td><strong>Layer 3 — Power Management System (PMS)</strong></td>
+        <td>Dedicated electrical "brain": load shedding logic, automatic bus transfer, generator control and synchronisation, source priority management, energy metering aggregation, power-quality alarming. Acts on GOOSE messages from IEDs in sub-10 ms for fast functions.</td>
+        <td><code>LV-MSB</code> (BT control), <code>DG</code>, <code>ATS</code>, <code>MCC-1..n</code> shed outputs</td>
+      </tr>
+      <tr>
+        <td><strong>Layer 2 — Bay / protection IEDs</strong></td>
+        <td>Numerical multifunction relays at each breaker — protection, measurement, control and event recording. Each IED is both a protection device and a source of real-time data (current, voltage, power, energy, fault records, event logs). IEC 61850 IEDs report directly onto the station bus.</td>
+        <td><code>MV-SWGR</code> IEDs, <code>LV-MSB</code> incomer / bus-tie relays, <code>MCC</code> feeder relays</td>
+      </tr>
+      <tr>
+        <td><strong>Layer 1 — Field / process devices</strong></td>
+        <td>Breakers (device number 52), generator controller (AVR + governor + synchroniser), <code>ATS</code> logic, <code>UPS</code> and <code>DCDB</code> monitors, <code>VFD</code> controllers, power quality meters at intake.</td>
+        <td><code>MV-MET</code>, <code>TX-1/2</code> winding monitors, <code>DG</code>, <code>VFD</code>, <code>PFC</code> controller</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 id="p-dcs-comms">Communications Protocols</h3>
+
+  <p>A redundant Ethernet / fibre station bus carries multiple protocols simultaneously:</p>
+
+  <ul>
+    <li><strong>IEC 61850 MMS (Manufacturing Message Specification):</strong> client-server reporting for monitoring, settings changes, commands and historian feeds. Used between IEDs and the PMS/SCADA. Bandwidth-efficient; latency typically 50–500 ms acceptable for this role.</li>
+    <li><strong>IEC 61850 GOOSE (Generic Object Oriented Substation Events):</strong> fast multicast peer-to-peer messaging <em>between IEDs</em> — typical latency &lt; 4 ms. Enables fast bus transfer, fast load shedding interlocks and protection interlocks without routing through the PMS server. This is the key enabler of sub-cycle electrical automation.</li>
+    <li><strong>Modbus TCP / DNP3 / OPC-UA:</strong> gateways to the DCS and third-party devices (energy meters, power quality monitors). Standard for legacy integration.</li>
+    <li><strong>PROFIBUS / PROFINET / EtherNet/IP:</strong> to VFD controllers (<code>VFD</code>) and motor starters in the MCCs.</li>
+  </ul>
+
+  <div class="note">
+    <strong>Note — IEC 61850 GOOSE vs polled Modbus:</strong> Traditional Modbus polling cycles are typically 100–1000 ms. A load-shedding scheme that relies on polled Modbus may take hundreds of milliseconds to respond to a generation shortfall — fast enough for some schemes, too slow for fast bus-transfer or short-circuit interlocks. GOOSE operates on a publish/subscribe model with sub-4 ms latency and self-supervision (heartbeat), making it reliable for safety-critical interlocks.
+  </div>
+
+  <h3 id="p-dcs-hardwired">Hardwired vs Networked: The Right Philosophy</h3>
+
+  <p>
+    The choice between hardwired and networked signals is a risk decision, not a technology preference.
+    The rule of thumb is:
+  </p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Signal type</th>
+        <th>Preferred path</th>
+        <th>Reason</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Master trip, emergency stop, safety interlock (e.g. transformer Buchholz trip, fire suppression trip)</td>
+        <td><strong>Hardwired</strong> — dedicated copper to trip coil</td>
+        <td>Deterministic, independent of IED / network health, fail-safe on wire break (if normally energised-to-hold)</td>
+      </tr>
+      <tr>
+        <td>Fast bus transfer authorisation, fast load-shed trip to feeder breaker</td>
+        <td><strong>GOOSE</strong> (IEC 61850) or hardwired</td>
+        <td>Sub-4 ms; GOOSE is acceptable if the station bus is redundant and GOOSE retransmission is configured; hardwired provides ultimate independence</td>
+      </tr>
+      <tr>
+        <td>Control commands (open/close breaker) from PMS or DCS</td>
+        <td><strong>Networked</strong> (IEC 61850 MMS or Modbus)</td>
+        <td>Operator-issued; latency of hundreds of ms acceptable; network path is auditable and logged</td>
+      </tr>
+      <tr>
+        <td>Status / measurement / alarms / metering</td>
+        <td><strong>Networked</strong> (MMS / Modbus / OPC-UA)</td>
+        <td>Not time-critical; rich data, historian integration, no hardwiring cost</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="warning">
+    <strong>Warning — network SPOF:</strong> If the PMS server is the single path for the bus-tie auto-close command, a PMS server failure becomes a SPOF in the control layer. Ensure that IED-to-IED GOOSE or hardwired control wiring provides a <em>backup</em> path for the bus-tie transfer that does not depend on the PMS server being alive.
+  </div>
+
+  <h3 id="p-dcs-verify">How to Verify the Control Architecture on Site</h3>
+
+  <ul class="checklist">
+    <li>Confirm the PMS or IED-based auto-transfer function is enabled and tested (not just installed).</li>
+    <li>Ask for the GOOSE configuration or hardwired logic diagram for bus-tie auto-close — trace the signal path end-to-end.</li>
+    <li>Verify redundancy of the station bus: dual-ring or dual-star Ethernet, with managed switches and alarming on link failure.</li>
+    <li>Check that the DCS receives live electrical alarms (transformer temperature, UPS fault, DC battery fault) — not just a generic "electrical fault" point.</li>
+    <li>Confirm cybersecurity: control LAN is segmented from the corporate LAN (firewall / DMZ); IED firmware versions are current; remote access (if any) uses a VPN with multi-factor authentication.</li>
+    <li>Review the PMS UPS supply: the PMS server must itself be fed from <code>UPS</code> — a PMS that dies with the bus cannot execute the transfer scheme.</li>
+  </ul>
+
+  <div class="key">Key takeaway: the PMS and IEC 61850 GOOSE layer is the nervous system of the electrical system. A SPOF in this layer can prevent all the hardware redundancy from operating. Always verify that the auto-transfer signal path is independent of the supply it is meant to restore, and that hardwired back-up exists for all safety-critical trips.</div>
+
+</section>
+
+<!-- ============================================================ -->
+
+<section id="p-bestpractice" data-title="Best Practice &amp; Emerging Technology" data-part="Part 4 — Philosophies, Modifications &amp; Control">
+  <h2>Best Practice &amp; Emerging Technology</h2>
+
+  <p><em>Where you are in the workflow: use this section when writing the Recommendations Register — these are the technologies and approaches that should be cited when proposing enhancements beyond the baseline philosophy.</em></p>
+
+  <h3 id="p-bestpractice-digital">Digital Substation (IEC 61850 Process Bus)</h3>
+
+  <p>
+    In a conventional substation, copper wiring runs from every CT and VT secondary terminal to
+    every relay panel. In a digital substation, <em>merging units</em> (MUs) sit at the primary
+    equipment and digitise CT/VT samples, transmitting <em>Sampled Values</em> (SV) over fibre to
+    the IED bay units. Benefits: dramatic reduction in copper wiring and termination points (a
+    major source of wiring errors and maintenance burden), self-supervision of the measurement
+    chain, simpler future expansion, and a unified data model (IEC 61850-9-2) that allows any
+    IED from any vendor to consume the same SV stream. For an existing brownfield plant, a
+    selective retrofit (new IEDs with process-bus capability at the point of planned relay
+    replacement) is more practical than a full digital conversion.
+  </p>
+
+  <h3 id="p-bestpractice-loadshedding">Intelligent / Fast Load Shedding</h3>
+
+  <p>
+    Traditional under-frequency load shedding responds in 2–5 s. Modern systems using
+    <strong>IEC 61850 GOOSE</strong> messaging and a PMS with a real-time power balance model
+    can shed the correct load block in <strong>under 50 ms</strong> after a generation event.
+    The scheme knows the exact MW of each feeder (from IED metering), calculates the deficit in
+    real time, and sheds only what is necessary — no over-shedding, no under-shedding. This
+    eliminates the risk of the DG tripping on overload during a utility loss event because
+    non-essential loads were not shed quickly enough.
+  </p>
+
+  <div class="tip">
+    <strong>Tip — specify the response time:</strong> When writing a recommendation for a load-shedding upgrade, specify the required response time (e.g. "shed non-essential load within 100 ms of utility loss detection") — this drives the vendor to propose a GOOSE-based solution rather than a relay-timer scheme.
+  </div>
+
+  <h3 id="p-bestpractice-arcflash">Arc-Flash Detection &amp; Zone-Selective Interlocking (ZSI)</h3>
+
+  <p>
+    Arc-flash incident energy is proportional to <em>arcing time</em>. Two technologies reduce
+    clearing time without sacrificing selectivity:
+  </p>
+
+  <ul>
+    <li><strong>Arc-flash light + current detection:</strong> optical sensors in the switchgear
+    busbar compartment detect the arc flash signature (intense light pulse + overcurrent) and
+    trip the upstream breaker within 8–12 ms — an order of magnitude faster than IDMT relay
+    operation. Dramatically reduces incident energy at the bus.</li>
+    <li><strong>Zone-Selective Interlocking (ZSI):</strong> IEDs exchange ZSI signals: if both
+    the downstream IED and the upstream IED see overcurrent simultaneously, it is a through-fault
+    and the upstream IED stays slow (maintaining discrimination). If only the upstream IED sees
+    current, it is a bus fault and the upstream IED trips instantaneously. ZSI achieves fast
+    clearing for bus faults while maintaining full selectivity for feeder faults — without
+    relaxing grading margins.</li>
+  </ul>
+
+  <p>Reference: <a href="#c-arcflash">Part 2 — Arc-Flash Assessment</a> for the incident energy calculation methodology.</p>
+
+  <h3 id="p-bestpractice-cm">Condition Monitoring &amp; Predictive Maintenance</h3>
+
+  <p>
+    Unplanned failures of transformers, switchgear and motors are a primary cause of SPOF events
+    — even well-designed redundant systems are defeated by simultaneous or sequential failures of
+    components under stress. Condition monitoring moves maintenance from time-based (change
+    everything at fixed intervals) to condition-based (change it when data says it is degrading).
+    Key technologies:
+  </p>
+
+  <ul>
+    <li><strong>Partial discharge (PD) monitoring</strong> on MV cables, switchgear and
+    transformer bushings — detects insulation degradation before it becomes a fault.</li>
+    <li><strong>Transformer winding temperature (WTI / OTI) and DGA</strong> (dissolved gas
+    analysis for oil-filled transformers) — detects thermal stress and incipient faults.</li>
+    <li><strong>Breaker health monitoring</strong> — contact resistance, spring energy, operating
+    time — detects wear before a mechanical failure during a fault.</li>
+    <li><strong>Motor winding temperature and vibration sensors</strong> integrated into the
+    MCC IED — early detection of overload or mechanical bearing failure.</li>
+    <li><strong>Digital twin / analytics platform</strong> — aggregates sensor data, applies
+    ML models, and alerts the maintenance team to anomalies days or weeks before failure.</li>
+  </ul>
+
+  <h3 id="p-bestpractice-bess">Battery Energy Storage System (BESS) &amp; Grid-Forming Inverters</h3>
+
+  <p>
+    A BESS connected to the LV-MSB or MV bus via a bidirectional inverter can fulfil multiple
+    roles simultaneously, making it one of the highest-value additions to a modern plant:
+  </p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Function</th>
+        <th>How BESS delivers it</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Ride-through &amp; bridging power</td>
+        <td>Supplies full plant load for the DG start-up period (10–30 s) — eliminates the process dip between utility loss and DG pick-up; replaces the ATS dead time.</td>
+      </tr>
+      <tr>
+        <td>Synthetic inertia</td>
+        <td>Grid-forming inverter emulates the inertia of a synchronous machine — slows ROCOF on loss of generation, giving protection schemes time to respond.</td>
+      </tr>
+      <tr>
+        <td>Voltage / frequency support</td>
+        <td>Fast active and reactive power injection within milliseconds — stabilises voltage and frequency during disturbances before other controls respond.</td>
+      </tr>
+      <tr>
+        <td>Peak shaving</td>
+        <td>Reduces peak demand charges by discharging during high-demand periods; charges during low-tariff periods.</td>
+      </tr>
+      <tr>
+        <td>Islanding capability</td>
+        <td>With a grid-forming inverter and adequate energy capacity, BESS + DG can form a stable microgrid, disconnected from a disturbed utility, and reconnect seamlessly when the grid is stable.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    <strong>Note — BESS sizing:</strong> BESS sizing for ride-through is driven by the DG start-up time and the essential load (e.g. 500 kW essential load × 30 s start-up time = ~4.2 kWh minimum, including inverter efficiency and state-of-charge margins). All figures are indicative; detailed sizing requires a dynamic simulation study.
+  </div>
+
+  <div class="key">Key takeaway: the six technology areas above (digital substation, intelligent load shedding, arc-flash detection/ZSI, condition monitoring, and BESS) represent the difference between a plant that handles its first SPOF event by luck and one that handles it by design. When writing the Recommendations Register, reference these as concept-level enhancements beyond the P-1 to P-8 baseline.</div>
+
+</section>
+
+<!-- ============================================================ -->
+
+<section id="p-grid" data-title="Grid Voltage Instability from Renewables" data-part="Part 4 — Philosophies, Modifications &amp; Control">
+  <h2>Grid Voltage Instability from Renewables</h2>
+
+  <p><em>Where you are in the workflow: this section helps you identify whether the plant's exposure to grid-quality disturbances is a SPOF in its own right — and what mitigations to recommend.</em></p>
+
+  <p>
+    As wind and solar generation displace synchronous plant on the transmission network, the grid
+    becomes "weaker": less stored kinetic energy (inertia), a lower short-circuit level, and more
+    volatile voltage and frequency. An industrial plant connected to such a grid will experience
+    <strong>more frequent and more severe disturbances at its point of connection</strong> — dips,
+    swells, fast rate-of-change-of-frequency (ROCOF) events, harmonics, and flicker — even when
+    no fault occurs within the plant. On these 21 plants in the Central and Eastern sector, utility
+    grid mix and renewable penetration should be confirmed per plant, as exposure varies.
+  </p>
+
+  <h3 id="p-grid-effects">How Grid Instability Hurts the Plant</h3>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Grid disturbance</th>
+        <th>Plant effect</th>
+        <th>Example trigger</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Voltage dip (short interruption &lt; 1 s)</td>
+        <td>Contactor drop-out (contactors typically release at 60–70 % Vn), VFD DC-bus undervoltage trip, motor stall</td>
+        <td>Distant fault clearance on the transmission network; switching of a large inverter-connected source</td>
+      </tr>
+      <tr>
+        <td>Fast ROCOF event</td>
+        <td>Loss-of-mains (LOM) relay at DG trips the generator offline; protection schemes operating faster than intended</td>
+        <td>Sudden disconnection of large renewable block from the grid</td>
+      </tr>
+      <tr>
+        <td>Voltage swell (&gt; 110 % Vn)</td>
+        <td>Overvoltage trip on sensitive electronics, accelerated insulation ageing, capacitor bank overload</td>
+        <td>Load rejection on a weak grid or tap-changer hunting</td>
+      </tr>
+      <tr>
+        <td>Harmonic distortion (THD rising)</td>
+        <td>Overheating of capacitor banks (PFC resonance), neutral conductor overload, interference with protection relays</td>
+        <td>Large inverter-based resources connected to the MV network near the plant</td>
+      </tr>
+      <tr>
+        <td>Voltage flicker</td>
+        <td>Visible flicker on lighting, interference with sensitive process instrumentation</td>
+        <td>Wind generation output variability, arc furnaces on the same feeder</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 id="p-grid-ridethrough">Ride-Through: Don't Trip on a Transient</h3>
+
+  <p>
+    The first line of defence is ensuring the plant does <strong>not</strong> trip on disturbances
+    it can survive. This requires coordinated settings across multiple device types:
+  </p>
+
+  <ul>
+    <li><strong>Under-voltage ride-through (UVRT) — time-delayed UV trips:</strong> set the
+    UV trip relay time delay so the plant rides through dips that conform to the applicable
+    grid-code LVRT curve (e.g. a 500 ms dip to 50 % Vn should not trip the plant). Coordinate
+    with the upstream utility protection so genuine faults in the plant still clear within the
+    required time.</li>
+    <li><strong>Contactor ride-through:</strong> DC-held coils or time-delay undervoltage relays
+    on contactors hold them closed through a short dip (typically 0.5–1 s hold-up). Alternatively,
+    specify contactors with a minimum hold-in voltage of 45–50 % Vn rather than the standard
+    70 %.</li>
+    <li><strong>VFD kinetic buffering / flying-restart:</strong> enable these functions in drive
+    parameters. Kinetic buffering allows the drive to regenerate motor inertia energy into the DC
+    bus, extending ride-through. Flying restart re-synchronises to a spinning motor after a supply
+    restoration without requiring a coast-to-stop cycle.</li>
+    <li><strong>Loss-of-mains (LOM) relay sensitivity:</strong> if the DG is fitted with a
+    ROCOF-based LOM relay, confirm the ROCOF setting is not over-sensitive. An overly sensitive
+    LOM relay trips the DG on a grid event even when the DG is supplying essential loads
+    correctly — converting a grid disturbance into a plant blackout.</li>
+  </ul>
+
+  <h3 id="p-grid-support">Dynamic Voltage Support: Hold the Voltage Up</h3>
+
+  <p>
+    The second line of defence is active voltage support at the plant's point of connection. For
+    plants where grid instability is identified as a material risk:
+  </p>
+
+  <ul>
+    <li><strong>STATCOM / SVC:</strong> fast dynamic reactive power compensation (response in
+    1–4 cycles); stabilises voltage, reduces flicker, and supports the plant voltage through
+    deep dips. Far faster than switched capacitor banks.</li>
+    <li><strong>Dynamic Voltage Restorer (DVR):</strong> series compensation device that injects
+    voltage in series with the supply, correcting dips and swells in real time for sensitive
+    downstream loads. Typical response: &lt; 1 ms.</li>
+    <li><strong>Thyristor-switched or fast-switched detuned PFC banks:</strong> faster reactive
+    support than contactor-switched <code>PFC</code> banks; ensure banks are detuned (7 % reactor)
+    to avoid resonance with rising background harmonic levels.</li>
+    <li><strong>OLTC / AVR coordination:</strong> confirm transformer on-load tap-changer (OLTC)
+    deadband and response time are set to maintain LV bus voltage within ±5 % at all load
+    conditions. Over-hunting of the tap-changer can worsen voltage instability.</li>
+  </ul>
+
+  <h3 id="p-grid-storage">Storage and Local Stability</h3>
+
+  <p>
+    For severe grid environments or plants with critical processes that cannot tolerate any
+    interruption, storage-based solutions provide the highest level of protection:
+  </p>
+
+  <ul>
+    <li><strong>BESS with grid-forming inverter:</strong> provides synthetic inertia, fast
+    frequency response, and can island the essential plant automatically during a severe grid
+    event. On grid restoration, the BESS microgrid controller checks synchronisation and
+    reconnects the plant seamlessly. See <a href="#p-bestpractice-bess">Best Practice — BESS</a>.</li>
+    <li><strong>UPS and flywheel:</strong> keep control systems and critical instrument loads
+    firm regardless of any external disturbance. Essential baseline (P-5).</li>
+  </ul>
+
+  <h3 id="p-grid-pq">See It Before It Trips You — Power Quality Monitoring</h3>
+
+  <p>
+    Continuous power quality (PQ) metering at the MV intake (<code>MV-MET</code>) and on critical
+    LV buses provides the data to:
+  </p>
+
+  <ul>
+    <li>Characterise the actual grid disturbance environment (how many dips per month, minimum voltage, ROCOF histogram).</li>
+    <li>Set ride-through relay margins correctly based on measured data rather than assumptions.</li>
+    <li>Detect rising harmonic background and proactively adjust <code>PFC</code> tuning before resonance occurs.</li>
+    <li>Support claims against the utility if grid-quality events cause plant damage or downtime.</li>
+  </ul>
+
+  <div class="tip">
+    <strong>Tip — field check:</strong> During the site visit, ask whether the plant has experienced unexplained process trips that coincided with apparent voltage events. Check the DCS alarm historian for clusters of "undervoltage" or "frequency alarm" events — these are evidence of grid instability affecting the plant, and they justify a recommendation for ride-through improvements or PQ monitoring.
+  </div>
+
+  <div class="key">Key takeaway: a plant that trips on every grid disturbance has an effective SPOF in the utility connection, regardless of how much internal redundancy it has. Ride-through settings, contactor hold-in improvement, VFD flying-restart, and PQ monitoring are low-cost first steps; STATCOM, DVR or BESS are the higher-cost solutions for severe grid environments. Always check the PQ history before concluding the plant is reliable.</div>
+
+</section>
+
+<!-- ============================================================ -->
+
+<section id="p-modifications" data-title="Typical Modifications Catalogue" data-part="Part 4 — Philosophies, Modifications &amp; Control">
+  <h2>Typical Modifications Catalogue</h2>
+
+  <p><em>Where you are in the workflow: use this catalogue when populating the Recommendations Register. Each row maps one modification to the SPOF it resolves, the affected tags, a concept description, and an indicative cost band. All costs are indicative H/M/L bands only — confirm scope and cost by market enquiry.</em></p>
+
+  <p>
+    The catalogue below covers the most common electrical modifications identified on MV/LV
+    industrial process plants. Every modification cross-references the SPOF type from the
+    <a href="#s-library">Part 3 — SPOF Library</a> (variants A–E). Use these rows as the starting point for
+    concept modification packages — each package must include a marked-up SLD, an equipment
+    outline specification, a scheme description / sequence of operation, and a high-level bill
+    of materials.
+  </p>
+
+  <div class="note">
+    <strong>Note — concept level only:</strong> All modifications described here are at concept
+    / feasibility level. Detailed design, equipment specification, procurement, and construction
+    are out of scope for the SPOF assessment campaign. Indicative cost bands: <strong>H</strong> = high (typically &gt; USD 200 k installed); <strong>M</strong> = medium (USD 30 k – 200 k); <strong>L</strong> = low (&lt; USD 30 k). All figures are indicative and to be confirmed by market enquiry.
+    <em>Cost band currency shown is USD (catalogue order-of-magnitude basis); actual project costs must be confirmed by local market enquiry — the Jubail case study in Part 5 uses SAR as the client's currency. Indicative bands are currency-agnostic at H/M/L level.</em>
+  </div>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Mod ID</th>
+        <th>Modification</th>
+        <th>SPOF type addressed (see <a href="#s-library">Part 3 — Library</a>)</th>
+        <th>Affected tag(s)</th>
+        <th>Concept description</th>
+        <th>Typical scope to specify</th>
+        <th>Indicative cost band</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>MOD-01</strong></td>
+        <td>Add normally-open auto-close bus-tie to LV-MSB</td>
+        <td>Type B — two transformers, no bus-tie</td>
+        <td><code>LV-MSB</code>, <code>BT</code></td>
+        <td>Install a 4-pole ACB bus-tie breaker (rated to carry full essential load) between Bus A and Bus B of the LV-MSB. Auto-close relay (UV-triggered on either incomer failure) with synchro-check and interlock to prevent closing onto a fault. Hardwired or GOOSE signal path independent of PMS server.</td>
+        <td>ACB rating and frame size; protection relay specification (auto-transfer + overcurrent + synchro-check); wiring/cabling to existing bus; updated protection coordination study; FAT and commissioning test procedure.</td>
+        <td><strong>M</strong></td>
+      </tr>
+      <tr>
+        <td><strong>MOD-02</strong></td>
+        <td>Second MV incomer and MV bus-section breaker</td>
+        <td>Type C — single utility incomer / single MV bus</td>
+        <td><code>MV-SWGR</code>, <code>MV-MET</code></td>
+        <td>Provide a second independent utility feeder terminating on a second MV incomer panel with a normally-open bus-section breaker between the two MV bus sections. Dual independent MV metering. Auto-close bus-section on loss of either incomer (with protection coordination — bus-section relay must grade with both feeders). Second NER (<code>MV-NER</code>) for the second section.</td>
+        <td>New MV switchgear extension (panels, busbars, cabling to new utility termination); updated MV IDMT relay settings; NER sizing; protection coordination study update; utility connection agreement amendment.</td>
+        <td><strong>H</strong></td>
+      </tr>
+      <tr>
+        <td><strong>MOD-03</strong></td>
+        <td>Split duty/standby MCCs across Bus A and Bus B</td>
+        <td>Type D — shared MCC / shared cable for duty and standby loads</td>
+        <td><code>MCC-1</code>, <code>MCC-2</code>, <code>LV-MSB</code></td>
+        <td>Reassign the standby motor starter(s) from the same MCC panel as the duty motor to a separate MCC panel fed from the alternate LV bus. Route the standby feeder cable on a physically separate path (different cable tray / conduit / trench, minimum 1 m separation). This ensures a single bus, panel, or cable fault cannot remove both duty and standby simultaneously.</td>
+        <td>New MCC panel (or panel extension) on the second bus; new outgoing feeder from LV-MSB Bus B; cable routing survey and trench/tray design; updated LV protection coordination; updated SLD.</td>
+        <td><strong>M</strong></td>
+      </tr>
+      <tr>
+        <td><strong>MOD-04</strong></td>
+        <td>Diesel generator set and ATS for essential loads</td>
+        <td>Type A/C — no backup for utility loss</td>
+        <td><code>DG</code>, <code>ATS</code>, <code>EDB</code></td>
+        <td>Install a diesel generator set sized for the confirmed essential load list, with automatic transfer switch and essential distribution board. Automatic start on utility loss detection (UV relay), ATS transfer within the specified dead time, load build-up sequence, anti-paralleling interlock, and weekly / monthly test capability. Fuel tank for minimum 24 h autonomy at full essential load.</td>
+        <td>DG sizing (kVA, voltage, frequency); ATS type and rating; EDB panel and distribution layout; essential load schedule and priority sequence; fuel system; acoustic enclosure; load test procedure; updated SLD and protection study.</td>
+        <td><strong>H</strong></td>
+      </tr>
+      <tr>
+        <td><strong>MOD-05</strong></td>
+        <td>Upgrade manual ATS to automatic transfer with PMS interlock</td>
+        <td>Type A/C — ATS in manual mode negates backup</td>
+        <td><code>ATS</code>, <code>DG</code></td>
+        <td>Replace existing manual or semi-automatic ATS with a fully automatic ATS unit interfaced to the PMS. PMS controls the transfer sequence (start DG, confirm voltage and frequency, transfer load, shed non-essential, confirm essential load is stable) and provides alarm and event records. Include hardwired UV trigger as a backup to PMS-commanded transfer.</td>
+        <td>New ATS panel or module; PMS interface wiring / GOOSE; updated sequence-of-operation document; revised load build-up schedule; commissioning and test certificate.</td>
+        <td><strong>M</strong></td>
+      </tr>
+      <tr>
+        <td><strong>MOD-06</strong></td>
+        <td>Add or resize detuned PFC capacitor bank</td>
+        <td>Type — power factor penalty / harmonic resonance (not a SPOF but a reliability and quality risk)</td>
+        <td><code>PFC</code>, <code>LV-MSB</code></td>
+        <td>Install or replace a 7 % detuned capacitor bank (filter reactor + capacitor steps) at the LV-MSB to correct power factor to ≥ 0.95 lagging at full load. The 7 % detuning ratio prevents resonance with the 5th harmonic and above. Automatic power factor controller (APFC) switches stages in response to reactive demand. Size based on load-flow reactive demand — indicatively 400–600 kVAr for a 2 MW plant, confirmed by a reactive power survey.</td>
+        <td>Reactive power survey and load-flow study; capacitor bank rating and harmonic audit; APFC relay; installation space in MSB; updated protection and harmonic study.</td>
+        <td><strong>M</strong></td>
+      </tr>
+      <tr>
+        <td><strong>MOD-07</strong></td>
+        <td>Separate cable routing of duty/standby feeders</td>
+        <td>Type D — common cable route for duty and standby</td>
+        <td><code>MCC-1</code>, <code>MCC-2</code>, field loads</td>
+        <td>Where duty and standby feeders currently share a cable tray, conduit or buried trench for any part of their route, physically separate them to different routes with minimum 1 m lateral separation (or structural fire barrier). This ensures a cable fire, mechanical damage, or flooded trench cannot take out both the duty and standby supply simultaneously. Survey and document all current dual-feed routes.</td>
+        <td>Cable routing survey drawings (current and proposed); new cable tray / conduit / trench works; cable termination at both ends; fire barrier if separation is &lt; 300 mm; updated cable schedule.</td>
+        <td><strong>L to M</strong></td>
+      </tr>
+      <tr>
+        <td><strong>MOD-08</strong></td>
+        <td>Install UPS and DCDB for control system independence</td>
+        <td>Type — control SPOF: protection and DCS lose supply during transfer/blackout</td>
+        <td><code>UPS</code>, <code>DCDB</code></td>
+        <td>Install an online double-conversion UPS (min. 30 min battery autonomy at full DCS / protection load) feeding all relay panels, DCS I/O, PMS servers, and communications. Install a separate 110 V DC DCDB (min. 2 h autonomy) for MV and LV protection relay trip/close coils, breaker charging motors, and emergency lighting. Both systems fed from the essential bus downstream of the ATS.</td>
+        <td>UPS kVA sizing (DCS + communications + relay panels + emergency lighting); DCDB Ah sizing (protection load + breaker charging currents × hold-up time); sealed lead-acid or Li-ion battery selection; charger and rectifier specification; essential bus feeder capacity; commissioning and autonomy test.</td>
+        <td><strong>M</strong></td>
+      </tr>
+      <tr>
+        <td><strong>MOD-09</strong></td>
+        <td>Arc-flash detection and zone-selective interlocking (ZSI)</td>
+        <td>Type — arc-flash severity / slow clearing of bus faults</td>
+        <td><code>LV-MSB</code>, <code>MCC-1..n</code>, <code>MV-SWGR</code></td>
+        <td>Fit arc-flash light + current detection sensors in LV-MSB busbar compartments and selected MCC panels. Link sensors to the incomer ACB trip coil via a dedicated arc-flash protection relay (response &lt; 10 ms). Where IEDs support it, configure ZSI between the incomer relay and feeder relays to achieve instantaneous clearing of bus faults while maintaining discrimination for feeder faults. Re-run arc-flash incident energy calculations after implementation to verify reduction.</td>
+        <td>Arc-flash protection relay selection; sensor types and positions; wiring to trip coils; IED ZSI compatibility check; updated arc-flash study; arc-flash hazard label update; commissioning test.</td>
+        <td><strong>M</strong></td>
+      </tr>
+      <tr>
+        <td><strong>MOD-10</strong></td>
+        <td>Earthing remediation — NER resize and earth-grid extension</td>
+        <td>Type — earthing deficiency (MV unearthed or NER incorrect; LV earth grid resistance high)</td>
+        <td><code>MV-NER</code>, <code>LV-MSB</code>, plant earth grid</td>
+        <td>If the MV-NER resistance value does not match the calculated earth-fault current requirement (see <a href="#c-earthing">Part 2</a>), replace with a correctly rated unit. If the LV earth grid resistance is above the target (typically &lt; 1 Ω for a large plant), extend the electrode grid (driven rods, buried ring conductor, or copper mesh) to achieve the required resistance. Retest after installation. Update MV earth-fault relay settings to match the new NER current.</td>
+        <td>MV earth-fault current calculation; NER resistance and rating specification; LV earth electrode resistance test and target value; electrode design (rod lengths, grid spacing, soil resistivity); updated MV 51G relay settings; commissioning test certificate; updated earthing study.</td>
+        <td><strong>L to M</strong></td>
+      </tr>
+      <tr>
+        <td><strong>MOD-11</strong></td>
+        <td>Intelligent load-shedding PMS upgrade</td>
+        <td>Type — slow or absent load shedding on N-1 transformer or DG supply</td>
+        <td><code>LV-MSB</code>, <code>MCC-1..n</code>, <code>DG</code></td>
+        <td>Replace or supplement existing under-frequency relay load shedding with a PMS-based fast load-shedding scheme. The PMS monitors real-time MW at each feeder (via IED metering), detects a generation deficit event (utility loss or transformer trip), and issues GOOSE trip commands to non-essential feeder breakers within 50–100 ms. Priority groups are configurable; scheme can shed the minimum necessary load rather than a fixed block.</td>
+        <td>PMS software load-shedding module specification; IED GOOSE configuration for all shed feeders; priority load schedule and interlock list; PMS-to-DCS interface for shedding status alarms; factory acceptance test; commissioning test record; updated sequence of operation.</td>
+        <td><strong>M</strong></td>
+      </tr>
+      <tr>
+        <td><strong>MOD-12</strong></td>
+        <td>VFD ride-through and motor re-acceleration scheme</td>
+        <td>Type — motor stall / re-acceleration failure after supply restoration</td>
+        <td><code>VFD</code>, <code>MCC-1..n</code></td>
+        <td>Enable kinetic buffering and flying-restart in all <code>VFD</code> parameter sets. For direct-on-line (DOL) motors: install time-delay auto-restart relay modules in starters (essential motors only, per risk assessment). Prepare and commission a motor re-acceleration sequence (priority groups and inter-step time delays) and load it into the PMS. Set VFD undervoltage ride-through window to minimum 500 ms (or to the expected transfer time, whichever is greater).</td>
+        <td>VFD parameter review and update for each drive; auto-restart relay module procurement for selected starters; re-acceleration sequence document; PMS sequence configuration; updated motor control philosophy; commissioning test (simulate supply dip and confirm successful re-acceleration).</td>
+        <td><strong>L</strong></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="tip">
+    <strong>Tip — filling the Recommendations Register:</strong> Copy the Mod ID, Modification title, SPOF type and Affected tags directly into the Recommendations Register. The "Typical scope to specify" column becomes the basis for the concept modification package description. Priority (H/M/L) in the register should be driven by the FMECA criticality number, not by cost alone — a low-cost modification addressing a high-criticality SPOF should always be prioritised over an expensive modification addressing a low-criticality finding.
+  </div>
+
+  <div class="key">Key takeaway: the twelve modifications above cover the full set of SPOF types from Part 3. For each plant, scan the catalogue, identify which Mod IDs apply, and create the corresponding rows in the Recommendations Register — linked back to the FMECA finding that justifies them. All modifications are concept level only; each requires a detailed design phase before procurement or construction.</div>
+
+</section>
+
+<!-- ============================================================ -->
+
+<section id="p-selfcheck" data-title="Part 4 — Self-Check" data-part="Part 4 — Philosophies, Modifications &amp; Control">
+  <h2>Part 4 — Self-Check</h2>
+
+  <p><em>Where you are in the workflow: test your understanding of philosophies and modifications before moving to Part 5 field tasks.</em></p>
+
+  <p>Answer each question from memory, then expand the answer to check.</p>
+
+  <!-- Q1 -->
+  <details>
+    <summary><strong>Q1 — Bus transfer speed.</strong> A plant has a fast bus transfer (FBT) relay set to close the bus-tie within 80 ms. A reviewer proposes replacing it with a residual-voltage (RV) transfer that waits 5 s. What is the process consequence of the change, and when would the RV approach ever be preferred?</summary>
+    <div class="worked">
+      <p><strong>Answer.</strong> With the FBT relay, the bus transfer completes before the residual motor voltages drift significantly out of phase — motors keep spinning and the process continues with minimal dip. With the RV transfer, all motors on the dead bus will coast for 5 s (or until their residual voltage decays to the threshold). This typically means a full process stop: pump pressures drop, reactors lose agitation, and a restart sequence is needed. For a continuous process, this is a production loss event that the FBT was designed to avoid.</p>
+      <p>RV transfer is preferred when: (a) the relay set does not support synchro-check or the motor inertia is very low (residual decays fast anyway); (b) there are large synchronous motors whose residual voltage takes a long time to decay and out-of-phase closing would cause damaging mechanical torque; or (c) the process can tolerate a 5 s stop (e.g. a utility building, not the core process). The key trade-off is process continuity vs mechanical torque on motors during closing.</p>
+    </div>
+  </details>
+
+  <!-- Q2 -->
+  <details>
+    <summary><strong>Q2 — Load shedding trigger.</strong> A plant loses one of its two transformers. The surviving transformer is rated 1600 kVA. Before the fault, the total plant load was 2600 kVA (split equally, 1300 kVA per transformer). What happens if there is no load-shedding scheme? What should the scheme shed first?</summary>
+    <div class="worked">
+      <p><strong>Answer.</strong> Without a load-shedding scheme, the surviving transformer is immediately loaded to 2600 kVA — 162 % of its rated capacity. The transformer will trip on thermal overload protection within seconds (if it has a Buchholz / winding temperature relay) or will sustain damage and trip within minutes. This produces a total plant blackout — a worse outcome than the original single transformer loss.</p>
+      <p>The load-shedding scheme must shed enough non-essential load to bring the surviving transformer below its rated capacity, with a margin. If the essential load is ~1100 kVA and the transformer is rated 1600 kVA, the scheme needs to shed at least 1000 kVA (2600 − 1600 = 1000 kVA minimum, preferably more for stability margin). It should shed Priority 3 loads first (site lighting, workshops, offices), then Priority 2 (HVAC, secondary utilities), keeping the core process alive. The essential loads (DCS, fire pump, critical process drives) must never be in the shed list.</p>
+    </div>
+  </details>
+
+  <!-- Q3 -->
+  <details>
+    <summary><strong>Q3 — DCDB importance.</strong> A plant has a UPS for the DCS but no separate DCDB. The LV-MSB bus goes dead during a transformer fault. Can the bus-tie relay operate to close the bus-tie?</summary>
+    <div class="worked">
+      <p><strong>Answer.</strong> Only if the bus-tie relay trip coil is energised. If the relay coil is fed from the LV AC bus (e.g. via a 230 V AC adapter), it loses power when the bus goes dead — exactly when the auto-close command is needed. The relay cannot operate and the bus-tie stays open, leaving the dead bus dark even though the surviving transformer is healthy.</p>
+      <p>A DCDB supplies the relay trip and close coils from a battery-backed 110 V DC system that is independent of the AC bus state. With a DCDB, the bus-tie relay remains powered during the blackout and can execute the auto-close sequence. This is why the DCDB is a non-negotiable element of the control philosophy — the UPS protects the DCS, but the DCDB protects the protection system itself.</p>
+    </div>
+  </details>
+
+  <!-- Q4 -->
+  <details>
+    <summary><strong>Q4 — IEC 61850 GOOSE vs Modbus.</strong> A PMS designer proposes using Modbus TCP polling (250 ms cycle time) for the fast load-shedding trip signal to MCC feeder breakers. What is the risk, and what should be specified instead?</summary>
+    <div class="worked">
+      <p><strong>Answer.</strong> The risk is that on a generation shortfall event, the load-shedding command takes up to 250 ms to reach the feeder breakers plus the breaker trip time. On a DG set, frequency may decay at 2–5 Hz/s on a severe overload: in 250 ms the frequency could drop 0.5–1.25 Hz, potentially causing the DG governor to fail to recover or triggering spurious under-frequency trips on other loads before the shed command arrives. A 250 ms Modbus latency is too slow for a fast load-shedding scheme where the target response time is &lt; 100 ms.</p>
+      <p>The specification should require IEC 61850 GOOSE messaging from the PMS (or directly IED-to-IED) to the feeder breaker trip coils. GOOSE latency on a local Ethernet network is &lt; 4 ms, and the signal is self-supervised (heartbeat — the receiver knows if the publisher has failed). This achieves the required response time. Alternatively, hardwired trip outputs from a dedicated fast load-shedding relay provide a fully deterministic path if GOOSE is not available on the existing IEDs.</p>
+    </div>
+  </details>
+
+  <!-- Q5 -->
+  <details>
+    <summary><strong>Q5 — Modifications catalogue.</strong> During a site visit you find: (a) duty and standby cooling water pumps are both fed from MCC-1, which is on Bus A; (b) the bus-tie is present but auto-transfer is disabled; (c) the UPS is in static bypass. Write three rows for the Recommendations Register, citing the correct Mod ID for each.</summary>
+    <div class="worked">
+      <p><strong>Answer (indicative — adapt to actual plant data).</strong></p>
+      <table class="tbl">
+        <thead><tr><th>Rec. Ref</th><th>Finding</th><th>Mod ID</th><th>Recommended action</th><th>Priority</th></tr></thead>
+        <tbody>
+          <tr><td>REC-01</td><td>Duty and standby cooling pumps both fed from MCC-1 (Bus A) — common MCC and bus SPOF defeats standby redundancy</td><td>MOD-03</td><td>Relocate standby pump starter to a new or extended MCC panel on Bus B with separately routed feeder cable. Update SLD and protection study.</td><td>High</td></tr>
+          <tr><td>REC-02</td><td>Bus-tie auto-transfer disabled — manual operation only; loss of one transformer will not result in automatic bus restoration</td><td>MOD-01</td><td>Re-enable auto-transfer function in bus-tie relay / PMS; confirm UV trigger settings; add DCDB-backed GOOSE or hardwired trip path; issue test certificate.</td><td>High</td></tr>
+          <tr><td>REC-03</td><td>UPS in static bypass — inverter not running; next AC supply disturbance will directly interrupt DCS and protection relay supplies</td><td>MOD-08</td><td>Restore UPS to online double-conversion mode immediately (check reason for bypass — typically a failed battery or faulty inverter). If UPS is unserviceable, procure replacement. Confirm battery age and conduct discharge test.</td><td>High</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </details>
+
+  <!-- Q6 -->
+  <details>
+    <summary><strong>Q6 — Grid instability.</strong> A plant engineer tells you the process trips unexpectedly two or three times a month, always on night shifts. The events appear to coincide with voltage "brownouts" visible on the DCS trend. No faults are found in the plant each time. What is the most likely cause, and what three actions would you recommend?</summary>
+    <div class="worked">
+      <p><strong>Answer.</strong> The pattern (recurring, night-shift timing, no internal fault, voltage sag visible) is characteristic of <strong>external grid voltage disturbances</strong> — likely voltage dips from the transmission or distribution network, possibly associated with renewable generation ramping or fault-clearance switching on the utility network. Night-shift timing often correlates with lower system demand (less inertia on the grid) and wind generation peaks.</p>
+      <p>Three recommended actions:</p>
+      <ol>
+        <li><strong>Install or enable continuous power quality monitoring</strong> at the MV-MET metering point (IEC 61000-4-30 Class A meter). Capture dip depth, duration, and frequency. This provides the evidence needed to characterise the disturbances and correlate them precisely with the process trips.</li>
+        <li><strong>Review and increase undervoltage ride-through time delays</strong> on contactor coils and VFD undervoltage trip settings. If contactors are releasing at 70 % Vn after 20 ms, even a mild grid dip will cause mass dropout. Set the UV trip delay to ride through at least 500 ms of dips conforming to the applicable grid-code LVRT curve.</li>
+        <li><strong>Enable VFD kinetic buffering and flying-restart</strong> on all process-critical drives. Check motor control philosophy to confirm whether auto-restart is permitted for each motor (safety review required). This allows the plant to self-recover from a short dip without a manual restart sequence.</li>
+      </ol>
+      <p>If the disturbances are confirmed to be severe (e.g. dips below 60 % Vn lasting &gt; 1 s, several times per month), escalate to a recommendation for a STATCOM or BESS for dynamic voltage support.</p>
+    </div>
+  </details>
+
+  <div class="key">
+    You have completed Part 4. The eight philosophy templates give you a consistent framework for judging any MV/LV plant design. The modifications catalogue gives you the standard vocabulary for the Recommendations Register. Part 5 — Field Tasks now takes you through the complete per-plant workflow step by step: desk study, site visit, drawing verification, analysis, and final report assembly — starting with a worked walk-through of the first assignment.
+    <br><br>
+    <strong>Next: <a href="#t-jubail">Part 5 — Field Tasks</a>.</strong>
+  </div>
+
+</section>

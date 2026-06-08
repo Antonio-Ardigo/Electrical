@@ -1,0 +1,1879 @@
+<!-- ================================================================
+     PART 3 — SPOF ANALYSIS & RELIABILITY
+     Fragment: 40-part3.html
+     Data source: training/module-03-spof-analysis.md,
+                  training/module-05-reliability-fmeca.md,
+                  diagrams/spof-examples/sld-A..E.
+     All values are INDICATIVE — for training only.
+================================================================ -->
+
+<!-- ============================================================
+     3.0 — PART INTRO / WORKFLOW POSITION
+============================================================ -->
+<section id="s-what" data-title="What is a SPOF — and Why It Matters" data-part="Part 3 — SPOF Analysis &amp; Reliability">
+
+  <div class="note">
+    <strong>Where you are in the workflow:</strong> You have identified the equipment (Part 1) and
+    worked through the key calculations (Part 2 — see <a href="#c-shortcircuit">fault levels</a> and
+    <a href="#c-protection">protection co-ordination</a>). Part 3 turns that knowledge into a
+    structured single-point-of-failure analysis and a formal reliability assessment. The findings
+    will drive the recommendations in <a href="#p-modifications">Part 4</a>.
+  </div>
+
+  <h2>What is a SPOF — and Why It Matters</h2>
+
+  <p>
+    A <strong>single point of failure (SPOF)</strong> is any one component or shared element whose
+    failure, on its own, disables a function or de-energises a load that must stay energised. It does
+    not matter how much redundancy exists downstream: if a common element upstream can black it all
+    out, the function has a SPOF.
+  </p>
+
+  <h3 id="s-what-why">Why SPOFs matter in a process plant</h3>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Driver</th>
+        <th>What happens when a SPOF trips</th>
+        <th>Typical consequence</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Availability / production loss</strong></td>
+        <td>Critical load loses supply without warning</td>
+        <td>Process shutdown, spoiled batch, forced restart — hours to days of lost production</td>
+      </tr>
+      <tr>
+        <td><strong>Safety</strong></td>
+        <td>Safety system, cooling pump, agitator or ventilation fan de-energises</td>
+        <td>Hazardous condition: thermal runaway, toxic release, loss of fire suppression</td>
+      </tr>
+      <tr>
+        <td><strong>Cost</strong></td>
+        <td>Emergency repair, overtime, expedited spares, regulatory notification</td>
+        <td>Often 10–100× the cost of the redundancy that would have prevented it</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="key">
+    A SPOF is a <em>system property</em>, not just a component property. Two pumps in parallel give
+    no protection if they share a single supply cable. Always trace from source to load — the SPOF
+    is wherever there is no alternative path.
+  </div>
+
+</section><!-- /s-what -->
+
+
+<!-- ============================================================
+     3.1 — THE SPOF-HUNT METHOD
+============================================================ -->
+<section id="s-method" data-title="The SPOF-Hunt Method" data-part="Part 3 — SPOF Analysis &amp; Reliability">
+
+  <h2>The SPOF-Hunt Method</h2>
+
+  <p>
+    Work the single-line diagram systematically, starting at the point of supply and moving toward
+    the loads. Use five repeating steps:
+  </p>
+
+  <ol>
+    <li>
+      <strong>Trace</strong> — follow every power path from the utility intake (MV-MET / MV-SWGR)
+      through each transformer (TX-1, TX-2), along each bus section of LV-MSB, through every MCC
+      and feeder, to each final load.
+    </li>
+    <li>
+      <strong>Ask</strong> — at every element: <em>"If this one item fails or is isolated for
+      maintenance, what loses supply?"</em>
+    </li>
+    <li>
+      <strong>Flag</strong> — if the answer is "a load that must stay up" and there is
+      <em>no alternative path</em>, mark it as a SPOF candidate.
+    </li>
+    <li>
+      <strong>Check common elements</strong> — look especially at shared items that sit upstream of
+      apparent redundancy: a single utility incomer, a single MV bus, an un-tied LV bus, a shared
+      outgoing cable or MCC, a single ATS. Redundancy downstream is defeated if these are common.
+    </li>
+    <li>
+      <strong>Mitigate</strong> — for each flagged item, propose an alternative path: N+1
+      equipment, dual feed, auto bus-tie, separate routing, DG/ATS standby, or UPS/DCDB.
+    </li>
+  </ol>
+
+  <div class="tip">
+    <strong>Practical tip:</strong> Print the master SLD on a large sheet and use a highlighter to
+    trace each path. Mark every element that is a common ancestor of two or more critical loads.
+    Those are your prime SPOF candidates.
+  </div>
+
+  <h3 id="s-method-demo">Demonstration on the master SLD</h3>
+
+  <p>
+    Apply the method to the indicative 2 MW plant master SLD below. Starting from the top:
+    utility supply → MV-MET → MV-SWGR → (TX-1 to Bus A, TX-2 to Bus B) → LV-MSB with bus-tie
+    (BT) → MCCs → loads / DG / ATS / UPS.
+  </p>
+
+  <figure class="fig">
+    <div class="svg-embed" data-src="diagrams/svg/sld-master-2MW.svg"></div>
+    <figcaption>
+      Fig 3-0 — Master SLD, indicative 2 MW MV/LV process plant (IEC 60617 symbols, indicative).
+      Trace each element from source to load; flag any with no alternative path.
+    </figcaption>
+  </figure>
+
+  <p>
+    Walking through the method on this diagram:
+  </p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Element</th>
+        <th>Tag(s)</th>
+        <th>Common element upstream of…</th>
+        <th>SPOF?</th>
+        <th>Alternative path present?</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Utility incomer(s)</td>
+        <td><code>MV-MET</code></td>
+        <td>Entire plant</td>
+        <td>Potentially yes — depends on whether one or two incomers</td>
+        <td>DG + ATS covers essential loads on utility loss</td>
+      </tr>
+      <tr>
+        <td>MV switchgear / RMU</td>
+        <td><code>MV-SWGR</code></td>
+        <td>Both transformers</td>
+        <td>If single MV bus — yes (see SLD C)</td>
+        <td>Bus-section breaker gives partial mitigation</td>
+      </tr>
+      <tr>
+        <td>Transformer 1</td>
+        <td><code>TX-1</code></td>
+        <td>LV-MSB Bus A + all MCC-1 (Bus A) loads</td>
+        <td>No — BT auto-closes, TX-2 backs up</td>
+        <td>TX-2 via auto-close bus-tie BT</td>
+      </tr>
+      <tr>
+        <td>Transformer 2</td>
+        <td><code>TX-2</code></td>
+        <td>LV-MSB Bus B + all MCC-2 (Bus B) loads</td>
+        <td>No — BT auto-closes, TX-1 backs up</td>
+        <td>TX-1 via auto-close bus-tie BT</td>
+      </tr>
+      <tr>
+        <td>LV main switchboard bus-tie</td>
+        <td><code>BT</code></td>
+        <td>Cross-bus essential loads</td>
+        <td>Yes — if BT fails to close, N-1 benefit is lost</td>
+        <td>Manual close (slow); periodic test essential</td>
+      </tr>
+      <tr>
+        <td>MCC incomer / shared feeder</td>
+        <td><code>MCC-1</code>…n</td>
+        <td>All loads on that MCC</td>
+        <td>Yes — if duty + standby share same MCC (see SLD D)</td>
+        <td>Split duty/standby across Bus A and Bus B MCCs</td>
+      </tr>
+      <tr>
+        <td>ATS control</td>
+        <td><code>ATS</code></td>
+        <td>Essential bus on DG transfer</td>
+        <td>Yes — if ATS fails to operate</td>
+        <td>Redundant control; monthly on-load test</td>
+      </tr>
+      <tr>
+        <td>UPS / DCDB</td>
+        <td><code>UPS</code>, <code>DCDB</code></td>
+        <td>DCS / PLC / protection supplies</td>
+        <td>Yes — if UPS battery fails during disturbance</td>
+        <td>Redundant UPS; battery monitoring</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="warning">
+    <strong>Warning — the "two of everything" trap:</strong> Installing two transformers does not
+    give N-1 resilience unless the bus-tie is present <em>and</em> functional. Verify the BT
+    auto-transfer scheme is tested and operational before claiming N-1 credit.
+  </div>
+
+</section><!-- /s-method -->
+
+
+<!-- ============================================================
+     3.2 — THE SPOF LIBRARY (SLDs A–E)
+============================================================ -->
+<section id="s-library" data-title="SPOF Library — Variants A to E" data-part="Part 3 — SPOF Analysis &amp; Reliability">
+
+  <h2>SPOF Library — Variants A to E</h2>
+
+  <p>
+    The five example SLDs below form a teaching library. SLDs <strong>A through D are flawed
+    configurations</strong> — each isolates one type of SPOF. SLD <strong>E is the resilient
+    reference</strong>. Study each in sequence: the flaw in A is corrected in B, B's flaw in C,
+    and so on until E carries all the mitigations.
+  </p>
+
+  <!-- ---- A ---- -->
+  <h3 id="s-library-a">Variant A — Single Transformer, Single LV Bus</h3>
+
+  <figure class="fig">
+    <div class="svg-embed" data-src="diagrams/svg/spof-A.svg"></div>
+    <figcaption>
+      Fig 3-A — SPOF variant A: single transformer TX-1, single un-split LV bus (indicative).
+    </figcaption>
+  </figure>
+
+  <p>
+    <strong>Configuration:</strong> One utility feed → TX-1 (1600 kVA indicative) → single
+    un-split LV bus (LV-MSB) feeding all loads. No second source, no bus-tie.
+  </p>
+
+  <p>
+    <strong>SPOF(s) identified:</strong> The single transformer TX-1 and the single un-split LV bus
+    are both whole-plant SPOFs. Also: the MV feeder to TX-1 and the LV incomer breaker.
+  </p>
+
+  <p>
+    <strong>Consequence:</strong> Loss of TX-1, its MV feeder, the LV incomer breaker, or any LV
+    bus fault <strong>de-energises the entire plant</strong>. Total blackout. No load segregation
+    limits the affected zone.
+  </p>
+
+  <div class="warning">
+    This configuration is common in small or legacy installations. Any single component failure
+    produces a total plant blackout — there is no time to transfer loads because there is nowhere
+    to transfer to.
+  </div>
+
+  <p>
+    <strong>Mitigation:</strong> Move to the master-SLD arrangement — add TX-2 on a split bus with
+    auto-close bus-tie BT (N-1 capability), and provide DG + ATS for essential loads. This is
+    exactly the reference design shown in Variant E.
+  </p>
+
+  <!-- ---- B ---- -->
+  <h3 id="s-library-b">Variant B — Two Transformers, Two Buses, No Bus-Tie</h3>
+
+  <figure class="fig">
+    <div class="svg-embed" data-src="diagrams/svg/spof-B.svg"></div>
+    <figcaption>
+      Fig 3-B — SPOF variant B: two transformers, two buses, no bus-tie between them (indicative).
+    </figcaption>
+  </figure>
+
+  <p>
+    <strong>Configuration:</strong> TX-1 feeds Bus A, TX-2 feeds Bus B — two independent buses
+    with <strong>no bus-tie</strong>. Appears redundant at first glance.
+  </p>
+
+  <p>
+    <strong>SPOF(s) identified:</strong> Each transformer is a SPOF <em>for its own bus</em>.
+    The redundancy is illusory: the healthy transformer has no path to the dead bus.
+  </p>
+
+  <p>
+    <strong>Consequence:</strong> Loss of TX-1 drops <strong>all of Bus A</strong>; loss of TX-2
+    drops <strong>all of Bus B</strong>. Half the plant is lost on any single transformer or
+    feeder failure — even though two transformers are installed.
+  </p>
+
+  <div class="note">
+    <strong>The "two transformers but still not N-1" lesson:</strong> The number of transformers is
+    irrelevant if there is no means to transfer load between buses. N-1 requires both the
+    equipment <em>and</em> the interconnection.
+  </div>
+
+  <p>
+    <strong>Mitigation:</strong> Install a normally-open auto-close bus-tie (BT) between Bus A and
+    Bus B. The bus-tie must close automatically on loss of either incomer. Verify that either
+    transformer can carry the essential plant load in N-1 condition (see transformer loading
+    calculations in Part 2).
+  </p>
+
+  <!-- ---- C ---- -->
+  <h3 id="s-library-c">Variant C — Single Utility Incomer / Single MV Breaker</h3>
+
+  <figure class="fig">
+    <div class="svg-embed" data-src="diagrams/svg/spof-C.svg"></div>
+    <figcaption>
+      Fig 3-C — SPOF variant C: good LV architecture but single MV incomer and bus (indicative).
+    </figcaption>
+  </figure>
+
+  <p>
+    <strong>Configuration:</strong> The LV side is well-arranged (TX-1, TX-2, bus-tie), but
+    <strong>all power flows through a single utility feeder, single MV incomer breaker [52-I],
+    and single MV bus</strong>.
+  </p>
+
+  <p>
+    <strong>SPOF(s) identified:</strong> Single utility feeder, single MV incomer CB, and the
+    single MV busbar. The SPOF has <strong>moved upstream</strong> — it is now at the MV intake,
+    not the LV distribution level.
+  </p>
+
+  <p>
+    <strong>Consequence:</strong> Loss of the utility supply, the incomer breaker, or an MV bus
+    fault <strong>blacks out the whole plant</strong> regardless of LV redundancy. The LV bus-tie
+    cannot help — both transformers lose their source simultaneously.
+  </p>
+
+  <div class="warning">
+    This is the most common "hidden SPOF" found in existing plants. Engineers who only examine
+    the LV distribution miss it entirely. Always trace the <em>full</em> power path from the
+    utility boundary.
+  </div>
+
+  <p>
+    <strong>Mitigation:</strong> Provide a second independent utility feeder with a closeable MV
+    bus-section (as in Variant E). Where a second feeder is not feasible, rely on DG + ATS to
+    ride through utility loss for all essential loads. Strengthen MV incomer protection
+    (differential, IDMT O/C, earth fault) to minimise fault duration.
+  </p>
+
+  <!-- ---- D ---- -->
+  <h3 id="s-library-d">Variant D — Shared Outgoing Cable / Single MCC for Duty + Standby</h3>
+
+  <figure class="fig">
+    <div class="svg-embed" data-src="diagrams/svg/spof-D.svg"></div>
+    <figcaption>
+      Fig 3-D — SPOF variant D: upstream redundancy defeated by a shared MCC feeder cable (indicative).
+    </figcaption>
+  </figure>
+
+  <p>
+    <strong>Configuration:</strong> Sources are redundant upstream (TX-1, TX-2, bus-tie), but a
+    <strong>single shared outgoing feeder and single MCC (MCC-1)</strong> supplies both a critical
+    duty pump <em>and</em> its standby pump from the same bus section.
+  </p>
+
+  <p>
+    <strong>SPOF(s) identified:</strong> The shared outgoing cable, the MCC-1 bus, and the MCC-1
+    incomer breaker are all common elements serving <em>both</em> the duty and standby machines.
+  </p>
+
+  <p>
+    <strong>Consequence:</strong> One feeder cable fault, MCC bus fault, or MCC incomer trip takes
+    <strong>both duty and standby pumps offline simultaneously</strong>. The standby machine
+    provides no protection against the common supply element. The upstream redundancy is wasted.
+  </p>
+
+  <div class="key">
+    Variant D demonstrates the general principle: <em>redundancy of equipment is only as effective
+    as the independence of its supply</em>. Always check whether duty and standby loads share any
+    cable, MCC, bus section, or protection device upstream.
+  </div>
+
+  <p>
+    <strong>Mitigation:</strong> Feed duty pump from MCC-1 on Bus A; feed standby pump from MCC-2
+    on Bus B. Route the two supply cables via physically separated routes. No single cable, MCC, or
+    bus now disables the function.
+  </p>
+
+  <!-- ---- E ---- -->
+  <h3 id="s-library-e">Variant E — Resilient Reference Layout</h3>
+
+  <figure class="fig">
+    <div class="svg-embed" data-src="diagrams/svg/spof-E.svg"></div>
+    <figcaption>
+      Fig 3-E — Resilient reference layout: all A–D SPOFs mitigated (indicative).
+    </figcaption>
+  </figure>
+
+  <p>
+    <strong>Configuration:</strong> Dual independent utility incomers, closeable MV bus-section,
+    two full-rated transformers on segregated LV buses with a closed/auto bus-tie, duty and
+    standby pumps split across Bus A and Bus B with separately routed cables, DG + ATS for
+    essential loads, and UPS + DCDB for control and protection supplies.
+  </p>
+
+  <p>
+    <strong>Why there is no dominant SPOF:</strong> Every element that was a SPOF in A–D now has
+    an alternative path:
+  </p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Element that was a SPOF in A–D</th>
+        <th>Variant</th>
+        <th>Alternative path in E</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Single transformer + single un-split LV bus</td>
+        <td>A</td>
+        <td>Two full-rated transformers on segregated buses; N-1 load transfer</td>
+      </tr>
+      <tr>
+        <td>Two transformers but no bus-tie</td>
+        <td>B</td>
+        <td>Closed / auto bus-tie BT — fast automatic transfer on loss of either incomer</td>
+      </tr>
+      <tr>
+        <td>Single utility incomer / single MV bus</td>
+        <td>C</td>
+        <td>Dual independent incomers + closeable MV bus-section</td>
+      </tr>
+      <tr>
+        <td>Shared cable / single MCC for duty + standby</td>
+        <td>D</td>
+        <td>Duty on Bus A (MCC-1), standby on Bus B (MCC-2), separately routed cables</td>
+      </tr>
+      <tr>
+        <td>Total utility loss leaving essential loads dark</td>
+        <td>A, B, C</td>
+        <td>DG + ATS — automatic start and transfer to essential bus</td>
+      </tr>
+      <tr>
+        <td>Control / protection supply loss during disturbance</td>
+        <td>All</td>
+        <td>UPS (AC no-break) + DCDB (DC trip / close) — independent of LV bus</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ---- A–E Comparison ---- -->
+  <h3 id="s-library-compare">Summary comparison — Variants A to E</h3>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Variant</th>
+        <th>Description</th>
+        <th>Main SPOF</th>
+        <th>Worst-case consequence</th>
+        <th>Primary mitigation</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>A</strong></td>
+        <td>Single TX, single un-split bus</td>
+        <td>TX-1, LV-MSB bus, MV feeder</td>
+        <td>Whole-plant blackout on any single failure</td>
+        <td>Add TX-2 + split bus + auto bus-tie BT; DG for essential</td>
+      </tr>
+      <tr>
+        <td><strong>B</strong></td>
+        <td>Two TXs, two buses, no bus-tie</td>
+        <td>Each TX/incomer for its own bus</td>
+        <td>Loss of one source drops half the plant</td>
+        <td>Install normally-open auto-close bus-tie BT; confirm N-1 loading</td>
+      </tr>
+      <tr>
+        <td><strong>C</strong></td>
+        <td>Good LV, single MV incomer + bus</td>
+        <td>Single utility feeder, single MV incomer CB, single MV bus</td>
+        <td>Whole-plant blackout despite LV redundancy</td>
+        <td>Dual independent incomers + MV bus-section; DG + ATS for essential</td>
+      </tr>
+      <tr>
+        <td><strong>D</strong></td>
+        <td>Good upstream, shared MCC for duty + standby</td>
+        <td>Shared cable / MCC-1 incomer</td>
+        <td>Single common-element fault loses both duty and standby simultaneously</td>
+        <td>Duty on MCC-1 / Bus A; standby on MCC-2 / Bus B; separate cable routes</td>
+      </tr>
+      <tr>
+        <td><strong>E</strong></td>
+        <td>Resilient reference — all A–D mitigations applied</td>
+        <td><em>No dominant single SPOF</em></td>
+        <td>Any single failure survivable by automatic transfer or standby</td>
+        <td>— (reference target; all common elements have an alternative path)</td>
+      </tr>
+    </tbody>
+  </table>
+
+</section><!-- /s-library -->
+
+
+<!-- ============================================================
+     3.3 — SPOF-HARDENING PRINCIPLES
+============================================================ -->
+<section id="s-principles" data-title="SPOF-Hardening Principles" data-part="Part 3 — SPOF Analysis &amp; Reliability">
+
+  <h2>SPOF-Hardening Principles</h2>
+
+  <p>
+    The A–E library illustrates every mitigation type in practice. The seven underlying
+    principles below apply to any MV/LV plant. Apply them in priority order: first eliminate
+    the highest-consequence SPOFs, then work down the risk register.
+  </p>
+
+  <h3 id="s-principles-n1">N+1 Redundancy</h3>
+  <p>
+    Install at least one more capacity unit than the minimum required to carry the load. For
+    transformers this means <strong>two transformers each rated to carry the essential load in
+    N-1 condition</strong> (i.e. each ≥ essential kVA, not total kVA ÷ 2). For motors,
+    one duty + one standby. N+1 is worthless without the means to transfer — see bus-tie below.
+  </p>
+
+  <h3 id="s-principles-seg">Segregation</h3>
+  <p>
+    Split the LV switchboard into <strong>Bus A and Bus B</strong> with separate incomer CBs
+    and separate LV cable compartments. Physically separate cable routes (different trenches or
+    cable ladders), separate protection panels, and — where practicable — separate room or bay
+    allocations. Segregation limits the zone of any single fault: a bus fault, fire, or arc-flash
+    event on Bus A cannot propagate to Bus B.
+  </p>
+
+  <h3 id="s-principles-bustie">Bus-Tie / Auto-Transfer</h3>
+  <p>
+    A <strong>normally-open auto-close bus-tie (BT)</strong> between Bus A and Bus B lets the
+    surviving transformer back up the dead bus within seconds (typical auto-transfer time:
+    100–500 ms, indicative). Without the bus-tie, N+1 transformers give no N-1 benefit
+    (Variant B). The bus-tie scheme must be tested periodically (at minimum annually on-load
+    or as defined by the site maintenance plan). The BT protection relay must co-ordinate with
+    the transformer incomers to prevent mal-operation.
+  </p>
+
+  <h3 id="s-principles-dualfeed">Dual Feed</h3>
+  <p>
+    Two <strong>independent utility incomers</strong> (physically separate cables from separate
+    substations or ring points) with a closeable MV bus-section remove the upstream intake SPOF
+    (Variant C). Where a second utility feeder is not economically or geographically feasible,
+    the DG + ATS combination must cover all loads that cannot tolerate blackout. Document the
+    gap explicitly in the risk register.
+  </p>
+
+  <h3 id="s-principles-routing">Separate Routing of Duty vs Standby</h3>
+  <p>
+    Run the supply cables for a duty load and its standby load via <strong>separate MCCs and
+    physically separate cable routes</strong> — different cable trenches, ducts or ladder
+    routes that cannot be simultaneously damaged by a single cable fire, flood, or excavation
+    strike. The separation should extend from the LV bus section right back to the MCC incomer
+    (Variant D lesson).
+  </p>
+
+  <h3 id="s-principles-dg">Standby Generation (DG)</h3>
+  <p>
+    A <strong>diesel generator (DG)</strong> sized for the essential load (typically 30–50 % of
+    installed kVA, indicative) with an automatic transfer switch (ATS) provides a completely
+    independent source independent of the utility supply. The DG covers: total utility failure,
+    MV incomer fault, and transformer outage that would otherwise leave essential loads dark.
+    Weekly no-load test and monthly on-load test are minimum recommended practice. Fuel, coolant,
+    and battery condition are critical.
+  </p>
+
+  <h3 id="s-principles-ups">UPS for Control and Protection</h3>
+  <p>
+    The <strong>uninterruptible power supply (UPS)</strong> provides AC no-break power to DCS,
+    PLC, and marshalling panels; the <strong>DC distribution board (DCDB)</strong> provides
+    battery-backed DC (typically 110 V DC or 24 V DC, indicative) for protection relay trip
+    coils, remote indication, and emergency lighting. Without these, a supply disturbance
+    triggers a protection relay loss-of-supply condition, preventing controlled re-energisation.
+    UPS battery condition, bypass functionality, and charger health must be routinely verified.
+  </p>
+
+  <div class="note">
+    <strong>Proportionality:</strong> Every mitigation has a cost, complexity, and footprint
+    trade-off. Apply redundancy where the consequence of failure justifies it. Use the FMECA
+    risk ranking (Section <a href="#s-fmeca">FMECA</a>) to prioritise spend. Essential and
+    safety-critical loads always take precedence.
+  </div>
+
+</section><!-- /s-principles -->
+
+
+<!-- ============================================================
+     3.4 — TYPICAL-SPOF FIELD CHECKLIST
+============================================================ -->
+<section id="s-checklist" data-title="Typical-SPOF Field Checklist" data-part="Part 3 — SPOF Analysis &amp; Reliability">
+
+  <h2>Typical-SPOF Field Checklist</h2>
+
+  <p>
+    Use this checklist during a site walkdown or drawing review. Work through each system zone
+    in order. Tick each item when you have inspected it and are satisfied, or annotate with a
+    finding reference. The checklist is generic and applies to any MV/LV plant of similar
+    configuration; not every item will be present on every site.
+  </p>
+
+  <div class="tip">
+    <strong>Field tip:</strong> Bring a printed copy of the master SLD and mark each SPOF
+    candidate directly on the drawing as you work through the zones below. Cross-reference
+    finding numbers in the margin.
+  </div>
+
+  <table class="form">
+    <tr><td>Site / plant name</td><td>___________________________</td></tr>
+    <tr><td>Assessment reference</td><td>___________________________</td></tr>
+    <tr><td>Engineer (assessor)</td><td>___________________________</td></tr>
+    <tr><td>Date of walkdown</td><td>___________________________</td></tr>
+    <tr><td>SLD revision reviewed</td><td>___________________________</td></tr>
+  </table>
+
+  <!-- ---- Zone 1 ---- -->
+  <h3 id="s-checklist-mv-intake">Zone 1 — MV Intake / Utility Incomer (MV-MET)</h3>
+
+  <div class="note">
+    <strong>Typical consequence if SPOF present:</strong> Total plant blackout, including any
+    downstream LV redundancy. Severity: Critical. Typical mitigation: dual independent incomers,
+    DG + ATS for essential loads.
+  </div>
+
+  <ul class="checklist">
+    <li>Confirm whether the site has ONE or TWO independent utility incomers (physically separate
+        cables from separate utility substations or ring-main points).</li>
+    <li>If a single incomer: verify that DG + ATS coverage for essential loads is sized and
+        commissioned — document the unprotected load gap.</li>
+    <li>Check the MV metering cubicle (MV-MET) — confirm protection relay is present, set,
+        and test records are current.</li>
+    <li>Verify the incoming MV cable route: is the cable protected from physical damage
+        (buried and marked, armoured, away from excavation zones)?</li>
+    <li>Confirm interlock/key scheme between utility incomer and any generator incomer — an
+        accidental parallel condition is a SPOF for the protection system.</li>
+  </ul>
+
+  <!-- ---- Zone 2 ---- -->
+  <h3 id="s-checklist-mv-swgr">Zone 2 — MV Switchgear (MV-SWGR, MV-NER)</h3>
+
+  <div class="note">
+    <strong>Typical consequence if SPOF present:</strong> Total plant blackout or loss of earth
+    fault detection. Severity: Critical to High. Typical mitigation: MV bus-section breaker,
+    dual-incomer MV switchgear, proven NER scheme.
+  </div>
+
+  <ul class="checklist">
+    <li>Is the MV switchgear a single bus or a split bus (with a bus-section breaker)?
+        A single MV bus is a whole-plant SPOF.</li>
+    <li>Check that the MV incomer CB(s) have functional spring-charge / charged indicator and
+        trip coil continuity — a failed trip coil is a hidden SPOF for fault clearance.</li>
+    <li>Verify the MV protection relay (IDMT O/C and earth fault) is active, in-service, and
+        last tested within the maintenance interval.</li>
+    <li>Confirm the neutral earthing resistor (MV-NER) is connected, resistance value within
+        tolerance, and has thermal overload monitoring.</li>
+    <li>Check arc-flash / pressure-relief arrangement on the MV switchgear — a single MV arc
+        event that damages the bus will cause a prolonged outage unless the design contains it.</li>
+    <li>Confirm that MV switchgear control / trip power supply is from the UPS or DCDB — a
+        supply disturbance must not disable protection.</li>
+  </ul>
+
+  <!-- ---- Zone 3 ---- -->
+  <h3 id="s-checklist-transformers">Zone 3 — Transformers TX-1 / TX-2</h3>
+
+  <div class="note">
+    <strong>Typical consequence if SPOF present:</strong> Loss of one transformer — half the
+    plant if no bus-tie, or full plant if only one transformer installed. Severity: High.
+    Typical mitigation: N+1 sizing, auto bus-tie, differential protection, oil/temperature
+    monitoring.
+  </div>
+
+  <ul class="checklist">
+    <li>Confirm two transformers are installed (TX-1 and TX-2). If only one transformer: the
+        entire LV plant is a SPOF for that transformer — document and assess DG coverage.</li>
+    <li>Verify each transformer nameplate (kVA, voltage ratio, vector group Dyn11, impedance)
+        matches the design basis; mismatched impedances affect load sharing after N-1 transfer.</li>
+    <li>Check that each transformer has <strong>independent</strong> MV and LV protection
+        (IDMT O/C, earth fault, winding temperature, oil level / Buchholz gas — as applicable)
+        — shared protection is a common-element SPOF.</li>
+    <li>Confirm the LV incomer CB of TX-1 and the LV incomer CB of TX-2 are <strong>separate
+        circuit breakers</strong> — not a single shared LV incomer.</li>
+    <li>Verify transformer loading in N-1 condition: is either transformer rated to carry the
+        full essential load if the other is out of service?</li>
+    <li>Check physical separation between TX-1 and TX-2 — are they in separate compartments
+        or bays so a fire or catastrophic failure of one cannot damage the other?</li>
+  </ul>
+
+  <!-- ---- Zone 4 ---- -->
+  <h3 id="s-checklist-lv-msb">Zone 4 — LV Main Switchboard &amp; Bus-Tie (LV-MSB, BT)</h3>
+
+  <div class="note">
+    <strong>Typical consequence if SPOF present:</strong> Loss of bus-tie = loss of N-1
+    capability; single LV bus = whole-plant SPOF. Severity: High to Critical. Typical
+    mitigation: split bus with functional auto-close BT, Form 4 compartmentalisation,
+    arc detection.
+  </div>
+
+  <ul class="checklist">
+    <li>Confirm the LV-MSB is a <strong>split-bus arrangement</strong> (Bus A and Bus B as
+        separate bus sections with separate incomer CBs and separate busbars).</li>
+    <li>Verify the bus-tie CB (BT) is present and <strong>in service</strong> (not permanently
+        open with no auto-transfer scheme).</li>
+    <li>Confirm the bus-tie auto-transfer scheme is commissioned: on loss of Bus A incomer,
+        BT closes automatically to feed Bus A from Bus B (and vice versa). Test records?</li>
+    <li>Check the interlocking logic: both LV incomers and the bus-tie should not be able
+        to close simultaneously (prevents dangerous parallel operation).</li>
+    <li>Verify the LV-MSB construction standard (Form 4 compartmentalisation preferred) —
+        a low-form panel allows a fault to spread across bus sections, defeating the split.</li>
+    <li>Check for arc-flash detection (optical or pressure) on the LV-MSB — a bus arc event
+        in a high-fault-level plant is a high-consequence SPOF for the LV distribution.</li>
+    <li>Confirm that Bus A and Bus B feeders to critical loads are balanced — a heavily
+        unbalanced split means N-1 transfer may overload the surviving transformer.</li>
+  </ul>
+
+  <!-- ---- Zone 5 ---- -->
+  <h3 id="s-checklist-mcc">Zone 5 — MCCs and Outgoing Feeders (MCC-1…n)</h3>
+
+  <div class="note">
+    <strong>Typical consequence if SPOF present:</strong> Loss of a critical duty and standby
+    pair simultaneously (Variant D pattern). Severity: High. Typical mitigation: duty and
+    standby on separate MCCs / bus sections, separately routed cables.
+  </div>
+
+  <ul class="checklist">
+    <li>For every critical process function with a duty + standby machine: confirm the duty
+        machine is fed from one MCC / bus section and the standby from a <strong>different</strong>
+        MCC / bus section.</li>
+    <li>Trace the cable routes for duty and standby pairs — do they share a common cable tray,
+        duct bank, or trench? If yes, a single cable fire defeats the redundancy.</li>
+    <li>Check each MCC incomer protection: is it set to clear faults within the cable rating
+        and not to trip the whole MCC on a single outgoing feeder fault?</li>
+    <li>Confirm the MCC bus bar rating and construction (Form type) — a low-form or
+        under-rated MCC bus is a common SPOF for all loads on that MCC.</li>
+    <li>Verify VFD bypass arrangements where provided — a VFD failure with no bypass on
+        a critical load is a SPOF for the driven process function.</li>
+    <li>Check PFC (power factor correction) connection point — shunt PFC banks failing open
+        can cause voltage/reactive power issues that trip loads indirectly.</li>
+  </ul>
+
+  <!-- ---- Zone 6 ---- -->
+  <h3 id="s-checklist-dg">Zone 6 — Standby / Essential Supply (DG, ATS)</h3>
+
+  <div class="note">
+    <strong>Typical consequence if SPOF present:</strong> Essential loads dead on utility failure;
+    ATS or DG unable to start. Severity: Critical (for safety-critical loads). Typical
+    mitigation: regular tested auto-start, redundant ATS control, essential bus clearly defined.
+  </div>
+
+  <ul class="checklist">
+    <li>Confirm the DG rating is sufficient for the defined essential load — if the essential
+        load list has grown since commissioning, the DG may now be undersized.</li>
+    <li>Verify the essential bus is clearly defined and segregated: only loads that must run on
+        generator should be connected. Non-essential loads left on the essential bus overload
+        the DG and cause it to trip — a SPOF for all essential functions.</li>
+    <li>Check ATS operation: is the transfer from mains to DG <strong>automatic</strong> on
+        mains failure detection? What is the auto-start to load time (indicative: &lt;15–30 s)?</li>
+    <li>Confirm ATS transfer logic — does a failed ATS cause the essential bus to stay dead?
+        Is there a manual transfer bypass?</li>
+    <li>Verify DG auto-start test records (weekly no-load, monthly on-load indicative). A DG
+        that has not been tested recently is a high-probability SPOF.</li>
+    <li>Check DG fuel level, fuel storage capacity (hours at full essential load), and fuel
+        delivery contract — fuel exhaustion is a simple and avoidable SPOF.</li>
+    <li>Confirm DG battery (starter battery) condition and last replacement date — a failed
+        battery is a very common reason for a DG not to start.</li>
+  </ul>
+
+  <!-- ---- Zone 7 ---- -->
+  <h3 id="s-checklist-ups">Zone 7 — Control / Protection Supplies (UPS, DCDB)</h3>
+
+  <div class="note">
+    <strong>Typical consequence if SPOF present:</strong> DCS / PLC brownout, loss of protection
+    relay trip power, inability to operate circuit breakers. Severity: High (cascades into all
+    other systems). Typical mitigation: redundant UPS, battery monitoring, bypass capability.
+  </div>
+
+  <ul class="checklist">
+    <li>Confirm a UPS is installed for DCS / PLC / relay panels. Check the rated hold-up time
+        (battery autonomy at full load, <strong>indicative minimum 15–30 min for UPS</strong>; confirm per plant) — is it current or degraded?</li>
+    <li>Verify the UPS battery has been tested (discharge test) within the maintenance interval
+        and that battery string health is monitored (cell voltage, temperature).</li>
+    <li>Check UPS bypass path — can the UPS be bypassed for maintenance without a supply
+        interruption to critical control panels? A UPS with no bypass is itself a SPOF
+        during UPS maintenance or failure.</li>
+    <li>Confirm the DCDB (DC distribution board) is fed from a dedicated battery charger, and
+        that DC supplies reach all protection relay trip / close coils. Check the rated DCDB
+        battery hold-up time (<strong>indicative minimum 2 h</strong>; confirm per plant requirement).</li>
+    <li>Verify DCDB battery charger AC supply — if it is fed from the same bus as the equipment
+        it is meant to back up, a bus fault defeats the DC backup.</li>
+    <li>Check there is no single MCB or fuse in the DC distribution that, if it operates, cuts
+        power to all relay trip coils simultaneously — that is a common-element SPOF for
+        protection.</li>
+  </ul>
+
+  <!-- ---- Zone 8 ---- -->
+  <h3 id="s-checklist-earthing">Zone 8 — Earthing and Neutral (MV-NER, LV neutral)</h3>
+
+  <div class="note">
+    <strong>Typical consequence if SPOF present:</strong> Loss of earth fault protection
+    selectivity, dangerous touch potentials, or undetected earth fault developing into a
+    phase fault. Severity: High (safety). Typical mitigation: periodic resistance check,
+    thermal monitoring, continuity testing of earth conductors.
+  </div>
+
+  <ul class="checklist">
+    <li>Confirm MV-NER is connected and resistance value is within design tolerance
+        (measured at last maintenance, with certificate).</li>
+    <li>Verify only one NER is connected at a time when the MV bus-section is closed — two
+        parallel NERs alter the earth fault current and can defeat protection settings.</li>
+    <li>Check LV transformer neutral earthing (solidly earthed at one point per bus section)
+        — multiple neutral earthing points or a broken neutral are both SPOFs for LV earth
+        fault protection.</li>
+    <li>Confirm the main earth bar continuity: a broken earth conductor is invisible under
+        normal conditions but becomes a dangerous SPOF during a fault event.</li>
+    <li>Verify LV earth fault relay settings match the NER impedance and cable capacitance —
+        a mis-set relay that fails to detect an earth fault is a protection SPOF.</li>
+  </ul>
+
+  <div class="key">
+    Complete all eight zones before closing the field inspection. Annotate findings directly on
+    the SLD print. Assign a finding number to each SPOF identified; these numbers flow directly
+    into the risk register and recommendations in <a href="#p-modifications">Part 4</a>.
+  </div>
+
+  <h3 id="s-checklist-spof-map">Zone-to-SPOF-type mapping</h3>
+
+  <p>
+    The eight zones above align to the SPOF library variants (<a href="#s-library">§ SPOF Library</a>).
+    Use this cross-reference to connect a zone finding to the appropriate modification concept:
+  </p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Checklist zone</th>
+        <th>SPOF type (library)</th>
+        <th>Typical modification</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Zone 1 — MV intake / utility incomer</td>
+        <td><strong>Type C</strong> — single utility incomer / single MV bus
+          (<a href="#s-library-c">§ Variant C</a>)</td>
+        <td>MOD-02 (second MV incomer); DG + ATS (MOD-04)</td>
+      </tr>
+      <tr>
+        <td>Zone 2 — MV switchgear</td>
+        <td><strong>Type C</strong> — single MV bus
+          (<a href="#s-library-c">§ Variant C</a>)</td>
+        <td>MOD-02 (MV bus-section); MOD-09 (arc-flash detection)</td>
+      </tr>
+      <tr>
+        <td>Zone 3 — Transformers TX-1/TX-2</td>
+        <td><strong>Type A</strong> — single transformer / single LV bus
+          (<a href="#s-library-a">§ Variant A</a>)</td>
+        <td>MOD-04 (add TX-2 + split bus); MOD-01 (bus-tie)</td>
+      </tr>
+      <tr>
+        <td>Zone 4 — LV main switchboard &amp; bus-tie</td>
+        <td><strong>Type B</strong> — two TXs, no bus-tie
+          (<a href="#s-library-b">§ Variant B</a>)</td>
+        <td>MOD-01 (auto-close bus-tie)</td>
+      </tr>
+      <tr>
+        <td>Zone 5 — MCCs and outgoing feeders</td>
+        <td><strong>Type D</strong> — shared cable / MCC for duty + standby
+          (<a href="#s-library-d">§ Variant D</a>)</td>
+        <td>MOD-03 (split MCCs); MOD-07 (separate cable routes)</td>
+      </tr>
+      <tr>
+        <td>Zone 6 — Standby / essential supply (DG, ATS)</td>
+        <td><strong>Type A/C</strong> — no backup for utility loss
+          (<a href="#s-library-a">§ Variant A</a>, <a href="#s-library-c">§ Variant C</a>)</td>
+        <td>MOD-04 (DG + ATS); MOD-05 (upgrade to auto ATS)</td>
+      </tr>
+      <tr>
+        <td>Zone 7 — Control / protection supplies (UPS, DCDB)</td>
+        <td><strong>Control SPOF</strong> — control/protection supply loss
+          (all variants, see <a href="#s-library-e">§ Variant E</a>)</td>
+        <td>MOD-08 (UPS + DCDB installation)</td>
+      </tr>
+      <tr>
+        <td>Zone 8 — Earthing and neutral</td>
+        <td><strong>Earthing SPOF</strong> — no standard variant; cross-reference
+          <a href="#p8-earthing-philosophy">P-8 earthing philosophy</a></td>
+        <td>MOD-10 (NER resize / earth-grid extension)</td>
+      </tr>
+    </tbody>
+  </table>
+
+</section><!-- /s-checklist -->
+
+
+<!-- ============================================================
+     3.5 — RELIABILITY METRICS
+============================================================ -->
+<section id="s-metrics" data-title="Reliability Metrics" data-part="Part 3 — SPOF Analysis &amp; Reliability">
+
+  <h2>Reliability Metrics</h2>
+
+  <p>
+    SPOF analysis answers <em>where</em> the weak points are. Reliability metrics answer
+    <em>how bad</em> each weak point is, in quantitative terms. These four quantities are
+    the common language of reliability engineering.
+  </p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Quantity</th>
+        <th>Symbol</th>
+        <th>Formula</th>
+        <th>Meaning</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Failure rate</td>
+        <td><strong>λ</strong></td>
+        <td>failures / hour</td>
+        <td>How often a component fails on average</td>
+      </tr>
+      <tr>
+        <td>Mean time between failures</td>
+        <td><strong>MTBF</strong></td>
+        <td>1 / λ</td>
+        <td>Average operating hours between successive failures</td>
+      </tr>
+      <tr>
+        <td>Mean time to repair / restore</td>
+        <td><strong>MTTR</strong></td>
+        <td>hours</td>
+        <td>Average time from failure detection to restoration (includes spares, labour, access)</td>
+      </tr>
+      <tr>
+        <td>Reliability</td>
+        <td><strong>R(t)</strong></td>
+        <td>e<sup>−λt</sup></td>
+        <td>Probability of zero failures in operating time t</td>
+      </tr>
+      <tr>
+        <td>Availability</td>
+        <td><strong>A</strong></td>
+        <td>MTBF / (MTBF + MTTR)</td>
+        <td>Fraction of time the function is actually available</td>
+      </tr>
+      <tr>
+        <td>Unavailability</td>
+        <td><strong>U</strong></td>
+        <td>1 − A</td>
+        <td>Fraction of time down; multiply by 8760 h/yr for annual downtime estimate</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 id="s-metrics-worked">Worked example — single transformer availability</h3>
+
+  <div class="worked">
+    <h4>Worked example — Single transformer (TX-1) availability (indicative)</h4>
+    <p>
+      Given indicative data: <strong>MTBF = 200,000 h</strong> (transformer major failure, oil-filled
+      distribution type), <strong>MTTR = 168 h</strong> (one week, including spare logistics).
+    </p>
+    <p><strong>Step 1 — Availability:</strong></p>
+    <code class="formula">A = MTBF / (MTBF + MTTR) = 200,000 / (200,000 + 168) = 0.99916</code>
+    <p><strong>Step 2 — Unavailability:</strong></p>
+    <code class="formula">U = 1 − 0.99916 = 8.4 × 10⁻⁴</code>
+    <p><strong>Step 3 — Estimated annual downtime:</strong></p>
+    <code class="formula">Annual downtime = U × 8760 h/yr = 8.4 × 10⁻⁴ × 8760 ≈ 7.4 h/yr</code>
+    <p>
+      <strong>Result:</strong> A single transformer is unavailable for approximately 7.4 hours per
+      year on average (indicative). This sets the baseline for comparison with redundant
+      configurations in the RBD section.
+    </p>
+    <p class="note-inline"><em>All values indicative — use project-specific or published reliability
+    data for real studies.</em></p>
+  </div>
+
+  <div class="tip">
+    <strong>Practical implication of MTTR:</strong> MTTR is strongly influenced by spares holding,
+    access, and contractor response time — all factors within the plant operator's control. A
+    critical spare transformer held on-site can cut MTTR from 168 h to perhaps 24–48 h (indicative),
+    which roughly doubles the annual availability. Reducing MTTR is often the most cost-effective
+    lever available.
+  </div>
+
+</section><!-- /s-metrics -->
+
+
+<!-- ============================================================
+     3.6 — RELIABILITY BLOCK DIAGRAMS
+============================================================ -->
+<section id="s-rbd" data-title="Reliability Block Diagrams (RBD)" data-part="Part 3 — SPOF Analysis &amp; Reliability">
+
+  <h2>Reliability Block Diagrams (RBD)</h2>
+
+  <p>
+    A reliability block diagram (RBD) models how individual component availabilities combine at
+    the system level. Two fundamental topologies:
+  </p>
+
+  <h3 id="s-rbd-series">Series and Parallel Topologies</h3>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Topology</th>
+        <th>Block representation</th>
+        <th>Formula</th>
+        <th>System availability vs components</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Series</strong> (all must work)</td>
+        <td>[A₁] — [A₂] — [A₃] — …</td>
+        <td>A<sub>sys</sub> = A₁ × A₂ × A₃ × …</td>
+        <td>Always <em>lower</em> than the worst individual component</td>
+      </tr>
+      <tr>
+        <td><strong>Parallel</strong> (1-out-of-2)</td>
+        <td>[A₁] in parallel with [A₂]</td>
+        <td>A<sub>par</sub> = 1 − (1 − A₁)(1 − A₂)</td>
+        <td>Always <em>higher</em> than either component alone</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="worked">
+    <h4>Worked example — Essential path availability with and without bus-tie</h4>
+
+    <p>
+      Using the indicative transformer availability derived in
+      <a href="#s-metrics">Section Reliability Metrics</a>:
+      <strong>A<sub>TX</sub> = 0.99916</strong> each.
+    </p>
+
+    <p><strong>Case 1 — Single transformer (SPOF — Variant A):</strong></p>
+    <code class="formula">A = 0.99916 → estimated downtime ≈ 7.4 h/yr</code>
+
+    <p><strong>Case 2 — Two transformers, no bus-tie (Variant B) — each bus still a SPOF:</strong></p>
+    <code class="formula">
+      Each bus: A = 0.99916 (unchanged — the two transformers are in series with their own
+      buses, not in parallel with each other without a tie)
+    </code>
+
+    <p><strong>Case 3 — Two transformers with auto-close bus-tie (master SLD / Variant E):</strong></p>
+    <p>
+      With the bus-tie, TX-1 and TX-2 are effectively in a 1-out-of-2 parallel arrangement for the
+      essential path:
+    </p>
+    <code class="formula">
+      A_par = 1 − (1 − 0.99916)² = 1 − (8.4 × 10⁻⁴)² = 1 − 7.1 × 10⁻⁷ ≈ 0.99999929
+    </code>
+    <code class="formula">
+      Annual downtime ≈ (1 − 0.99999929) × 8760 ≈ 0.006 h/yr (about 22 seconds per year — indicative)
+    </code>
+
+    <p>
+      <strong>Comparison:</strong> Adding the bus-tie reduces estimated annual downtime of the
+      essential path from ~7.4 h/yr to ~0.006 h/yr — a factor of approximately 1 200× improvement
+      (indicative), for the cost of one auto-transfer scheme.
+    </p>
+
+    <p><strong>Series elements on the essential path (the common-element catch):</strong></p>
+    <p>
+      The parallel TX benefit is capped by the <em>series</em> elements that both transformers
+      share. For the essential path: MV-SWGR (series) → (TX-1 ‖ TX-2) → LV-MSB bus → BT
+      (series) → MCC → load. Each series element reduces system availability:
+    </p>
+    <code class="formula">
+      A_essential ≈ A_MV-SWGR × A_par(TX) × A_LV-MSB × A_BT × A_MCC
+    </code>
+    <p>
+      Using indicative values (MV-SWGR: MTBF 500,000 h, MTTR 48 h → A ≈ 0.99990; LV-MSB busbar:
+      MTBF 1,000,000 h, MTTR 72 h → A ≈ 0.99993; BT breaker: MTBF 200,000 h, MTTR 24 h →
+      A ≈ 0.99988; MCC incomer: MTBF 300,000 h, MTTR 8 h → A ≈ 0.99997):
+    </p>
+    <code class="formula">
+      A_essential ≈ 0.99990 × 0.99999929 × 0.99993 × 0.99988 × 0.99997 ≈ 0.99968
+      → ~28 h/yr estimated downtime (dominated by series elements, not the transformers)
+    </code>
+    <p>
+      <strong>Lesson:</strong> The transformer redundancy is so effective that the system
+      availability is now dominated by the <em>series</em> common elements — MV switchgear and
+      bus-tie. This is exactly the Module 3 insight, now quantified. Improving MTTR (faster repair,
+      on-site spares) on these series elements gives more benefit than trying to add further
+      transformer redundancy.
+    </p>
+    <p><em>All values indicative — use project failure data for real studies.</em></p>
+  </div>
+
+  <h3 id="s-rbd-mttr">MTTR as a Design Lever</h3>
+
+  <p>
+    An <strong>automatic bus-tie (BT)</strong> or <strong>ATS</strong> reduces MTTR for the
+    <em>essential load</em> from hours (manual switching, call-out, access) to seconds
+    (automatic transfer). This single change typically raises availability far more cheaply than
+    chasing a lower component failure rate:
+  </p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Transfer method</th>
+        <th>MTTR for essential load</th>
+        <th>Estimated annual downtime (illustrative)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Manual switching (call-out, access, operate)</td>
+        <td>~4–8 h (indicative)</td>
+        <td>~3–7 h/yr per transformer outage event</td>
+      </tr>
+      <tr>
+        <td>Auto-close bus-tie or ATS (100–500 ms)</td>
+        <td>&lt;1 s (indicative)</td>
+        <td>&lt;0.01 h/yr equivalent (effectively zero for most processes)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="key">
+    Improving MTTR through automation (auto-transfer, ATS) is usually the most cost-effective
+    reliability lever. It does not require new hardware on the supply side — only a correctly
+    designed and tested control scheme.
+  </div>
+
+</section><!-- /s-rbd -->
+
+
+<!-- ============================================================
+     3.7 — FMECA
+============================================================ -->
+<section id="s-fmeca" data-title="FMECA — Failure Mode, Effects and Criticality Analysis" data-part="Part 3 — SPOF Analysis &amp; Reliability">
+
+  <h2>FMECA — Failure Mode, Effects and Criticality Analysis</h2>
+
+  <p>
+    FMECA (IEC 60812) is the formal tool for converting a SPOF list into a scored, ranked risk
+    register. For each component, you identify its <strong>failure modes</strong>, trace the
+    <strong>local and system effects</strong>, and score <strong>criticality</strong>.
+  </p>
+
+  <h3 id="s-fmeca-anchors">S / O / D Scale Definitions (1–5)</h3>
+
+  <p>
+    The table below defines what each score value <em>means</em> for Severity, Occurrence and
+    Detection. Use these definitions consistently across all FMECA rows — calibrate to project
+    data (IEEE 493 / ISO 14224) for formal studies.
+    <em>All descriptors are indicative; adapt thresholds to the plant's specific process criticality.</em>
+  </p>
+
+  <table class="tbl" id="tbl-sod-anchors">
+    <thead>
+      <tr>
+        <th>Score</th>
+        <th>Severity (S) — worst system-level consequence</th>
+        <th>Occurrence (O) — failure frequency / likelihood</th>
+        <th>Detection (D) — how easy to detect before system event</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>1</strong></td>
+        <td>Negligible — minor local disturbance; no process impact; corrected in minutes</td>
+        <td>Very rare — once per 20+ years; MTBF &gt; 150,000 h (e.g. NER resistor)</td>
+        <td>Continuously monitored with auto-alarm; failure almost certainly detected immediately</td>
+      </tr>
+      <tr>
+        <td><strong>2</strong></td>
+        <td>Minor — brief interruption of non-critical sub-system; process dip &lt;5 min; no safety event</td>
+        <td>Unlikely — once per 10–20 years; MTBF 60,000–150,000 h (e.g. MV switchgear panel)</td>
+        <td>Periodic inspection / routine test detects most failures within the maintenance interval</td>
+      </tr>
+      <tr>
+        <td><strong>3</strong></td>
+        <td>Significant — partial process shutdown or sub-area loss; production loss &gt;1 h; no safety impact</td>
+        <td>Occasional — once per 3–10 years; MTBF 10,000–60,000 h (e.g. transformer, LV ACB)</td>
+        <td>Intermittent monitoring or manual check; may miss some failure modes between checks</td>
+      </tr>
+      <tr>
+        <td><strong>4</strong></td>
+        <td>High — major production loss or half-plant outage; or a significant safety concern (arc-flash PPE boundary violated)</td>
+        <td>Moderate — once per 1–3 years; MTBF 3,000–10,000 h (e.g. MCC complete, ATS, UPS)</td>
+        <td>No routine monitoring; failure is known only when demanded (standby equipment, latent modes)</td>
+      </tr>
+      <tr>
+        <td><strong>5</strong></td>
+        <td>Catastrophic — whole-plant blackout; safety-critical load lost; personnel injury risk or major equipment damage</td>
+        <td>Frequent — more than once per year; MTBF &lt; 3,000 h (e.g. ageing VFD power electronics, corroded battery)</td>
+        <td>Effectively undetectable without specific test; hidden until a fault event reveals it (D = 5 is the "latent SPOF" indicator)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="tip">
+    <strong>Using these anchors:</strong> Start with Severity. If loss of this one item causes a whole-plant blackout or a safety event, S ≥ 4 regardless of probability. Then set Occurrence from MTBF data (IEEE 493 / Appendix G). Finally set Detection: if there is no live monitoring and no regular test record, D ≥ 4. A D = 5 row (hidden failure) almost always reaches P1 or P2 RPN.
+  </div>
+
+  <h3 id="s-fmeca-method">Scoring method — RPN</h3>
+
+  <p>
+    The most common scoring scheme is the <strong>Risk Priority Number (RPN)</strong>:
+  </p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Factor</th>
+        <th>Symbol</th>
+        <th>Scale</th>
+        <th>Meaning (higher = worse)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Severity</td>
+        <td><strong>S</strong></td>
+        <td>1–5</td>
+        <td>How bad is the worst system-level consequence of this failure mode? (5 = catastrophic / safety-critical)</td>
+      </tr>
+      <tr>
+        <td>Occurrence</td>
+        <td><strong>O</strong></td>
+        <td>1–5</td>
+        <td>How likely / frequent is this failure mode? (5 = frequent / high failure rate)</td>
+      </tr>
+      <tr>
+        <td>Detection</td>
+        <td><strong>D</strong></td>
+        <td>1–5</td>
+        <td>How difficult is it to detect before it becomes a system event? (5 = effectively undetectable)</td>
+      </tr>
+      <tr>
+        <td><strong>RPN</strong></td>
+        <td>S × O × D</td>
+        <td>1–125</td>
+        <td>Overall risk priority — mitigate highest numbers first</td>
+      </tr>
+      <tr>
+        <td><strong>Criticality (Crit)</strong></td>
+        <td>S × O</td>
+        <td>1–25</td>
+        <td>Severity × Occurrence, used alongside SPOF flag for ranking when detection data is uncertain</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="tip">
+    <strong>Scale guidance (1–5):</strong> S=5 = safety-critical or whole-plant blackout;
+    S=4 = essential loads lost; S=3 = significant process impact; S=2 = minor/local disruption; S=1 = negligible.
+    O=5 = frequent (annual or more often); O=1 = very rare (&lt;once per 20 yr).
+    D=5 = failure is latent / undetectable without testing; D=1 = continuously monitored with alarm.
+  </div>
+
+  <h3 id="s-fmeca-bands">Priority bands</h3>
+
+  <p>
+    After scoring, assign each row a priority band. These bands are consistent with
+    the SF-03 priority rule in <a href="#t-analysis">Part 5 — Post-Site Analysis</a>:
+  </p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Band</th>
+        <th>Condition</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>P1</strong></td>
+        <td>SPOF with S ≥ 4, or RPN ≥ 60</td>
+        <td>Immediate action — safety-critical or highest-risk; act before next scheduled outage</td>
+      </tr>
+      <tr>
+        <td><strong>P2</strong></td>
+        <td>RPN 36–59</td>
+        <td>Short-term — plan and implement within 6–12 months</td>
+      </tr>
+      <tr>
+        <td><strong>P3</strong></td>
+        <td>RPN 16–35</td>
+        <td>Medium-term — address in next planned maintenance window (12–24 months)</td>
+      </tr>
+      <tr>
+        <td><strong>P4</strong></td>
+        <td>RPN &lt; 16</td>
+        <td>Monitor — review at next FMECA update; no immediate modification required</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="tip">
+    <strong>Detection (D) is the key lever.</strong> Adding condition monitoring (winding
+    temperature, oil level, battery discharge test, relay self-test) lowers D and therefore
+    RPN without changing the hardware or its failure rate. This is often the cheapest
+    mitigation available.
+  </div>
+
+  <h3 id="s-fmeca-table">Worked FMECA extract — master SLD key components</h3>
+
+  <p>
+    The table below is a representative FMECA extract for the principal components of the
+    indicative 2 MW plant. Scores are illustrative; calibrate the S/O/D scales and use
+    project-specific or published failure data on a real study.
+  </p>
+
+  <div class="note">
+    <strong>Scale reminder:</strong> S, O, D each scored 1–5 (5 = worst). RPN = S × O × D (max 125).
+    All scores are illustrative training values — calibrate with project-specific data for real studies.
+    Priority bands: P1 = SPOF with S ≥ 4 or RPN ≥ 60; P2 = RPN 36–59; P3 = RPN 16–35; P4 &lt; 16.
+  </div>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th style="width:2em;">&#9744;</th>
+        <th>Tag</th>
+        <th>Function</th>
+        <th>Failure mode</th>
+        <th>Local effect</th>
+        <th>System effect</th>
+        <th>S</th>
+        <th>O</th>
+        <th>D</th>
+        <th>RPN</th>
+        <th>Priority</th>
+        <th>Recommended mitigation</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>&#9744;</td>
+        <td><code>MV-SWGR</code></td>
+        <td>MV distribution; isolation</td>
+        <td>MV busbar fault / arc</td>
+        <td>MV bus de-energised; incomer CB trips</td>
+        <td>Total plant blackout (both TXs lose source); DG/ATS essential path only</td>
+        <td>5</td><td>1</td><td>3</td>
+        <td><strong>15</strong></td>
+        <td>P3</td>
+        <td>MV bus-section breaker; arc-flash detection; SF₆ or sealed technology; strict access control</td>
+      </tr>
+      <tr>
+        <td>&#9744;</td>
+        <td><code>MV-SWGR</code></td>
+        <td>MV incomer switching / protection</td>
+        <td>Incomer CB fails to trip on fault</td>
+        <td>Fault not cleared; upstream protection operates</td>
+        <td>Upstream supply lost — utility outage; whole plant affected until utility restores</td>
+        <td>5</td><td>2</td><td>4</td>
+        <td><strong>40</strong></td>
+        <td>P2</td>
+        <td>Annual CB trip-coil continuity test; protection relay secondary injection test; trip circuit supervision alarm</td>
+      </tr>
+      <tr>
+        <td>&#9744;</td>
+        <td><code>TX-1</code></td>
+        <td>Step MV → LV; feed Bus A</td>
+        <td>Winding fault (internal)</td>
+        <td>TX-1 trips on differential / Buchholz; Bus A dead</td>
+        <td>Half plant loses supply; BT must close — if BT fails, Bus A stays dark</td>
+        <td>4</td><td>2</td><td>3</td>
+        <td><strong>24</strong></td>
+        <td>P3</td>
+        <td>Auto bus-tie BT + N-1 loading verified; 87T differential protection; winding temperature and oil-level monitoring</td>
+      </tr>
+      <tr>
+        <td>&#9744;</td>
+        <td><code>TX-2</code></td>
+        <td>Step MV → LV; feed Bus B</td>
+        <td>Winding fault (internal)</td>
+        <td>TX-2 trips on differential / Buchholz; Bus B dead</td>
+        <td>Half plant loses supply; BT must close — if BT fails, Bus B stays dark</td>
+        <td>4</td><td>2</td><td>3</td>
+        <td><strong>24</strong></td>
+        <td>P3</td>
+        <td>Auto bus-tie BT + N-1 loading verified; 87T differential protection; winding temperature and oil-level monitoring</td>
+      </tr>
+      <tr>
+        <td>&#9744;</td>
+        <td><code>BT</code></td>
+        <td>Interconnect Bus A and Bus B; N-1 back-feed</td>
+        <td>Fails to close on bus-tie demand</td>
+        <td>BT remains open; dead bus stays dark</td>
+        <td>Essential loads on dead bus lost for duration of repair — N-1 credit eliminated</td>
+        <td>5</td><td>2</td><td>4</td>
+        <td><strong>40</strong></td>
+        <td>P2</td>
+        <td>Auto-transfer scheme with redundant control; annual on-load transfer test; BT position monitoring and alarm</td>
+      </tr>
+      <tr>
+        <td>&#9744;</td>
+        <td><code>LV-MSB</code></td>
+        <td>Distribute LV to all MCCs</td>
+        <td>Busbar fault / arc-flash event</td>
+        <td>Bus section trips; all outgoing feeders on that section de-energised</td>
+        <td>All loads on affected bus section lost; extended outage during repair/inspection</td>
+        <td>5</td><td>1</td><td>4</td>
+        <td><strong>20</strong></td>
+        <td>P3</td>
+        <td>Form 4 Type 7 compartmentalisation (contains arc to one functional unit); arc-flash detection; planned arc-flash study; routine PM</td>
+      </tr>
+      <tr>
+        <td>&#9744;</td>
+        <td>&#9744;</td>
+        <td><code>DG</code></td>
+        <td>Standby power for essential bus</td>
+        <td>Fails to start on mains loss</td>
+        <td>DG does not reach rated voltage / frequency within transfer time</td>
+        <td>Essential bus stays dark during mains loss event; all essential loads lost</td>
+        <td>5</td><td>4</td><td>3</td>
+        <td><strong>60</strong></td>
+        <td>P1</td>
+        <td>Weekly auto-start (no-load) test; monthly on-load test; fuel, coolant and starter battery monitoring; critical spare parts on-site</td>
+      </tr>
+      <tr>
+        <td>&#9744;</td>
+        <td><code>ATS</code></td>
+        <td>Transfer essential bus from mains to DG and back</td>
+        <td>Fails to transfer (control or contactor fault)</td>
+        <td>ATS remains on dead mains; DG runs unloaded or not at all</td>
+        <td>Essential bus dead during mains outage; safety-critical loads lost for duration</td>
+        <td>5</td><td>3</td><td>4</td>
+        <td><strong>60</strong></td>
+        <td>P1</td>
+        <td>Redundant ATS control relay; monthly on-load transfer test; alarm to PMS on ATS fault; manual bypass provision</td>
+      </tr>
+      <tr>
+        <td>&#9744;</td>
+        <td><code>UPS</code></td>
+        <td>AC no-break supply for DCS / PLC / relays</td>
+        <td>Battery failure / inverter fault</td>
+        <td>UPS output interrupted or degraded</td>
+        <td>DCS / PLC loss-of-power trip; relay panels de-energised; protection may mal-operate or fail to operate</td>
+        <td>4</td><td>3</td><td>3</td>
+        <td><strong>36</strong></td>
+        <td>P2</td>
+        <td>Redundant UPS (N+1 modules or 2 × 50 % UPS on static switch); battery discharge test every 6 months; bypass verified; battery monitoring alarm</td>
+      </tr>
+      <tr>
+        <td>&#9744;</td>
+        <td><code>DCDB</code></td>
+        <td>Battery-backed DC supply for trip / close coils</td>
+        <td>Charger fault or battery depletion</td>
+        <td>DC rail voltage falls below trip coil pick-up level</td>
+        <td>All protection relay trip coils lose power; circuit breakers cannot be tripped — a SPOF for the entire protection system</td>
+        <td>5</td><td>2</td><td>4</td>
+        <td><strong>40</strong></td>
+        <td>P2</td>
+        <td>DC bus voltage monitoring with alarm; periodic battery discharge test; redundant charger; trip circuit supervision on all critical CBs</td>
+      </tr>
+      <tr>
+        <td>&#9744;</td>
+        <td><code>MV-NER</code></td>
+        <td>Limit MV earth fault current; enable selective earth fault protection</td>
+        <td>Open-circuit fault (resistor or connection fails open)</td>
+        <td>MV system becomes effectively unearthed</td>
+        <td>Earth fault overvoltages; phase-to-phase fault escalation; earth fault relay loses sensitivity — hidden hazard</td>
+        <td>4</td><td>2</td><td>5</td>
+        <td><strong>40</strong></td>
+        <td>P2</td>
+        <td>Thermal overload monitoring; annual resistance check; NER connected alarm; verify NER in circuit whenever MV bus-section is closed (parallel NERs)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    <em>RPN scores are illustrative training values — calibrate S/O/D scales with real plant
+    failure data before use in any project study. Indicative only.</em>
+  </p>
+
+  <h3 id="s-fmeca-reading">Reading the FMECA output</h3>
+
+  <p>
+    Sort the FMECA table by RPN descending. The top P1 entries — ATS (RPN 60) and DG (RPN 60) —
+    are the immediate-action priority items. P2 items (RPN 36–59) include BT, MV-SWGR incomer CB
+    (both RPN 40), DCDB (RPN 40), MV-NER (RPN 40) and UPS (RPN 36).
+    Note how <strong>detection (D)</strong> drives a large share of the risk scores: adding
+    monitoring lowers D and cuts RPN without changing hardware. This is consistently the most
+    cost-effective first step.
+  </p>
+
+</section><!-- /s-fmeca -->
+
+
+<!-- ============================================================
+     3.8 — RISK RANKING & RECOMMENDATIONS REGISTER
+============================================================ -->
+<section id="s-recommendations" data-title="Risk Ranking and Recommendations Register" data-part="Part 3 — SPOF Analysis &amp; Reliability">
+
+  <h2>Risk Ranking and Recommendations Register</h2>
+
+  <p>
+    The FMECA RPN scores are converted to a ranked recommendations register — the deliverable
+    that drives plant improvements. The process has three steps:
+  </p>
+
+  <h3 id="s-recommendations-matrix">Step 1 — Plot on a risk matrix</h3>
+
+  <p>
+    Map each FMECA finding to a <strong>Severity × Probability</strong> matrix and assign a
+    risk colour. Act on findings top-down:
+  </p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Severity ↓ / Probability →</th>
+        <th>Low (rare)</th>
+        <th>Medium (occasional)</th>
+        <th>High (frequent)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>High (Critical consequence)</strong></td>
+        <td style="background:#ffe0b2;">Medium</td>
+        <td style="background:#ffcdd2;">High</td>
+        <td style="background:#b71c1c; color:#fff;">CRITICAL</td>
+      </tr>
+      <tr>
+        <td><strong>Medium</strong></td>
+        <td style="background:#f9f9c5;">Low</td>
+        <td style="background:#ffe0b2;">Medium</td>
+        <td style="background:#ffcdd2;">High</td>
+      </tr>
+      <tr>
+        <td><strong>Low</strong></td>
+        <td style="background:#f9f9c5;">Low</td>
+        <td style="background:#f9f9c5;">Low</td>
+        <td style="background:#ffe0b2;">Medium</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 id="s-recommendations-register">Step 2 — Build the recommendations register</h3>
+
+  <p>
+    Each finding becomes a row in the recommendations register. A minimum register structure:
+  </p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th style="width:2em;">&#9744;</th>
+        <th>Ref</th>
+        <th>Tag / Location</th>
+        <th>Finding / SPOF</th>
+        <th>Risk (before)</th>
+        <th>Recommended action</th>
+        <th>Risk (after)</th>
+        <th>Priority</th>
+        <th>Owner</th>
+        <th>Target date</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>&#9744;</td>
+        <td>REC-01</td>
+        <td><code>ATS</code></td>
+        <td>ATS fails to transfer on utility loss — essential bus stays dark</td>
+        <td>High (RPN 60)</td>
+        <td>Install redundant ATS control relay; commission monthly on-load transfer test</td>
+        <td>Low (RPN est. 15)</td>
+        <td><strong>1 — Immediate</strong></td>
+        <td>___</td>
+        <td>___</td>
+        <td>Open</td>
+      </tr>
+      <tr>
+        <td>&#9744;</td>
+        <td>REC-02</td>
+        <td><code>MV-NER</code></td>
+        <td>NER open-circuit fault — undetected MV earth fault risk</td>
+        <td>Medium (RPN 40)</td>
+        <td>Add NER thermal monitor with alarm; annual resistance measurement programme</td>
+        <td>Low (RPN est. 16)</td>
+        <td><strong>2 — Short term</strong></td>
+        <td>___</td>
+        <td>___</td>
+        <td>Open</td>
+      </tr>
+      <tr>
+        <td>&#9744;</td>
+        <td>REC-03</td>
+        <td><code>TX-1</code>, <code>TX-2</code></td>
+        <td>Transformer winding fault with BT failing to close — half-plant extended outage</td>
+        <td>Medium (RPN 24)</td>
+        <td>Commission and test BT auto-transfer scheme; add 87T differential protection; winding temperature alarm</td>
+        <td>Low (RPN est. 12)</td>
+        <td><strong>3 — Medium term</strong></td>
+        <td>___</td>
+        <td>___</td>
+        <td>Open</td>
+      </tr>
+      <tr>
+        <td>&#9744;</td>
+        <td>REC-04</td>
+        <td><code>DG</code></td>
+        <td>DG fails to start on mains loss — essential bus stays dark</td>
+        <td>High (RPN 60)</td>
+        <td>Implement weekly no-load / monthly on-load test regime; add fuel and battery monitoring</td>
+        <td>Low (RPN est. 15)</td>
+        <td><strong>1 — Immediate</strong></td>
+        <td>___</td>
+        <td>___</td>
+        <td>Open</td>
+      </tr>
+      <tr>
+        <td>&#9744;</td>
+        <td>REC-05</td>
+        <td><code>BT</code></td>
+        <td>Bus-tie fails to close — N-1 benefit lost on transformer outage</td>
+        <td>Medium (RPN 40)</td>
+        <td>Annual on-load BT transfer test; BT position monitoring and alarm; BT trip coil continuity supervision</td>
+        <td>Low (RPN est. 16)</td>
+        <td><strong>2 — Short term</strong></td>
+        <td>___</td>
+        <td>___</td>
+        <td>Open</td>
+      </tr>
+      <tr>
+        <td>&#9744;</td>
+        <td>REC-06</td>
+        <td><code>DCDB</code></td>
+        <td>DC rail collapses — all protection trip coils lose power</td>
+        <td>Medium (RPN 40)</td>
+        <td>Add DC bus voltage monitoring alarm; redundant charger; trip circuit supervision on all critical CBs</td>
+        <td>Low (RPN est. 16)</td>
+        <td><strong>2 — Short term</strong></td>
+        <td>___</td>
+        <td>___</td>
+        <td>Open</td>
+      </tr>
+      <tr>
+        <td>&#9744;</td>
+        <td>REC-07</td>
+        <td><code>UPS</code></td>
+        <td>UPS battery or inverter failure — DCS/PLC unplanned trip</td>
+        <td>Medium (RPN 36)</td>
+        <td>6-monthly battery discharge test; add redundant UPS module; verify bypass path</td>
+        <td>Low (RPN est. 12)</td>
+        <td><strong>2 — Short term</strong></td>
+        <td>___</td>
+        <td>___</td>
+        <td>Open</td>
+      </tr>
+      <tr>
+        <td>&#9744;</td>
+        <td>REC-08</td>
+        <td><code>LV-MSB</code></td>
+        <td>Busbar arc-flash — extended section outage pending inspection and repair</td>
+        <td>Low (RPN 20)</td>
+        <td>Upgrade to Form 4 Type 7 if not already; add arc-flash detection; commission arc-flash hazard study</td>
+        <td>Low (RPN est. 8)</td>
+        <td><strong>3 — Medium term</strong></td>
+        <td>___</td>
+        <td>___</td>
+        <td>Open</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 id="s-recommendations-link">Step 3 — Link findings forward</h3>
+
+  <p>
+    Each recommendation in the register flows directly into the modifications catalogue and the
+    site visit action list. See <a href="#p-modifications">Part 4 — Modifications Catalogue</a>
+    for the detailed implementation guidance on each item, and
+    <a href="#t-jubail">the Jubail case study</a> for an example of how this register was
+    applied in practice on a similar plant.
+  </p>
+
+  <div class="tip">
+    <strong>State risk before and after:</strong> Every recommendation should include the
+    estimated RPN (or risk colour) both before and after the mitigation is applied. This makes
+    the value of each action explicit and enables prioritisation when budget is constrained.
+  </div>
+
+</section><!-- /s-recommendations -->
+
+
+<!-- ============================================================
+     3.9 — SELF-CHECK QUESTIONS
+============================================================ -->
+<section id="s-selfcheck" data-title="Self-Check Questions" data-part="Part 3 — SPOF Analysis &amp; Reliability">
+
+  <h2>Self-Check Questions</h2>
+
+  <p>
+    Work through these questions using the SPOF library and reliability sections above. Reveal
+    the answer only after attempting each question.
+  </p>
+
+  <!-- Q1 -->
+  <h3 id="s-selfcheck-q1">Q1 — Identifying a whole-plant SPOF</h3>
+  <p>
+    In Variant A (single transformer, single bus), name <strong>two distinct elements</strong>
+    that are each individually capable of causing a whole-plant blackout.
+  </p>
+  <details>
+    <summary>Show answer</summary>
+    <p>
+      Any two of the following are correct: <strong>TX-1</strong> (the single transformer);
+      the <strong>single un-split LV bus (LV-MSB)</strong>; the <strong>MV feeder cable to
+      TX-1</strong>; the <strong>LV incomer circuit breaker</strong>. Any single one of these
+      failing removes supply from the entire plant — there is no alternative path and no load
+      segregation.
+    </p>
+  </details>
+
+  <!-- Q2 -->
+  <h3 id="s-selfcheck-q2">Q2 — The bus-tie and N-1</h3>
+  <p>
+    Variant B installs two transformers, yet it is not N-1 secure. Explain why — and state
+    exactly what single addition gives N-1 capability (subject to transformer loading).
+  </p>
+  <details>
+    <summary>Show answer</summary>
+    <p>
+      Without a bus-tie, the two transformers are electrically isolated — the healthy transformer
+      has no path to the dead bus. Loss of TX-1 drops <em>all</em> of Bus A; loss of TX-2 drops
+      <em>all</em> of Bus B. Half the plant is lost on any single transformer/feeder failure.
+    </p>
+    <p>
+      The single addition that restores N-1 capability is a <strong>normally-open auto-close
+      bus-tie (BT)</strong> between Bus A and Bus B, with an automatic transfer scheme that closes
+      BT within seconds on loss of either incomer — provided the surviving transformer is rated
+      to carry the combined essential load in N-1 condition.
+    </p>
+  </details>
+
+  <!-- Q3 -->
+  <h3 id="s-selfcheck-q3">Q3 — Hidden SPOF upstream</h3>
+  <p>
+    Variant C has two transformers, a split bus, and a functional bus-tie. Why can a total
+    plant blackout still occur?
+  </p>
+  <details>
+    <summary>Show answer</summary>
+    <p>
+      Because the SPOF is <em>upstream</em> of the transformers. All power flows through a
+      <strong>single utility feeder</strong> and a <strong>single MV incomer CB</strong> on a
+      <strong>single MV bus</strong>. If the utility supply is lost, the incomer CB fails, or
+      an MV bus fault occurs, both transformers simultaneously lose their source. The LV bus-tie
+      cannot help — it interconnects two dead buses. The lesson: always trace the full path from
+      utility boundary to load, not just the LV distribution.
+    </p>
+  </details>
+
+  <!-- Q4 -->
+  <h3 id="s-selfcheck-q4">Q4 — Common element behind apparent redundancy</h3>
+  <p>
+    In Variant D, the upstream supply is fully redundant (two transformers, two buses, bus-tie).
+    Where is the SPOF, and how do you remove it?
+  </p>
+  <details>
+    <summary>Show answer</summary>
+    <p>
+      The SPOF is the <strong>shared outgoing cable and single MCC-1 incomer</strong> that supply
+      both the duty pump <em>and</em> its standby pump from the same bus section. One cable fault,
+      MCC bus fault, or MCC incomer trip takes both pumps offline at once — the standby gives no
+      protection against this common element.
+    </p>
+    <p>
+      Remove it by feeding the <strong>duty pump from MCC-1 on Bus A</strong> and the
+      <strong>standby pump from MCC-2 on Bus B</strong>, with separately routed supply cables.
+      No single cable, MCC, or bus section now disables both the duty and standby function.
+    </p>
+  </details>
+
+  <!-- Q5 -->
+  <h3 id="s-selfcheck-q5">Q5 — Why "two of everything" can still be wrong</h3>
+  <p>
+    A colleague says: "We have two transformers, two buses, and two pumps — we're N-1 secure."
+    Using the lessons from Variants B and D, explain why this statement can still be wrong.
+  </p>
+  <details>
+    <summary>Show answer</summary>
+    <p>
+      <strong>Variant B lesson:</strong> Two transformers and two buses without a bus-tie means
+      each bus still has only one source. Lose one transformer, lose half the plant. The
+      "redundancy" of the second transformer is inaccessible to the dead bus.
+    </p>
+    <p>
+      <strong>Variant D lesson:</strong> Two pumps supplied by the same cable, same MCC, and same
+      bus section — a common element — means a single cable or MCC fault disables both duty and
+      standby simultaneously. The "redundancy" of the second pump is defeated by the shared supply.
+    </p>
+    <p>
+      <strong>Conclusion:</strong> N-1 security requires not just N+1 equipment but also that
+      <em>no single shared element</em> can disable the function. Always check for common
+      elements that bridge the apparent redundancy.
+    </p>
+  </details>
+
+  <!-- Q6 -->
+  <h3 id="s-selfcheck-q6">Q6 — Reliability metrics calculation</h3>
+  <p>
+    A component has <strong>MTBF = 150,000 h</strong> and <strong>MTTR = 120 h</strong>.
+    Calculate its availability and estimated annual downtime.
+  </p>
+  <details>
+    <summary>Show answer</summary>
+    <div class="worked">
+      <p><strong>Availability:</strong></p>
+      <code class="formula">A = MTBF / (MTBF + MTTR) = 150,000 / (150,000 + 120) = 0.99920</code>
+      <p><strong>Unavailability:</strong></p>
+      <code class="formula">U = 1 − 0.99920 = 7.99 × 10⁻⁴</code>
+      <p><strong>Estimated annual downtime:</strong></p>
+      <code class="formula">U × 8760 h/yr = 7.99 × 10⁻⁴ × 8760 ≈ 7.0 h/yr (indicative)</code>
+    </div>
+  </details>
+
+  <!-- Q7 -->
+  <h3 id="s-selfcheck-q7">Q7 — Series vs parallel availability</h3>
+  <p>
+    Two identical units, each with <strong>A = 0.99</strong>. Find the system availability in:
+    (a) series; (b) 1-out-of-2 parallel. Comment on the difference.
+  </p>
+  <details>
+    <summary>Show answer</summary>
+    <div class="worked">
+      <p><strong>(a) Series:</strong></p>
+      <code class="formula">A_ser = 0.99 × 0.99 = 0.9801 → ~174 h/yr downtime</code>
+      <p><strong>(b) Parallel (1-out-of-2):</strong></p>
+      <code class="formula">A_par = 1 − (1 − 0.99)² = 1 − (0.01)² = 0.9999 → ~0.9 h/yr downtime</code>
+      <p>
+        <strong>Comment:</strong> The parallel arrangement is approximately 200× better than series
+        for the same two components. This is the fundamental quantitative argument for N+1 with a
+        transfer path (bus-tie). Series elements (such as the MV switchgear) cap the system
+        availability; they must be addressed through MTTR reduction (faster repair, auto-transfer)
+        rather than adding parallel components.
+      </p>
+    </div>
+  </details>
+
+  <!-- Q8 -->
+  <h3 id="s-selfcheck-q8">Q8 — FMECA scoring and detection</h3>
+  <p>
+    An FMECA entry for the ATS initially scores <strong>S = 5, O = 3, D = 4</strong> (1–5 scale).
+    (a) Calculate the RPN. (b) If monthly on-load testing improves detection to <strong>D = 2</strong>,
+    what is the new RPN? (c) What does this illustrate?
+  </p>
+  <details>
+    <summary>Show answer</summary>
+    <div class="worked">
+      <p><strong>(a) Initial RPN:</strong></p>
+      <code class="formula">RPN = S × O × D = 5 × 3 × 4 = 60</code>
+      <p><strong>(b) After improving detection:</strong></p>
+      <code class="formula">RPN = 5 × 3 × 2 = 30 (reduction of 50 %)</code>
+      <p>
+        <strong>(c) Illustration:</strong> Improving <em>detection</em> through regular
+        testing cuts the RPN by 50 % without any change to the hardware or its failure
+        rate. This is often the lowest-cost mitigation available — a well-structured
+        maintenance and testing programme is a direct reliability investment.
+      </p>
+    </div>
+  </details>
+
+  <div class="key">
+    <strong>Bridge to Part 4:</strong> You have now identified the SPOFs, quantified their
+    availability impact, scored their criticality in the FMECA, and ranked them in a
+    recommendations register. Part 4 — <a href="#p-modifications">Modifications Catalogue</a> —
+    takes the highest-priority findings from this register and develops the detailed
+    implementation guidance: what to specify, how to verify, and what to document. Move there
+    next to close the loop from analysis to action.
+  </div>
+
+</section><!-- /s-selfcheck -->

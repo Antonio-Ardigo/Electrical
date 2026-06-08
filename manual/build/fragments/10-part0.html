@@ -1,0 +1,499 @@
+<!-- ============================================================
+     Part 0 — Orientation
+     Sections: orientation-job | orientation-forms |
+               orientation-workflow | orientation-howto |
+               orientation-conventions
+     ============================================================ -->
+
+<section id="orientation-job" data-title="The Assignment" data-part="Part 0 — Orientation">
+  <h2>The Assignment</h2>
+
+  <p><em>Where you are in the workflow: before anything else, understand what the campaign is and what you are being asked to deliver.</em></p>
+
+  <h3 id="orientation-job-campaign">The SPOF Assessment Campaign</h3>
+
+  <p>
+    You are one of <strong>two Electrical Engineers</strong> on a four-month campaign to deliver an
+    <strong>Electrical Single Point of Failure (SPOF) Assessment</strong> across
+    <strong>21 water and desalination plants</strong> in the Central &amp; Eastern sector
+    (Riyadh, Madinah, Qassim and the Eastern Region). The core team is:
+  </p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Role</th>
+        <th>Count</th>
+        <th>Primary responsibility</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Project Manager (Electrical)</td>
+        <td>1</td>
+        <td>Programme, quality, HSE, client interface; reviews all deliverables before submission.</td>
+      </tr>
+      <tr>
+        <td>Electrical Engineer</td>
+        <td>2</td>
+        <td>Per-plant SPOF assessment, plant calculation packages, concept modifications, assessment forms. <strong>That is you.</strong></td>
+      </tr>
+      <tr>
+        <td>Electrical Technician</td>
+        <td>Optional</td>
+        <td>Non-intrusive field surveys and asset inventory support only — not part of the core team.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 id="orientation-job-scope">What you are asked to do per plant</h3>
+
+  <p>For each of the 21 plants you are expected to work autonomously through the following:</p>
+
+  <ul>
+    <li><strong>Desk study:</strong> review the existing single-line diagrams, equipment schedules and prior studies.</li>
+    <li><strong>Plant calculation package:</strong> produce <em>load-flow</em> (verifying bus voltages and cable loadings under normal and N-1 conditions), <em>short-circuit</em> (prospective fault current at each bus), <em>protection coordination</em> (relay grading), and <em>earthing &amp; lightning</em> assessments with power-system software. <em>Arc-flash</em> per IEEE 1584 (incident energy at each working position) and <em>RAM/RBD</em> — Reliability, Availability, Maintainability / Reliability Block Diagram availability modelling (<a href="#s-rbd">Part 3</a>) — are advantageous.</li>
+    <li><strong>SPOF assessment:</strong> inventory and classify electrical single points of failure; assess criticality using <em>FMECA</em> — Failure Mode, Effects and Criticality Analysis per IEC 60812 (<a href="#s-fmeca">Part 3</a>) — which ranks each failure mode by Risk Priority Number (<em>RPN</em> = Severity × Occurrence × Detection, max 125 on the 1–5 scales used here).</li>
+    <li><strong>SLD verification:</strong> red-line the single-line diagrams against the as-found plant during site visits.</li>
+    <li><strong>Concept modifications:</strong> for each recommended change, prepare a marked-up SLD, equipment outline specification, scheme description, sequence of operation and high-level bill of materials. Concept level only — not detailed design, procurement or construction.</li>
+    <li><strong>Assessment forms:</strong> complete the four per-plant deliverable forms (see <a href="#orientation-forms">Section — The Four Deliverable Forms</a>).</li>
+  </ul>
+
+  <div class="note">
+    <strong>Note — indicative figures:</strong> All ratings, capacities and figures in this manual are <em>indicative and tentative</em>.
+    They illustrate method and typical practice. Confirm every value against the plant's actual load list,
+    short-circuit study, utility connection agreement and governing specifications before acting on them.
+  </div>
+
+  <h3 id="orientation-job-map">Site logistics — Central &amp; Eastern sector</h3>
+
+  <p>
+    The 21 plants are distributed across four hubs. The map below shows a schematic national overview
+    combined with a zoomed sector view. Geometry is not to scale; the per-hub split is indicative.
+  </p>
+
+  <figure class="fig">
+    <div class="svg-embed" data-src="diagrams/svg/wsm-site-logistics-map.svg"></div>
+    <figcaption>Fig 0-1 — Schematic site logistics map, Central &amp; Eastern sector, 21 plants (indicative)</figcaption>
+  </figure>
+
+  <div class="key">Key takeaway: You are an autonomous assessment engineer. Your job is to identify electrical single points of failure, quantify their risk, and recommend practicable mitigations — plant by plant, across 21 sites in four months.</div>
+</section>
+
+<!-- ============================================================ -->
+
+<section id="orientation-forms" data-title="The Four Deliverable Forms" data-part="Part 0 — Orientation">
+  <h2>The Four Deliverable Forms</h2>
+
+  <p><em>Where you are in the workflow: understand the exact deliverables you must produce for every plant before you step on site.</em></p>
+
+  <p>
+    For each of the 21 plants, the primary deliverables are four completed assessment forms plus the
+    plant calculation package and any concept modification packages. The forms are described below.
+    Blank templates are in <a href="#a-blankforms">Appendix F — Blank Forms</a>.
+  </p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Form</th>
+        <th>What it contains</th>
+        <th>When completed</th>
+        <th>Who owns it</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>1. Document Inventory</strong></td>
+        <td>
+          List of all electrical documents obtained or requested: single-line diagrams (revision, date, verified),
+          equipment schedules, protection setting records, prior studies, maintenance records, drawings.
+          Records what was available, what was missing, and what was verified on site.
+        </td>
+        <td>Started in desk study; updated on site visit; finalised after site.</td>
+        <td>Lead Engineer (you) — PM reviews.</td>
+      </tr>
+      <tr>
+        <td><strong>2. FMECA Form</strong></td>
+        <td>
+          Failure Mode, Effects and Criticality Analysis (IEC 60812). One row per electrical item of
+          significance: failure mode, local effect, system effect, existing controls, severity (S),
+          occurrence (O), detectability (D), RPN or criticality number, and recommended action.
+          Identifies and ranks the SPOFs.
+        </td>
+        <td>Populated during analysis phase after desk study and site visit; updated iteratively.</td>
+        <td>Lead Engineer — PM quality-gates before submission.</td>
+      </tr>
+      <tr>
+        <td><strong>3. Recommendations Register</strong></td>
+        <td>
+          Ranked list of recommended modifications or improvements. One row per recommendation:
+          reference number, description, priority (high/medium/low), estimated scope, applicable
+          standard, link to FMECA row, and status (open / in progress / closed). The basis for the
+          concept modification packages.
+        </td>
+        <td>Drafted after FMECA is complete; updated as concept modifications are developed.</td>
+        <td>Lead Engineer — PM approves priority ranking before issue.</td>
+      </tr>
+      <tr>
+        <td><strong>4. Site-Visit Report</strong></td>
+        <td>
+          Factual record of the site visit: date, attendees, areas accessed, equipment observed,
+          as-found conditions (nameplate data, breaker/switch status, visible condition concerns,
+          any thermographic hot-spots if permitted), discrepancies against the SLD, and photographs index.
+          Non-intrusive only — see the warning below.
+        </td>
+        <td>Completed on the day of the site visit; reviewed by PM before issue.</td>
+        <td>Lead Engineer (with optional technician support for data capture).</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="tip">
+    <strong>Tip — form discipline:</strong> Open all four forms as soon as a plant is assigned.
+    Fill the Document Inventory and Site-Visit Report header during desk study so the template is
+    ready on site. Do not wait until after the visit to create the form.
+  </div>
+
+  <div class="tip">
+    <strong>Tip — traceability:</strong> Every row in the FMECA form should carry a unique reference
+    that you can cite in the Recommendations Register. The PM uses this linkage when quality-checking
+    your work.
+  </div>
+
+  <div class="note" id="orientation-forms-idlegend">
+    <strong>Form &amp; row-ID legend.</strong>
+    <strong>SF-01</strong> = Document Inventory; <strong>SF-02</strong> = FMECA Worksheet;
+    <strong>SF-03</strong> = Recommendations Register; <strong>SF-04</strong> = Site-Visit Report.
+    Within each form, rows carry the following prefixes:
+    <code>DOC-xx</code> (SF-01 document rows) |
+    <code>FM-xx</code> (SF-02 FMECA rows) |
+    <code>REC-xx</code> (SF-03 recommendation rows) |
+    <code>OBS-xx</code> (SF-04 observation rows) |
+    <code>PH-xx</code> (SF-04 photolog rows) |
+    <code>ACT-xx</code> (SF-04 action rows).
+    These prefixes are consistent across the blank forms in
+    <a href="#a-blankforms">Appendix E</a> and the worked Jubail example in
+    <a href="#t-jubail">Part 5</a>.
+  </div>
+
+  <div class="key">Key takeaway: Four forms, completed in sequence — Document Inventory, FMECA, Recommendations Register, Site-Visit Report — are the non-negotiable deliverables for every plant. Start them early; update them iteratively.</div>
+</section>
+
+<!-- ============================================================ -->
+
+<section id="orientation-workflow" data-title="Assessment Workflow at a Glance" data-part="Part 0 — Orientation">
+  <h2>Assessment Workflow at a Glance</h2>
+
+  <p><em>Where you are in the workflow: map the full sequence so you can plan your time plant by plant.</em></p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Stage</th>
+        <th>What you do</th>
+        <th>Form(s) updated</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>1 — Pre-site desk study</strong></td>
+        <td>
+          Request and review all available documents: SLDs (confirm revision / date), equipment
+          schedules, prior calculations, protection setting records. Identify missing documents
+          to chase on site. Prepare calculation model shell. Mark up a working copy of the SLD
+          with questions. Brief the optional technician if deployed.
+        </td>
+        <td>Document Inventory (columns: document received, revision, status)</td>
+      </tr>
+      <tr>
+        <td><strong>2 — Site visit (non-intrusive)</strong></td>
+        <td>
+          Verify SLD against as-found installation; red-line discrepancies. Capture nameplate data
+          (ratings, make/model, serial numbers) for all main equipment. Record breaker/switch
+          configuration (normally open / closed). Note visible condition, housekeeping and reliability
+          concerns. Photograph (where permitted) and index photos. Collect any documents not
+          previously received. Strictly observe host permit-to-work and QHSE rules.
+        </td>
+        <td>
+          Site-Visit Report (as-found data);<br>
+          Document Inventory (documents obtained on site)
+        </td>
+      </tr>
+      <tr>
+        <td><strong>3 — Analysis (office)</strong></td>
+        <td>
+          Update the calculation model with as-found data. Run load-flow, short-circuit, protection
+          coordination and earthing/lightning studies. Identify and classify SPOFs from the verified
+          SLD. Populate FMECA rows: failure mode, effects, controls, criticality (S × O × D).
+          Rank items by criticality / risk.
+        </td>
+        <td>FMECA form (all columns)</td>
+      </tr>
+      <tr>
+        <td><strong>4 — Recommendations</strong></td>
+        <td>
+          For each high-criticality FMECA item, develop a concept modification:
+          marked-up SLD, equipment outline specification, scheme description / sequence of operation,
+          and high-level bill of materials. Re-run affected calculations on the modified arrangement.
+          Populate the Recommendations Register with priority, scope and FMECA cross-reference.
+        </td>
+        <td>Recommendations Register (all columns)</td>
+      </tr>
+      <tr>
+        <td><strong>5 — Report &amp; issue</strong></td>
+        <td>
+          PM reviews and quality-gates all four forms and the calculation package. Finalise the
+          Site-Visit Report. Assemble the per-plant deliverable pack (forms + calculation package +
+          concept modification packages + red-lined SLDs). Submit to PM for consolidation into the
+          campaign report.
+        </td>
+        <td>All four forms finalised; calculation package issued.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="tip">
+    <strong>Tip — iterate freely:</strong> The workflow above is a logical sequence, not a strict
+    one-pass process. You will often loop back: a site finding may invalidate a desk-study assumption
+    and require you to update the FMECA and re-run a calculation. Return to earlier stages whenever
+    new information warrants it. The PM expects updated forms up until the submission milestone.
+  </div>
+
+  <div class="key">Key takeaway: Five stages — desk study, site visit, analysis, recommendations, report. The forms are living documents throughout; complete and finalise them in order.</div>
+</section>
+
+<!-- ============================================================ -->
+
+<section id="orientation-howto" data-title="How to Use This Manual" data-part="Part 0 — Orientation">
+  <h2>How to Use This Manual</h2>
+
+  <p><em>Where you are in the workflow: orient yourself to the manual before reading the technical content.</em></p>
+
+  <h3 id="orientation-howto-structure">Manual structure — Parts 0 to 5 and Appendices</h3>
+
+  <p>
+    This manual is a single self-contained HTML file designed for field use (offline, printable).
+    It is organised into six parts and a set of appendices:
+  </p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Part</th>
+        <th>Title</th>
+        <th>What it gives you</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Part 0</strong></td>
+        <td>Orientation (this part)</td>
+        <td>Campaign context, deliverable forms, assessment workflow, conventions.</td>
+      </tr>
+      <tr>
+        <td><strong>Part 1</strong></td>
+        <td>Foundations</td>
+        <td>How to read a MV/LV SLD; every equipment tag and its function; power-flow walk-through;
+            equipment schedule and applicable IEC standards.</td>
+      </tr>
+      <tr>
+        <td><strong>Part 2</strong></td>
+        <td>Calculations</td>
+        <td>All core electrical calculations — load, transformer sizing, full-load current,
+            short-circuit, voltage drop, PFC, cable selection, protection coordination, arc-flash,
+            earthing — with worked examples and a formula card.</td>
+      </tr>
+      <tr>
+        <td><strong>Part 3</strong></td>
+        <td>SPOF Analysis</td>
+        <td>SPOF identification method, a symbol library of failure points, FMECA and RBD techniques,
+            reliability metrics, and a printable site checklist.</td>
+      </tr>
+      <tr>
+        <td><strong>Part 4</strong></td>
+        <td>Control Philosophy &amp; Modifications</td>
+        <td>DCS/SCADA/PMS integration, best-practice modification templates, grid-instability
+            mitigations, modification concept packages.</td>
+      </tr>
+      <tr>
+        <td><strong>Part 5</strong></td>
+        <td>Field Tasks</td>
+        <td>Step-by-step site procedures: desk study, site-visit checklist, drawing verification,
+            analysis workflow, report assembly, and the first-assignment walk-through.</td>
+      </tr>
+      <tr>
+        <td><strong>Appendices</strong></td>
+        <td>A – G</td>
+        <td>Glossary, standards list, formula card, full tag table, blank forms, hardening guidance,
+            MTBF reference data.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 id="orientation-howto-onassignment">How to use the manual on a real assignment</h3>
+
+  <ol>
+    <li>
+      <strong>First time through:</strong> read Parts 0 and 1 in full to internalise the workflow
+      and the tag scheme. Skim Part 2 to confirm you are comfortable with the calculation methods.
+    </li>
+    <li>
+      <strong>Starting a new plant:</strong> open <a href="#t-desk">Part 5 — Desk Study Procedure</a>
+      and follow the checklist. Open the four blank forms from
+      <a href="#a-blankforms">Appendix F</a> and fill the header information.
+    </li>
+    <li>
+      <strong>On site:</strong> use the <a href="#t-visual-checklist">Visual Inspection Checklist</a>
+      and the <a href="#t-drawing-checklist">Drawing Verification Checklist</a> in Part 5.
+      The SPOF symbol library in <a href="#s-library">Part 3</a> helps you spot failure points
+      in real switchrooms.
+    </li>
+    <li>
+      <strong>During analysis:</strong> use Part 2 for calculations and Part 3 for the FMECA
+      method. Cross-reference to the <a href="#a-formula">Formula Card</a> and
+      <a href="#a-mtbf">MTBF Reference Data</a> as needed.
+    </li>
+    <li>
+      <strong>New to this type of assignment?</strong> Start with the
+      <a href="#t-walkthrough">first-assignment walk-through</a> in Part 5 — it takes you
+      step-by-step through one complete plant cycle.
+    </li>
+  </ol>
+
+  <div class="tip">
+    <strong>Tip — sidebar navigation:</strong> Use the sidebar (left panel) to jump between sections.
+    Checkboxes in checklist sections persist across sessions in the same browser — use them to track
+    progress per plant.
+  </div>
+
+  <div class="note">
+    <strong>On-screen vs field use.</strong> Checkbox tick-state is stored in the browser's
+    <code>localStorage</code> — it persists only in the same browser on the same device, and
+    only while on-screen at a desk. For <strong>field use, print the relevant checklist
+    section</strong> (use the Print button or Ctrl+P) and tick on paper. Transfer your
+    paper marks back to the on-screen form in the office.
+  </div>
+
+  <div class="key">Key takeaway: Parts 0 and 1 are the foundation — read them first. Parts 2–4 are your reference library. Part 5 is your task guide on every assignment. Use the first-assignment walk-through in Part 5 if you are new to this type of work.</div>
+</section>
+
+<!-- ============================================================ -->
+
+<section id="orientation-conventions" data-title="Conventions Used in This Manual" data-part="Part 0 — Orientation">
+  <h2>Conventions Used in This Manual</h2>
+
+  <p><em>Where you are in the workflow: agree the ground rules before diving into the technical content.</em></p>
+
+  <h3 id="orientation-conventions-iec">IEC basis, voltages and frequency</h3>
+
+  <p>
+    This manual follows <strong>IEC conventions</strong> throughout:
+  </p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Parameter</th>
+        <th>Value used in this manual</th>
+        <th>Note</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Standards basis</td>
+        <td>IEC (primary); IEEE referenced where relevant (e.g. IEEE 1584, IEEE 493)</td>
+        <td>ANSI device numbers (52, 87T, etc.) are used in SLD breaker notation as industry practice.</td>
+      </tr>
+      <tr>
+        <td>MV supply voltage</td>
+        <td>11 kV (indicative)</td>
+        <td>Actual utility voltage must be confirmed per plant; could be 6.6 kV, 13.8 kV or other.</td>
+      </tr>
+      <tr>
+        <td>LV distribution voltage</td>
+        <td>400 / 415 V, 3-phase</td>
+        <td>IEC utilisation voltage. Confirm per plant.</td>
+      </tr>
+      <tr>
+        <td>Frequency</td>
+        <td>50 Hz</td>
+        <td>Confirm per plant.</td>
+      </tr>
+      <tr>
+        <td>MV earthing</td>
+        <td>Resistance-earthed (NER)</td>
+        <td>Typical for industrial MV; confirm per plant.</td>
+      </tr>
+      <tr>
+        <td>LV earthing</td>
+        <td>TN-S (solid)</td>
+        <td>Confirm per plant.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 id="orientation-conventions-tags">Equipment tag scheme</h3>
+
+  <p>
+    Every piece of equipment is identified by a <strong>tag</strong>. Use only the tags in the
+    table below; do not invent new tags without updating the project reference document.
+    The full tag table with functions is in <a href="#f-equipment-table">Part 1 — Equipment Function Table</a>
+    and <a href="#a-tags">Appendix D — Tag Table</a>.
+  </p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Tag</th>
+        <th>Equipment</th>
+        <th>Voltage level</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><code>MV-MET</code></td><td>Utility revenue metering cubicle</td><td>11 kV (MV)</td></tr>
+      <tr><td><code>MV-SWGR</code></td><td>MV metal-clad switchgear</td><td>11 kV (MV)</td></tr>
+      <tr><td><code>MV-NER</code></td><td>Neutral Earthing Resistor</td><td>11 kV (MV)</td></tr>
+      <tr><td><code>TX-1</code> / <code>TX-2</code></td><td>MV/LV power transformers (2 × 1600 kVA, indicative)</td><td>11 kV / 400 V boundary</td></tr>
+      <tr><td><code>LV-MSB</code></td><td>Main LV switchboard / PCC (split bus A/B)</td><td>400 V (LV)</td></tr>
+      <tr><td><code>BT</code></td><td>LV bus-tie circuit breaker (normally open)</td><td>400 V (LV)</td></tr>
+      <tr><td><code>MCC-1</code> … <code>MCC-n</code></td><td>Motor Control Centres</td><td>400 V (LV)</td></tr>
+      <tr><td><code>VFD</code></td><td>Variable Frequency Drive(s)</td><td>400 V (LV)</td></tr>
+      <tr><td><code>PFC</code></td><td>Power factor correction (detuned capacitor bank)</td><td>400 V (LV)</td></tr>
+      <tr><td><code>DG</code></td><td>Diesel generator set</td><td>400 V (LV)</td></tr>
+      <tr><td><code>ATS</code></td><td>Automatic Transfer Switch</td><td>400 V (LV)</td></tr>
+      <tr><td><code>UPS</code></td><td>Uninterruptible Power Supply</td><td>400 V AC / battery</td></tr>
+      <tr><td><code>DCDB</code></td><td>DC battery and charger system (110 V DC)</td><td>DC (MV switchgear supply)</td></tr>
+      <tr><td><code>DB</code> / <code>EDB</code></td><td>Distribution board / Essential distribution board</td><td>400 V (LV)</td></tr>
+    </tbody>
+  </table>
+
+  <h3 id="orientation-conventions-indicative">The "indicative figures" rule</h3>
+
+  <p>
+    Every numerical value in this manual — voltages, currents, kVA ratings, cable sizes, fault
+    levels, reliability figures — is <strong>indicative and tentative</strong>. The values are
+    sized to a representative ~2 MW industrial plant to illustrate calculation method and typical
+    equipment selection. They are <strong>not</strong> a substitute for:
+  </p>
+  <ul>
+    <li>the plant's actual load list and demand study,</li>
+    <li>a site-specific short-circuit and load-flow study,</li>
+    <li>the utility connection agreement and network data,</li>
+    <li>the governing project specification and local regulations.</li>
+  </ul>
+  <p>Always confirm figures against actual plant data before acting on them.</p>
+
+  <div class="warning">
+    <strong>Warning — NON-INTRUSIVE surveys only.</strong>
+    All site surveys under this campaign are <strong>non-intrusive</strong>. You must not open
+    energised panels, operate switches or breakers, perform live electrical tests, or take
+    measurements that require direct contact with live conductors. Visual inspection, nameplate
+    reading, photograph capture and accessible meter readings are permitted.
+    Strictly observe the host permit-to-work procedure, lock-out/tag-out rules and QHSE
+    requirements (ISO 9001 / 14001 / 45001) at every plant. The NDA and applicable national
+    cybersecurity data-handling requirements apply to all data collected on site.
+  </div>
+
+  <div class="key">Key takeaway: IEC basis, 11 kV / 400–415 V / 50 Hz, the tag scheme above, all figures indicative — and every site survey is non-intrusive. These four rules underpin everything in this manual. Part 1 now walks you through the standard MV/LV plant architecture you will encounter on most of these 21 sites.</div>
+</section>
