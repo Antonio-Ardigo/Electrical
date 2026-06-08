@@ -158,14 +158,14 @@
       <tr>
         <td>Transformer 1</td>
         <td><code>TX-1</code></td>
-        <td>LV-MSB Bus A + all MCC-1/3 loads</td>
+        <td>LV-MSB Bus A + all MCC-1 (Bus A) loads</td>
         <td>No — BT auto-closes, TX-2 backs up</td>
         <td>TX-2 via auto-close bus-tie BT</td>
       </tr>
       <tr>
         <td>Transformer 2</td>
         <td><code>TX-2</code></td>
-        <td>LV-MSB Bus B + all MCC-2/4 loads</td>
+        <td>LV-MSB Bus B + all MCC-2 (Bus B) loads</td>
         <td>No — BT auto-closes, TX-1 backs up</td>
         <td>TX-1 via auto-close bus-tie BT</td>
       </tr>
@@ -1285,13 +1285,15 @@
       </tr>
       <tr>
         <td>&#9744;</td>
+        <td>&#9744;</td>
         <td><code>DG</code></td>
         <td>Standby power for essential bus</td>
         <td>Fails to start on mains loss</td>
         <td>DG does not reach rated voltage / frequency within transfer time</td>
         <td>Essential bus stays dark during mains loss event; all essential loads lost</td>
-        <td>8</td><td>4</td><td>3</td>
-        <td><strong>96</strong></td>
+        <td>5</td><td>4</td><td>3</td>
+        <td><strong>60</strong></td>
+        <td>P1</td>
         <td>Weekly auto-start (no-load) test; monthly on-load test; fuel, coolant and starter battery monitoring; critical spare parts on-site</td>
       </tr>
       <tr>
@@ -1301,8 +1303,9 @@
         <td>Fails to transfer (control or contactor fault)</td>
         <td>ATS remains on dead mains; DG runs unloaded or not at all</td>
         <td>Essential bus dead during mains outage; safety-critical loads lost for duration</td>
-        <td>9</td><td>3</td><td>4</td>
-        <td><strong>108</strong></td>
+        <td>5</td><td>3</td><td>4</td>
+        <td><strong>60</strong></td>
+        <td>P1</td>
         <td>Redundant ATS control relay; monthly on-load transfer test; alarm to PMS on ATS fault; manual bypass provision</td>
       </tr>
       <tr>
@@ -1312,8 +1315,9 @@
         <td>Battery failure / inverter fault</td>
         <td>UPS output interrupted or degraded</td>
         <td>DCS / PLC loss-of-power trip; relay panels de-energised; protection may mal-operate or fail to operate</td>
-        <td>7</td><td>3</td><td>3</td>
-        <td><strong>63</strong></td>
+        <td>4</td><td>3</td><td>3</td>
+        <td><strong>36</strong></td>
+        <td>P2</td>
         <td>Redundant UPS (N+1 modules or 2 × 50 % UPS on static switch); battery discharge test every 6 months; bypass verified; battery monitoring alarm</td>
       </tr>
       <tr>
@@ -1323,8 +1327,9 @@
         <td>Charger fault or battery depletion</td>
         <td>DC rail voltage falls below trip coil pick-up level</td>
         <td>All protection relay trip coils lose power; circuit breakers cannot be tripped — a SPOF for the entire protection system</td>
-        <td>9</td><td>2</td><td>4</td>
-        <td><strong>72</strong></td>
+        <td>5</td><td>2</td><td>4</td>
+        <td><strong>40</strong></td>
+        <td>P2</td>
         <td>DC bus voltage monitoring with alarm; periodic battery discharge test; redundant charger; trip circuit supervision on all critical CBs</td>
       </tr>
       <tr>
@@ -1334,8 +1339,9 @@
         <td>Open-circuit fault (resistor or connection fails open)</td>
         <td>MV system becomes effectively unearthed</td>
         <td>Earth fault overvoltages; phase-to-phase fault escalation; earth fault relay loses sensitivity — hidden hazard</td>
-        <td>7</td><td>2</td><td>7</td>
-        <td><strong>98</strong></td>
+        <td>4</td><td>2</td><td>5</td>
+        <td><strong>40</strong></td>
+        <td>P2</td>
         <td>Thermal overload monitoring; annual resistance check; NER connected alarm; verify NER in circuit whenever MV bus-section is closed (parallel NERs)</td>
       </tr>
     </tbody>
@@ -1349,8 +1355,9 @@
   <h3 id="s-fmeca-reading">Reading the FMECA output</h3>
 
   <p>
-    Sort the FMECA table by RPN descending. The top entries — ATS (108), MV-NER (98),
-    TX-1/TX-2/DG (96 each), MV-SWGR incomer CB (96) — are the priority items for mitigation.
+    Sort the FMECA table by RPN descending. The top P1 entries — ATS (RPN 60) and DG (RPN 60) —
+    are the immediate-action priority items. P2 items (RPN 36–59) include BT, MV-SWGR incomer CB
+    (both RPN 40), DCDB (RPN 40), MV-NER (RPN 40) and UPS (RPN 36).
     Note how <strong>detection (D)</strong> drives a large share of the risk scores: adding
     monitoring lowers D and cuts RPN without changing hardware. This is consistently the most
     cost-effective first step.
@@ -1437,9 +1444,9 @@
         <td>R-01</td>
         <td><code>ATS</code></td>
         <td>ATS fails to transfer on utility loss — essential bus stays dark</td>
-        <td>High (RPN 108)</td>
+        <td>High (RPN 60)</td>
         <td>Install redundant ATS control relay; commission monthly on-load transfer test</td>
-        <td>Low (RPN est. 27)</td>
+        <td>Low (RPN est. 15)</td>
         <td><strong>1 — Immediate</strong></td>
         <td>___</td>
         <td>___</td>
@@ -1450,10 +1457,10 @@
         <td>R-02</td>
         <td><code>MV-NER</code></td>
         <td>NER open-circuit fault — undetected MV earth fault risk</td>
-        <td>High (RPN 98)</td>
+        <td>Medium (RPN 40)</td>
         <td>Add NER thermal monitor with alarm; annual resistance measurement programme</td>
-        <td>Low (RPN est. 28)</td>
-        <td><strong>1 — Immediate</strong></td>
+        <td>Low (RPN est. 16)</td>
+        <td><strong>2 — Short term</strong></td>
         <td>___</td>
         <td>___</td>
         <td>Open</td>
@@ -1463,10 +1470,10 @@
         <td>R-03</td>
         <td><code>TX-1</code>, <code>TX-2</code></td>
         <td>Transformer winding fault with BT failing to close — half-plant extended outage</td>
-        <td>High (RPN 96)</td>
+        <td>Medium (RPN 24)</td>
         <td>Commission and test BT auto-transfer scheme; add 87T differential protection; winding temperature alarm</td>
-        <td>Medium (RPN est. 24)</td>
-        <td><strong>2 — Short term</strong></td>
+        <td>Low (RPN est. 12)</td>
+        <td><strong>3 — Medium term</strong></td>
         <td>___</td>
         <td>___</td>
         <td>Open</td>
@@ -1476,10 +1483,10 @@
         <td>R-04</td>
         <td><code>DG</code></td>
         <td>DG fails to start on mains loss — essential bus stays dark</td>
-        <td>High (RPN 96)</td>
+        <td>High (RPN 60)</td>
         <td>Implement weekly no-load / monthly on-load test regime; add fuel and battery monitoring</td>
-        <td>Low (RPN est. 24)</td>
-        <td><strong>2 — Short term</strong></td>
+        <td>Low (RPN est. 15)</td>
+        <td><strong>1 — Immediate</strong></td>
         <td>___</td>
         <td>___</td>
         <td>Open</td>
@@ -1489,9 +1496,9 @@
         <td>R-05</td>
         <td><code>BT</code></td>
         <td>Bus-tie fails to close — N-1 benefit lost on transformer outage</td>
-        <td>High (RPN 90)</td>
+        <td>Medium (RPN 40)</td>
         <td>Annual on-load BT transfer test; BT position monitoring and alarm; BT trip coil continuity supervision</td>
-        <td>Low (RPN est. 18)</td>
+        <td>Low (RPN est. 16)</td>
         <td><strong>2 — Short term</strong></td>
         <td>___</td>
         <td>___</td>
@@ -1502,9 +1509,9 @@
         <td>R-06</td>
         <td><code>DCDB</code></td>
         <td>DC rail collapses — all protection trip coils lose power</td>
-        <td>Medium (RPN 72)</td>
+        <td>Medium (RPN 40)</td>
         <td>Add DC bus voltage monitoring alarm; redundant charger; trip circuit supervision on all critical CBs</td>
-        <td>Low (RPN est. 18)</td>
+        <td>Low (RPN est. 16)</td>
         <td><strong>2 — Short term</strong></td>
         <td>___</td>
         <td>___</td>
@@ -1515,10 +1522,10 @@
         <td>R-07</td>
         <td><code>UPS</code></td>
         <td>UPS battery or inverter failure — DCS/PLC unplanned trip</td>
-        <td>Medium (RPN 63)</td>
+        <td>Medium (RPN 36)</td>
         <td>6-monthly battery discharge test; add redundant UPS module; verify bypass path</td>
-        <td>Low (RPN est. 21)</td>
-        <td><strong>3 — Medium term</strong></td>
+        <td>Low (RPN est. 12)</td>
+        <td><strong>2 — Short term</strong></td>
         <td>___</td>
         <td>___</td>
         <td>Open</td>
@@ -1528,9 +1535,9 @@
         <td>R-08</td>
         <td><code>LV-MSB</code></td>
         <td>Busbar arc-flash — extended section outage pending inspection and repair</td>
-        <td>Medium (RPN 54)</td>
+        <td>Low (RPN 20)</td>
         <td>Upgrade to Form 4 Type 7 if not already; add arc-flash detection; commission arc-flash hazard study</td>
-        <td>Low (RPN est. 9)</td>
+        <td>Low (RPN est. 8)</td>
         <td><strong>3 — Medium term</strong></td>
         <td>___</td>
         <td>___</td>
@@ -1716,7 +1723,7 @@
   <!-- Q8 -->
   <h3 id="s-selfcheck-q8">Q8 — FMECA scoring and detection</h3>
   <p>
-    An FMECA entry for the ATS initially scores <strong>S = 9, O = 3, D = 4</strong>.
+    An FMECA entry for the ATS initially scores <strong>S = 5, O = 3, D = 4</strong> (1–5 scale).
     (a) Calculate the RPN. (b) If monthly on-load testing improves detection to <strong>D = 2</strong>,
     what is the new RPN? (c) What does this illustrate?
   </p>
@@ -1724,9 +1731,9 @@
     <summary>Show answer</summary>
     <div class="worked">
       <p><strong>(a) Initial RPN:</strong></p>
-      <code class="formula">RPN = S × O × D = 9 × 3 × 4 = 108</code>
+      <code class="formula">RPN = S × O × D = 5 × 3 × 4 = 60</code>
       <p><strong>(b) After improving detection:</strong></p>
-      <code class="formula">RPN = 9 × 3 × 2 = 54 (reduction of 50 %)</code>
+      <code class="formula">RPN = 5 × 3 × 2 = 30 (reduction of 50 %)</code>
       <p>
         <strong>(c) Illustration:</strong> Improving <em>detection</em> through regular
         testing cuts the RPN by 50 % without any change to the hardware or its failure

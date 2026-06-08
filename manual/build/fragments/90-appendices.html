@@ -75,7 +75,7 @@
       <tr><td><strong>RAM</strong></td><td>Reliability, Availability, Maintainability. The quantitative study of system uptime: how often failures occur (R), what fraction of time the system works (A), and how quickly it is restored (M). See <a href="#s-fmeca">Part 3 — FMECA / RAM</a>.</td></tr>
       <tr><td><strong>RBD</strong></td><td>Reliability Block Diagram. Series / parallel model used to compute system availability from component data. Series elements degrade availability; parallel (redundant) paths multiply it up. See <a href="#s-fmeca">Part 3</a>.</td></tr>
       <tr><td><strong>ROCOF</strong></td><td>Rate of Change of Frequency. Measure of frequency volatility on the grid (Hz/s). Increases as synchronous generation (with inertia) is displaced by inverter-based renewables. High ROCOF can trip plant protection (df/dt relays) prematurely.</td></tr>
-      <tr><td><strong>RPN</strong></td><td>Risk Priority Number. FMECA criticality score = Severity (S) × Occurrence (O) × Detection (D), each scored 1–10 (higher = worse outcome / more frequent / harder to detect). Used to rank FMECA findings for action priority. See <a href="#a-formula">Appendix C</a>.</td></tr>
+      <tr><td><strong>RPN</strong></td><td>Risk Priority Number. FMECA criticality score = Severity (S) × Occurrence (O) × Detection (D), each scored 1–5 (higher = worse outcome / more frequent / harder to detect). RPN max = 125. Used to rank FMECA findings for action priority. Priority bands: P1 = SPOF with S ≥ 4 or RPN ≥ 60; P2 = RPN 36–59; P3 = RPN 16–35; P4 &lt; 16. See <a href="#a-formula">Appendix C</a>.</td></tr>
       <tr><td><strong>SCADA</strong></td><td>Supervisory Control and Data Acquisition. Supervisory monitoring and control layer for the power system; aggregates IED data, trends energy, and provides alarm management to operators.</td></tr>
       <tr><td><strong>SLD</strong></td><td>Single-Line Diagram. One-line schematic showing the power system's main components and their electrical connections, using IEC 60617 symbols. The primary document for SLD verification on site and for SPOF hunting.</td></tr>
       <tr><td><strong>SPOF</strong></td><td>Single Point of Failure. A component or path whose failure alone disables a function or supply that must remain available. The central concept of this assessment campaign. See <a href="#s-checklist">Part 3</a> and <a href="#a-hardening">Appendix F</a>.</td></tr>
@@ -357,8 +357,8 @@
       <tr>
         <td><strong>FMECA Risk Priority Number</strong></td>
         <td><code>RPN = S &times; O &times; D</code></td>
-        <td>S: Severity (1–10); O: Occurrence (1–10); D: Detection difficulty (1–10; 10 = hardest to detect). Higher RPN = higher risk. Rank and act top-down.</td>
-        <td>ATS: S=9, O=3, D=4 &rarr; RPN = 108 (highest in example FMECA)</td>
+        <td>S: Severity (1–5); O: Occurrence (1–5); D: Detection difficulty (1–5; 5 = hardest to detect). RPN max = 125. Higher RPN = higher risk. Priority bands: P1 = SPOF with S ≥ 4 or RPN ≥ 60; P2 = RPN 36–59; P3 = RPN 16–35; P4 &lt; 16. Rank and act top-down.</td>
+        <td>ATS: S=5, O=3, D=4 &rarr; RPN = 60 (P1 in example FMECA)</td>
       </tr>
       <tr>
         <td><strong>Reliability (survival function)</strong></td>
@@ -410,6 +410,12 @@
         <td>MV metal-clad switchgear</td>
         <td>11 kV (MV)</td>
         <td>The main 11 kV distribution assembly. Houses the utility incomer CB (52-I), MV bus-section CB, transformer-feeder CBs (52-T1, 52-T2) with protection IEDs (50/51, 50N/51N, 87T). Rated ~25 kA/1 s. Fault level basis for all downstream short-circuit ratings.</td>
+      </tr>
+      <tr>
+        <td><code>MV-PROT</code></td>
+        <td>MV protection and control IEDs</td>
+        <td>11 kV (MV)</td>
+        <td>Numerical IEDs providing overcurrent (50/51), earth-fault (50N/51N), transformer differential (87T), and under/over-voltage (27/59) protection. Relays are supplied from the DCDB so they remain operative even on AC failure. A latent FMECA row — loss of DC supply to MV-PROT disables protection.</td>
       </tr>
       <tr>
         <td><code>MV-NER</code></td>
@@ -469,7 +475,7 @@
         <td><code>ATS</code></td>
         <td>Automatic Transfer Switch</td>
         <td>400 V (LV)</td>
-        <td>Detects loss of utility supply and automatically starts and connects the DG to the essential bus. The highest-RPN item (RPN 108) in the example FMECA. A failed-to-transfer ATS on a utility outage = total loss of essential load. Verify commissioning records and test schedule.</td>
+        <td>Detects loss of utility supply and automatically starts and connects the DG to the essential bus. A P1-priority item (RPN 60) in the example FMECA. A failed-to-transfer ATS on a utility outage = total loss of essential load. Verify commissioning records and test schedule.</td>
       </tr>
       <tr>
         <td><code>UPS</code></td>
@@ -592,7 +598,7 @@
     <strong>Tip — reading the SLD on site:</strong> When verifying the drawing against the as-found plant, check: (1) bus-tie switch — is it normally open and does it have an auto-transfer scheme? (2) transformer taps — what position are they set at? (3) ATS — is the transfer scheme commissioned? (4) DG — is the auto-start enabled? These four items account for most SPOF findings on routine site visits.
   </div>
 
-  <div class="key">Key takeaway: 16 equipment tags, 14 IEC 60617 symbols. The tag scheme is fixed — do not invent new tags; update the reference document if a new item is found on a plant that does not fit any existing tag.</div>
+  <div class="key">Key takeaway: 17 equipment tags (including MV-PROT), 14 IEC 60617 symbols. The tag scheme is fixed — do not invent new tags; update the reference document if a new item is found on a plant that does not fit any existing tag.</div>
 </section>
 
 <!-- ============================================================ -->
@@ -609,11 +615,12 @@
   </p>
 
   <!-- ── FORM 1: DOCUMENT INVENTORY ───────────────────────────── -->
-  <h3 id="a-blankforms-docrev">Form 1 — Document Inventory</h3>
+  <h3 id="a-blankforms-docrev">SF-01 — Document Inventory</h3>
 
   <p>
     Record all electrical documents requested, received and reviewed. Add rows as required.
     Documents not received should be chased via the site contact before or during the site visit.
+    <em>Form IDs SF-01…SF-04 match the worked example in <a href="#t-jubail">Part 5 — Jubail Case Study</a>.</em>
   </p>
 
   <table class="form">
@@ -640,22 +647,22 @@
       </tr>
     </thead>
     <tbody>
-      <tr><td>D-01</td><td>Master Single-Line Diagram</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-      <tr><td>D-02</td><td>MV Switchgear Single-Line Diagram</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-      <tr><td>D-03</td><td>LV Switchboard (LV-MSB) Single-Line Diagram</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-      <tr><td>D-04</td><td>MCC-1 Single-Line / Schematic</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-      <tr><td>D-05</td><td>MCC-2 Single-Line / Schematic (if present)</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-      <tr><td>D-06</td><td>Equipment schedule / load list</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-      <tr><td>D-07</td><td>Transformer test certificates (TX-1, TX-2)</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-      <tr><td>D-08</td><td>Protection relay settings (MV-SWGR IEDs)</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-      <tr><td>D-09</td><td>Protection coordination study</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-      <tr><td>D-10</td><td>Short-circuit study</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-      <tr><td>D-11</td><td>Load-flow study</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-      <tr><td>D-12</td><td>Earthing / lightning protection study</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-      <tr><td>D-13</td><td>Arc-flash study (if available)</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-      <tr><td>D-14</td><td>DG / ATS commissioning records</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-      <tr><td>D-15</td><td>UPS / DCDB battery maintenance records</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-      <tr><td>D-16</td><td>Previous SPOF / reliability assessment (if any)</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>DOC-01</td><td>Master Single-Line Diagram</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>DOC-02</td><td>MV Switchgear Single-Line Diagram</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>DOC-03</td><td>LV Switchboard (LV-MSB) Single-Line Diagram</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>DOC-04</td><td>MCC-1 Single-Line / Schematic</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>DOC-05</td><td>MCC-2 Single-Line / Schematic (if present)</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>DOC-06</td><td>Equipment schedule / load list</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>DOC-07</td><td>Transformer test certificates (TX-1, TX-2)</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>DOC-08</td><td>Protection relay settings (MV-SWGR IEDs)</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>DOC-09</td><td>Protection coordination study</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>DOC-10</td><td>Short-circuit study</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>DOC-11</td><td>Load-flow study</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>DOC-12</td><td>Earthing / lightning protection study</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>DOC-13</td><td>Arc-flash study (if available)</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>DOC-14</td><td>DG / ATS commissioning records</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>DOC-15</td><td>UPS / DCDB battery maintenance records</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>DOC-16</td><td>Previous SPOF / reliability assessment (if any)</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
       <tr><td></td><td>(add rows as required)</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
     </tbody>
   </table>
@@ -667,12 +674,13 @@
   </table>
 
   <!-- ── FORM 2: FMECA WORKSHEET ──────────────────────────────── -->
-  <h3 id="a-blankforms-fmeca">Form 2 — FMECA Worksheet</h3>
+  <h3 id="a-blankforms-fmeca">SF-02 — FMECA Worksheet</h3>
 
   <p>
     Failure Mode, Effects and Criticality Analysis per IEC 60812.
-    One row per item / failure mode. Score S, O, D on a 1–10 scale (10 = worst).
-    Rank by RPN = S &times; O &times; D. See <a href="#s-fmeca">Part 3 — FMECA method</a> for scale definitions.
+    One row per item / failure mode. Score S, O, D on a <strong>1–5 scale</strong> (5 = worst); RPN = S × O × D (max 125).
+    Priority bands: P1 = SPOF with S ≥ 4 or RPN ≥ 60; P2 = RPN 36–59; P3 = RPN 16–35; P4 &lt; 16.
+    See <a href="#s-fmeca">Part 3 — FMECA method</a> for scale definitions.
     Scores are indicative; calibrate scales using IEEE 493 / ISO 14224 data for real studies.
   </p>
 
@@ -694,41 +702,42 @@
         <th>Local effect</th>
         <th>System effect (worst case)</th>
         <th>Existing controls / detection</th>
-        <th>S (1–10)</th>
-        <th>O (1–10)</th>
-        <th>D (1–10)</th>
+        <th>S (1–5)</th>
+        <th>O (1–5)</th>
+        <th>D (1–5)</th>
         <th>RPN</th>
         <th>Recommended action</th>
         <th>Rec. ref.</th>
       </tr>
     </thead>
     <tbody>
-      <tr><td>F-01</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-      <tr><td>F-02</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-      <tr><td>F-03</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-      <tr><td>F-04</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-      <tr><td>F-05</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-      <tr><td>F-06</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-      <tr><td>F-07</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-      <tr><td>F-08</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-      <tr><td>F-09</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-      <tr><td>F-10</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>FM-01</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>FM-02</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>FM-03</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>FM-04</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>FM-05</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>FM-06</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>FM-07</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>FM-08</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>FM-09</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>FM-10</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
       <tr><td></td><td colspan="12">(add rows as required — one row per item/failure-mode combination)</td></tr>
     </tbody>
   </table>
 
   <table class="form" style="margin-top:0.8em;">
     <tr><td>Total items assessed</td><td></td></tr>
-    <tr><td>High-RPN items (RPN &ge; 80)</td><td></td></tr>
+    <tr><td>P1 items (SPOF S &ge; 4 or RPN &ge; 60)</td><td></td></tr>
+    <tr><td>P2 items (RPN 36–59)</td><td></td></tr>
     <tr><td>Form status</td><td>&#9744; Draft &nbsp; &#9744; For review &nbsp; &#9744; Final</td></tr>
   </table>
 
   <!-- ── FORM 3: RECOMMENDATIONS REGISTER ─────────────────────── -->
-  <h3 id="a-blankforms-recreg">Form 3 — Recommendations Register</h3>
+  <h3 id="a-blankforms-recreg">SF-03 — Recommendations Register</h3>
 
   <p>
     Ranked list of recommended modifications and improvements derived from the FMECA.
-    One row per recommendation. Link each row back to the FMECA reference (Rec. ref. = F-xx).
+    One row per recommendation. Link each row back to the FMECA reference (Rec. ref. = FM-xx).
     Risk ratings: H = High, M = Medium, L = Low. Cost: H / M / L indicative only.
   </p>
 
@@ -757,14 +766,14 @@
       </tr>
     </thead>
     <tbody>
-      <tr><td>R-01</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-      <tr><td>R-02</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-      <tr><td>R-03</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-      <tr><td>R-04</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-      <tr><td>R-05</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-      <tr><td>R-06</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-      <tr><td>R-07</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-      <tr><td>R-08</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>REC-01</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>REC-02</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>REC-03</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>REC-04</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>REC-05</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>REC-06</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>REC-07</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>REC-08</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
       <tr><td></td><td colspan="10">(add rows as required)</td></tr>
     </tbody>
   </table>
@@ -778,7 +787,7 @@
   </table>
 
   <!-- ── FORM 4: SITE-VISIT REPORT ────────────────────────────── -->
-  <h3 id="a-blankforms-svr">Form 4 — Site-Visit Report</h3>
+  <h3 id="a-blankforms-svr">SF-04 — Site-Visit Report</h3>
 
   <p>
     Factual record of the site visit. Non-intrusive only — do not open energised panels,
@@ -884,7 +893,13 @@
     permitted activities. Observe host permit-to-work, LOTO and QHSE rules at all times.
   </div>
 
-  <div class="key">Key takeaway: Four blank forms — Document Inventory, FMECA Worksheet, Recommendations Register, Site-Visit Report. Open them at plant assignment, fill the header during desk study, and update iteratively through site visit, analysis and recommendations stages.</div>
+  <div class="note">
+    <strong>Form ID mapping — blank forms to worked example (Jubail, Part 5):</strong>
+    SF-01 = Document Inventory (rows: DOC-xx); SF-02 = FMECA Worksheet (rows: FM-xx);
+    SF-03 = Recommendations Register (rows: REC-xx); SF-04 = Site-Visit Report (observations: OBS-xx, photos: PH-xx, actions: ACT-xx).
+    These IDs align with the Part 5 Jubail case study.
+  </div>
+  <div class="key">Key takeaway: Four blank forms — SF-01 Document Inventory, SF-02 FMECA Worksheet, SF-03 Recommendations Register, SF-04 Site-Visit Report. Open them at plant assignment, fill the header during desk study, and update iteratively through site visit, analysis and recommendations stages.</div>
 </section>
 
 <!-- ============================================================ -->
@@ -1204,7 +1219,9 @@
       </tr>
       <tr>
         <td>DG + ATS (both must work)</td>
-        <td>A = A_DG &times; A_ATS = 0.9980 &times; 0.99973</td>
+        <td>A = A_DG &times; A_ATS = 0.9980 &times; 0.99973<br>
+        <em>A_DG derivation: DG failure-to-start probability &asymp; 5% per demand (1 demand/yr); MTBF running &asymp; 15,000 h; MTTR &asymp; 24 h.
+        Effective A_DG = 1 &minus; P(fail-to-start) &asymp; 0.9980 (indicative — dominated by start-reliability; full RAM model needed for real studies).</em></td>
         <td>~0.99773</td>
         <td>~19.6 h/yr (manual ATS)</td>
       </tr>

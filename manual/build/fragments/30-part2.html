@@ -188,14 +188,14 @@
     <p>Loading<sub>N-1, full</sub> = 2.35 / 1.6 = <strong>1.47 pu (147 %)</strong> — not
     acceptable for continuous operation.</p>
 
-    <p><strong>With non-essential load shed (essential fraction &asymp; 55 %):</strong></p>
-    <p>S<sub>essential</sub> = 0.55 &times; 2.35 = 1.29 MVA</p>
+    <p><strong>With non-essential load shed (essential fraction &asymp; 55 %, &asymp; 0.65 MW / 1.0–1.3 MVA):</strong></p>
+    <p>S<sub>essential</sub> = 0.55 &times; 2.35 = <strong>1.29 MVA</strong> (≈ 0.65 MW active at pf 0.8 → 0.81 MVA apparent running; includes 1.25 × step-load factor → 1.01 MVA for DG sizing — see <a href="#c-genset">§c-genset</a>)</p>
     <p>Loading<sub>N-1, essential</sub> = 1.29 / 1.6 = <strong>0.81 pu (&asymp; 81 %)</strong>
     — within continuous rating. &#10003;</p>
 
     <p><strong>Result:</strong> the 2 &times; 1600 kVA + bus-tie design is N-1 secure for
-    essential load, provided non-essential load is shed automatically. This is the load-shedding
-    requirement on <code>LV-MSB</code>.</p>
+    essential load (~55 % of total, &asymp; 0.65 MW / 1.29 MVA), provided non-essential load is shed automatically. This is the load-shedding
+    requirement on <code>LV-MSB</code>. The same 0.65 MW essential-load basis is used for DG sizing in <a href="#c-genset">§c-genset</a>.</p>
   </div>
 
   <div class="warning">
@@ -666,7 +666,9 @@
     = <strong>1.01 MVA</strong></p>
 
     <p><strong>Result:</strong> select a <strong>&asymp; 1 000 kVA</strong> standby
-    DG — matching the design basis. All values indicative.</p>
+    DG (indicative band: 800–1250 kVA per <a href="#f-equipment-table">equipment schedule</a>;
+    1000 kVA is the worked point value) — consistent with the N-1 essential-load basis
+    of 0.65 MW / ~1.29 MVA in <a href="#c-transformer">§c-transformer</a>. All values indicative.</p>
   </div>
 
   <h3 id="c-genset-govconstraint">The governing constraint: voltage dip on motor start</h3>
@@ -973,7 +975,7 @@
 
     <p><strong>Step 2 — Incident energy</strong> at D = 600 mm, t = 0.20 s (indicative
     from IEEE 1584-2018 empirical model):</p>
-    <p>E &asymp; <strong>10 cal/cm&sup2;</strong></p>
+    <p>E &asymp; <strong>10 cal/cm&sup2;</strong> <em>(assumed illustrative value — not computed from the full six-parameter IEEE 1584-2018 model; use recognised power-system software for labelling studies)</em></p>
     <p>(This is an illustration only — the IEEE 1584-2018 model uses six parameters and
     electrode configuration corrections that cannot be reduced to a simple formula here.)</p>
 

@@ -758,7 +758,7 @@
       <strong>Load flow (indicative)</strong> —
       see <a href="#c-loadflow">Part 2 — Load Flow</a>:
       run a steady-state load flow to verify bus voltages and identify any heavily loaded
-      feeders. Confirm voltage at the end of the longest cable run is within ±6 % of nominal.
+      feeders. Confirm voltage at the end of the longest cable run is within ±5 % of nominal (IEC 60364 — consistent with the acceptance limit stated in <a href="#c-loadflow">Part 2 — Load Flow</a>).
     </li>
   </ul>
 
@@ -932,6 +932,45 @@
     and recommendation categories that an engineer is likely to encounter across the 21-plant
     campaign.
   </p>
+
+  <div class="note">
+    <strong>Scope disclosure — why the Jubail plant is larger than the manual's reference basis.</strong>
+    The Jubail SWRO study is a deliberately <em>larger, simulated plant</em> designed to show that
+    the assessment <em>method scales</em> beyond the manual's indicative ~2 MW / 11 kV / 400 V
+    reference. The Jubail plant uses:
+    <ul>
+      <li>132 kV grid incomers (not 11 kV)</li>
+      <li>2 × 40 MVA 132/13.8 kV transformers (not 2 × 1600 kVA 11/0.4 kV)</li>
+      <li>13.8 kV main switchboard (not 400 V LV-MSB)</li>
+    </ul>
+    The method — SPOF tracing, FMECA scoring on a 1–5 scale, priority banding — is identical.
+    The scale difference simply exercises the forms on a larger system.
+    <br><br>
+    Because the Jubail plant is a distinct, larger facility, the document uses a
+    <strong>site-specific extended asset-tag taxonomy</strong> (P01- prefix) rather than the
+    manual's approved core tag scheme. The table below maps the principal Jubail site tags to
+    their approved-scheme equivalents for cross-reference:
+    <table class="tbl" style="margin-top:0.6em;">
+      <thead>
+        <tr>
+          <th>Jubail site tag</th>
+          <th>Approved core tag equivalent</th>
+          <th>Equipment</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><code>P01-SWGR-01</code></td><td><code>MV-SWGR</code></td><td>Main HV/MV switchgear</td></tr>
+        <tr><td><code>P01-BUSTIE-01</code></td><td><code>BT</code></td><td>Bus-tie circuit breaker</td></tr>
+        <tr><td><code>P01-GEN-01</code></td><td><code>DG</code></td><td>Standby / emergency generator</td></tr>
+        <tr><td><code>P01-DC-01</code></td><td><code>DCDB</code></td><td>DC distribution board / battery</td></tr>
+        <tr><td><code>P01-TX-01 / P01-TX-02</code></td><td><code>TX-1 / TX-2</code></td><td>Main power transformers</td></tr>
+        <tr><td><code>P01-UPS-01</code></td><td><code>UPS</code></td><td>Uninterruptible power supply</td></tr>
+        <tr><td><code>P01-ATS-01</code></td><td><code>ATS</code></td><td>Automatic transfer switch</td></tr>
+        <tr><td><code>P01-MCC-01 / P01-MCC-02</code></td><td><code>MCC-1 / MCC-2</code></td><td>Motor control centres</td></tr>
+      </tbody>
+    </table>
+    The manual's approved core tag scheme (MV-MET, MV-SWGR, MV-PROT, MV-NER, TX-1/2, LV-MSB, BT, MCC-1…n, VFD, PFC, DG, ATS, UPS, DCDB, DB, EDB) continues to govern all standard deliverables produced by this campaign.
+  </div>
 
   <div class="note">
     <strong>Note — simulated data.</strong>
