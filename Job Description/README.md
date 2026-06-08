@@ -1,8 +1,9 @@
 # Job Descriptions — Electrical SPOF Assessment
 
 Role profiles for the engineering team supporting an **Electrical Single Point of Failure
-(SPOF) Assessment** of **21 water / desalination plants** across the Central & Eastern
-sector (Riyadh, Madinah, Qassim, Eastern Region), over a **4-month** campaign.
+(SPOF) Assessment** of **21 groundwater desalination plants** across the Central & Eastern
+sector — **19 in Riyadh Province + 2 in the Eastern Province** (no plants in Madinah or
+Qassim), 16 sites, ~1.66 M m³/day — over a **4-month** campaign.
 
 | Profile | Count | File |
 |---------|-------|------|
@@ -51,13 +52,14 @@ IEC 60812 (FMECA); ISO 20815 / ISO 14224.
 
 ## Site logistics map
 
-The 21 plants span four hubs in the Central & Eastern sector. The map below combines a
-national overview with a zoomed sector view in a single drawing.
+The 21 plants sit at 16 sites — 19 in Riyadh Province and 2 in the Eastern Province
+(Al-Hani and Hafar Al-Batin), ~1.66 M m³/day. The map below combines a national overview
+with a Riyadh-province zoom in a single drawing.
 
-![Site logistics map — Central & Eastern sector, 21 plants](../diagrams/svg/wsm-site-logistics-map.svg)
+![Site logistics map — 21 groundwater plants, 19 Riyadh Province + 2 Eastern](../diagrams/svg/wsm-site-logistics-map.svg)
 
-*Schematic / indicative only — geometry not to scale and the per-hub split
-(7 + 4 + 4 + 6 = 21) is indicative. Rendered from `diagrams/src/build_map.py`.*
+*Schematic / indicative only — city-level positions, marker size ~ capacity; no plants in
+Madinah or Qassim; Al-Hani (Eastern) location to verify. Rendered from `diagrams/src/build_map.py`.*
 
 > The core team is **1 PM + 2 Electrical Engineers**; the technician profile is provided
 > as an optional site-survey support role and is not part of the core team.

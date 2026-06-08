@@ -1,8 +1,7 @@
 # Job Description — Electrical Technician (Site Survey & Data Capture)
 
 **Engagement:** Electrical **Single Point of Failure (SPOF) Assessment** of 21 water /
-desalination plants across the Central & Eastern sector (Riyadh, Madinah, Qassim,
-Eastern Region), over a **4-month** campaign.
+desalination plants across the Central & Eastern sector (19 in Riyadh Province + 2 in the Eastern Province), over a **4-month** campaign.
 
 > **Note:** The core team is **1 Project Manager + 2 Electrical Engineers**. This
 > technician profile is an **optional field-support role** to strengthen the
