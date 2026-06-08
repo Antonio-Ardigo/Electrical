@@ -1043,6 +1043,101 @@
     </tbody>
   </table>
 
+  <h3 id="t-jubail-topspofs">Top FMECA rows and matching recommendations — at a glance</h3>
+
+  <p>
+    The table below surfaces the three highest-priority FMECA rows from the Jubail study (all
+    three are either SPOF=Y or RPN&nbsp;= P1/P2) and their matched recommendations. Row IDs use
+    the Jubail site-specific <code>P01-</code> prefix (see tag mapping above). These rows are
+    the ones most referenced in the peer-review commentary below — reading this table first
+    lets you follow the commentary without opening the full embedded document.
+    <em>All values are simulated for training only.</em>
+  </p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>FM-ID</th>
+        <th>Tag (Jubail)</th>
+        <th>Approx. core tag</th>
+        <th>Failure mode</th>
+        <th>S</th><th>O</th><th>D</th><th>RPN</th>
+        <th>SPOF?</th>
+        <th>Finding (end effect)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>P01-FM-006</strong></td>
+        <td><code>P01-DC-01</code></td>
+        <td><code>DCDB</code></td>
+        <td>Charger ageing → DC supply degraded / undetected loss</td>
+        <td>4</td><td>3</td><td>5</td><td><strong>60</strong></td>
+        <td>N (latent)</td>
+        <td>Latent loss of tripping → protection fails on demand (highest RPN; D=5 because no battery capacity test on record — hidden failure)</td>
+      </tr>
+      <tr>
+        <td><strong>P01-FM-001</strong></td>
+        <td><code>P01-BUSTIE-01</code></td>
+        <td><code>BT</code></td>
+        <td>No automatic transfer; manual close only</td>
+        <td>4</td><td>3</td><td>2</td><td><strong>24</strong></td>
+        <td><strong>Y</strong></td>
+        <td>Loss of ~half RO production for minutes–hours on transformer/incomer loss; manual restoration only (SPOF Type B pattern)</td>
+      </tr>
+      <tr>
+        <td><strong>P01-FM-012</strong></td>
+        <td><code>P01-SWGR-01</code></td>
+        <td><code>MV-SWGR</code></td>
+        <td>Busbar fault / flashover (whole common 13.8 kV board)</td>
+        <td>4</td><td>1</td><td>2</td><td><strong>8</strong></td>
+        <td><strong>Y</strong></td>
+        <td>Total loss of RO production — single common MV board is a whole-plant SPOF (SPOF Type C pattern); low probability but catastrophic consequence → P1 by SPOF+S&ge;4 rule</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <table class="tbl" style="margin-top:0.8em;">
+    <thead>
+      <tr>
+        <th>REC-ID</th>
+        <th>Linked FM-ID</th>
+        <th>Modification</th>
+        <th>Risk before</th>
+        <th>Risk after</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>P01-REC-06</strong></td>
+        <td>P01-FM-006</td>
+        <td>Replace ageing battery charger; reinstate battery capacity-discharge testing; add on-line DC bus voltage monitoring alarm</td>
+        <td>High (RPN 60 — latent)</td>
+        <td>Low (latent DC-supply loss removed; protection reliability restored)</td>
+      </tr>
+      <tr>
+        <td><strong>P01-REC-01</strong></td>
+        <td>P01-FM-001</td>
+        <td>Add automatic bus-tie transfer scheme (auto-changeover relay + interlocks + protection re-grading)</td>
+        <td>High (SPOF=Y, S=4)</td>
+        <td>Low (half-bus restoration time: minutes → seconds; availability ~0.985 → ~0.999 indicative)</td>
+      </tr>
+      <tr>
+        <td><strong>P01-REC-12</strong></td>
+        <td>P01-FM-012</td>
+        <td>Switchgear integrity programme: bus-zone protection verification, primary-injection tests, arc-flash detection retrofit</td>
+        <td>High (SPOF=Y, S=4, whole-board)</td>
+        <td>Medium (reduces likelihood and consequence of whole-board bus fault)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="tip">
+    <strong>Traceability chain illustrated:</strong>
+    SF-04 observation (missing battery test) → SF-01 gap (DOC-12 Missing) → FM-006 Detection raised to D=5 → RPN=60 → P1 priority → REC-06 (replace charger + reinstate testing).
+    This is the canonical checklist→FMECA→register→modification chain, demonstrated end-to-end.
+  </div>
+
   <h3 id="t-jubail-embedded">Jubail SWRO study — all four forms</h3>
 
   <div class="doc-embed" data-src="Forms Examples/P01_JUBAIL_DESAL_STUDY.html"></div>
@@ -1140,6 +1235,92 @@
   </div>
 
   <div class="key">Key takeaway: Read the Jubail study as a worked example of the complete method — not as a template to copy blindly. The peer-review commentary above identifies the reasoning behind the scoring decisions. Apply that reasoning, not just the scores, on your own plants.</div>
+</section>
+
+<!-- ============================================================ -->
+<section id="t-selfcheck" data-title="Part 5 — Self-Check" data-part="Part 5 — Field Tools &amp; Case Study">
+  <h2>Part 5 — Self-Check</h2>
+
+  <p><em>Where you are in the workflow: test your understanding of the traceability chain and the non-intrusive rule before going to site for the first time.</em></p>
+
+  <!-- Q1 -->
+  <h3 id="t-sc-q1">Q1 — The traceability chain</h3>
+  <p>
+    Name the four links in the traceability chain that connects a site observation to a capital
+    modification recommendation, and state which deliverable form each link lives in.
+  </p>
+  <details>
+    <summary>Show answer</summary>
+    <p>
+      The four links are:
+    </p>
+    <ol>
+      <li><strong>Site observation (OBS-xx)</strong> — recorded in SF-04 (Site-Visit Report), Section 4. Each observation is factual and tagged to an asset; it seeds a FMECA row via the FM-ID field.</li>
+      <li><strong>FMECA row (FM-xx)</strong> — in SF-02 (FMECA Worksheet). The observation provides the evidence; the FMECA assigns S/O/D scores, computes RPN, flags SPOF=Y/N, and generates a recommendation reference (REC-ID).</li>
+      <li><strong>Recommendation row (REC-xx)</strong> — in SF-03 (Recommendations Register). Each FMECA row that warrants action produces one recommendation row; the REC-ID cross-references the FM-ID so the chain is auditable.</li>
+      <li><strong>Modifications catalogue</strong> — the concept modification packages (Part 4). Each REC row maps to one or more Mod IDs from the catalogue, which describe what to specify, verify and document.</li>
+    </ol>
+    <p>
+      A completed register in which every REC-xx traces back to a specific FM-xx, and every FM-xx traces back to an OBS-xx or a DOC-xx gap, is a fully traceable deliverable. This is what the PM quality-checks before approval.
+    </p>
+  </details>
+
+  <!-- Q2 -->
+  <h3 id="t-sc-q2">Q2 — The non-intrusive rule</h3>
+  <p>
+    You arrive at the plant and notice that the MV switchgear front door is standing open.
+    The O&amp;M supervisor says: "Go ahead — it's been like that all morning, it's fine."
+    What do you do, and why?
+  </p>
+  <details>
+    <summary>Show answer</summary>
+    <p>
+      You <strong>do not enter or touch</strong> the open panel. The non-intrusive rule is
+      absolute: you must not open energised panels, operate any device, or interfere with any
+      equipment — regardless of whether someone else has already left it open, and regardless
+      of verbal permission from local staff. Only the host's authorised person (AP) under a
+      valid permit-to-work can authorise access to live electrical equipment.
+    </p>
+    <p>
+      The correct actions are:
+    </p>
+    <ul>
+      <li>Record the open panel in SF-04 Section 4 as an observation: "MV-SWGR front door found open, no PTW in evidence" — with a photograph if permitted.</li>
+      <li>Raise it in SF-04 Section 6 (Safety / QHSE notes) as a concern: an open live MV panel with no PTW is a QHSE finding in its own right.</li>
+      <li>Inform the escort and request either a formal PTW to use the access for observation, or request the door be closed.</li>
+      <li>Do not cite the open door as an opportunity to make visual observations inside the live panel without PTW authorisation.</li>
+    </ul>
+  </details>
+
+  <!-- Q3 -->
+  <h3 id="t-sc-q3">Q3 — Document gap → FMECA Detection rating</h3>
+  <p>
+    The SF-01 Document Inventory shows that the battery capacity-discharge test record
+    (DOC-15 UPS/DCDB battery maintenance records) is listed as <strong>Missing</strong>.
+    How does this gap affect the FMECA row for the DCDB charger failure mode,
+    and what priority band will the row most likely reach?
+  </p>
+  <details>
+    <summary>Show answer</summary>
+    <p>
+      A missing battery capacity-discharge test means the true battery hold-up time
+      is <strong>unknown</strong>. Without evidence of a recent discharge test, there is
+      no way to know whether the battery will deliver its rated autonomy — it may have
+      degraded to a fraction of nameplate capacity. This is the definition of a
+      <strong>latent (hidden) failure</strong>: the failure is undetectable until the
+      moment the battery is called upon.
+    </p>
+    <p>
+      <strong>Mechanical FMECA update:</strong> Set Detection D = 5 (effectively
+      undetectable — hidden until a fault event). For DCDB charger failure with
+      S = 4 (whole-bus protection loss, safety-critical) and a typical O = 3
+      (ageing charger, once per few years), RPN = 4 × 3 × 5 = <strong>60</strong>.
+      This meets the P1 threshold (RPN ≥ 60). The row becomes Immediate priority —
+      exactly as illustrated in the Jubail FM-006 row.
+    </p>
+  </details>
+
+  <div class="key">Key takeaway: The traceability chain — SF-04 observation → SF-02 FMECA → SF-03 recommendation → concept modification — is the backbone of every deliverable. The non-intrusive rule is absolute: no observation is worth a safety violation. Document gaps in SF-01 mechanically raise Detection ratings in the FMECA — follow the chain, do not estimate.</div>
 </section>
 
 <!-- ============================================================ -->
@@ -1364,7 +1545,8 @@
       Build the FMECA (SF-02): open a row for each SF-04 observation and for each SF-01 gap
       that represents a failure mode. Assign S, O, D; compute RPN and Crit; flag SPOFs.
       Cross-check: every SF-04 observation with an FM-ID should have a corresponding FMECA row.
-      See <a href="#s-fmeca">Part 3 — FMECA Method</a> for the S/O/D scale anchors.
+      See the <a href="#s-fmeca-anchors">S/O/D scale anchor table in Part 3</a> for the exact
+      score definitions (what S=1..5, O=1..5, D=1..5 each mean).
     </li>
     <li>
       Update D ratings for all FMECA rows affected by SF-01 gaps (as described in

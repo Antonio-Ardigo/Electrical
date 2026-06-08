@@ -777,14 +777,15 @@
 
   <ul class="checklist">
     <li>Confirm a UPS is installed for DCS / PLC / relay panels. Check the rated hold-up time
-        (battery autonomy at full load, indicative minimum 30 min) — is it current or degraded?</li>
+        (battery autonomy at full load, <strong>indicative minimum 15–30 min for UPS</strong>; confirm per plant) — is it current or degraded?</li>
     <li>Verify the UPS battery has been tested (discharge test) within the maintenance interval
         and that battery string health is monitored (cell voltage, temperature).</li>
     <li>Check UPS bypass path — can the UPS be bypassed for maintenance without a supply
         interruption to critical control panels? A UPS with no bypass is itself a SPOF
         during UPS maintenance or failure.</li>
-    <li>Confirm the DCDB (DC distribution board) is fed from the UPS or a dedicated battery
-        charger, and that DC supplies reach all protection relay trip / close coils.</li>
+    <li>Confirm the DCDB (DC distribution board) is fed from a dedicated battery charger, and
+        that DC supplies reach all protection relay trip / close coils. Check the rated DCDB
+        battery hold-up time (<strong>indicative minimum 2 h</strong>; confirm per plant requirement).</li>
     <li>Verify DCDB battery charger AC supply — if it is fed from the same bus as the equipment
         it is meant to back up, a bus fault defeats the DC backup.</li>
     <li>Check there is no single MCB or fuse in the DC distribution that, if it operates, cuts
@@ -821,6 +822,73 @@
     the SLD print. Assign a finding number to each SPOF identified; these numbers flow directly
     into the risk register and recommendations in <a href="#p-modifications">Part 4</a>.
   </div>
+
+  <h3 id="s-checklist-spof-map">Zone-to-SPOF-type mapping</h3>
+
+  <p>
+    The eight zones above align to the SPOF library variants (<a href="#s-library">§ SPOF Library</a>).
+    Use this cross-reference to connect a zone finding to the appropriate modification concept:
+  </p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Checklist zone</th>
+        <th>SPOF type (library)</th>
+        <th>Typical modification</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Zone 1 — MV intake / utility incomer</td>
+        <td><strong>Type C</strong> — single utility incomer / single MV bus
+          (<a href="#s-library-c">§ Variant C</a>)</td>
+        <td>MOD-02 (second MV incomer); DG + ATS (MOD-04)</td>
+      </tr>
+      <tr>
+        <td>Zone 2 — MV switchgear</td>
+        <td><strong>Type C</strong> — single MV bus
+          (<a href="#s-library-c">§ Variant C</a>)</td>
+        <td>MOD-02 (MV bus-section); MOD-09 (arc-flash detection)</td>
+      </tr>
+      <tr>
+        <td>Zone 3 — Transformers TX-1/TX-2</td>
+        <td><strong>Type A</strong> — single transformer / single LV bus
+          (<a href="#s-library-a">§ Variant A</a>)</td>
+        <td>MOD-04 (add TX-2 + split bus); MOD-01 (bus-tie)</td>
+      </tr>
+      <tr>
+        <td>Zone 4 — LV main switchboard &amp; bus-tie</td>
+        <td><strong>Type B</strong> — two TXs, no bus-tie
+          (<a href="#s-library-b">§ Variant B</a>)</td>
+        <td>MOD-01 (auto-close bus-tie)</td>
+      </tr>
+      <tr>
+        <td>Zone 5 — MCCs and outgoing feeders</td>
+        <td><strong>Type D</strong> — shared cable / MCC for duty + standby
+          (<a href="#s-library-d">§ Variant D</a>)</td>
+        <td>MOD-03 (split MCCs); MOD-07 (separate cable routes)</td>
+      </tr>
+      <tr>
+        <td>Zone 6 — Standby / essential supply (DG, ATS)</td>
+        <td><strong>Type A/C</strong> — no backup for utility loss
+          (<a href="#s-library-a">§ Variant A</a>, <a href="#s-library-c">§ Variant C</a>)</td>
+        <td>MOD-04 (DG + ATS); MOD-05 (upgrade to auto ATS)</td>
+      </tr>
+      <tr>
+        <td>Zone 7 — Control / protection supplies (UPS, DCDB)</td>
+        <td><strong>Control SPOF</strong> — control/protection supply loss
+          (all variants, see <a href="#s-library-e">§ Variant E</a>)</td>
+        <td>MOD-08 (UPS + DCDB installation)</td>
+      </tr>
+      <tr>
+        <td>Zone 8 — Earthing and neutral</td>
+        <td><strong>Earthing SPOF</strong> — no standard variant; cross-reference
+          <a href="#p8-earthing-philosophy">P-8 earthing philosophy</a></td>
+        <td>MOD-10 (NER resize / earth-grid extension)</td>
+      </tr>
+    </tbody>
+  </table>
 
 </section><!-- /s-checklist -->
 
@@ -1575,7 +1643,7 @@
       </tr>
       <tr>
         <td>&#9744;</td>
-        <td>R-07</td>
+        <td>REC-07</td>
         <td><code>UPS</code></td>
         <td>UPS battery or inverter failure — DCS/PLC unplanned trip</td>
         <td>Medium (RPN 36)</td>
@@ -1588,7 +1656,7 @@
       </tr>
       <tr>
         <td>&#9744;</td>
-        <td>R-08</td>
+        <td>REC-08</td>
         <td><code>LV-MSB</code></td>
         <td>Busbar arc-flash — extended section outage pending inspection and repair</td>
         <td>Low (RPN 20)</td>

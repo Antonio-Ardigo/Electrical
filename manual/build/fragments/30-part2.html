@@ -79,6 +79,21 @@
     short-circuit/load-flow studies, and the governing standards.
   </div>
 
+  <div class="key">
+    <strong>If you master only four, master these:</strong> On most SPOF assessments, four
+    calculations carry the most evidential weight:
+    (1) <strong>Transformer sizing / N-1 check</strong> (<a href="#c-transformer">§ 2</a>) —
+    confirms the fundamental redundancy claim;
+    (2) <strong>Full-load current (FLC)</strong> (<a href="#c-flc">§ 3</a>) —
+    the basis for every breaker, cable, and relay sizing check;
+    (3) <strong>Short-circuit level</strong> (<a href="#c-shortcircuit">§ 4</a>) —
+    verifies that switchgear can interrupt faults safely;
+    (4) <strong>Protection coordination</strong> (<a href="#c-protection">§ 9</a>) —
+    confirms that faults isolate the minimum zone.
+    The remaining sections are Reference — important for completeness but less frequently
+    the direct driver of a P1 FMECA finding.
+  </div>
+
 </section>
 
 
@@ -87,7 +102,7 @@
 ============================================================ -->
 <section id="c-load" data-title="Load and Demand Estimate" data-part="Part 2 — Calculations">
 
-  <h2>1 — Load &amp; Demand Estimate</h2>
+  <h2>1 — Load &amp; Demand Estimate <span style="font-size:0.65em; font-weight:normal; background:#e8f4fd; border:1px solid #aad4f5; border-radius:3px; padding:1px 5px; color:#1a6fa0;">Core</span></h2>
 
   <p><strong>Goal:</strong> confirm the ~2 MW plant demand and convert it to apparent power
   (MVA) — the anchor point for every sizing calculation that follows.</p>
@@ -163,7 +178,7 @@
 ============================================================ -->
 <section id="c-transformer" data-title="Transformer Sizing and N-1 Check" data-part="Part 2 — Calculations">
 
-  <h2>2 — Transformer Sizing &amp; N-1 Check</h2>
+  <h2>2 — Transformer Sizing &amp; N-1 Check <span style="font-size:0.65em; font-weight:normal; background:#e8f4fd; border:1px solid #aad4f5; border-radius:3px; padding:1px 5px; color:#1a6fa0;">Core</span></h2>
 
   <p><strong>Goal:</strong> verify the 2 &times; 1600 kVA selection and confirm that one
   transformer (<code>TX-1</code> or <code>TX-2</code>) can carry the essential load via
@@ -242,7 +257,7 @@
 ============================================================ -->
 <section id="c-flc" data-title="Full-Load Current LV and MV" data-part="Part 2 — Calculations">
 
-  <h2>3 — Full-Load Current (LV &amp; MV)</h2>
+  <h2>3 — Full-Load Current (LV &amp; MV) <span style="font-size:0.65em; font-weight:normal; background:#e8f4fd; border:1px solid #aad4f5; border-radius:3px; padding:1px 5px; color:#1a6fa0;">Core</span></h2>
 
   <p><strong>Goal:</strong> calculate the 400 V full-load current (FLC) of a 1600 kVA
   transformer — the basis for the incomer ACB frame size and busbar rating — and the
@@ -317,7 +332,7 @@
 ============================================================ -->
 <section id="c-shortcircuit" data-title="Short-Circuit Current and Switchgear Withstand" data-part="Part 2 — Calculations">
 
-  <h2>4 — Short-Circuit Current &amp; Switchgear Withstand</h2>
+  <h2>4 — Short-Circuit Current &amp; Switchgear Withstand <span style="font-size:0.65em; font-weight:normal; background:#e8f4fd; border:1px solid #aad4f5; border-radius:3px; padding:1px 5px; color:#1a6fa0;">Core</span></h2>
 
   <p><strong>Goal:</strong> calculate the LV prospective short-circuit current from the
   transformer impedance, check the bus-tie parallel case, and verify that the switchgear
@@ -402,7 +417,7 @@
 ============================================================ -->
 <section id="c-motors" data-title="Motor FLC and Starting Methods" data-part="Part 2 — Calculations">
 
-  <h2>5 — Motor FLC, Starting Methods &amp; LV/MV Feed Threshold</h2>
+  <h2>5 — Motor FLC, Starting Methods &amp; LV/MV Feed Threshold <span style="font-size:0.65em; font-weight:normal; background:#f5f0e8; border:1px solid #c8b88a; border-radius:3px; padding:1px 5px; color:#6b5a1e;">Reference</span></h2>
 
   <p><strong>Goal:</strong> calculate the full-load current and starting current of a
   representative LV motor, explain why large motors use soft-start or VFD, and identify
@@ -497,7 +512,7 @@
 ============================================================ -->
 <section id="c-cables" data-title="Cable Sizing and Voltage Drop" data-part="Part 2 — Calculations">
 
-  <h2>6 — Cable Sizing &amp; Voltage Drop</h2>
+  <h2>6 — Cable Sizing &amp; Voltage Drop <span style="font-size:0.65em; font-weight:normal; background:#f5f0e8; border:1px solid #c8b88a; border-radius:3px; padding:1px 5px; color:#6b5a1e;">Reference</span></h2>
 
   <p><strong>Goal:</strong> size a motor feeder cable and verify the voltage drop is within
   acceptable limits (typically &le; 5 % for motor feeders).</p>
@@ -578,7 +593,7 @@
 ============================================================ -->
 <section id="c-pfc" data-title="Power-Factor Correction Sizing" data-part="Part 2 — Calculations">
 
-  <h2>7 — Power-Factor Correction (PFC)</h2>
+  <h2>7 — Power-Factor Correction (PFC) <span style="font-size:0.65em; font-weight:normal; background:#f5f0e8; border:1px solid #c8b88a; border-radius:3px; padding:1px 5px; color:#6b5a1e;">Reference</span></h2>
 
   <p><strong>Goal:</strong> size the automatic capacitor bank (<code>PFC</code>) to raise
   the plant power factor from 0.85 to 0.95, and understand why detuning reactors are
@@ -644,7 +659,7 @@
 ============================================================ -->
 <section id="c-genset" data-title="Standby Generator Sizing Rationale" data-part="Part 2 — Calculations">
 
-  <h2>8 — Standby Generator Sizing Rationale</h2>
+  <h2>8 — Standby Generator Sizing Rationale <span style="font-size:0.65em; font-weight:normal; background:#f5f0e8; border:1px solid #c8b88a; border-radius:3px; padding:1px 5px; color:#6b5a1e;">Reference</span></h2>
 
   <p><strong>Goal:</strong> justify the indicative <code>DG</code> rating (&asymp; 1 000 kVA)
   on an essential-load basis and explain the constraints that really drive the size.</p>
@@ -724,7 +739,7 @@
 ============================================================ -->
 <section id="c-loadflow" data-title="Reading and Validating a Load-Flow Study" data-part="Part 2 — Calculations">
 
-  <h2>9 — Reading &amp; Validating a Load-Flow Study</h2>
+  <h2>9 — Reading &amp; Validating a Load-Flow Study <span style="font-size:0.65em; font-weight:normal; background:#f5f0e8; border:1px solid #c8b88a; border-radius:3px; padding:1px 5px; color:#6b5a1e;">Reference</span></h2>
 
   <p><strong>Goal:</strong> confirm the voltage profile, power flows and losses at peak
   load — that every bus stays within &pm; 5 % of nominal and no branch is thermally
@@ -826,7 +841,7 @@
 ============================================================ -->
 <section id="c-protection" data-title="Protection Coordination and Selectivity" data-part="Part 2 — Calculations">
 
-  <h2>10 — Protection Coordination &amp; Selectivity</h2>
+  <h2>10 — Protection Coordination &amp; Selectivity <span style="font-size:0.65em; font-weight:normal; background:#e8f4fd; border:1px solid #aad4f5; border-radius:3px; padding:1px 5px; color:#1a6fa0;">Core</span></h2>
 
   <p><strong>Goal:</strong> set protective devices so the device <em>closest to the fault
   trips first</em>, isolating the smallest possible zone (selectivity/discrimination),
@@ -936,7 +951,7 @@
 ============================================================ -->
 <section id="c-arcflash" data-title="Arc-Flash Incident Energy and the Clearing-Time Lever" data-part="Part 2 — Calculations">
 
-  <h2>11 — Arc-Flash / Incident Energy (IEEE 1584) &amp; the Clearing-Time Lever</h2>
+  <h2>11 — Arc-Flash / Incident Energy (IEEE 1584) &amp; the Clearing-Time Lever <span style="font-size:0.65em; font-weight:normal; background:#f5f0e8; border:1px solid #c8b88a; border-radius:3px; padding:1px 5px; color:#6b5a1e;">Reference</span></h2>
 
   <p><strong>Goal:</strong> estimate the incident energy and arc-flash boundary at the
   <code>LV-MSB</code>, label the gear and select PPE — and show why <em>clearing time</em>
@@ -1064,7 +1079,7 @@
 ============================================================ -->
 <section id="c-earthing" data-title="Earthing and Lightning-Protection Assessment" data-part="Part 2 — Calculations">
 
-  <h2>12 — Earthing &amp; Lightning-Protection Assessment</h2>
+  <h2>12 — Earthing &amp; Lightning-Protection Assessment <span style="font-size:0.65em; font-weight:normal; background:#f5f0e8; border:1px solid #c8b88a; border-radius:3px; padding:1px 5px; color:#6b5a1e;">Reference</span></h2>
 
   <p><strong>Goal:</strong> verify the MV neutral earthing resistor (<code>MV-NER</code>),
   the LV earth system, the earth-conductor cross-sections, and the lightning-protection
@@ -1469,7 +1484,100 @@
   <p>Work each problem before opening the answer. All values are <em>indicative</em>;
   use &radic;3 = 1.732.</p>
 
-  <h3 id="c-sc-problems">Problems</h3>
+  <h3 id="c-sc-interpretation">Interpretation questions</h3>
+
+  <p>These questions test your ability to draw conclusions from numbers — the skill the PM
+  will assess when reviewing your FMECA entries. Attempt each before opening the answer.</p>
+
+  <ol>
+    <li>
+      <p>The LV-MSB incomer ammeter reads <strong>2 650 A</strong> on a 1 600 kVA transformer.
+      The transformer FLC at 400 V is calculated as 2 310 A.
+      What do you conclude, and what is your immediate action?</p>
+      <details>
+        <summary>Show answer</summary>
+        <p>
+          The transformer is loaded at 2 650 / 2 310 = <strong>1.15 pu (115 %)</strong> —
+          significantly above its rated FLC. This is an overload condition.
+        </p>
+        <p>
+          <strong>Immediate FMECA implication:</strong> The transformer is unable to carry
+          full current without exceeding its thermal rating (continuous overload accelerates
+          insulation ageing). If this is normal operating load, the transformer is undersized
+          for its duty. If one transformer is lost and the bus-tie closes to back-feed from this
+          overloaded unit, it will trip on overcurrent — the N-1 redundancy claim fails.
+        </p>
+        <p>
+          <strong>Action:</strong> Record the reading as an observation in SF-04 (OBS-xx);
+          open an FMECA row for TX overloading (S = 4 — loss of N-1 capability; O = depends
+          on whether overload is sustained; D = 2 if transformer monitoring with alarms is live).
+          Add a recommendation to revalidate the essential-load list and consider demand-side
+          reduction or transformer uprating.
+        </p>
+      </details>
+    </li>
+
+    <li>
+      <p>The LV prospective short-circuit current at the LV-MSB is calculated at
+      <strong>38.5 kA</strong> for a single transformer. The LV-MSB bus-tie ACB nameplate
+      shows a rated breaking capacity of <strong>36 kA</strong>. The two-transformer
+      bus-tie-closed fault level is <strong>77 kA</strong>. What are the implications?</p>
+      <details>
+        <summary>Show answer</summary>
+        <p>
+          <strong>Single-transformer case:</strong> The BT ACB at 36 kA is below the
+          calculated 38.5 kA fault level — even in the normal single-transformer condition
+          the bus-tie breaker appears under-rated by ~7 %. This is a potential P1 safety SPOF.
+          The ACB must not be closed if it cannot interrupt the prospective fault current.
+        </p>
+        <p>
+          <strong>Bus-tie-closed parallel case:</strong> If both transformers are in parallel
+          (e.g. during a transfer), the fault level rises to ~77 kA — more than double the
+          ACB rating. This is a critical finding: operating with the bus-tie closed and no
+          ACB upgrade is a life-safety hazard.
+        </p>
+        <p>
+          <strong>FMECA row:</strong> S = 5 (catastrophic — ACB fails to interrupt fault,
+          potential catastrophic switchboard failure); P1 regardless of RPN. Recommended action:
+          confirm fault level with a detailed short-circuit study; specify a replacement ACB
+          with Icu ≥ 77 kA (or maintain strict NOP bus-tie operation and confirm single-TX Isc
+          value with utility data).
+        </p>
+      </details>
+    </li>
+
+    <li>
+      <p>The arc-flash label on the LV-MSB Bus A incomer cubicle shows an incident energy
+      of <strong>22 cal/cm²</strong>, derived from a study conducted in 2014. Since that
+      study, a second transformer (TX-2) has been connected, roughly doubling the available
+      fault current to the bus. How do you treat this finding?</p>
+      <details>
+        <summary>Show answer</summary>
+        <p>
+          The 2014 study is <strong>Obsolete</strong> — log it as such in SF-01.
+          The actual incident energy at the bus is now substantially higher than 22 cal/cm²
+          because higher fault current means faster energy delivery and longer clearing times
+          may no longer hold. Worse, the PPE category assigned in 2014 is likely wrong and
+          may be unsafe.
+        </p>
+        <p>
+          <strong>Immediate QHSE action (SF-04 Section 6):</strong> Flag the out-of-date
+          arc-flash label and the connected TX-2 as a QHSE finding. No work requiring arc-flash
+          PPE should be performed against the 2014 label values until a restudied.
+        </p>
+        <p>
+          <strong>FMECA row:</strong> FM for "arc-flash boundary unverified / label obsolete" —
+          S = 5 (personnel injury risk); O = 2 (switching events occasional); D = 4 (no current
+          study; undetectable error in PPE assignment). RPN = 40 → P2; but S = 5 with S ≥ 4 rule
+          should be flagged for immediate escalation at next switching event. Recommendation:
+          commission updated IEEE 1584 study and update all cubicle labels before any live
+          switching maintenance.
+        </p>
+      </details>
+    </li>
+  </ol>
+
+  <h3 id="c-sc-problems">Numerical problems</h3>
 
   <ol>
     <li>

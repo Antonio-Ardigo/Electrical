@@ -838,23 +838,36 @@
   </table>
 
   <h4>Section D — Photolog Index</h4>
+  <p>
+    The 12 mandatory photographs (PH-01 through PH-12) match the photolog defined in the
+    <a href="#t-vc-photolog">Visual Inspection Checklist, Part 5</a>. Tick each row when the
+    photo is captured and indexed.
+  </p>
   <table class="tbl">
     <thead>
       <tr>
+        <th>&#9744;</th>
         <th>Photo ref.</th>
         <th>File name</th>
         <th>Equipment / location</th>
         <th>Description / relevance to assessment</th>
+        <th>OBS-ref (if finding)</th>
       </tr>
     </thead>
     <tbody>
-      <tr><td>P-01</td><td></td><td></td><td></td></tr>
-      <tr><td>P-02</td><td></td><td></td><td></td></tr>
-      <tr><td>P-03</td><td></td><td></td><td></td></tr>
-      <tr><td>P-04</td><td></td><td></td><td></td></tr>
-      <tr><td>P-05</td><td></td><td></td><td></td></tr>
-      <tr><td>P-06</td><td></td><td></td><td></td></tr>
-      <tr><td></td><td colspan="3">(add rows as required)</td></tr>
+      <tr><td>&#9744;</td><td>PH-01</td><td></td><td>Switchroom / main entry</td><td>Overall switchroom general view — panel line-up and housekeeping</td><td></td></tr>
+      <tr><td>&#9744;</td><td>PH-02</td><td></td><td>MV-SWGR line-up</td><td>MV switchgear line-up and arc-flash labels (or their absence)</td><td></td></tr>
+      <tr><td>&#9744;</td><td>PH-03</td><td></td><td>Bus-tie (BT / MV bus-section)</td><td>Bus-tie breaker cubicle front — position indicator (O/I) clearly visible</td><td></td></tr>
+      <tr><td>&#9744;</td><td>PH-04</td><td></td><td>TX-1 nameplate</td><td>TX-1 rating plate: kVA, voltage ratio, vector group, impedance, year</td><td></td></tr>
+      <tr><td>&#9744;</td><td>PH-05</td><td></td><td>TX-2 nameplate</td><td>TX-2 rating plate (same fields as PH-04)</td><td></td></tr>
+      <tr><td>&#9744;</td><td>PH-06</td><td></td><td>LV-MSB incomer and bus-tie section</td><td>LV-MSB front: incomer A, incomer B, bus-tie breaker with position indicators and labels</td><td></td></tr>
+      <tr><td>&#9744;</td><td>PH-07</td><td></td><td>DG nameplate and starting battery</td><td>Generator rating plate and battery / charger in same frame if possible</td><td></td></tr>
+      <tr><td>&#9744;</td><td>PH-08</td><td></td><td>ATS panel front</td><td>ATS source labels (Normal/Standby) and transfer-switch position indicator</td><td></td></tr>
+      <tr><td>&#9744;</td><td>PH-09</td><td></td><td>DCDB / battery charger</td><td>Charger nameplate, battery type label, front-panel fault/alarm indicators</td><td></td></tr>
+      <tr><td>&#9744;</td><td>PH-10</td><td></td><td>UPS front panel</td><td>UPS nameplate and status indicators: mains-OK, battery-OK, any active alarms</td><td></td></tr>
+      <tr><td>&#9744;</td><td>PH-11</td><td></td><td>Main earth test point / pit</td><td>Test disconnect link, test tag (last test date), earth bar bonding connections</td><td></td></tr>
+      <tr><td>&#9744;</td><td>PH-12</td><td></td><td>Notable defect or discrepancy</td><td>Specific item seeding an FMECA finding (one photo per distinct finding; add rows as needed)</td><td></td></tr>
+      <tr><td></td><td>(add)</td><td></td><td></td><td>(additional photos beyond mandatory 12)</td><td></td></tr>
     </tbody>
   </table>
 
@@ -900,6 +913,62 @@
     These IDs align with the Part 5 Jubail case study.
   </div>
   <div class="key">Key takeaway: Four blank forms — SF-01 Document Inventory, SF-02 FMECA Worksheet, SF-03 Recommendations Register, SF-04 Site-Visit Report. Open them at plant assignment, fill the header during desk study, and update iteratively through site visit, analysis and recommendations stages.</div>
+
+  <!-- ── FORM 5: AS-FOUND VERIFICATION SHEET ───────────────────── -->
+  <h3 id="a-blankforms-verif">As-Found Verification Sheet</h3>
+
+  <p>
+    Use this sheet during post-site analysis to verify that nameplate data captured on site
+    matches the calculated parameters and to record a Pass/Fail verdict for each key item.
+    This directly supports the "assessment = verification" thesis: every FMECA row for a
+    sizing or rating finding must trace to a completed row here.
+    <em>All calculations are indicative; confirm with project-specific studies.</em>
+  </p>
+
+  <table class="form">
+    <tr><td>Plant name</td><td></td></tr>
+    <tr><td>Assessment reference</td><td></td></tr>
+    <tr><td>Engineer</td><td></td></tr>
+    <tr><td>Date completed</td><td></td></tr>
+  </table>
+
+  <table class="tbl" style="margin-top:0.8em;">
+    <thead>
+      <tr>
+        <th>Tag</th>
+        <th>Nameplate: kVA (or kW)</th>
+        <th>Nameplate: Z% (TX) or FLC (motor)</th>
+        <th>Nameplate: V (primary / secondary)</th>
+        <th>Nameplate: rated A (LV FLC)</th>
+        <th>Nameplate: Icu (kA) — switchgear / cable</th>
+        <th>Calculated FLC (A) [I = S / (√3·V)]</th>
+        <th>Calculated Isc (kA) [FLC / Z%]</th>
+        <th>Pass / Fail / Flag</th>
+        <th>Notes / FM-ID if finding</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>TX-1</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>&#9744; Pass &nbsp;&#9744; Fail</td><td></td></tr>
+      <tr><td>TX-2</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>&#9744; Pass &nbsp;&#9744; Fail</td><td></td></tr>
+      <tr><td>LV-MSB Bus A incomer ACB</td><td></td><td>—</td><td>400 V</td><td></td><td></td><td>(from TX-1 FLC)</td><td>(from TX-1 Isc)</td><td>&#9744; Pass &nbsp;&#9744; Fail</td><td></td></tr>
+      <tr><td>LV-MSB Bus B incomer ACB</td><td></td><td>—</td><td>400 V</td><td></td><td></td><td>(from TX-2 FLC)</td><td>(from TX-2 Isc)</td><td>&#9744; Pass &nbsp;&#9744; Fail</td><td></td></tr>
+      <tr><td>BT bus-tie ACB</td><td></td><td>—</td><td>400 V</td><td></td><td></td><td>(essential load A)</td><td>(N-1 Isc)</td><td>&#9744; Pass &nbsp;&#9744; Fail</td><td></td></tr>
+      <tr><td>DG</td><td></td><td>—</td><td>400 V / 415 V</td><td></td><td>—</td><td>(essential load A)</td><td>—</td><td>&#9744; Pass &nbsp;&#9744; Fail</td><td></td></tr>
+      <tr><td>MCC-1 incomer MCCB</td><td></td><td>—</td><td>400 V</td><td></td><td></td><td>(MCC load A)</td><td>(MCC Isc)</td><td>&#9744; Pass &nbsp;&#9744; Fail</td><td></td></tr>
+      <tr><td>MCC-2 incomer MCCB</td><td></td><td>—</td><td>400 V</td><td></td><td></td><td>(MCC load A)</td><td>(MCC Isc)</td><td>&#9744; Pass &nbsp;&#9744; Fail</td><td></td></tr>
+      <tr><td>UPS</td><td></td><td>—</td><td>230/400 V</td><td></td><td>—</td><td>(DCS/relay load A)</td><td>—</td><td>&#9744; Pass &nbsp;&#9744; Fail</td><td></td></tr>
+      <tr><td>DCDB charger</td><td></td><td>—</td><td>110/48/24 V DC</td><td></td><td>—</td><td>(trip coil load A)</td><td>—</td><td>&#9744; Pass &nbsp;&#9744; Fail</td><td></td></tr>
+      <tr><td>(add rows)</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+    </tbody>
+  </table>
+
+  <p style="font-size:0.85em;"><em>
+    Pass criteria (indicative): TX loading ≤ 80 % nameplate kVA in normal; ≤ 100 % in N-1.
+    ACB / MCCB rated current ≥ calculated FLC × 1.25 (service factor). Switchgear Icu ≥ calculated Isc.
+    Cable ampacity ≥ FLC after derating. DG kVA ≥ essential load kVA × 1.1. UPS autonomy ≥ 15 min.
+    DCDB autonomy ≥ 2 h. All criteria indicative — confirm against governing specification.
+  </em></p>
+
 </section>
 
 <!-- ============================================================ -->

@@ -9,6 +9,14 @@
 
   <p><em>Where you are in the workflow: you have identified the SPOFs and calculated the numbers (Parts 2–3); now apply the standard philosophies to judge whether each plant's design is sound, and to specify what must change.</em></p>
 
+  <div class="note">
+    <strong>First assignment?</strong> On day one you mainly need the
+    <a href="#p-modifications">Modifications Catalogue</a> (below); it gives you the
+    ready-made rows to copy into your Recommendations Register. The eight philosophy
+    templates in this section are reference material for deeper assessments and peer review —
+    return to them once you have completed your first plant cycle.
+  </div>
+
   <p>
     The eight templates below form a reusable reference. Each one can be applied directly to a
     plant you are assessing: scan the philosophy, locate the matching equipment on the SLD, and
@@ -48,7 +56,7 @@
 
   <p><strong>What a deficiency looks like.</strong></p>
   <ul>
-    <li>Single transformer feeding an un-split bus (SPOF type A — see <a href="#s-checklist">Part 3</a>).</li>
+    <li>Single transformer feeding an un-split bus (SPOF type A — see <a href="#s-library-a">Part 3 — Variant A</a>).</li>
     <li>Two transformers present but bus-tie has no auto-close function — bus-tie is a manual-only switch.</li>
     <li>N-1 loading check fails: one transformer cannot carry the essential load; loss of one source will shed critical process motors.</li>
     <li>Bus-tie permanently closed (running in parallel) without differential protection — a fault on one bus propagates to both.</li>
@@ -108,7 +116,7 @@
 
   <p><strong>What a deficiency looks like.</strong></p>
   <ul>
-    <li>Bus-tie auto-transfer function is <em>disabled</em> in relay settings — only manual transfer possible (SPOF type B).</li>
+    <li>Bus-tie auto-transfer function is <em>disabled</em> in relay settings — only manual transfer possible (SPOF type B — see <a href="#s-library-b">Part 3 — Variant B</a>).</li>
     <li>Residual-voltage transfer configured when fast transfer is achievable — unnecessarily slow, causing motor stalls.</li>
     <li>No UV relay on the incomer — bus-tie has no trigger condition and will not operate automatically on loss of incomer.</li>
     <li>Transfer logic closes the bus-tie regardless of whether the surviving source is healthy — risk of cascading a fault onto the remaining bus.</li>
@@ -784,8 +792,8 @@
 
   <p>
     The catalogue below covers the most common electrical modifications identified on MV/LV
-    industrial process plants. Every modification cross-references the SPOF type from
-    <a href="#s-checklist">Part 3 — SPOF Checklist</a>. Use these rows as the starting point for
+    industrial process plants. Every modification cross-references the SPOF type from the
+    <a href="#s-library">Part 3 — SPOF Library</a> (variants A–E). Use these rows as the starting point for
     concept modification packages — each package must include a marked-up SLD, an equipment
     outline specification, a scheme description / sequence of operation, and a high-level bill
     of materials.
@@ -803,7 +811,7 @@
       <tr>
         <th>Mod ID</th>
         <th>Modification</th>
-        <th>SPOF type addressed (see <a href="#s-checklist">Part 3</a>)</th>
+        <th>SPOF type addressed (see <a href="#s-library">Part 3 — Library</a>)</th>
         <th>Affected tag(s)</th>
         <th>Concept description</th>
         <th>Typical scope to specify</th>

@@ -52,8 +52,8 @@
 
   <ul>
     <li><strong>Desk study:</strong> review the existing single-line diagrams, equipment schedules and prior studies.</li>
-    <li><strong>Plant calculation package:</strong> produce load-flow, short-circuit, protection coordination, and earthing &amp; lightning assessments (with power-system software). Arc-flash (IEEE 1584) and RAM/RBD availability analysis are advantageous.</li>
-    <li><strong>SPOF assessment:</strong> inventory and classify electrical single points of failure; assess criticality using failure-mode and effects analysis (FMECA per IEC 60812).</li>
+    <li><strong>Plant calculation package:</strong> produce <em>load-flow</em> (verifying bus voltages and cable loadings under normal and N-1 conditions), <em>short-circuit</em> (prospective fault current at each bus), <em>protection coordination</em> (relay grading), and <em>earthing &amp; lightning</em> assessments with power-system software. <em>Arc-flash</em> per IEEE 1584 (incident energy at each working position) and <em>RAM/RBD</em> — Reliability, Availability, Maintainability / Reliability Block Diagram availability modelling (<a href="#s-rbd">Part 3</a>) — are advantageous.</li>
+    <li><strong>SPOF assessment:</strong> inventory and classify electrical single points of failure; assess criticality using <em>FMECA</em> — Failure Mode, Effects and Criticality Analysis per IEC 60812 (<a href="#s-fmeca">Part 3</a>) — which ranks each failure mode by Risk Priority Number (<em>RPN</em> = Severity × Occurrence × Detection, max 125 on the 1–5 scales used here).</li>
     <li><strong>SLD verification:</strong> red-line the single-line diagrams against the as-found plant during site visits.</li>
     <li><strong>Concept modifications:</strong> for each recommended change, prepare a marked-up SLD, equipment outline specification, scheme description, sequence of operation and high-level bill of materials. Concept level only — not detailed design, procurement or construction.</li>
     <li><strong>Assessment forms:</strong> complete the four per-plant deliverable forms (see <a href="#orientation-forms">Section — The Four Deliverable Forms</a>).</li>
@@ -159,6 +159,22 @@
     <strong>Tip — traceability:</strong> Every row in the FMECA form should carry a unique reference
     that you can cite in the Recommendations Register. The PM uses this linkage when quality-checking
     your work.
+  </div>
+
+  <div class="note" id="orientation-forms-idlegend">
+    <strong>Form &amp; row-ID legend.</strong>
+    <strong>SF-01</strong> = Document Inventory; <strong>SF-02</strong> = FMECA Worksheet;
+    <strong>SF-03</strong> = Recommendations Register; <strong>SF-04</strong> = Site-Visit Report.
+    Within each form, rows carry the following prefixes:
+    <code>DOC-xx</code> (SF-01 document rows) |
+    <code>FM-xx</code> (SF-02 FMECA rows) |
+    <code>REC-xx</code> (SF-03 recommendation rows) |
+    <code>OBS-xx</code> (SF-04 observation rows) |
+    <code>PH-xx</code> (SF-04 photolog rows) |
+    <code>ACT-xx</code> (SF-04 action rows).
+    These prefixes are consistent across the blank forms in
+    <a href="#a-blankforms">Appendix E</a> and the worked Jubail example in
+    <a href="#t-jubail">Part 5</a>.
   </div>
 
   <div class="key">Key takeaway: Four forms, completed in sequence — Document Inventory, FMECA, Recommendations Register, Site-Visit Report — are the non-negotiable deliverables for every plant. Start them early; update them iteratively.</div>
@@ -349,6 +365,14 @@
     <strong>Tip — sidebar navigation:</strong> Use the sidebar (left panel) to jump between sections.
     Checkboxes in checklist sections persist across sessions in the same browser — use them to track
     progress per plant.
+  </div>
+
+  <div class="note">
+    <strong>On-screen vs field use.</strong> Checkbox tick-state is stored in the browser's
+    <code>localStorage</code> — it persists only in the same browser on the same device, and
+    only while on-screen at a desk. For <strong>field use, print the relevant checklist
+    section</strong> (use the Print button or Ctrl+P) and tick on paper. Transfer your
+    paper marks back to the on-screen form in the office.
   </div>
 
   <div class="key">Key takeaway: Parts 0 and 1 are the foundation — read them first. Parts 2–4 are your reference library. Part 5 is your task guide on every assignment. Use the first-assignment walk-through in Part 5 if you are new to this type of work.</div>
