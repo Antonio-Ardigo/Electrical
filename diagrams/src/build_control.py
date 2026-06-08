@@ -151,26 +151,25 @@ def build(d):
     # ============================================================
     # 4) Field / process level: primary plant per IED
     # ============================================================
+    # Each column's primary plant aligns with the IED above it. The transformer
+    # column carries the breakers the 87T differential trips (hardwired).
     field = [
-        (-9.0, "52  MV CB",   "incomer\nbreaker",   "#eef2f7", "net"),
-        (-5.4, "52  MV CB",   "bus-section\nbreaker", "#eef2f7", "net"),
-        (-1.8, "Genset ctrl", "DG  AVR / gov\n+ sync", "#eef7ee", "net"),
-        ( 1.8, "ACB + Meter", "52 LV + ATS\npower meter", "#eef2f7", "net"),
-        ( 5.4, "UPS / DC",    "UPS + DCDB\n110 V DC", "#f3f3f3", "net"),
-        ( 9.0, "VFDs",        "MCC / drives\nmotor feeders", "#eef2f7", "net"),
+        (-9.0, "52  MV CB",    "MV incomer\nbreaker",        "#eef2f7"),
+        (-5.4, "52  MV CB",    "MV bus-section\nbreaker",    "#eef2f7"),
+        (-1.8, "52-T / ACB",   "TX breakers\n+ power meter", "#eef2f7"),
+        ( 1.8, "Genset / ATS", "DG  AVR / gov\n+ sync, ATS", "#eef7ee"),
+        ( 5.4, "UPS / DC",     "UPS + DCDB\n110 V DC",       "#f3f3f3"),
+        ( 9.0, "VFDs / Meter", "MCC drives\nmotor feeders",  "#eef2f7"),
     ]
-    for (x, nm, sub, fill, kind) in field:
+    for (x, nm, sub, fill) in field:
         s.place(d, s.Block(w=2.7, h=1.3, name=nm, sub=sub, fill=fill),
                 (x, Y_FLD), anchor="center")
 
-    # IED -> field links. Most are networked process-bus / hardwired I/O;
-    # the transformer 87T trip is shown as a dedicated hardwired safety trip.
-    for (x, nm, sub, fill, kind) in field:
-        y0 = Y_GOOSE if False else Y_IED - 0.62
-        # link from IED bottom (use the IED-row drop already at GOOSE node)
+    # IED -> field links. Most are networked (process bus / hardwired I/O);
+    # the transformer 87T differential trip is a dedicated hardwired safety trip.
+    for (x, nm, sub, fill) in field:
         if x == -1.8:
-            # hardwired safety trip (transformer 87T -> 52)
-            hardwire(d, (x, Y_GOOSE), (x, Y_FLD + 0.65))
+            hardwire(d, (x, Y_GOOSE), (x, Y_FLD + 0.65))   # 87T -> 52-T (hardwired)
         else:
             net(d, (x, Y_GOOSE), (x, Y_FLD + 0.65), color=GREY)
 
