@@ -1096,26 +1096,78 @@
       <tr>
         <td>Severity</td>
         <td><strong>S</strong></td>
-        <td>1–10</td>
-        <td>How bad is the worst system-level consequence of this failure mode?</td>
+        <td>1–5</td>
+        <td>How bad is the worst system-level consequence of this failure mode? (5 = catastrophic / safety-critical)</td>
       </tr>
       <tr>
         <td>Occurrence</td>
         <td><strong>O</strong></td>
-        <td>1–10</td>
-        <td>How likely / frequent is this failure mode?</td>
+        <td>1–5</td>
+        <td>How likely / frequent is this failure mode? (5 = frequent / high failure rate)</td>
       </tr>
       <tr>
         <td>Detection</td>
         <td><strong>D</strong></td>
-        <td>1–10</td>
-        <td>How difficult is it to detect before it becomes a system event? (10 = undetectable)</td>
+        <td>1–5</td>
+        <td>How difficult is it to detect before it becomes a system event? (5 = effectively undetectable)</td>
       </tr>
       <tr>
         <td><strong>RPN</strong></td>
         <td>S × O × D</td>
-        <td>1–1000</td>
+        <td>1–125</td>
         <td>Overall risk priority — mitigate highest numbers first</td>
+      </tr>
+      <tr>
+        <td><strong>Criticality (Crit)</strong></td>
+        <td>S × O</td>
+        <td>1–25</td>
+        <td>Severity × Occurrence, used alongside SPOF flag for ranking when detection data is uncertain</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="tip">
+    <strong>Scale guidance (1–5):</strong> S=5 = safety-critical or whole-plant blackout;
+    S=4 = essential loads lost; S=3 = significant process impact; S=2 = minor/local disruption; S=1 = negligible.
+    O=5 = frequent (annual or more often); O=1 = very rare (&lt;once per 20 yr).
+    D=5 = failure is latent / undetectable without testing; D=1 = continuously monitored with alarm.
+  </div>
+
+  <h3 id="s-fmeca-bands">Priority bands</h3>
+
+  <p>
+    After scoring, assign each row a priority band. These bands are consistent with
+    the SF-03 priority rule in <a href="#t-analysis">Part 5 — Post-Site Analysis</a>:
+  </p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Band</th>
+        <th>Condition</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>P1</strong></td>
+        <td>SPOF with S ≥ 4, or RPN ≥ 60</td>
+        <td>Immediate action — safety-critical or highest-risk; act before next scheduled outage</td>
+      </tr>
+      <tr>
+        <td><strong>P2</strong></td>
+        <td>RPN 36–59</td>
+        <td>Short-term — plan and implement within 6–12 months</td>
+      </tr>
+      <tr>
+        <td><strong>P3</strong></td>
+        <td>RPN 16–35</td>
+        <td>Medium-term — address in next planned maintenance window (12–24 months)</td>
+      </tr>
+      <tr>
+        <td><strong>P4</strong></td>
+        <td>RPN &lt; 16</td>
+        <td>Monitor — review at next FMECA update; no immediate modification required</td>
       </tr>
     </tbody>
   </table>
@@ -1135,6 +1187,12 @@
     project-specific or published failure data on a real study.
   </p>
 
+  <div class="note">
+    <strong>Scale reminder:</strong> S, O, D each scored 1–5 (5 = worst). RPN = S × O × D (max 125).
+    All scores are illustrative training values — calibrate with project-specific data for real studies.
+    Priority bands: P1 = SPOF with S ≥ 4 or RPN ≥ 60; P2 = RPN 36–59; P3 = RPN 16–35; P4 &lt; 16.
+  </div>
+
   <table class="tbl">
     <thead>
       <tr>
@@ -1148,6 +1206,7 @@
         <th>O</th>
         <th>D</th>
         <th>RPN</th>
+        <th>Priority</th>
         <th>Recommended mitigation</th>
       </tr>
     </thead>
@@ -1159,8 +1218,9 @@
         <td>MV busbar fault / arc</td>
         <td>MV bus de-energised; incomer CB trips</td>
         <td>Total plant blackout (both TXs lose source); DG/ATS essential path only</td>
-        <td>9</td><td>1</td><td>5</td>
-        <td><strong>45</strong></td>
+        <td>5</td><td>1</td><td>3</td>
+        <td><strong>15</strong></td>
+        <td>P3</td>
         <td>MV bus-section breaker; arc-flash detection; SF₆ or sealed technology; strict access control</td>
       </tr>
       <tr>
@@ -1170,8 +1230,9 @@
         <td>Incomer CB fails to trip on fault</td>
         <td>Fault not cleared; upstream protection operates</td>
         <td>Upstream supply lost — utility outage; whole plant affected until utility restores</td>
-        <td>8</td><td>2</td><td>6</td>
-        <td><strong>96</strong></td>
+        <td>5</td><td>2</td><td>4</td>
+        <td><strong>40</strong></td>
+        <td>P2</td>
         <td>Annual CB trip-coil continuity test; protection relay secondary injection test; trip circuit supervision alarm</td>
       </tr>
       <tr>
@@ -1181,8 +1242,9 @@
         <td>Winding fault (internal)</td>
         <td>TX-1 trips on differential / Buchholz; Bus A dead</td>
         <td>Half plant loses supply; BT must close — if BT fails, Bus A stays dark</td>
-        <td>8</td><td>3</td><td>4</td>
-        <td><strong>96</strong></td>
+        <td>4</td><td>2</td><td>3</td>
+        <td><strong>24</strong></td>
+        <td>P3</td>
         <td>Auto bus-tie BT + N-1 loading verified; 87T differential protection; winding temperature and oil-level monitoring</td>
       </tr>
       <tr>
@@ -1192,8 +1254,9 @@
         <td>Winding fault (internal)</td>
         <td>TX-2 trips on differential / Buchholz; Bus B dead</td>
         <td>Half plant loses supply; BT must close — if BT fails, Bus B stays dark</td>
-        <td>8</td><td>3</td><td>4</td>
-        <td><strong>96</strong></td>
+        <td>4</td><td>2</td><td>3</td>
+        <td><strong>24</strong></td>
+        <td>P3</td>
         <td>Auto bus-tie BT + N-1 loading verified; 87T differential protection; winding temperature and oil-level monitoring</td>
       </tr>
       <tr>
@@ -1203,8 +1266,9 @@
         <td>Fails to close on bus-tie demand</td>
         <td>BT remains open; dead bus stays dark</td>
         <td>Essential loads on dead bus lost for duration of repair — N-1 credit eliminated</td>
-        <td>9</td><td>2</td><td>5</td>
-        <td><strong>90</strong></td>
+        <td>5</td><td>2</td><td>4</td>
+        <td><strong>40</strong></td>
+        <td>P2</td>
         <td>Auto-transfer scheme with redundant control; annual on-load transfer test; BT position monitoring and alarm</td>
       </tr>
       <tr>
@@ -1214,8 +1278,9 @@
         <td>Busbar fault / arc-flash event</td>
         <td>Bus section trips; all outgoing feeders on that section de-energised</td>
         <td>All loads on affected bus section lost; extended outage during repair/inspection</td>
-        <td>9</td><td>1</td><td>6</td>
-        <td><strong>54</strong></td>
+        <td>5</td><td>1</td><td>4</td>
+        <td><strong>20</strong></td>
+        <td>P3</td>
         <td>Form 4 Type 7 compartmentalisation (contains arc to one functional unit); arc-flash detection; planned arc-flash study; routine PM</td>
       </tr>
       <tr>
