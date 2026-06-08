@@ -1,53 +1,51 @@
 # Job Description — Project Manager (Electrical)
 
-**Engagement:** WSM Electrical **Single Point of Failure (SPOF) Assessment** —
-21 assessment units, Central & Eastern sector (Riyadh, Madinah, Qassim, Eastern
-Region) groundwater & surface-water desalination plants.
-**Reference:** WSM Subcontractor Technical Specification `WSM-SUBC-SPEC-001 Rev 0`
-([in this folder](WSM%20Subcontractor%20Technical%20Specification%20Rev%200.docx)).
+**Engagement:** Electrical **Single Point of Failure (SPOF) Assessment** of 21 water /
+desalination plants across the Central & Eastern sector (Riyadh, Madinah, Qassim,
+Eastern Region), full-time over a **4-month** campaign.
 
 | | |
 |---|---|
-| **Reports to** | WSM Project Manager / Client |
-| **Leads** | The supplied engineering team (2 Electrical Engineers) + field support |
-| **Engagement** | Full-time, **4 months** (per Part 1 of the specification) |
-| **Location** | WSM premises and plant sites (Central & Eastern) |
+| **Reports to** | Client Project Manager |
+| **Leads** | The engineering team (2 Electrical Engineers) + field support |
+| **Engagement** | Full-time, **4 months** |
+| **Location** | Office and plant sites (Central & Eastern) |
 | **Languages** | **Arabic & English** (required) |
 
 ## Role summary
 
-Lead and coordinate the subcontracted engineering team delivering WSM's electrical
-SPOF assessment across the 21 assessment units. Own programme, quality, HSE and
-client interface for the assessment campaign and for the per-plant **calculations**
-(Part 2) and **basic-engineering modifications** (Part 3) called off by WSM, working
-under the direction of WSM's Project Manager.
+Lead and coordinate the engineering team delivering the electrical SPOF assessment
+across the 21 plants. Own the programme, quality, HSE and client interface for the
+assessment campaign and for the per-plant **calculation packages** and concept-level
+**modifications**.
 
 ## Key responsibilities
 
-- **Programme & delivery** — plan and control the 4-month campaign across 21 units;
-  schedule document reviews, site visits and deliverable turnaround; track progress
-  and report to WSM.
-- **Team leadership** — direct the two Electrical Engineers (and field support);
-  allocate plants, balance workload, review and check deliverables before submission.
-- **Method assurance** — ensure each plant is delivered to the WSM study method:
-  **SF-01 Document Inventory · SF-02 FMECA · SF-03 Recommendations · SF-04 Site Visit
-  Report**, with consistent quality and taxonomy.
-- **Technical oversight** — quality-gate the SLD red-line/verification, the SPOF
-  inventory and criticality classification, the **FMECA (IEC 60812)** and **RAM/RBD
-  (IEEE 493 / ISO 20815, ISO 14224 taxonomy)**, and the per-plant calculation set
-  (load-flow, short-circuit, protection coordination, arc-flash/IEEE 1584, earthing &
-  lightning) — challenging assumptions and conclusions.
-- **Call-off management** — coordinate Part 2 (calculations) and Part 3 (basic
-  engineering of recommended modifications: bus-tie/auto-transfer, standby/alternate
-  feeds, protection re-grading, battery/charger, earthing remediation) per plant.
-- **HSE & compliance** — enforce host-plant permit-to-work and QHSE
-  (ISO 9001/14001/45001); ensure surveys remain **non-intrusive**; uphold NDA, **NCA
-  cybersecurity (v6.0)** data handling, and arrange SCE-accredited review/stamping
+- **Programme & delivery** — plan and control the 4-month campaign across the 21 plants;
+  schedule the document reviews, site visits and deliverable turnaround; track and report
+  progress.
+- **Team leadership** — direct the two Electrical Engineers (and field support); allocate
+  plants, balance workload, and review/check deliverables before submission.
+- **Method assurance** — ensure each plant is delivered to a consistent standard: the
+  assessment forms (a **document inventory**, a **failure-mode / criticality (FMECA)**
+  form, a **recommendations register**, and a **site-visit report**) and the plant
+  calculation packages.
+- **Technical oversight** — quality-gate the single-line-diagram red-line / verification,
+  the SPOF inventory and criticality classification, and the plant calculation packages
+  (load-flow, short-circuit, protection coordination, earthing & lightning). Arc-flash
+  (IEEE 1584) and RAM / RBD availability analysis are **preferable** where provided.
+  Challenge assumptions and conclusions.
+- **Modifications** — coordinate the concept-level engineering of the recommended
+  modifications per plant (e.g. bus-tie / auto-transfer, standby or alternate feeds,
+  protection re-grading, battery / charger, earthing remediation).
+- **HSE & compliance** — enforce host permit-to-work and QHSE (ISO 9001 / 14001 / 45001);
+  ensure surveys remain **non-intrusive**; uphold the NDA and the applicable national
+  cybersecurity data-handling requirements; and arrange SCE-accredited review / stamping
   where required.
-- **Commercial** — manage the engagement against the pricing schedule (fixed 4-month
-  personnel supply + per-plant unit rates); maintain reporting and submittals.
+- **Commercial & reporting** — manage the engagement programme and deliverables and
+  maintain regular reporting to the client.
 
-## Minimum qualifications (per spec §3.2)
+## Minimum qualifications
 
 - **BSc Electrical Engineering** (MSc and/or **PMP** advantageous).
 - **≥ 10 years** experience; proven **LV & MV** power-system background.
@@ -57,17 +55,22 @@ under the direction of WSM's Project Manager.
 
 ## Skills & competencies
 
-- Able to read, interrogate and red-line **single-line diagrams** and to direct/QA the
-  full study and calculation set (without necessarily running every calc personally).
-- Familiar with **FMECA, RAM/RBD and SPOF/reliability** methods and the relevant
-  standards: **IEC, IEEE (incl. 1584 / 493), NFPA 70E, ANSI, NEMA**.
-- Strong programme/stakeholder management, deliverable QA, and bilingual reporting.
+- Able to read, interrogate and red-line **single-line diagrams** and to direct and QA the
+  **plant calculation packages** and the assessment (without necessarily running every
+  calculation personally).
+- Familiar with SPOF / reliability and failure-mode / criticality (FMECA) methods;
+  RAM / RBD availability analysis preferable.
+- Working command of the relevant standards (IEC; IEEE, including 493; NFPA 70E; ANSI;
+  NEMA).
+- Strong programme and stakeholder management, deliverable QA, and bilingual reporting.
 
-## Key deliverables
+## Key deliverables — the forms
 
-- On-programme delivery of the per-plant study sets (SF-01…SF-04) across 21 units.
-- Checked, consistent SPOF inventories, FMECA, recommendations and site-visit reports.
-- Coordinated Part 2/Part 3 call-offs and the consolidated final report to WSM.
+- On-programme delivery, across the 21 plants, of the completed assessment **forms** — the
+  **document inventory**, the **failure-mode / criticality (FMECA)** form, the
+  **recommendations register**, and the **site-visit report**.
+- Checked, consistent **plant calculation packages** and concept modification packages.
+- Consolidated reporting to the client.
 
-*Defined against WSM-SUBC-SPEC-001 Rev 0; final terms (SCE, programme, rates) per the
-executed subcontract.*
+*Indicative role profile; final terms (SCE, programme, rates) are confirmed on
+engagement.*

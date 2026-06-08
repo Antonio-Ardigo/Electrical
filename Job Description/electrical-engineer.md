@@ -1,63 +1,65 @@
 # Job Description — Electrical Engineer (SPOF Assessment & Calculations)
 
-**Engagement:** WSM Electrical **Single Point of Failure (SPOF) Assessment** —
-21 assessment units, Central & Eastern sector (Riyadh, Madinah, Qassim, Eastern
-Region) groundwater & surface-water desalination plants.
-**Reference:** WSM Subcontractor Technical Specification `WSM-SUBC-SPEC-001 Rev 0`
-([in this folder](WSM%20Subcontractor%20Technical%20Specification%20Rev%200.docx)).
-**Positions:** 2 (per spec §3.1).
+**Engagement:** Electrical **Single Point of Failure (SPOF) Assessment** of 21 water /
+desalination plants across the Central & Eastern sector (Riyadh, Madinah, Qassim,
+Eastern Region), full-time over a **4-month** campaign. **Positions: 2.**
 
 | | |
 |---|---|
-| **Reports to** | Project Manager (Electrical) / WSM Project Manager |
-| **Engagement** | Full-time, **4 months** (Part 1), plus per-plant call-offs (Parts 2 & 3) |
-| **Location** | WSM premises and plant sites (Central & Eastern) |
+| **Reports to** | Project Manager (Electrical) |
+| **Engagement** | Full-time, **4 months**, plus per-plant calculation and modification assignments |
+| **Location** | Office and plant sites (Central & Eastern) |
 | **Languages** | **Arabic & English** (required) |
 
 ## Role summary
 
-Deliver the per-plant electrical SPOF assessment and **perform all of the engineering
-calculations** across the 21 assessment units, applying the WSM study method, and
-provide the basic-engineering of recommended modifications on call-off. Must be able
-to run the full power-system study set autonomously.
+Deliver the per-plant electrical SPOF assessment and **produce the plant calculation
+packages** across the 21 plants, and provide concept-level engineering of the
+recommended modifications. The engineer must be able to run the core power-system
+studies autonomously and assemble a complete calculation package per plant.
 
-## Calculations the role must perform (must be fully autonomous)
+## Plant calculation package — required (performed autonomously)
 
-Per spec §3.3 / §4, for each plant (assessment and modifications):
+For each plant (assessment, and for the recommended modifications), the engineer
+produces a complete calculation package:
 
-| Study | Standard / basis |
-|-------|------------------|
+| Study | Basis |
+|-------|-------|
 | **Load-flow analysis** | IEC / IEEE |
 | **Short-circuit study** | IEC 60909 / IEEE |
-| **Protection coordination study** | IEC / IEEE (grading, relay settings) |
-| **Arc-flash / incident-energy study** | **IEEE 1584** (+ NFPA 70E) |
+| **Protection coordination study** | grading and relay/trip settings |
 | **Earthing & lightning-protection assessment** | IEC 62305 / IEEE 80 |
 
-Delivered using recognized power-system software (e.g. ETAP / DIgSILENT / SKM or
-equivalent) — tools to be stated in the offer method statement.
+**Preferable (advantageous, not required):**
 
-## Key responsibilities (per spec §3.3 and §4)
+- **Arc-flash / incident-energy study** (IEEE 1584 / NFPA 70E).
+- **RAM / RBD availability analysis** (IEEE 493 / ISO 20815).
 
-- **SLD verification** — review and **red-line update single-line diagrams**; verify
-  against the as-found plant during site visits.
-- **SPOF assessment** — inventory and classify electrical **Single Points of Failure**;
-  assess criticality.
-- **Reliability analysis** — **FMECA (IEC 60812)** and **RAM / RBD (IEEE 493 /
-  ISO 20815)** using **ISO 14224** taxonomy.
-- **Field surveys** — non-intrusive surveys at host plants; data capture; QHSE-compliant
-  site work.
-- **Calculations (Part 2)** — perform the full study set above, per plant on call-off.
-- **Modifications — basic engineering (Part 3)** — concept-level engineering of
-  recommended changes: revised/marked-up SLD; equipment sizing and outline
-  specifications (e.g. **bus-tie auto-transfer scheme, standby/alternate feeds,
-  protection re-grading, battery/charger, earthing remediation**); re-run the basic
-  calculations on the modification; scheme description, sequence of operation, plot
-  plan and an indicative (high-level) bill of materials. *Battery limit: basic/concept
-  engineering only — excludes detailed design, procurement and construction.*
-- **Reporting** — contribute to the per-plant study set (**SF-01 Document Inventory ·
-  SF-02 FMECA · SF-03 Recommendations · SF-04 Site Visit Report**) and the final report.
+Studies are produced with recognized power-system software (e.g. ETAP / DIgSILENT / SKM
+or equivalent).
 
-## Minimum qualifications (per spec §3.2)
+## Key responsibilities
+
+- **Plant calculation packages** — produce the complete per-plant calculation package
+  (the required studies above) for each plant and for each recommended modification.
+- **Single-line diagram verification** — review and red-line the single-line diagrams and
+  verify them against the as-found plant during site visits.
+- **SPOF assessment** — inventory and classify the electrical single points of failure and
+  assess their criticality (failure modes, effects and criticality analysis). Availability
+  (RAM / RBD) analysis is preferable where the data supports it.
+- **Field surveys** — non-intrusive surveys at the plants; capture as-found data; work to
+  the host QHSE and permit-to-work rules.
+- **Modifications — concept engineering** — for each recommended change: a marked-up
+  single-line diagram; equipment sizing and outline specifications (e.g. bus-tie /
+  auto-transfer scheme, standby or alternate feeds, protection re-grading, battery /
+  charger, earthing remediation); re-run the relevant calculations on the modification;
+  a scheme description, sequence of operation, plot plan and a high-level bill of
+  materials. Concept level only — excludes detailed design, procurement and construction.
+- **Reporting** — for every plant, complete the assessment forms: a **document
+  inventory**, a **failure-mode / criticality (FMECA)** form, a **recommendations
+  register**, and a **site-visit report**; and contribute to the consolidated report.
+
+## Minimum qualifications
 
 - **BSc Electrical Engineering**.
 - **≥ 5 years** experience; proven **LV & MV** power-system work.
@@ -67,19 +69,26 @@ equivalent) — tools to be stated in the offer method statement.
 
 ## Skills & competencies
 
-- Fully autonomous in **load-flow, short-circuit, protection-coordination, arc-flash
-  (IEEE 1584)** and **earthing/lightning** studies.
-- Fluent reading/authoring **single-line diagrams**; FMECA / RAM-RBD / reliability methods.
-- Command of the standards: **IEC, IEEE (incl. 1584 / 493), NFPA 70E, ANSI, NEMA**,
-  plus IEC 60812 (FMECA), ISO 20815 / ISO 14224.
-- Methodical, QHSE-aware, strong bilingual technical documentation.
+- **Able to produce a complete plant calculation package** autonomously — load-flow,
+  short-circuit, protection coordination and earthing/lightning.
+- **Arc-flash (IEEE 1584)** and **RAM / RBD availability** analysis are **preferable**.
+- Fluent reading and red-lining **single-line diagrams**; competent in failure-mode /
+  criticality (FMECA) and reliability methods.
+- Working command of the relevant standards (IEC; IEEE, including 493; NFPA 70E; ANSI;
+  NEMA; IEC 60812 for FMECA; ISO 20815 / ISO 14224).
+- Methodical, QHSE-aware, with strong bilingual technical documentation.
 
-## Key deliverables
+## Key deliverables — the forms
 
-- Per-plant **calculation packages** (the five studies) for assessment and modifications.
-- Red-lined SLDs, SPOF inventories, FMECA and RAM/RBD results.
-- Basic-engineering modification packages (Part 3) and inputs to SF-01…SF-04 and the
-  final report.
+For each plant, the completed assessment **forms** are the primary deliverables:
 
-*Defined against WSM-SUBC-SPEC-001 Rev 0; final ratings and study results per the
-per-plant call-offs and detailed conditions.*
+- the **document inventory** form,
+- the **failure-mode / criticality (FMECA)** form,
+- the **recommendations register**, and
+- the **site-visit report**.
+
+Together with the **plant calculation package** (per plant and per modification), the
+red-lined single-line diagrams, and the concept modification packages.
+
+*Indicative role profile; final ratings, study results and conditions are confirmed per
+plant.*
