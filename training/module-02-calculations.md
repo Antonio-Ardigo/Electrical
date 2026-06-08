@@ -31,6 +31,17 @@ On completion you will be able to:
 - Size a **motor feeder** (FLC, DOL starting, soft-start/VFD rationale).
 - Size a **cable** with derating and a **voltage-drop** check.
 - Size **power-factor correction** (0.85 → 0.95) and the **standby generator**.
+- Read a **load-flow** result (bus voltages, tap, losses) and confirm limits.
+- **Coordinate protection** for selectivity (grading margin, relay/trip settings).
+- Estimate **arc-flash** incident energy and boundary (**IEEE 1584**) and use the
+  clearing-time lever.
+- Size the **earthing** system (NER, earth grid, earth conductor) and set the
+  **lightning-protection** class.
+
+Sections **§9–§12** extend the set to the full power-system study suite — **load-flow,
+protection coordination, arc-flash (IEEE 1584) and earthing/lightning** — matching the
+studies required by an electrical SPOF-assessment scope (alongside the short-circuit
+study of §4).
 
 **Constants used throughout:** √3 = 1.732; LV line voltage V = 400 V; MV line
 voltage = 11 kV; 50 Hz.
@@ -411,6 +422,192 @@ generator size.
 
 ---
 
+## 9. Load-flow analysis
+
+**Goal:** confirm the **voltage profile, power flows and losses** at peak load —
+that every bus stays within ±5 % and no branch is thermally overloaded.
+
+**Transformer voltage regulation.** Split Z = 6 % into R ≈ 1.2 %, X ≈ 5.9 %. At the
+normal ~73 % loading (§2), pf ≈ 0.90 (cosφ = 0.90, sinφ = 0.436):
+
+```
+ΔV% ≈ load_pu × (R%·cosφ + X%·sinφ)
+ΔV% ≈ 0.73 × (1.2×0.90 + 5.9×0.436)
+ΔV% ≈ 0.73 × (1.08 + 2.57) = 0.73 × 3.65 = 2.7 %
+```
+
+**Bus voltage.** With the transformer off-load tap set to nominal, the
+[LV-MSB](../diagrams/sld-master-2MW.md#lv-msb) sits ~2.7 % below its no-load value at
+full load (≈ 389 V); a **+2.5 % tap** restores it to ~400 V. Adding the worst feeder
+drop of 2.4 % (§6) puts the motor terminal at ≈ **97–98 %** of nominal — inside the
+±5 % limit. Correcting power factor (§7) lowers current and lifts the profile further.
+
+**Losses (indicative).** Transformer load (copper) loss scales with loading²; at 73 %
+of a unit with ~17 kW full-load loss, each transformer dissipates ≈ 0.73² × 17 ≈ **9 kW**.
+
+**Result:** voltages within limits after tap selection; flows confirm each transformer
+at ~73 % and feeders within ampacity. The study validates the §1–§7 sizing and tells
+you whether the tap, cable sizes and PFC are adequate **or** where reinforcement is needed.
+
+> **Why this calc matters**
+> - **Why it's essential:** proves the steady-state network actually delivers
+>   acceptable voltage to every load and that nothing is overloaded.
+> - **If not done / done wrong:** hidden under-voltage (process trips, motors won't
+>   start) or over-voltage, and undetected branch overloads; or needless reinforcement.
+> - **Inputs:** load list, source voltage, transformer/cable impedances, tap settings, pf.
+> - **Outputs:** bus voltages, branch power flows, losses, required tap position.
+> - **Equipment sized / selected:** transformer **tap range**, conductor sizes,
+>   **PFC** placement; validates **TX-1/TX-2** and feeder loading.
+
+---
+
+## 10. Protection coordination (selectivity)
+
+**Goal:** set the protective devices so the one **closest to the fault trips first**,
+isolating the smallest possible zone (selectivity), while still clearing every fault fast.
+
+**The series of devices** (fault on a motor feeder, tracing upstream): motor MCCB →
+[MCC](../diagrams/sld-master-2MW.md#mcc-1) → LV outgoing MCCB → LV incomer
+[ACB](../diagrams/sld-master-2MW.md#lv-msb) → MV transformer-feeder relay `[52-T]`
+([MV-SWGR](../diagrams/sld-master-2MW.md#mv-swgr)) → MV incomer `[52-I]`.
+
+**Time grading.** Between two graded relays leave a margin Δt for breaker opening +
+relay overshoot + CT error + safety (≈ 0.3 s):
+
+```
+t_upstream = t_downstream + Δt
+LV incomer ACB short-time delay  t = 0.20 s
+MV 52-T relay (51)               t = 0.20 + 0.30 = 0.50 s
+```
+
+**MV relay pickup** (CT 100/1 A on the ~84 A primary FLC of §3):
+
+```
+I_pickup = 1.25 × 84 A = 105 A  → 1.05 × CT  (set ~1.05 on 100/1)
+```
+
+Transformer **internal** faults are cleared instantly by the **87T differential**
+(see `[52-T]`), independent of the time grading above.
+
+**Result:** indicative grading — motor feeder ≈ 0.05 s, LV incomer ≈ 0.20 s, MV feeder
+≈ 0.50 s — is **selective**: a feeder fault trips only that feeder, not the whole bus.
+
+> **Why this calc matters**
+> - **Why it's essential:** turns the fault levels (§4) into actual relay/trip
+>   settings that isolate faults selectively and fast.
+> - **If not done / done wrong:** loss of selectivity (an upstream breaker trips for a
+>   downstream fault → far larger outage), or too-slow clearing (equipment damage and
+>   higher arc-flash energy — see §11).
+> - **Inputs:** fault levels (§4), device time-current curves, CT ratios, grading margin.
+> - **Outputs:** relay pickup and time settings, trip-unit bands, a discrimination study.
+> - **Equipment sized / selected:** **MV-PROT** relays/IEDs and the **ACB/MCCB** trip
+>   units; informs use of zone-selective interlocking / bus differential.
+
+---
+
+## 11. Arc-flash / incident-energy study (IEEE 1584)
+
+**Goal:** estimate the **incident energy** and **arc-flash boundary** at the
+[LV-MSB](../diagrams/sld-master-2MW.md#lv-msb), to label the gear and select PPE — and
+to show why **clearing time** (§10) is the dominant lever.
+
+**Inputs.** Bolted fault I_bf ≈ 38.5 kA (§4), 400 V, in an enclosure; working distance
+D = 600 mm; upstream device clearing time t.
+
+**Arcing current** (LV arcing/bolted ratio ≈ 0.5–0.6 per IEEE 1584):
+
+```
+I_a ≈ 0.58 × 38.5 kA ≈ 22 kA
+```
+
+**Incident energy** scales with arcing current × time and inversely with distance². With
+the upstream device clearing at **t = 0.20 s** (the LV incomer band from §10), the
+IEEE 1584-2018 empirical model gives, indicatively:
+
+```
+E ≈ 10 cal/cm²  (at D = 600 mm)
+```
+
+**Arc-flash boundary** (distance where E falls to E_B = 1.2 cal/cm², inverse-square scaling):
+
+```
+AFB ≈ D × √(E / 1.2) = 0.6 m × √(10 / 1.2) = 0.6 × 2.89 ≈ 1.7 m
+```
+
+**The clearing-time lever.** Halving the clearing time roughly halves the energy. Adding
+an **arc-reduction measure** (maintenance switch, zone-selective interlocking, or an
+arc-flash relay) to clear in **t = 0.05 s** drops E to ≈ **2.5 cal/cm²** and shrinks the
+boundary — at some tension with the selectivity grading of §10, which is why bus
+differential / ZSI is used to get both.
+
+**Result:** ~**10 cal/cm²** at 600 mm → arc-rated PPE must exceed this (e.g. a 12–25
+cal/cm² kit), arc-flash boundary ≈ **1.7 m**; faster tripping is the cheapest way to
+reduce it. *Exact figures require the full IEEE 1584-2018 model and site data.*
+
+> **Why this calc matters**
+> - **Why it's essential:** quantifies the thermal hazard to personnel and sets PPE,
+>   labels and arc-mitigation — a life-safety requirement (NFPA 70E / IEEE 1584).
+> - **If not done / done wrong:** people exposed to under-rated PPE (severe burns),
+>   non-compliant/ missing arc-flash labels, no basis for mitigation.
+> - **Inputs:** bolted fault current (§4), arcing-current ratio, **clearing time** (§10),
+>   working distance, electrode/enclosure configuration.
+> - **Outputs:** incident energy (cal/cm²), arc-flash boundary, PPE category, labels.
+> - **Equipment sized / selected:** **PPE** and warning labels; drives arc-reduction
+>   relays / maintenance switches / ZSI and influences switchgear selection (arc-rated).
+
+---
+
+## 12. Earthing & lightning-protection assessment
+
+**Goal:** size the **earthing system** — the MV neutral earthing resistor
+([MV-NER](../diagrams/sld-master-2MW.md#mv-ner)), the earth grid and the earth
+conductors — and set the **lightning-protection** class (IEC 62305).
+
+**MV neutral earthing resistor.** The MV system is **resistance-earthed** to limit the
+earth-fault current (here to ≈ 300 A) so faults are detectable but damage/arc energy is
+limited:
+
+```
+R_NER = (V_LL / √3) / I_ef = (11,000 / 1.732) / 300 = 6351 / 300 ≈ 21 Ω
+```
+
+(Rated for the fault duration, e.g. a 10 s short-time rating; I²R during fault
+≈ 300² × 21 ≈ 1.9 MW dissipated briefly.)
+
+**LV earthing.** The 400 V system is **TN-S, solidly earthed**, so an LV earth fault is
+of the same order as a line fault and is cleared quickly by the feeder protection.
+
+**Earth-conductor sizing (adiabatic).** Conductor that must carry the LV fault for the
+clearing time (I = 38.5 kA, t = 0.2 s, k ≈ 143 for Cu/PVC):
+
+```
+A = I × √t / k = 38,500 × √0.2 / 143 = 38,500 × 0.447 / 143 ≈ 120 mm²
+```
+
+**Earth grid & lightning.** Target grid resistance (e.g. ≤ 1 Ω for the substation,
+depending on soil resistivity ρ) with touch/step voltages inside the **IEEE 80** limits;
+the **lightning-protection level (LPL I–IV)** follows an **IEC 62305** risk assessment,
+fixing air-termination, down-conductor and earth-termination requirements, all bonded to
+the grid.
+
+**Result:** **R_NER ≈ 21 Ω**, earth conductors ≥ **120 mm² Cu** (governed by the LV
+fault), grid resistance to target with verified touch/step voltages, and an LPS class
+from the IEC 62305 risk study.
+
+> **Why this calc matters**
+> - **Why it's essential:** keeps touch/step voltages safe, gives protection a path to
+>   detect earth faults, limits fault damage, and protects against lightning.
+> - **If not done / done wrong:** dangerous touch/step voltages (electrocution),
+>   undetected earth faults, equipment damage, and lightning exposure.
+> - **Inputs:** system earthing method, earth-fault current & duration, soil resistivity,
+>   grid geometry, lightning risk assessment.
+> - **Outputs:** NER ohms/rating, earth-conductor csa, grid resistance, touch/step
+>   compliance, LPS class.
+> - **Equipment sized / selected:** **MV-NER**, the earth grid/electrodes and bonding,
+>   earthing **conductors**, and the lightning-protection system (LPS).
+
+---
+
 ## Calculations → equipment → cost impact
 
 A one-row-per-calculation map from each calculation to the equipment it sizes and
@@ -426,6 +623,10 @@ why it does (or doesn't) drive capital cost.
 | 6. Cable sizing & volt-drop | Design current, derating, length, R/X | Required Iz, cross-section, %ΔV | Feeder cable, containment | Cable overheats (fire) or volt-drop too high | **Medium** — copper/aluminium volume across the plant |
 | 7. Power-factor correction | P, present pf, target pf, harmonics | Required kVAr, detuning | PFC bank + 7 % reactors | Utility reactive penalties; capacity wasted | **Medium** — avoids reactive-power penalties and frees capacity |
 | 8. Standby generator | Essential load, pf, step load, dip limit | DG rating (~1000 kVA) | DG set, ATS/breaker, essential distro | Genset stalls on outage, or oversized | **High** — gensets are costly per kVA |
+| 9. Load-flow | Loads, source V, Z, taps, pf | Bus voltages, flows, losses, tap | Transformer tap, cable sizes, PFC placement | Hidden under/over-voltage or overloads | **Medium** — mainly validates ratings/taps; flags reinforcement |
+| 10. Protection coordination | Fault levels, device curves, CT ratios | Relay/trip settings, selectivity | MV-PROT relays, ACB/MCCB trip units | Loss of selectivity (wider outage) or slow clearing | **Low–Med** — mostly settings/engineering (hardware only if extra relays) |
+| 11. Arc-flash (IEEE 1584) | Arcing current, clearing time, distance | Incident energy, AFB, PPE category | PPE, labels, arc-reduction (ZSI/relay) | Severe burn risk; non-compliant labels | **Medium** — PPE + arc-reduction relays; safety-critical |
+| 12. Earthing & lightning | Earthing method, fault current, soil ρ | NER ohms, earth csa, grid R, LPS class | MV-NER, earth grid, conductors, LPS | Touch/step hazard; equipment & lightning damage | **Medium** — earth grid copper + NER + LPS; safety-critical |
 
 ---
 
@@ -440,6 +641,14 @@ contrast, **power-factor correction (§7)** and **voltage-drop / cable losses
 headline capital figure. **Motor starting (§5)** sits in between: it adds modest
 capital (soft-starter/VFD over DOL) but protects supply quality and reduces the
 genset size.
+
+The added studies are mostly **engineering and settings plus modest hardware**:
+**load-flow (§9)** chiefly validates the §1–§7 sizing and flags where (or whether)
+reinforcement is needed; **protection coordination (§10)** is largely relay/trip
+settings; **arc-flash (§11)** and **earthing/lightning (§12)** add PPE, arc-reduction
+relays, earth-grid copper and an LPS. Their headline CAPEX is modest, but they are
+**safety-critical** — their value is measured in avoided injury, equipment loss and
+downtime rather than in the capital figure.
 
 ---
 
@@ -457,6 +666,11 @@ genset size.
 | Voltage drop | ΔV = √3·I·(R cosφ + X sinφ)·L | 9.6 V = 2.4 % |
 | PFC reactive power | Q_c = P·(tanφ1 − tanφ2) | 2000·0.291 = 582 kVAr |
 | Generator (essential) | S = P/pf × step factor | 0.81 × 1.25 = 1.0 MVA |
+| Transformer regulation | ΔV% ≈ load_pu·(R%cosφ + X%sinφ) | 0.73·(1.2·0.9+5.9·0.436) = 2.7 % |
+| Grading margin (relays) | t_up = t_down + Δt | 0.20 + 0.30 = 0.50 s |
+| Arc-flash boundary | AFB ≈ D·√(E/1.2) | 0.6·√(10/1.2) = 1.7 m |
+| NER resistance | R = (V_LL/√3)/I_ef | 6351 / 300 = 21 Ω |
+| Earth conductor (adiabatic) | A = I·√t / k | 38,500·√0.2/143 = 120 mm² |
 
 ---
 
@@ -474,6 +688,10 @@ Work each before opening the answer.
    a 1600 kVA unit. What is the per-unit loading — is it acceptable?
 5. A feeder carries **I_B = 160 A** with grouping/temperature derating factors of
    0.85 and 0.91. What tabulated cable rating I_z is required?
+6. The MV system is resistance-earthed to limit the earth-fault current to **400 A**
+   at 11 kV. What **NER resistance** is required?
+7. An arc-flash study gives **6 cal/cm²** at a 600 mm working distance. Estimate the
+   **arc-flash boundary** (E_B = 1.2 cal/cm²) using the inverse-square scaling.
 
 <details>
 <summary><strong>Answers</strong></summary>
@@ -488,6 +706,8 @@ Work each before opening the answer.
    **acceptable** for the essential-load N-1 case (non-essential load shed).
 5. I_z(req) = 160 / (0.85 × 0.91) = 160 / 0.7735 = **207 A** — select a cable
    with tabulated rating ≥ 207 A.
+6. R_NER = (11,000 / 1.732) / 400 = 6351 / 400 = **15.9 Ω**.
+7. AFB = 0.6 × √(6 / 1.2) = 0.6 × √5 = 0.6 × 2.236 = **1.34 m**.
 
 </details>
 
