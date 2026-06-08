@@ -38,9 +38,14 @@ Electrical/
 │   ├── module-02-calculations.md              core electrical calculations + worked examples
 │   └── module-03-spof-analysis.md             single-point-of-failure analysis
 └── diagrams/
-    ├── sld-master-2MW.md                       master reference single-line diagram
-    └── spof-examples/                          alternative SLDs for SPOF analysis
+    ├── DRAWING-STANDARD.md                     SLD format/style spec (schemdraw, IEC 60617)
+    ├── sld-master-2MW.md                       master reference SLD (embeds svg/, anchored legend)
+    ├── spof-examples/                          alternative SLDs for SPOF analysis
+    ├── src/                                    schemdraw source: slddraw.py + build_*.py
+    └── svg/                                    rendered SVG/PNG figures (build artefacts)
 ```
+
+The reusable **`electrical-draftsman`** subagent lives in `.claude/agents/`.
 
 ### Course flow (do not reorder without reason)
 
@@ -60,8 +65,11 @@ Electrical/
 - **Tag ↔ drawing linking:** the master SLD gives each tag an HTML anchor (e.g.
   `<a id="mv-swgr"></a>MV-SWGR`). Module tables deep-link to those anchors
   (e.g. `[MV-SWGR](../diagrams/sld-master-2MW.md#mv-swgr)`). Preserve anchors when editing.
-- **Diagrams:** ASCII art inside fenced code blocks. Keep them aligned, readable, and stylistically
-  consistent with `sld-master-2MW.md`. Busbars `═══`, normally-open tie marked `N.O.`.
+- **Diagrams:** professional **IEC 60617 vector SLDs** built with **schemdraw** from Python source in
+  `diagrams/src/` (symbol library `slddraw.py`), rendered to **SVG** in `diagrams/svg/` and embedded in
+  Markdown. The source script is the master — never hand-edit an SVG; re-render instead. Follow
+  `diagrams/DRAWING-STANDARD.md`. For SLD work, use the **`electrical-draftsman`** agent
+  (`.claude/agents/electrical-draftsman.md`).
 - **Tone:** professional, concise, GitHub-flavored Markdown. Every numeric value is **indicative**;
   state that assumptions are tentative and to be confirmed by detailed studies.
 

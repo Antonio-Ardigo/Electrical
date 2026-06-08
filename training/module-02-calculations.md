@@ -37,6 +37,29 @@ voltage = 11 kV; 50 Hz.
 
 ---
 
+## Why these calculations matter
+
+Engineering calculations are what turn a concept single-line diagram into
+**correctly-rated, safe, coordinated equipment**. Every rating you see on the SLD
+— a transformer kVA, a breaker frame and breaking capacity, a busbar bracing
+figure, a cable cross-section, a capacitor bank, a genset — is the *output* of one
+of the calculations below, and the calculation is the **audit trail** that
+justifies it.
+
+Skip or guess them and you fail in one of two directions:
+
+- **Under-rating** → unsafe or non-functional plant: cables and busbars that
+  overheat (fire risk), switchgear that cannot interrupt a fault (catastrophic
+  failure), protection that mis-coordinates or fails/nuisance-trips, motors that
+  won't start, and process voltage too low to run.
+- **Over-rating** → wasted capital tied up in oversized transformers, switchgear
+  frames, cable and gensets that the plant will never use.
+
+The right calculation, done with the right inputs, lands the design between those
+two — safe and coordinated, without paying for capacity that is never needed.
+
+---
+
 ## 1. Load & demand estimate
 
 **Goal:** confirm the ~2 MW plant demand and convert it to apparent power (MVA).
@@ -62,6 +85,16 @@ S = 2.0 MW / 0.85 = 2.35 MVA
 with the design basis. Adding a diversity/spare margin of +20–25 % gives an
 installed transformer base of ~**2.8–3.0 MVA**, which drives the 2 × 1600 kVA
 selection in §2.
+
+> **Why this calc matters**
+> - **Why it's essential:** sets the total size of the whole electrical plant.
+> - **If not done / done wrong:** over-estimate wastes capital on oversized
+>   gear; under-estimate leaves no capacity and forces a costly retrofit.
+> - **Inputs:** connected-load list (nameplate kW), demand/diversity factor,
+>   plant power factor.
+> - **Outputs:** maximum demand (MW) and apparent power (MVA), installed base.
+> - **Equipment sized / selected:** sets the base for **TX-1/TX-2**,
+>   **MV-SWGR**, **LV-MSB** and feeders — effectively everything downstream.
 
 ---
 
@@ -103,6 +136,18 @@ one source the bus-tie lets the survivor carry the **essential load at ~81 %**
 (within rating), with non-essential load shed. The 2 × 1600 kVA + bus-tie design
 is therefore **N-1 secure for essential load**.
 
+> **Why this calc matters**
+> - **Why it's essential:** picks the transformer rating and proves redundancy
+>   (one unit can carry the essential load).
+> - **If not done / done wrong:** undersized → overload/loss of supply on N-1;
+>   oversized → paying for kVA and switchgear frames never used.
+> - **Inputs:** apparent power (from §1), redundancy concept (N-1), essential-
+>   load fraction, standard transformer ratings.
+> - **Outputs:** number/rating of units (2 × 1600 kVA), normal and N-1 loading
+>   in pu.
+> - **Equipment sized / selected:** **TX-1/TX-2**, the **bus-tie (BT)** scheme,
+>   and the load-shedding requirement on **LV-MSB**.
+
 ---
 
 ## 3. Transformer full-load current (LV side)
@@ -129,6 +174,16 @@ the ~2500–3200 A bus rating noted in the design basis.
 
 *(For reference, the 11 kV primary FLC = 1,600,000 / (1.732 × 11,000) ≈ **84 A**,
 sizing the MV transformer-feeder breakers `[52-T1]`/`[52-T2]`.)*
+
+> **Why this calc matters**
+> - **Why it's essential:** the continuous current every conductor and breaker
+>   on the LV incomer must carry.
+> - **If not done / done wrong:** under-rated busbar/breaker overheats and ages
+>   prematurely; over-rated wastes copper and frame cost.
+> - **Inputs:** transformer kVA, LV line voltage.
+> - **Outputs:** LV full-load current (≈2310 A); MV-side FLC (≈84 A).
+> - **Equipment sized / selected:** **LV-MSB** incomer **ACB** frame and busbar
+>   rating; MV transformer-feeder breakers (`52-T1`/`52-T2`) in **MV-SWGR**.
 
 ---
 
@@ -164,6 +219,17 @@ the MCC bus at **50–65 kA** covers the single-transformer fault with margin; t
 **bus-tie is operated normally-open** (and interlocked) so the two contributions
 are not summed continuously, keeping fault duty within the 50–65 kA board rating.
 
+> **Why this calc matters**
+> - **Why it's essential:** sets the fault current the switchgear must safely
+>   interrupt and the busbars must withstand mechanically.
+> - **If not done / done wrong:** breaker with too-low breaking capacity can
+>   explode on a fault, or unbraced busbars deform — a safety-critical failure.
+> - **Inputs:** LV full-load current (§3), transformer impedance Z%, source/
+>   parallelling assumptions.
+> - **Outputs:** prospective short-circuit current (kA) per unit and parallel.
+> - **Equipment sized / selected:** breaking capacity (Icu/Ics) and busbar
+>   bracing of **LV-MSB**, **MCC** and all **ACB/MCCB**; bus-tie interlock.
+
 ---
 
 ## 5. Motor full-load current & starting
@@ -198,6 +264,17 @@ current to near FLC **and** gives speed control. For this reason motors above
 economically fed at **MV (3.3 / 6.6 kV)** via a dedicated MV starter rather than
 the 400 V MCC — the LV FLC becomes large (a 200 kW LV motor draws ~350 A) and
 cable/starter cost rises. Our 110 kW example sits comfortably below that line.
+
+> **Why this calc matters**
+> - **Why it's essential:** sizes the motor feeder/protection and decides the
+>   starting method (DOL vs soft-start vs VFD).
+> - **If not done / done wrong:** DOL inrush dips the bus and nuisance-trips or
+>   stalls the motor; under-rated starter/contactor fails on start.
+> - **Inputs:** motor kW, voltage, pf, efficiency, starting multiple (≈6.5×).
+> - **Outputs:** motor FLC (≈194 A), starting current (≈1260 A DOL), starting-
+>   method recommendation.
+> - **Equipment sized / selected:** motor starter/overload and feeder in the
+>   **MCC**, soft-starter or **VFD**, and the LV-vs-MV feed decision.
 
 ---
 
@@ -239,6 +316,18 @@ R ≈ 0.23 Ω/km, X ≈ 0.08 Ω/km; pf = 0.86 → cosφ = 0.86, sinφ = 0.51.
 **Result:** **95 mm² Cu XLPE**, 2.4 % drop at full load — within the typical
 **≤5 %** motor-feeder limit (and ≤3 % is comfortable). Selection accepted.
 
+> **Why this calc matters**
+> - **Why it's essential:** picks a conductor that carries the load without
+>   overheating and keeps voltage at the load high enough to run.
+> - **If not done / done wrong:** under-sized cable overheats (insulation
+>   failure/fire) or volt-drop too high to start/run the load; over-sized wastes
+>   copper/aluminium.
+> - **Inputs:** design current (FLC), grouping/temperature derating factors,
+>   run length, conductor R/X, voltage-drop limit.
+> - **Outputs:** required tabulated rating, cable cross-section, %voltage drop.
+> - **Equipment sized / selected:** the feeder **cable** (95 mm² Cu XLPE here)
+>   and its gland/tray/containment.
+
 ---
 
 ## 7. Power-factor correction (PFC)
@@ -265,6 +354,17 @@ Because VFDs inject harmonics, the bank is **detuned (7 % reactors)** to avoid
 resonance — as noted for the [PFC](../diagrams/sld-master-2MW.md#pfc) tag.
 Correcting to 0.95 also drops the apparent power (2.35 → 2.0/0.95 = 2.11 MVA),
 relieving transformer and cable loading.
+
+> **Why this calc matters**
+> - **Why it's essential:** raises power factor to avoid utility reactive-power
+>   penalties and frees transformer/cable capacity.
+> - **If not done / done wrong:** ongoing low-pf penalties on the energy bill and
+>   capacity wasted carrying reactive current; an un-detuned bank can resonate
+>   with VFD harmonics and fail.
+> - **Inputs:** active power, present pf, target pf, harmonic environment.
+> - **Outputs:** required reactive power (≈580 kVAr), detuning requirement.
+> - **Equipment sized / selected:** the automatic capacitor bank **PFC** (with
+>   7 % detuning reactors) and its feeder/switching steps.
 
 ---
 
@@ -296,6 +396,50 @@ sizing must check the transient **voltage dip** on the largest motor start (ofte
 the governing constraint), step-load acceptance, and de-rating for altitude/
 ambient. Soft-starting/VFD the largest essential motors reduces the required
 generator size.
+
+> **Why this calc matters**
+> - **Why it's essential:** sizes the backup source that keeps essential/safety
+>   loads running when the utility fails.
+> - **If not done / done wrong:** undersized genset stalls on motor start or
+>   trips on overload during an outage (loss of essential plant); oversized is
+>   very costly per kVA and runs inefficiently lightly loaded.
+> - **Inputs:** essential active load, pf, largest-motor step load, transient
+>   voltage-dip limit, site de-rating (altitude/ambient).
+> - **Outputs:** generator rating (≈1000 kVA), step-load/voltage-dip check.
+> - **Equipment sized / selected:** the standby **DG** set, its breaker/ATS and
+>   the essential-load distribution it feeds.
+
+---
+
+## Calculations → equipment → cost impact
+
+A one-row-per-calculation map from each calculation to the equipment it sizes and
+why it does (or doesn't) drive capital cost.
+
+| Calculation | Key inputs | Key outputs | Equipment sized | If skipped | Cost impact (H/M/L + why) |
+|---|---|---|---|---|---|
+| 1. Load & demand | Connected kW, diversity factor, pf | Demand (MW), apparent power (MVA) | Base for TX-1/TX-2, MV-SWGR, LV-MSB, feeders | Whole plant mis-sized; costly retrofit or wasted capital | **High** — sets the entire plant size; everything scales from it |
+| 2. Transformer sizing & N-1 | MVA, redundancy concept, essential fraction | Unit rating, normal/N-1 loading (pu) | TX-1/TX-2, bus-tie (BT) scheme | Overload on N-1 or oversized units/switchgear | **High** — transformers + switchgear frames + cable sizes all scale with it |
+| 3. Transformer FLC (LV) | Transformer kVA, LV voltage | LV FLC (~2310 A), MV FLC (~84 A) | LV-MSB incomer ACB, busbars; MV feeder breakers | Under-rated busbar/breaker overheats | **High** — sets ACB frame and busbar ampacity (large copper) |
+| 4. Short-circuit / fault | LV FLC, Z%, source assumptions | Prospective Isc (kA) | Breaking capacity & bracing of LV-MSB, MCC, ACB/MCCB | Breaker can't clear fault — safety failure | **High** — drives breaker breaking capacity and busbar bracing (expensive) |
+| 5. Motor FLC & starting | Motor kW, V, pf, η, start multiple | FLC, start current, start method | MCC starter/overload, soft-starter/VFD, LV-vs-MV feed | Bus dip/nuisance trip; under-rated starter fails | **Medium** — soft-starter/VFD cost vs DOL; affects MCC/feed choice |
+| 6. Cable sizing & volt-drop | Design current, derating, length, R/X | Required Iz, cross-section, %ΔV | Feeder cable, containment | Cable overheats (fire) or volt-drop too high | **Medium** — copper/aluminium volume across the plant |
+| 7. Power-factor correction | P, present pf, target pf, harmonics | Required kVAr, detuning | PFC bank + 7 % reactors | Utility reactive penalties; capacity wasted | **Medium** — avoids reactive-power penalties and frees capacity |
+| 8. Standby generator | Essential load, pf, step load, dip limit | DG rating (~1000 kVA) | DG set, ATS/breaker, essential distro | Genset stalls on outage, or oversized | **High** — gensets are costly per kVA |
+
+---
+
+## Where the money is
+
+The calculations that **dominate capital cost** are the **demand/transformer
+sizing (§1–§3)** and the **short-circuit rating (§4)**: between them they fix the
+frame sizes, the breaker breaking capacities, the busbar bracing, the cable
+cross-sections and the genset — the most expensive items in the plant. By
+contrast, **power-factor correction (§7)** and **voltage-drop / cable losses
+(§6)** mainly affect **operating cost and utility penalties** rather than the
+headline capital figure. **Motor starting (§5)** sits in between: it adds modest
+capital (soft-starter/VFD over DOL) but protects supply quality and reduces the
+genset size.
 
 ---
 
