@@ -1,0 +1,104 @@
+<article class="concept" id="concept-motorstart">
+  <h2>10. Motor Starting</h2>
+  <p class="backlink">Manual deep-dive: <a href="manual-rev3.html#c-motors">open the full section</a></p>
+
+  <h3>The Problem</h3>
+  <p>An induction motor at standstill is, electrically, a transformer whose secondary winding has been short-circuited by the rotor cage. Switch it straight onto the 400 V bus — <strong>direct-on-line (DOL)</strong> starting — and it draws <strong>6 to 7 times its full-load current</strong> for as long as it takes to accelerate, typically 2–10 seconds. The current arrives at a miserable power factor of about 0.2, almost pure magnetisation, and it does not care how big your transformer is.</p>
+  <p>That inrush has to be pushed through the 6 % impedance of a 1600 kVA transformer (TX-1/TX-2), and impedance times current equals voltage <em>lost</em>. The bus voltage dips for the whole acceleration. Other motors on the same MCC see less voltage; their torque falls with voltage <em>squared</em>, so a 10 % dip costs 19 % of torque — loaded machines slow down and draw even more current. Contactor coils hold in down to roughly 80 % voltage; below that they drop out and trip healthy loads. The DCS flags low-voltage alarms across the plant. In the worst case, one big compressor start ripples into a partial plant trip.</p>
+  <p>In Saudi conditions the problem is sharper still: at 50 °C ambient everything already runs near its thermal limit, and when the plant is on the 1250 kVA diesel generator (tag DG) the "grid" behind the bus is twenty times weaker than SEC. The engineering question of this chapter is brutally practical: <em>which motors may start DOL, and which must be eased onto the bus — and how do you prove it with arithmetic a field engineer can redo on a phone?</em></p>
+
+  <h3>Core Principles</h3>
+  <h4>Principle 1: A stalled motor is a short-circuited transformer</h4>
+  <p><strong>Statement:</strong> At zero speed the rotor conductors see the full 60 Hz field, so only the machine's leakage impedance limits current — hence the locked-rotor current of 6–7 × In at pf ≈ 0.2.</p>
+  <p>As the rotor accelerates, the frequency it "sees" (the slip frequency) falls, apparent rotor resistance rises, and current drops — but only near full speed. The current stays close to locked-rotor value for most of the run-up; it is a cliff, not a slope.</p>
+  <h4>Principle 2: Voltage dip is a voltage-divider problem</h4>
+  <p><strong>Statement:</strong> The starting kVA divides the voltage across the source impedance and the motor; to first order the dip at the bus is the starting kVA as a fraction of the total.</p>
+  <p><code class="formula">ΔU/U ≈ S_start / (S_start + S_sc)</code></p>
+  <p>Here S_sc, the short-circuit level (defined in Chapter 9), is the measure of bus stiffness. Big motor + weak source = deep dip. This single fraction is the screening tool used in the worked example.</p>
+  <h4>Principle 3: Torque scales with voltage squared</h4>
+  <p><strong>Statement:</strong> Induction motor torque at any speed is proportional to U², so a dip hurts twice — the starting motor accelerates more slowly (longer dip) and every running motor loses torque.</p>
+  <p>This is why dip limits exist: typically <strong>≤ 10 % at the switchboard</strong> (protects everyone else) and <strong>≤ 15 % at the starting motor's own terminals</strong> (ensures it can still break away and accelerate its load). These are common plant-specification values; the project motor-starting study sets the binding ones.</p>
+  <h4>Principle 4: Reduced-voltage starting trades current for torque</h4>
+  <p><strong>Statement:</strong> Any method that lowers the voltage (or reshapes the frequency) at the motor terminals during start reduces current proportionally — but torque falls with the square, so the driven load must still be accelerable.</p>
+  <p>A pump with a quadratic torque curve is easy to start gently; a loaded screw conveyor is not. Starting method selection is always a two-sided check: bus dip on one side, accelerating torque on the other.</p>
+
+  <h3>Key Innovations</h3>
+  <h4>Star-delta starting (early 20th century)</h4>
+  <p><strong>What:</strong> Start with the windings in star (each winding sees 400/√3 = 231 V), then switch to delta at speed. Current and torque both drop to <strong>1/3</strong> of DOL values.</p>
+  <p><strong>Why it mattered:</strong> The first cheap reduced-voltage method — three contactors and a timer. Its weakness is the open transition: a current spike at the star→delta changeover, and only 33 % of starting torque, fine for fans, marginal for much else.</p>
+  <h4>The soft starter (1970s–80s, thyristor era)</h4>
+  <p><strong>What:</strong> Anti-parallel thyristors chop the voltage smoothly from ~30 % to 100 % over an adjustable ramp; current limit settable, typically 2.5–4 × In.</p>
+  <p><strong>Why it mattered:</strong> Continuous, shockless control of the trade-off in Principle 4 — no changeover spike, adjustable in the field, and it doubles as a soft <em>stop</em> for pumps (kills water hammer).</p>
+  <h4>The VFD as a starter (1990s onward)</h4>
+  <p><strong>What:</strong> A variable frequency drive starts the motor at low frequency and low voltage simultaneously, keeping the magnetic flux constant. The motor never experiences locked-rotor conditions; line current stays near or below <strong>1.5 × In</strong> while delivering up to full torque from zero speed.</p>
+  <p><strong>Why it mattered:</strong> It decouples starting current from starting torque — the only method that does. Where the process wants speed control anyway (most pumps and fans, for energy saving), the starting problem disappears for free. The price is harmonics — Chapter <a href="09-harmonics.html">9</a>.</p>
+  <p>The practical selection ladder, cheapest first: <strong>DOL → star-delta → soft starter → VFD</strong>. Climb only as far as the dip calculation and the load's torque curve force you to.</p>
+
+  <h3>Worked Example: Can a 160 kW pump motor start DOL on TX-1?</h3>
+  <div class="worked">
+    <p><strong>Given:</strong> Motor 160 kW, 400 V, 60 Hz, 4-pole (≈1800 rpm), efficiency η = 0.96, pf = 0.86, locked-rotor current 6 × In at pf ≈ 0.2. Source: one transformer TX-1, 1600 kVA, Z = 6 %, on a stiff 13.8 kV grid. Dip criteria: ≤ 10 % at LV-MSB. All values indicative.</p>
+    <p><strong>Step 1 — Full-load current of the motor.</strong> Input apparent power first:</p>
+    <p><code class="formula">S_motor = P / (η × pf) = 160 / (0.96 × 0.86) = 193.8 kVA</code></p>
+    <p><code class="formula">In = 193 800 / (√3 × 400) = 193 800 / 692.8 = 280 A</code></p>
+    <p><em>Why:</em> shaft kW must be grossed up for losses (η) and reactive demand (pf) before converting to amps.</p>
+    <p><strong>Step 2 — Starting current and starting kVA.</strong></p>
+    <p><code class="formula">I_start = 6 × In = 6 × 280 = 1680 A</code></p>
+    <p><code class="formula">S_start = √3 × 400 × 1680 = 1164 kVA</code></p>
+    <p><em>Note:</em> 1164 kVA of starting demand from a 160 kW motor — 73 % of the whole transformer rating, for several seconds. This is why the question must be asked at all.</p>
+    <p><strong>Step 3 — Bus stiffness behind LV-MSB.</strong></p>
+    <p><code class="formula">S_sc ≈ S_tx / Z = 1600 / 0.06 = 26 700 kVA&nbsp;&nbsp;(matches Isc ≈ 38.5 kA at 400 V)</code></p>
+    <p><strong>Step 4 — Voltage dip on the grid supply.</strong></p>
+    <p><code class="formula">ΔU/U ≈ S_start / (S_start + S_sc) = 1164 / (1164 + 26 700) = 1164 / 27 864 = 0.042</code></p>
+    <p><code class="formula">ΔU ≈ 4.2 %</code></p>
+    <p><em>Verdict:</em> 4.2 % &lt; 10 % limit → <strong>DOL start accepted on normal supply</strong>, even with the bus-tie open and one transformer alone.</p>
+    <p><strong>Step 5 — Same motor on the 1250 kVA diesel generator.</strong> A generator's transient stiffness is set by its transient reactance x′d ≈ 14 %:</p>
+    <p><code class="formula">S_sc,DG ≈ S_DG / x′d = 1250 / 0.14 ≈ 8930 kVA</code></p>
+    <p><code class="formula">ΔU/U ≈ 1164 / (1164 + 8930) = 1164 / 10 094 = 0.115 → ≈ 11.5 %</code></p>
+    <p><em>Verdict:</em> 11.5 % &gt; 10 % → <strong>DOL start rejected on DG</strong>. Options: soft starter limited to ~3 × In (S_start ≈ 580 kVA → dip ≈ 580/9510 ≈ 6 % — accept), or PMS-staged restart so this motor starts alone on a lightly loaded DG.</p>
+    <p><strong>Sanity check:</strong> the grid case (26.7 MVA) is three times stiffer than the DG case (8.9 MVA), and the dip is roughly three times smaller — the numbers scale as the physics says they should. Also note the dip duration: a quadratic-torque pump accelerates in ~3–5 s; the dip is brief but long enough to matter to contactors if it were deeper.</p>
+  </div>
+
+  <h3>Intuitive Formalization</h3>
+  <p>The whole subject reduces to one screening formula and two scaling laws. The screening formula is the voltage divider:</p>
+  <p><code class="formula">ΔU/U ≈ S_start / (S_start + S_sc)</code></p>
+  <p>where <strong>S_start</strong> (kVA) is the locked-rotor demand — physically, how hard the stalled motor pulls on the bus — and <strong>S_sc</strong> (kVA) is the short-circuit level — physically, how hard the source can push back. The dip is simply the motor's share of the tug-of-war. Two scaling laws decide what to do when the dip is too deep:</p>
+  <p><code class="formula">I_start ∝ U_motor&nbsp;&nbsp;&nbsp;but&nbsp;&nbsp;&nbsp;T_start ∝ U_motor²</code></p>
+  <p>Current falls linearly with applied voltage (Ohm's law on the leakage impedance), but torque falls with its square (torque is flux × current, and both shrink together). Every starting method is a different point on this trade-off: DOL (100 % U, 100 % T, 6–7 × In), star-delta (58 % U → 33 % I and 33 % T), soft starter (adjustable ramp), VFD (the cheat — it changes frequency too, keeping flux and torque while current stays ≈1.5 × In). The field method is always: compute the dip, compare to the limit, climb the ladder one rung at a time, then verify the remaining torque still accelerates the load.</p>
+
+  <h3>CTQ Mapping</h3>
+  <table class="tbl">
+    <thead><tr><th>Critical-to-quality requirement</th><th>How the concept delivers it</th><th>What to check in the field</th></tr></thead>
+    <tbody>
+      <tr><td>No plant-wide disturbance when large motors start (dip ≤ 10 % at LV-MSB)</td><td>Dip screening per motor; starting method ladder applied where screening fails</td><td>Motor-starting study vs installed starter type; record dip with a power-quality meter during commissioning starts</td></tr>
+      <tr><td>Motor actually reaches speed without tripping</td><td>Torque-vs-voltage check (T ∝ U²) against the driven load curve; acceleration time inside thermal limits</td><td>Measured run-up time vs the protection relay's locked-rotor/excessive-start-time setting</td></tr>
+      <tr><td>Starts succeed on DG supply, not just on SEC</td><td>Separate dip check at S_sc,DG ≈ 8.9 MVA; PMS staged restart sequence</td><td>Black-building test: staged restart order and timers in the PMS; soft-start current limit settings</td></tr>
+      <tr><td>Motor thermal life at 50 °C ambient</td><td>Limited starts per hour (typically 2–3 hot starts for large machines); start current duration bounded</td><td>Starts-per-hour counter / relay setting; winding temperature alarms after repeated starts</td></tr>
+      <tr><td>Contactors and undervoltage relays ride through normal starts</td><td>Dip kept above ~80 % contactor hold-in voltage with margin</td><td>UV relay delay settings coordinate with worst-case start duration</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Conceptual Map</h3>
+  <pre>
+                        MOTOR STARTING (core)
+                                 |
+        +----------- rests on ---+--------------------+
+        |                        |                    |
+  Stalled motor =          Voltage divider       Torque ∝ U²
+  shorted transformer      ΔU ≈ S_start /        (dip hurts the
+  → 6–7×In @ pf 0.2        (S_start + S_sc)       starter AND
+        |                        |                 the neighbours)
+        |                        |                    |
+        +--------- led to: the starting ladder -------+
+                                 |
+     DOL ──→ star-delta ──→ soft starter ──→ VFD
+    (6–7×In)   (1/3 I, 1/3 T)  (2.5–4×In,     (≈1.5×In, full
+     cheap                      ramp+softstop)  torque; harmonics
+        |                        |              → Ch. 9)
+        +--------- enables ------+--------------------+
+                                 |
+        160 kW DOL on TX-1: dip 4.2 % ✓ on SEC grid
+        same motor on DG 1250 kVA: 11.5 % ✗ → soft start
+        + PMS staged restart after transfer (Ch. 12)
+  </pre>
+  <div class="note"><p>All values indicative on the Rev 3 basis (400 V / 60 Hz / 1800 rpm 4-pole / 50 °C); the project motor-starting and coordination studies govern accept/reject limits and settings.</p></div>
+</article>

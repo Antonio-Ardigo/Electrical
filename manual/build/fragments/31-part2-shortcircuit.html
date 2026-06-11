@@ -1,0 +1,756 @@
+<!-- ============================================================
+     §C-SHORTCIRCUIT  Short-circuit current & switchgear withstand
+     Rev 3 (Saudi/SEC edition) — 13.8 kV / 400-230 V / 60 Hz / 50 °C
+     Deep-dive tutorial. Expands the original §4 seed into the full
+     eight-heading pedagogy pattern. All numbers indicative;
+     SASO-adopted IEC 60909 and the formal plant studies govern.
+============================================================ -->
+<section id="c-shortcircuit" data-title="Short-Circuit Current and Switchgear Withstand" data-part="Part 2 — Calculations">
+
+  <h2>4 — Short-Circuit Current &amp; Switchgear Withstand <span style="font-size:0.65em; font-weight:normal; background:#e8f4fd; border:1px solid #aad4f5; border-radius:3px; padding:1px 5px; color:#1a6fa0;">Core</span></h2>
+
+  <p><strong>Goal:</strong> understand why the prospective short-circuit current is the
+  single most consequential number in the plant, calculate it from the SEC utility
+  connection down to the 400 V busbars (including the IEC 60909 refinements — voltage
+  factor, X/R, peak factor, motor contribution), and verify that every switchboard,
+  breaker and busbar between the 13.8 kV intake and the last MCC can both
+  <em>survive</em> and <em>interrupt</em> the worst fault it can ever see.</p>
+
+  <p>This section feeds almost every other calculation in Part 2: the breaker rating
+  checks in <a href="#c-breaker">§14 — Circuit Breakers</a>, the grading study in
+  <a href="#c-protection">§10 — Protection Coordination</a>, the incident-energy
+  calculation in <a href="#c-arcflash">§11 — Arc-Flash</a>, and the cable thermal
+  withstand check in <a href="#c-cables">§6 — Cable Sizing</a>. Get this number wrong
+  and every one of those studies inherits the error.</p>
+
+  <div class="note">
+    <strong>Indicative data.</strong> Every numeric value in this section is indicative
+    and chosen for teaching on the Rev 3 plant basis (SEC 13.8 kV, 60 Hz, design utility
+    fault level 25 kA within the SEC-stated 25&ndash;40 kA range; 2 &times; 1600 kVA,
+    Z = 6 % transformers; 400/230 V TN-S LV system; 50 &deg;C design ambient). The
+    plant's formal short-circuit study to the SASO-adopted edition of
+    <strong>IEC 60909</strong>, performed with the fault level confirmed in writing by
+    SEC, governs. Standards are cited as SASO-adopted IEC together with the SEC
+    Distribution Code / Saudi Grid Code and SBC 401.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       1. WHY THIS EXISTS
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-shortcircuit-why">The One Number Every Rating Answers To</h3>
+
+  <h4>Why this exists</h4>
+
+  <p>Walk through the plant and read the nameplates. The <code>LV-MSB</code> incomer ACB
+  says something like <em>Icu 65 kA</em>. The MV switchgear label says <em>31.5 kA / 3 s</em>.
+  The busbar type-test certificate quotes a peak withstand in kA. The MCC door label, the
+  fuse cartridges in the PFC panel, even the little MCBs in the lighting distribution
+  board — every one of them carries a fault rating in kiloamps. None of those numbers
+  describes anything the equipment does on a normal day. They all answer one question,
+  and it is the question this section exists to ask: <strong>if a bolted short circuit
+  occurs right here, how much current will the network push through this spot before
+  something opens?</strong></p>
+
+  <p>The answer is called the <strong>prospective short-circuit current</strong>
+  (I<sub>sc</sub>, or I<sub>k</sub>" in IEC 60909 language). "Prospective" is doing
+  important work in that name: it is the current that <em>would</em> flow if the fault
+  were a perfect zero-impedance connection and nothing intervened. It is a property of
+  the <em>network</em>, not of the fault or of any protective device. You cannot reduce
+  it by setting a relay differently, and you cannot wish it smaller — you can only make
+  sure every piece of equipment in its path is rated for it.</p>
+
+  <p>The physics is humbling. Under normal load the network behaves like a polite
+  negotiation: the load's impedance limits the current to what the process needs —
+  roughly 2 309 A through each transformer at full load. A bolted fault removes the
+  load from the circuit entirely. What remains between the SEC generators and the fault
+  is only the <em>series impedance of the supply path</em>: the grid, the transformer,
+  a few metres of busbar. On the Rev 3 plant that residual impedance is about 6 % on the
+  transformer base — which means the fault current is about <strong>1 / 0.06 &asymp; 17
+  times</strong> the transformer's full-load current. Seventeen times. Every conductor,
+  joint, support and contact in the path must carry that current — and the breakers must
+  interrupt it — without converting the switchroom into the failure story told in the
+  next sub-section.</p>
+
+  <p>Two distinct duties flow from the one number, and the distinction matters all
+  through this section:</p>
+
+  <ul>
+    <li><strong>Withstand</strong> — every component the fault current flows
+    <em>through</em> (busbars, cable, CTs, isolators, the closed contacts of breakers
+    that are <em>not</em> tripping) must survive the thermal and magnetic punishment for
+    as long as the fault persists. This is a passive, mechanical duty: it begins at the
+    instant of the fault, milliseconds before any relay has even measured anything.</li>
+    <li><strong>Interruption</strong> — the one device assigned to clear the fault must
+    be able to <em>break</em> that current: stretch, cool and extinguish an arc carrying
+    tens of kiloamps. This is the breaking-capacity duty (I<sub>cu</sub> at LV,
+    rated short-circuit breaking current at MV) covered in detail in
+    <a href="#c-breaker">§14</a>.</li>
+  </ul>
+
+  <p>Both duties are sized from the prospective short-circuit current. That is why this
+  calculation comes so early in Part 2 and why it is flagged <em>Core</em>: transformer
+  sizing (<a href="#c-transformer">§3</a>) tells you what the plant <em>needs</em>;
+  the short-circuit study tells you what the plant must <em>survive</em>.</p>
+
+  <div class="key">
+    The prospective short-circuit current is a property of the network, not of any
+    device. It defines two duties at every point in the system: components in the fault
+    path must <em>withstand</em> it, and the clearing device must <em>interrupt</em> it.
+    Every kA rating on every nameplate in the plant is an answer to this one number.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       2. WHAT GOES WRONG WITHOUT IT
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-shortcircuit-failure">A Failure Story: the Board That Was Never Asked</h3>
+
+  <h4>What goes wrong without it</h4>
+
+  <p>The following narrative is fictional, but every element of it is assembled from
+  failure modes documented across the industry, and every number is consistent with the
+  Rev 3 plant basis. Read it as a rehearsal of what the checklist at the end of this
+  section is protecting you from.</p>
+
+  <p>A process plant much like this one had grown in stages. The original 400 V
+  switchboard was bought when the site had a single 1000 kVA transformer; the board was
+  honestly rated <strong>25 kA</strong>, comfortably above the 21 kA the old transformer
+  could deliver, and the type-test certificate said so. Years later the site re-powered:
+  two 1600 kVA, Z = 6 % units, a new bus-tie arrangement, a doubling of demand. The new
+  transformers could each drive about <strong>38.5 kA</strong> into a bolted fault on the
+  board — and with the tie closed, towards <strong>77 kA</strong>. Nobody re-ran the
+  short-circuit study. The old board "had always been fine". The fault level had been
+  raised; the board was never asked whether it could cope.</p>
+
+  <p>For six years nothing happened, because nothing happened: prospective fault current
+  is invisible until there is a fault. Then, during a maintenance window, a forgotten
+  bonding lead was left across two phases behind the incomer compartment, and the
+  incomer was closed onto it. A bolted phase-to-phase fault, dead short, full network
+  behind it.</p>
+
+  <p>What followed took less than a quarter of a second. Within the <strong>first
+  half-cycle — 8.3 ms at 60 Hz</strong> — the current rose to its fully offset peak,
+  close to 88 kA on this network (the worked calculation below shows where that number
+  comes from). The electromagnetic force between parallel conductors scales with the
+  <strong>square</strong> of the instantaneous current — F &prop; I&sup2; — so a board
+  braced for a 25 kA duty (peak around 53 kA) suddenly experienced forces nearly
+  <strong>three times</strong> what its supports were type-tested for. The busbars did
+  what unbraced conductors carrying anti-parallel currents always do: they tried to fly
+  apart. One support insulator cracked; a bar deflected; the phase-to-phase clearance
+  collapsed; and the bolted fault became a three-phase <strong>arcing</strong> fault in
+  open air inside the enclosure.</p>
+
+  <p>Now the second failure mode took over. An arc at this current level burns at
+  temperatures of the order of 10 000&ndash;20 000 K — hotter than the surface of the
+  sun — and it is not stationary: magnetic forces drive it along the bars (away from
+  the source) like a blowtorch on rails. The enclosure was ordinary folded sheet steel,
+  never designed for internal arc containment. The arc burnt through the rear panel in
+  roughly 100 ms, vented plasma and vaporised copper into the cable trench behind the
+  board, and ignited cable insulation. The upstream MV protection — graded slow
+  precisely so the LV devices could act first, as explained in
+  <a href="#c-protection">§10</a> — finally cleared the fault from the 13.8 kV side
+  after several hundred milliseconds. The LV incomer breaker never got the chance: an
+  early instant of the fault had already exceeded its 25 kA interrupting rating, its
+  contacts welded on the first peak, and from then on it was just another conductor in
+  the fault path.</p>
+
+  <p>Total damage: the switchboard destroyed, the cable trench fire-damaged, the plant
+  down for weeks awaiting a replacement board on long lead time. The two electricians in
+  the room survived because they happened to be standing beside, not in front of, the
+  cubicle — the arc-flash consequences of exactly this scenario are quantified in
+  <a href="#c-arcflash">§11</a>. The investigation's finding fitted in one sentence:
+  <em>the installed fault level had been raised above the switchboard's rating, and no
+  process existed to catch it.</em></p>
+
+  <p>Notice the chain of cause and effect, because it is general:</p>
+
+  <ul>
+    <li><strong>Underrated withstand</strong> fails first and fails mechanically —
+    bracing, supports, clearances — within the first peak, before any protection can
+    act. No relay setting can prevent it.</li>
+    <li><strong>Underrated interruption</strong> fails next — a breaker asked to break
+    more than its I<sub>cu</sub> may weld, restrike or rupture, converting the
+    protective device itself into the failure.</li>
+    <li><strong>Containment</strong> fails last — a non-arc-rated enclosure lets the
+    arc out, escalating an electrical fault into a fire and a personnel hazard.</li>
+  </ul>
+
+  <div class="warning">
+    <strong>The trap of the quiet upgrade.</strong> Fault level rises whenever the
+    network gets "stronger": a bigger or lower-impedance transformer, a second
+    transformer paralleled, a closed bus-tie, a new SEC infeed, on-site generation
+    paralleled to the bus. None of these changes look dangerous — they all
+    <em>improve</em> supply. Every one of them must trigger a re-check of the
+    short-circuit study against every downstream rating. The bus-tie case is the most
+    common offender and has its own sub-section below.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       3. FEEL FOR THE NUMBERS
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-shortcircuit-feel">How Violent Is 38.5 kA?</h3>
+
+  <h4>Feel for the numbers</h4>
+
+  <p>Numbers in kiloamps slide past the eye. Before the formal calculation, let us
+  honestly estimate two things: the <strong>energy</strong> released if the 400 V bus
+  faults and arcs for 0.3 s, and the <strong>mechanical force</strong> the busbars feel
+  at the first peak. Both follow from arithmetic you can redo on a phone.</p>
+
+  <p><strong>Energy.</strong> The power the network can push into a three-phase bolted
+  fault at the <code>LV-MSB</code> is:</p>
+
+  <div class="worked">
+    <h4>Estimate — energy in a 0.3 s arcing fault at the LV-MSB</h4>
+    <p>Apparent power feeding a bolted three-phase fault:</p>
+    <code class="formula">S_fault = sqrt(3) &times; V &times; Isc = 1.732 &times; 400 V &times; 38 500 A &asymp; 26.7 MVA</code>
+    <p>For a bolted fault nearly all of that energy is dissipated out in the network
+    impedance (mostly inside the transformer). The dangerous case is the
+    <em>arcing</em> fault, where the arc itself is a resistor sitting at the fault
+    point. Maximum power transfer theory says a resistive arc dissipates the most
+    energy locally when its impedance matches the source impedance — at which point
+    roughly <strong>half</strong> the bolted-fault power burns in the arc:</p>
+    <code class="formula">P_arc (upper estimate) &asymp; 0.5 &times; 26.7 MW &asymp; 13.3 MW</code>
+    <p>If protection clears the fault in 0.3 s (a realistic time if the incomer's
+    short-time delay is involved — see <a href="#c-breaker">§14</a>):</p>
+    <code class="formula">E_arc &asymp; 13.3 MW &times; 0.3 s &asymp; 4.0 MJ</code>
+    <p><strong>Sanity check:</strong> this is the crude upper-bound estimate; the
+    IEEE 1584 method in <a href="#c-arcflash">§11</a> computes the realistic arcing
+    current and the fraction of energy reaching a worker. But as an order of magnitude
+    it is honest — and it is the right order of magnitude to be frightened of.</p>
+  </div>
+
+  <p>Now translate 4.0 MJ into everyday quantities, computed honestly:</p>
+
+  <ul>
+    <li><strong>TNT:</strong> TNT releases &asymp; 4.6 MJ/kg, so 4.0 MJ &asymp;
+    <strong>0.9 kg of TNT</strong> — a stick-of-dynamite-class energy release inside a
+    sheet-steel cabinet at chest height. (The comparison is about energy, not
+    blast dynamics — an arc releases it over 0.3 s rather than microseconds — but the
+    pressure wave from an arc in an enclosure is still enough to blow doors off
+    non-arc-rated boards.)</li>
+    <li><strong>Car crash:</strong> a 1 200 kg car at 100 km/h (27.8 m/s) carries
+    KE = 0.5 &times; 1 200 &times; 27.8&sup2; &asymp; 0.46 MJ &asymp; 0.5 MJ. The arc
+    releases the kinetic energy of <strong>about eight highway-speed cars</strong>, in
+    a third of a second, in a box.</li>
+    <li><strong>Kettle:</strong> a 2 kW kettle would take 4 000 000 / 2 000 = 2 000 s
+    &asymp; <strong>33 minutes</strong> to release the same energy that the arc releases
+    in 0.3 s. The arc is roughly <em>6 600 kettles</em> running at once.</li>
+  </ul>
+
+  <p><strong>Force.</strong> Parallel conductors carrying current exert forces on each
+  other — anti-parallel currents (as between two phases at the moment of a
+  phase-to-phase fault) <em>repel</em>. The force per metre between two long parallel
+  bars is:</p>
+
+  <div class="worked">
+    <h4>Estimate — magnetic force between LV busbars at the first peak</h4>
+    <code class="formula">F/L = 2 &times; 10^-7 &times; i1 &times; i2 / d   (N/m, currents in A, spacing d in m)</code>
+    <p>Take the first-peak current with DC offset, ip &asymp; 88 kA (derived in the
+    worked calculation below from kappa &asymp; 1.61 at the transformer terminals), and
+    a typical 100 mm phase spacing:</p>
+    <code class="formula">F/L = 2 &times; 10^-7 &times; (88 000)^2 / 0.1 = 2 &times; 10^-7 &times; 7.74 &times; 10^9 / 0.1 &asymp; 15 500 N/m</code>
+    <p>That is <strong>&asymp; 15.5 kN per metre &asymp; 1.6 tonne-force on every metre
+    of busbar</strong> — as if a family car were hung off each metre of bar, applied
+    sideways, arriving in 8.3 ms. A busbar span between supports 0.5 m apart carries a
+    transverse load of &asymp; 7.7 kN (&asymp; 790 kg).</p>
+    <p>Now the tie-closed case, Isc &asymp; 77 kA, ip &asymp; 175 kA:</p>
+    <code class="formula">F/L = 2 &times; 10^-7 &times; (175 000)^2 / 0.1 &asymp; 61 000 N/m &asymp; 6.2 tonne-force per metre</code>
+    <p><strong>Sanity check — the I-squared law:</strong> doubling the current
+    (38.5 &rarr; 77 kA) <em>quadrupled</em> the force (15.5 &rarr; 61 kN/m), exactly as
+    F &prop; I&sup2; demands. This is why a board rated 50 kA cannot be "probably OK"
+    at 77 kA: it is not 54 % overstressed, the bracing forces are
+    (77/50)&sup2; &asymp; 2.4 times its tested duty.</p>
+  </div>
+
+  <p>Hold these two pictures — a kilogram of TNT of energy, and a car's weight of
+  sideways force per metre of bar — while reading the rest of the section. They are
+  what the words "breaking capacity" and "short-time withstand" actually mean.</p>
+
+  <div class="key">
+    A 0.3 s arcing fault at the 400 V bus releases of the order of 4 MJ — about 0.9 kg
+    of TNT, or eight highway-speed car crashes — and the first current peak loads the
+    busbars with about 1.6 tonne-force per metre. Force scales with I&sup2;: closing
+    the bus-tie doesn't add 100 % to the mechanical duty, it adds 300 %.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       4. WORKED CALCULATION
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-sc-worked">From SEC Intake to the 400 V Bus, Step by Step</h3>
+
+  <h4>Worked calculation</h4>
+
+  <p>We now compute the prospective short-circuit current at the two places where it
+  matters most — the 13.8 kV switchgear bus and the 400 V <code>LV-MSB</code> — and then
+  refine the raw numbers with the three IEC 60909 corrections a field engineer should be
+  able to reproduce: the <strong>voltage factor c</strong>, the <strong>peak factor
+  &kappa;</strong> (DC offset), and the <strong>motor contribution</strong>. All
+  arithmetic is doable on a phone. The per-unit machinery behind these shortcuts is
+  developed in <a href="#c-perunit">§2 — Per-Unit System</a>; the transformer data come
+  from <a href="#c-transformer">§3 — Transformer Sizing</a>.</p>
+
+  <p><strong>Step (a) — fault level at the 13.8 kV intake.</strong> SEC does not hand
+  you an impedance; it hands you (on request, in writing) a <strong>design fault
+  level</strong> at the point of connection. For this plant the Rev 3 design basis is
+  <strong>25 kA at 13.8 kV</strong>, and SEC's stated planning range for this class of
+  network is <strong>25&ndash;40 kA</strong> — which is why the MV switchgear is bought
+  at 31.5 kA (next sub-section) rather than barely above 25 kA. Convert the current into
+  a short-circuit apparent power, because MVA is the most convenient currency for the
+  next step:</p>
+
+  <div class="worked">
+    <h4>Worked calculation — MV fault level as short-circuit MVA</h4>
+    <p>Formula (three-phase apparent power at the fault):</p>
+    <code class="formula">S"k = sqrt(3) &times; U &times; Ik"</code>
+    <p>Substitution, with U = 13.8 kV and Ik" = 25 kA:</p>
+    <code class="formula">S"k = 1.732 &times; 13 800 V &times; 25 000 A = 597.6 MVA &asymp; 598 MVA</code>
+    <p>It is also worth expressing the grid "strength" as an impedance on the
+    transformer base, because that tells us whether the grid impedance matters at the
+    400 V bus. On the 1600 kVA base of one transformer:</p>
+    <code class="formula">Z_grid (pu, 1600 kVA base) = S_base / S"k = 1.6 MVA / 597.6 MVA &asymp; 0.0027 pu &asymp; 0.27 %</code>
+    <p><strong>Sanity check:</strong> the grid contributes about 0.27 % of impedance in
+    series with the transformer's 6 % — under one twentieth. The 400 V fault level is
+    therefore dominated by the transformer, and treating the SEC grid as an "infinite
+    bus" overstates the LV fault current by only a few percent — an error in the
+    <em>safe</em> direction for rating equipment. At the upper SEC value of 40 kA
+    (956 MVA) the grid term shrinks further, to &asymp; 0.17 %. Indicative values;
+    SEC's written confirmation and the formal IEC 60909 study govern.</p>
+  </div>
+
+  <div class="tip">
+    <strong>Field habit.</strong> The MV fault level is an SEC <em>planning</em> number
+    and can rise over the life of the plant as the SEC network is reinforced. Treat the
+    25 kA figure as today's floor, not a constant of nature: that is exactly why the MV
+    board is specified at 31.5 kA, inside SEC's stated 25&ndash;40 kA range, and why the
+    re-study triggers at the end of this section include "SEC notifies a change of fault
+    level".
+  </div>
+
+  <p><strong>Step (b) — fault current at the 400 V bus through one transformer.</strong>
+  The most useful shortcut in all of power engineering: for a fault at the LV terminals
+  of a transformer fed from a strong grid, the fault current is simply the transformer's
+  full-load current divided by its per-unit impedance. The logic is one sentence long —
+  the impedance voltage Z % is, by definition, the fraction of rated voltage needed to
+  push rated current through the short-circuited transformer, so applying <em>full</em>
+  voltage to a short circuit pushes 1/Z times rated current.</p>
+
+  <div class="worked">
+    <h4>Worked calculation — LV bus fault current, one 1600 kVA transformer</h4>
+    <p>Transformer full-load current at 400 V (from <a href="#c-transformer">§3</a>):</p>
+    <code class="formula">I_FLC = S / (sqrt(3) &times; U) = 1 600 000 VA / (1.732 &times; 400 V) = 2 309 A</code>
+    <p>Infinite-bus fault current with Z = 6 % = 0.06 pu:</p>
+    <code class="formula">Isc = I_FLC / Z = 2 309 A / 0.06 &asymp; 38 500 A = 38.5 kA</code>
+    <p>Refinement — include the SEC grid impedance from step (a) in series:</p>
+    <code class="formula">Isc = 2 309 / (0.06 + 0.0027) = 2 309 / 0.0627 &asymp; 36.8 kA</code>
+    <p><strong>Sanity check:</strong> the grid-included value is only &asymp; 4 % lower
+    than the infinite-bus value, confirming step (a)'s conclusion that the transformer
+    dominates. For <em>rating</em> equipment we keep the conservative 38.5 kA; for
+    <em>protection settings</em> the study value matters. Cross-check against the "17
+    times" intuition from the start of this section: 1/0.06 = 16.7, and
+    16.7 &times; 2 309 A &asymp; 38.5 kA. Consistent.</p>
+  </div>
+
+  <p><strong>The bus-tie case.</strong> The <code>LV-MSB</code> has two bus sections,
+  one per transformer, with a normally-open bus-tie. Close the tie with both
+  transformers energised and a fault anywhere on the bus now sees <strong>two 6 %
+  impedances in parallel</strong> — i.e. 3 % — between itself and the (effectively
+  infinite) grid:</p>
+
+  <div class="worked">
+    <h4>Worked calculation — LV bus fault current, bus-tie closed</h4>
+    <code class="formula">Z_parallel = 0.06 / 2 = 0.03 pu (two identical transformers in parallel)</code>
+    <code class="formula">Isc = 2 309 A / 0.03 &asymp; 77 000 A = 77 kA</code>
+    <p>Equivalently: each transformer independently drives its own 38.5 kA into the
+    same fault, and the contributions add:</p>
+    <code class="formula">Isc = 38.5 kA + 38.5 kA = 77 kA</code>
+    <p><strong>Sanity check:</strong> doubling the sources exactly doubles the fault
+    current (the small grid term spoils this by only a couple of percent). But recall
+    from "Feel for the numbers" that busbar force scales with current
+    <em>squared</em> — the mechanical duty quadruples, from &asymp; 15.5 kN/m to
+    &asymp; 61 kN/m.</p>
+  </div>
+
+  <p>This single calculation is the entire justification for the plant's
+  <strong>tie-normally-open</strong> operating philosophy. With the tie open, each bus
+  section sees at most &asymp; 38.5 kA plus motor contribution (step (d)), comfortably
+  inside a 50&ndash;65 kA board rating. With the tie closed and both incomers shut,
+  the prospective current approaches 77 kA plus motor contribution — at or beyond the
+  top of the board's rating. The tie exists for <em>maintenance transfer</em>: the
+  switching sequence is close tie &rarr; open one incomer, so that both incomers and
+  the tie are never all closed except for the few seconds of a make-before-break
+  transfer, under a documented procedure (and, in many plants, an electrical interlock
+  that enforces "two of three" — see <a href="#c-breaker">§14</a>).</p>
+
+  <div class="key">
+    One transformer: Isc &asymp; 2 309 A / 0.06 &asymp; 38.5 kA at the 400 V bus.
+    Tie closed, both transformers: &asymp; 77 kA — fault current doubles, busbar forces
+    quadruple. That is why the bus-tie is normally open and why closing it is a
+    controlled, interlocked, short-duration operation.
+  </div>
+
+  <p><strong>Step (c) — the IEC 60909 refinements.</strong> The raw 1/Z arithmetic
+  above is the right first estimate, but the SASO-adopted IEC 60909 method adds three
+  corrections that change purchasing decisions. Each is small to compute and large in
+  consequence.</p>
+
+  <p><em>(c-1) The voltage factor c.</em> Real buses do not sit at exactly nominal
+  voltage; transformers have taps; the standard wants the <em>maximum</em> credible
+  fault current for rating purposes. IEC 60909 therefore multiplies the nominal voltage
+  by a factor <strong>c</strong> before calculating: for maximum fault currents,
+  c<sub>max</sub> = <strong>1.10</strong> at MV, and <strong>1.05</strong> at LV systems
+  with the usual +6 % supply tolerance (1.10 where +10 % applies). A minimum set
+  (c<sub>min</sub> = 0.95&ndash;1.00) is used when you need the <em>smallest</em> fault
+  current — for checking that protection still picks up at the far end of a long cable
+  (<a href="#c-protection">§10</a>). Applied to our LV bus:</p>
+
+  <div class="worked">
+    <h4>Worked calculation — applying the voltage factor at the 400 V bus</h4>
+    <code class="formula">Ik" = c &times; Isc(raw) = 1.05 &times; 38.5 kA &asymp; 40.4 kA (one transformer)</code>
+    <code class="formula">Ik" = 1.05 &times; 77 kA &asymp; 80.9 kA (tie closed)</code>
+    <p><strong>Sanity check:</strong> a 5 % voltage uplift gives a 5 % current uplift —
+    fault current is linear in driving voltage. Note what this does at the margins: a
+    board rated exactly 38.5 kA would already be non-compliant on the IEC 60909
+    maximum case. This is one reason the LV-MSB is specified at 50&ndash;65 kA.</p>
+  </div>
+
+  <p><em>(c-2) The peak factor &kappa; and the DC offset.</em> Everything so far is an
+  RMS, steady-state-symmetrical number. But a fault that strikes at the wrong point on
+  the voltage wave does not start symmetrically: the inductive network cannot change its
+  current instantaneously, so a decaying <strong>DC component</strong> is superimposed
+  on the AC fault current, and the very first peak can approach <em>twice</em> the
+  symmetrical peak. How close it gets depends on how slowly the DC component decays —
+  i.e. on the network's <strong>X/R ratio</strong> (decay time constant
+  &tau; = X/(&omega;R) = L/R). High X/R = inductive, slow decay, high first peak. IEC 60909
+  captures this with the empirical peak factor:</p>
+
+  <div class="worked">
+    <h4>Worked calculation — peak current ip at the 13.8 kV bus</h4>
+    <p>Formula (IEC 60909 peak factor, then peak current):</p>
+    <code class="formula">kappa = 1.02 + 0.98 &times; e^(-3 / (X/R))</code>
+    <code class="formula">ip = kappa &times; sqrt(2) &times; Ik"</code>
+    <p>Substitution with a typical MV network X/R &asymp; 15 and Ik" = 25 kA:</p>
+    <code class="formula">kappa = 1.02 + 0.98 &times; e^(-3/15) = 1.02 + 0.98 &times; e^(-0.2) = 1.02 + 0.98 &times; 0.819 &asymp; 1.82</code>
+    <code class="formula">ip = 1.82 &times; 1.414 &times; 25 kA &asymp; 64.4 kA peak</code>
+    <p><strong>Sanity check:</strong> the theoretical ceiling is kappa = 2.0 (purely
+    inductive, no decay), giving ip = 2 &times; 1.414 &times; 25 = 70.7 kA; a purely
+    resistive network gives kappa = 1.02, ip &asymp; 36 kA. Our 64.4 kA sits sensibly
+    near, but below, the ceiling, as expected for X/R = 15. The MV switchgear's rated
+    peak withstand is 2.6 &times; 31.5 kA &asymp; 82 kA (the 2.6 factor is the
+    60 Hz standard ratio built into the IEC rating structure), so 64.4 kA passes with
+    margin. At the 400 V transformer terminals the X/R is lower (&asymp; 6 for a
+    1600 kVA unit), giving kappa &asymp; 1.61 and the ip &asymp; 88 kA already used in
+    "Feel for the numbers": 1.61 &times; 1.414 &times; 38.5 &asymp; 87.7 kA.</p>
+  </div>
+
+  <p><em>(c-3) What the DC offset means in time.</em> At 60 Hz one half-cycle lasts
+  <strong>1 / (2 &times; 60) = 8.33 ms</strong> — the fully offset first peak arrives
+  about 8.3 ms after fault inception, long before any relay-plus-breaker chain can act.
+  So the peak duty is <em>unavoidable</em>: busbar bracing and breaker
+  <strong>making</strong> capacity must be rated for ip with no help from protection.
+  Thereafter the DC component decays with &tau; = (X/R)/&omega; — for X/R = 15 at
+  60 Hz, &tau; = 15/377 &asymp; 40 ms — so a breaker that opens its contacts at, say,
+  50&ndash;80 ms still interrupts a current with significant remaining asymmetry. This
+  is why breaker ratings distinguish the <em>symmetrical</em> breaking current from the
+  <em>asymmetrical</em> duty (expressed via the rated DC component percentage at contact
+  separation), and why fast-tripping MV breakers on high-X/R networks must be checked
+  for DC component, not just RMS amperes — taken up in
+  <a href="#c-breaker">§14</a>.</p>
+
+  <p><strong>Step (d) — motor contribution.</strong> Here is the refinement most often
+  forgotten in hand calculations: during a fault, the plant's own running motors stop
+  being loads and briefly become <em>generators</em>. A spinning induction motor has
+  kinetic energy in its rotor and trapped flux in its magnetic circuit; when the bus
+  voltage collapses, that flux drives current <em>out</em> of the motor and into the
+  fault. The motor feeds the fault through its own subtransient impedance — which is
+  essentially its locked-rotor impedance — so each running motor contributes roughly its
+  <strong>starting current, 4&ndash;6 &times; FLC</strong>, decaying away over a few
+  cycles as the trapped flux dies (induction motors have no excitation to sustain it).</p>
+
+  <div class="worked">
+    <h4>Worked calculation — contribution of 500 kW of running LV motors</h4>
+    <p>Assume an indicative 500 kW of LV motors running on one bus section at the
+    moment of the fault (efficiency &asymp; 0.94, pf &asymp; 0.85). Aggregate full-load
+    current:</p>
+    <code class="formula">I_FLC(motors) = 500 000 W / (1.732 &times; 400 V &times; 0.85 &times; 0.94) &asymp; 900 A</code>
+    <p>Initial fault contribution at 4&ndash;6 &times; FLC (use 4 &times; as the
+    typical aggregate figure — large motors near 6, small motors and those behind long
+    cables nearer 4 or below):</p>
+    <code class="formula">I_motor &asymp; 4 &times; 900 A &asymp; 3 600 A &asymp; 3.5&ndash;4 kA (up to &asymp; 5.4 kA at 6&times;)</code>
+    <p>Total initial symmetrical fault current at the bus, one transformer:</p>
+    <code class="formula">Ik"(total) &asymp; 38.5 kA + 4 kA &asymp; 42&ndash;43 kA</code>
+    <p><strong>Sanity check:</strong> the motor add-on is &asymp; 10 % of the
+    transformer contribution — small, but exactly the kind of margin that decides
+    whether a 40 kA-rated device passes or fails. Note the direction of flow: motor
+    current arrives at the fault <em>from the load side</em>, so it stresses outgoing
+    feeder breakers "backwards" and inflates the first-cycle peak duty even when the
+    upstream source is modest. IEC 60909 includes motor groups whenever their combined
+    contribution exceeds about 5 % of the fault current — which it does here.</p>
+  </div>
+
+  <p><strong>Pulling it together</strong> — the indicative Rev 3 fault-current picture
+  (formal IEC 60909 study governs):</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Location</th><th>Case</th><th>Ik" sym (indicative)</th><th>ip peak (indicative)</th><th>Equipment rating to beat</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>13.8 kV bus</td><td>SEC design level</td><td>25 kA (SEC range 25&ndash;40 kA)</td><td>&asymp; 64 kA (kappa &asymp; 1.82)</td><td>MV swgr 31.5 kA / 3 s, peak &asymp; 82 kA</td></tr>
+      <tr><td>400 V LV-MSB</td><td>One TX + motors</td><td>&asymp; 38.5 + 4 &asymp; 42&ndash;43 kA</td><td>&asymp; 88 kA + motor peak</td><td>LV-MSB 50&ndash;65 kA, ACB Icu &ge; 50 kA</td></tr>
+      <tr><td>400 V LV-MSB</td><td>Tie closed, both TX + motors</td><td>&asymp; 77 + 4 &asymp; 81 kA</td><td>&asymp; 175 kA +</td><td>Exceeds board duty &mdash; hence tie normally open</td></tr>
+    </tbody>
+  </table>
+
+  <div class="key">
+    Four moves cover the whole plant: (a) SEC fault level &rarr; S"k &asymp; 598 MVA at
+    13.8 kV; (b) Isc = FLC / Z = 2 309 / 0.06 &asymp; 38.5 kA per transformer, 77 kA
+    tie-closed; (c) IEC 60909 corrections — voltage factor c, and peak factor
+    kappa = 1.02 + 0.98 e^(-3/(X/R)) giving the first-peak duty at 8.3 ms; (d) running
+    motors add 4&ndash;6 &times; their FLC for a few cycles. Rate equipment for the sum,
+    not for the transformer alone.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       5. EQUIPMENT SETTINGS
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-sc-settings">Turning the Fault Table into Nameplate Ratings</h3>
+
+  <h4>Equipment settings</h4>
+
+  <p>Strictly, the short-circuit study produces <em>ratings to buy</em> more than
+  <em>knobs to set</em> — the settings themselves (pickups, time delays, curves) belong
+  to the grading study in <a href="#c-protection">§10</a> and the breaker section in
+  <a href="#c-breaker">§14</a>. But every rating selection below is a decision made
+  <em>against</em> the fault table from the worked calculation, and the field engineer
+  should be able to audit each one:</p>
+
+  <ul>
+    <li><strong>MV switchgear short-time withstand — 31.5 kA / 3 s.</strong> The bus,
+    CTs, isolating contacts and cable terminations of the 13.8 kV board must carry the
+    full fault current for the rated short time while upstream/downstream grading plays
+    out. 31.5 kA &gt; the 25 kA design level with margin inside SEC's 25&ndash;40 kA
+    planning range; the 3 s duration covers the slowest credible backup clearing time.
+    The paired peak (making) withstand, &asymp; 2.6 &times; 31.5 &asymp; 82 kA, covers
+    the computed ip &asymp; 64 kA. If SEC ever confirms a level above 31.5 kA, the
+    board — not a setting — is what must change.</li>
+    <li><strong>MV breaker rated short-circuit breaking current.</strong> Selected equal
+    to the board's 31.5 kA class, with the rated DC component percentage checked against
+    the network X/R &asymp; 15 (&tau; &asymp; 40 ms at 60 Hz) at minimum contact-parting
+    time.</li>
+    <li><strong>LV-MSB rated short-time/withstand — 50&ndash;65 kA class.</strong>
+    The board must beat the worst single-source case including motors
+    (&asymp; 42&ndash;43 kA) with margin; it is <em>not</em> rated for the tie-closed
+    77 kA+ case, which is why the operating philosophy (tie normally open, two-of-three
+    interlock, make-before-break transfer only) is itself a "setting" — an
+    administrative and interlock configuration that holds the duty inside the
+    rating.</li>
+    <li><strong>LV ACB/MCCB breaking capacities — Icu vs Ics.</strong>
+    <strong>I<sub>cu</sub></strong> (ultimate breaking capacity) is the maximum fault
+    the breaker can interrupt once, after which it may need overhaul;
+    <strong>I<sub>cs</sub></strong> (service breaking capacity, quoted as a % of Icu)
+    is what it can interrupt and <em>remain in service</em>. Select Icu &ge; the
+    prospective fault at the point of installation (incomer ACBs: &ge; 50 kA at 400 V;
+    feeder MCCBs further out may legitimately use lower Icu where cable impedance has
+    reduced the fault level — proven by calculation, never by assumption). Prefer
+    Ics = 100 % Icu at the incomers, where a re-closeable board after a fault is worth
+    the price. Catalogue families in <a href="#cat-lv-breakers">Part 6 — LV ACB/MCCB
+    catalogue</a>.</li>
+    <li><strong>Icw of the LV incomers (short-time withstand of the breaker
+    itself).</strong> An incomer ACB that must stay closed while a downstream device
+    clears needs its own 1 s withstand &ge; the through-fault current — the basis of
+    time-graded selectivity in <a href="#c-protection">§10</a>.</li>
+    <li><strong>Minimum fault check.</strong> The same study, run with c<sub>min</sub>
+    and maximum impedance, yields the <em>smallest</em> fault current at the far end of
+    each feeder — the number protection pickups must sit <em>below</em>. Both edges of
+    the study are used: maximum for ratings, minimum for settings.</li>
+  </ul>
+
+  <div class="warning">
+    <strong>Never rate to the bare transformer number.</strong> 38.5 kA is the
+    transformer's contribution alone. The rating decision is made against
+    c &times; (transformer + grid refinement) + motor contribution at the relevant bus,
+    on the worst credible switching configuration. All values here are indicative;
+    the certified IEC 60909 study fixes the final figures.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       6. EQUIPMENT TECHNOLOGY
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-sc-technology">How Hardware Survives: Bracing and Containment</h3>
+
+  <h4>Equipment technology</h4>
+
+  <p>Two pieces of physical engineering stand between the numbers above and the failure
+  story at the start of this section: <strong>busbar bracing</strong> (surviving the
+  magnetic forces) and <strong>arc-resistant construction</strong> (containing the
+  worst case when, despite everything, an arc occurs inside the enclosure). The breaker
+  arc-interruption technologies — vacuum at MV, air-chute at LV — are covered in
+  <a href="#c-breaker">§14</a>; here we deal with the passive structure.</p>
+
+  <p><strong>Busbar bracing.</strong> "Feel for the numbers" computed the load:
+  F/L = 2 &times; 10<sup>-7</sup> &times; ip&sup2; / d — note that the structural duty
+  is set by the <em>peak</em> current ip, not the RMS value, because
+  <strong>F &prop; ip&sup2;</strong> and the worst blow lands on the very first offset
+  peak at 8.3 ms. A switchboard manufacturer meets this duty with:</p>
+
+  <ul>
+    <li><strong>Support spacing.</strong> Each busbar span behaves as a beam under a
+    distributed magnetic load; bending stress grows with the <em>square</em> of the span.
+    Halving the distance between insulator supports quarters the stress — which is why a
+    65 kA board visibly has supports every 300&ndash;400 mm where a 25 kA board might
+    have them every metre. This is the cheapest kA upgrade lever a manufacturer has,
+    and it is why withstand rating is baked into the mechanical design and cannot be
+    retrofitted in the field.</li>
+    <li><strong>Support strength and bar stiffness.</strong> Moulded or cast-resin
+    insulator supports rated for the computed cantilever load; bars oriented edge-on to
+    the force where possible; phase spacing d chosen as a compromise (wider spacing cuts
+    the force linearly but lengthens the board).</li>
+    <li><strong>Resonance check.</strong> The magnetic force on a bar carrying a 60 Hz
+    current pulsates at <strong>120 Hz</strong> (force &prop; i&sup2; rectifies the
+    waveform). The bar/support system's natural frequency must sit away from 120 Hz, or
+    the fault shakes the structure at resonance and the type-tested margin evaporates.</li>
+    <li><strong>Proof by type test, not by calculation.</strong> The Icw / ip
+    withstand of an assembled board is demonstrated by an actual short-circuit type test
+    on the design (IEC 61439 series at LV, IEC 62271-200 at MV). The certificate is
+    design-specific: change the bar size, spacing or supports and the certificate no
+    longer applies.</li>
+  </ul>
+
+  <p><strong>Arc-resistant enclosures.</strong> Withstand ratings assume the fault
+  current flows <em>in the bars</em>. The nastier case is the internal <strong>arcing
+  fault</strong> — a tool, a rodent, tracking across polluted insulation (a real
+  consideration at 50 &deg;C with wind-blown dust). For MV switchgear,
+  <strong>IEC 62271-200</strong> defines an <strong>Internal Arc Classification
+  (IAC)</strong>: the assembly is type-tested with a deliberately initiated internal arc
+  at rated current (for this plant's class, an IAC rating of
+  <strong>31.5 kA / 1 s</strong> would match the board) and must satisfy criteria that
+  amount to: doors stay shut, no fragments ejected, no burn-through of accessible
+  surfaces, and cotton indicators placed where personnel would stand do not ignite.
+  The classification letters state <em>which</em> sides are protected — A for
+  authorised-personnel access, with F/L/R (front/lateral/rear) coverage. Construction
+  features that achieve it: reinforced doors and hinges, pressure-relief flaps that
+  vent the arc blast upward into a duct or plenum away from the operator, compartment
+  segregation (busbar / breaker / cable boxes) so an arc in one compartment cannot
+  involve the next, and in premium designs ultra-fast arc-detection that collapses or
+  clears the arc in tens of milliseconds (<a href="#c-arcflash">§11</a>). Equivalent
+  LV practice uses arc-fault-contained assemblies tested to the IEC/TR guidance under
+  the IEC 61439 umbrella. Catalogue families in
+  <a href="#cat-mv-swgr">Part 6 — MV switchgear catalogue</a>.</p>
+
+  <div class="tip">
+    <strong>Field check.</strong> The IAC rating, like Icw, is on the nameplate and in
+    the type-test certificate — and it is only valid with the enclosure <em>as
+    tested</em>: doors closed and latched, pressure flaps unobstructed, gland plates
+    fitted, venting path clear. A propped-open door or a blocked relief duct quietly
+    deletes the arc rating without changing a single nameplate.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       7. CONTROL
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-sc-control">Seeing the Fault: Records, Oscillography and the PMS</h3>
+
+  <h4>Control</h4>
+
+  <p>Prospective fault current cannot be "controlled" in the feedback sense — it is set
+  by the network. What the control and monitoring layer does is three things:
+  <em>configure</em> the network so the duty stays inside ratings, <em>record</em>
+  every fault that actually happens, and <em>turn those records into verification</em>
+  of the study this whole section is built on.</p>
+
+  <ul>
+    <li><strong>Configuration enforcement.</strong> The plant's power management system
+    (PMS) and the switchgear interlocking together hold the fault level down: the
+    two-of-three incomer/tie interlock at the <code>LV-MSB</code> prevents the 77 kA
+    parallel configuration except during a deliberate transfer, and the PMS mimic shows
+    at a glance whether the tie is closed. The DG (which adds its own subtransient
+    contribution when paralleled) is connected through the ATS in open transition,
+    so it never feeds a bus in parallel with SEC. Any future closed-transition or
+    parallel-running modification is, by definition, a fault-level modification.</li>
+    <li><strong>Oscillography in relays and trip units.</strong> Every modern MV
+    protection IED, and the electronic trip units of the LV incomer ACBs, capture a
+    <strong>disturbance record</strong> on every trip: sampled current and voltage
+    waveforms (typically COMTRADE format at MV), pre-fault and post-fault, plus an event
+    log time-stamped to the station clock. On that record you can <em>see</em>
+    everything this section calculated — the symmetrical RMS level, the DC offset and
+    its decay (hence the real X/R), the first peak, the motor contribution as an
+    initial bump that decays over the first few cycles, and the exact clearing
+    time.</li>
+    <li><strong>PMS event recording.</strong> The PMS aggregates relay events, breaker
+    status changes and analogue snapshots across the plant onto one synchronised
+    timeline, so the sequence "feeder relay picked up &rarr; feeder breaker opened in
+    65 ms &rarr; incomer never tripped" can be reconstructed without walking from panel
+    to panel. Accurate time synchronisation (GPS/NTP to the relays) is what makes the
+    sequence trustworthy.</li>
+    <li><strong>Using fault records after an incident.</strong> The post-incident drill:
+    (1) freeze and download the records from every device that saw the fault, before
+    they are overwritten; (2) read the actual fault magnitude off the oscillography and
+    <strong>compare it with the study's predicted value for that location</strong> — a
+    real 30 kA fault where the study predicted 20 kA means the model (or the SEC fault
+    level) is wrong, and every rating verified against the study is now in question;
+    (3) verify the protection operated per the grading plan
+    (<a href="#c-protection">§10</a>); (4) check the cleared duty against the
+    interrupting device's rating and its cumulative-duty maintenance counter — breakers
+    earn inspection after heavy interruptions; (5) file the record with the study, so
+    the next revision starts from measured reality.</li>
+  </ul>
+
+  <div class="key">
+    Every real fault is a free, full-scale validation test of the short-circuit study.
+    A plant that downloads, reads and archives its relay oscillography knows its true
+    fault levels; a plant that just resets the flag and re-closes is operating on an
+    unverified model.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       8. SIZING METHOD
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-sc-sizing">The Bus-by-Bus Fault Table: How a Study Is Actually Built</h3>
+
+  <h4>Sizing method</h4>
+
+  <p>"Sizing" for short-circuit means establishing the prospective fault duty at every
+  bus, then proving every device on that bus survives and (where required) interrupts
+  it. The procedure, step by step:</p>
+  <ol>
+    <li><strong>Fix the sources.</strong> Get the SEC intake fault level in writing
+    (design value here: 25 kA at 13.8 kV; SEC range 25–40 kA — use the declared
+    maximum for ratings). Add on-site sources: DG subtransient contribution when it
+    can be connected, and running-motor contribution at each LV bus.</li>
+    <li><strong>Model the impedances.</strong> Grid, transformers (Z = 6 % on
+    1600 kVA), significant cable runs. Convert to a common base
+    (<a href="#c-perunit">per-unit / MVA method</a>).</li>
+    <li><strong>Compute per bus, worst credible configuration.</strong> For each bus:
+    initial symmetrical Ik", peak ip (κ·sqrt(2)·Ik" with the X/R of that bus), and
+    thermal equivalent for the protection clearing time. The Rev 3 headline figures:
+    MV board ≈ 25 kA, LV-MSB ≈ 38.5 kA one transformer, ≈ 77 kA tie-closed —
+    which is exactly why the tie is normally open and interlocked.</li>
+    <li><strong>Build the fault table</strong> (bus → Ik", ip, duty time) and check
+    every device against it: switchgear Icw (MV: 31.5 kA / 3 s) and peak withstand,
+    breaker Icu/Ics (<a href="#c-breaker">§14</a>), busbar bracing, cable adiabatic
+    limits (<a href="#c-cables">§7</a>), and the protection settings that assume these
+    currents (<a href="#c-protection">§10</a>).</li>
+    <li><strong>Margin and document.</strong> Select the next standard rating above the
+    computed duty (here 50–65 kA class at the LV-MSB), state the configuration
+    assumptions on the study cover sheet, and put the study under document control.</li>
+    <li><strong>Re-study triggers:</strong> any new source (DG paralleling, solar/BESS),
+    any transformer change, any tie-philosophy change, or an SEC network reinforcement
+    letter. A certified IEC 60909 (SASO-adopted) study by a competent engineer governs
+    over the hand numbers in this manual — all values here are indicative.</li>
+  </ol>
+
+  <h3 id="c-sc-selfcheck">Self-check — Short-Circuit</h3>
+
+  <ul class="checklist">
+    <li>Compute the LV bolted-fault current for one 1600 kVA, Z = 6 % transformer
+    (answer: 2309 / 0.06 ≈ 38.5 kA — indicative) and for the tie-closed case (≈ 77 kA).</li>
+    <li>Convert the SEC 25 kA at 13.8 kV intake into short-circuit MVA
+    (answer: ≈ 598 MVA) and explain what the number means physically.</li>
+    <li>Explain why the first current peak is higher than the symmetrical RMS value and
+    what X/R has to do with it; state the first half-cycle time at 60 Hz (8.33 ms).</li>
+    <li>List the three withstand/interrupt checks a fault table drives on one LV bus
+    (breaker Icu/Ics, busbar/switchgear Icw and peak, cable adiabatic).</li>
+    <li>Name three plant changes that invalidate the current short-circuit study.</li>
+  </ul>
+
+</section>

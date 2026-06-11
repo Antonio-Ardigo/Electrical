@@ -1,0 +1,104 @@
+<article class="concept" id="concept-impedance">
+  <h2>3. Transformer Impedance</h2>
+  <p class="backlink">Manual deep-dive: <a href="manual-rev3.html#c-transformer">open the full section</a></p>
+
+  <h3>The Problem</h3>
+  <p>A perfect transformer — zero internal impedance — sounds like exactly what you want: the LV bus voltage would never sag no matter what load you threw at it, motors would start without a flicker, and the bus would be perfectly "stiff". But run the fault arithmetic of Ch. 2 on that perfect machine: with nothing limiting the current except the (huge) SEC grid, an LV bus fault would draw not 38.5 kA but hundreds of kiloamperes. No purchasable LV switchgear could survive it. The very imperfection of the transformer — its leakage impedance — is the only thing standing between the 13.8 kV grid and the LV busbars during a fault.</p>
+  <p>So the impedance stamped <strong>Z = 6 %</strong> on TX-1's nameplate is not a defect to be minimised. It is a deliberately chosen design parameter sitting on a genuine engineering trade-off: every percent of impedance you remove to make the bus stiffer (less voltage drop, easier motor starting) raises the fault current the switchgear must interrupt and withstand; every percent you add to tame the fault current makes the bus softer (more sag under load, dimmer lights when the big compressor starts, more voltage rise to manage at light load).</p>
+  <p>Without understanding this double role, engineers make two opposite mistakes: specifying ultra-low-Z transformers and then discovering the switchboard needs an unaffordable 100 kA rating; or specifying high-Z units "for safety" and then living with a bus that sags so much at 50 °C peak load that contactors drop out during motor starts.</p>
+  <h3>Core Principles</h3>
+  <h4>Principle 1: Z % is a measured voltage, expressed as a ratio</h4>
+  <p><strong>Statement:</strong> the nameplate impedance is defined by the short-circuit test — short the LV winding, raise the MV voltage until rated current flows; the voltage needed, as a fraction of rated voltage, <em>is</em> Z. For TX-1, 6 % of 13.8 kV ≈ 828 V drives full 66.9 A into a dead short. Equivalently (Ch. 1): Z = 0.06 pu on 1600 kVA.</p>
+  <p><strong>Example:</strong> read backwards, the same test result says: apply <em>full</em> voltage to a dead short and 1/0.06 = 16.7 × rated current flows — the 38.5 kA of Ch. 2. The fault current is the short-circuit test run at full voltage.</p>
+
+  <h4>Principle 2: The same impedance drops voltage under ordinary load</h4>
+  <p><strong>Statement:</strong> load current flowing through Z drops voltage continuously, every hour of the plant's life. The drop depends on the load's power factor because Z is mostly reactance: <code>ΔV(pu) ≈ R(pu)·cosφ + X(pu)·sinφ</code>, where R is the resistive part (copper losses), X the leakage reactance, and φ the load phase angle (cosφ = power factor, here 0.85 before correction).</p>
+  <p><strong>Example:</strong> at full load our 6 % unit drops about 4 % — the LV bus sits near 384 V instead of 400 V unless taps compensate (worked below).</p>
+
+  <h4>Principle 3: One knob, two consequences — the stiffness trade-off</h4>
+  <p><strong>Statement:</strong> fault current scales as 1/Z; voltage drop scales roughly as Z. You cannot improve one without worsening the other on the same winding. Low Z (4 %) = stiff bus, ~58 kA fault. High Z (8 %) = soft bus (~5.3 % drop), but only ~29 kA fault. The chosen 6 % puts the fault at 38.5 kA — inside standard 50 kA LV switchgear — while keeping full-load drop ≈ 4 %, recoverable by the tap-changer.</p>
+
+  <h4>Principle 4: Taps shift the curve; they do not flatten it</h4>
+  <p><strong>Statement:</strong> off-circuit taps (typically ±2 × 2.5 %) change the turns ratio, raising the whole LV voltage profile to compensate the <em>average</em> drop. They do nothing about the <em>swing</em> between light load and full load, which remains set by Z. Stiffness is bought in copper and flux at the factory, not adjusted on site.</p>
+
+  <h3>Key Innovations</h3>
+  <h4>Controlled leakage reactance as a design variable (early transformer engineering)</h4>
+  <p><strong>What:</strong> the discovery that winding geometry — spacing between the MV and LV windings, winding height, interleaving — sets leakage flux, and therefore X, precisely and repeatably. Manufacturers can hit a specified Z within IEC 60076 tolerance (±10 % of declared Z).</p>
+  <p><strong>Why it mattered:</strong> it turned the fault level of every downstream installation into a <em>purchasable quantity</em>. When the project specified 1600 kVA at Z = 6 %, it was effectively ordering "38.5 kA at the LV bus" and sizing the entire LV system around that promise.</p>
+  <h4>Standardised impedance families (IEC 60076 practice)</h4>
+  <p><strong>What:</strong> conventional Z values by rating band — around 4 % for small distribution units, 6 % near 1600–2000 kVA, 8 %+ for larger units — so that switchgear, cables and protection could standardise too.</p>
+  <p><strong>Why it mattered:</strong> 6 % at 1600 kVA is the sweet spot where the fault current (≈38.5 kA) still fits mass-produced 50 kA LV boards. It also caps the paralleling penalty: equal Z is a precondition for the two transformers to share load correctly if ever paralleled — unequal Z makes the stiffer unit hog current in proportion to the mismatch.</p>
+  <h3>Worked Example</h3>
+  <p><strong>Scenario:</strong> compute both faces of Z = 6 % for TX-1 — the full-load voltage drop and the fault current — and show the trade-off numerically. <strong>Given:</strong> 1600 kVA, 13.8/0.4 kV, Z = 6 %; assume R = 1 %, so X = √(6² − 1²) ≈ 5.92 % (typical for this rating); plant power factor 0.85 (before PFC); LV FLC = 2 309 A. All values indicative.</p>
+  <div class="worked">
+    <p><strong>Step 1 — Split Z into its parts.</strong></p>
+    <code class="formula">R = 0.01 pu,  X = √(0.06² − 0.01²) = √(0.0036 − 0.0001) = √0.0035 ≈ 0.0592 pu</code>
+    <p><em>Why:</em> the resistive and reactive parts drop voltage differently depending on load angle, so they must be separated. R comes from the load-loss test; X dominates at this size.</p>
+    <p><strong>Step 2 — Load angle terms at pf 0.85.</strong></p>
+    <code class="formula">cosφ = 0.85,  sinφ = √(1 − 0.85²) = √(1 − 0.7225) = √0.2775 ≈ 0.527</code>
+    <p><strong>Step 3 — Full-load voltage drop (regulation, first-order formula).</strong></p>
+    <code class="formula">ΔV ≈ R·cosφ + X·sinφ = 0.01 × 0.85 + 0.0592 × 0.527</code>
+    <code class="formula">ΔV ≈ 0.0085 + 0.0312 = 0.0397 pu ≈ 4.0 %</code>
+    <code class="formula">LV bus at full load ≈ 400 V × (1 − 0.040) ≈ 384 V  (≈ 222 V phase-neutral)</code>
+    <p><em>Why:</em> the reactive term dominates (0.0312 of the 0.0397) — a direct consequence of X ≫ R and a lagging load. Note what PFC does: at the corrected pf 0.95, sinφ = 0.312 and ΔV drops to 0.01×0.95 + 0.0592×0.312 ≈ 2.8 % — power-factor correction is also a voltage tool.</p>
+    <p><strong>Step 4 — Fault current from the same 6 %.</strong></p>
+    <code class="formula">Isc = FLC / Z(pu) = 2 309 / 0.06 ≈ 38.5 kA</code>
+    <p><strong>Step 5 — The trade-off table.</strong> Re-run Steps 3–4 for alternative impedances (same R assumption):</p>
+    <code class="formula">Z = 4 %:  ΔV ≈ 2.5 %  |  Isc ≈ 2 309/0.04 ≈ 57.7 kA  → needs &gt;65 kA board</code>
+    <code class="formula">Z = 6 %:  ΔV ≈ 4.0 %  |  Isc ≈ 38.5 kA               → fits 50 kA board ✓</code>
+    <code class="formula">Z = 8 %:  ΔV ≈ 5.3 %  |  Isc ≈ 28.9 kA               → soft bus, motor-start sag</code>
+    <p><strong>Sanity check:</strong> 4 % regulation at full load is recoverable with a +5 % tap setting; 38.5 kA matches Ch. 2 and the Plant Data Card; the product ΔV × Isc is roughly constant across the rows — the visible signature of the 1/Z vs Z trade-off.</p>
+  </div>
+  <div class="key">
+    <p><strong>One number, two duties:</strong> Z = 6 % simultaneously promises "no more than ≈4 % sag at full load" and "no more than ≈38.5 kA into a fault". Specify Z and you have co-specified the switchgear rating and the bus stiffness.</p>
+  </div>
+
+  <h3>Intuitive Formalization</h3>
+  <p>Everything reduces to one series impedance and two readings of Ohm's law. Symbols: <code>Z, R, X</code> = per-unit impedance and its parts; <code>φ</code> = load phase angle; <code>FLC</code> = full-load current.</p>
+  <div class="worked">
+    <code class="formula">Under load:   ΔV(pu) ≈ R·cosφ + X·sinφ        (the everyday face)</code>
+    <code class="formula">Under fault:  Isc = FLC / Z(pu)                 (the worst-day face)</code>
+    <code class="formula">Trade-off:    ΔV ∝ Z   while   Isc ∝ 1/Z       (one knob, opposite hands)</code>
+  </div>
+  <p>Physical meaning: Z is leakage flux — magnetic field that links one winding but not the other, an air path deliberately built between MV and LV windings. Under load it behaves as a series voltage divider (you lose a slice of voltage proportional to current). Under fault it is a current valve (the only impedance left in the circuit). The cosφ/sinφ weighting says reactive current is the expensive kind for voltage: it pushes straight through the big X term — which is why the ≈580 kvar PFC bank, by carrying the reactive current locally, gives back more than a percent of bus voltage for free.</p>
+
+  <h3>CTQ Mapping</h3>
+  <table class="tbl">
+    <thead><tr><th>Critical-to-quality requirement</th><th>How the concept delivers it</th><th>What to check in the field</th></tr></thead>
+    <tbody>
+      <tr><td>LV voltage within limits across the load range at 50 °C</td><td>ΔV ≈ R·cosφ + X·sinφ predicts ≈4 % full-load sag; taps and PFC compensate</td><td>Bus voltage at peak load ≥ ~95 % of 400 V; tap position recorded and consistent on TX-1 and TX-2</td></tr>
+      <tr><td>Fault duty stays inside switchgear ratings</td><td>Isc = FLC/Z fixes 38.5 kA at the board the day Z was specified</td><td>Replacement transformers ordered with the same Z = 6 % (±IEC tolerance) — a "better" low-Z spare silently raises the fault level</td></tr>
+      <tr><td>Correct load sharing if units are ever paralleled</td><td>Equal pu impedance → equal current share; mismatch → proportional overload of the stiffer unit</td><td>Nameplates of TX-1/TX-2 agree on Z, vector group Dyn11 and ratio before any paralleling operation</td></tr>
+      <tr><td>Motor starts do not collapse the bus</td><td>Z sets the sag per ampere of starting current; 6 % keeps large DOL starts tolerable, VFDs reduce the demand further</td><td>Largest DOL start observed/calculated sag &lt; contactor drop-out threshold (~80–85 % V)</td></tr>
+    </tbody>
+  </table>
+  <h3>Conceptual Map</h3>
+  <pre>
+                    TRANSFORMER IMPEDANCE  Z = 6 % (core)
+                    "the imperfection that protects you"
+                                   |
+            +----------------------+---------------------+
+            | rests on             | rests on             | requires
+            v                      v                      v
+   [Z defined by SC test]   [Z = R + jX, X ≫ R]    [Ch.1 Per-unit:
+    828 V drives 66.9 A      R≈1 %, X≈5.92 %        6 % = 0.06 pu]
+            |                      |
+            |          +-----------+------------+
+            |          |                        |
+            v          v                        v
+      EVERYDAY FACE: load drop            WORST-DAY FACE: fault valve
+      ΔV ≈ R·cosφ + X·sinφ ≈ 4 %          Isc = FLC/Z = 38.5 kA
+            |                                   |
+            | mitigated by                      | contained by
+            v                                   v
+   [Taps ±2×2.5 % shift avg]            [50–65 kA LV board rating]
+   [PFC 580 kvar cuts sinφ]             [feeds Ch.2, Ch.4, Ch.6]
+            |                                   |
+            +---------- TRADE-OFF --------------+
+                  ΔV ∝ Z  vs  Isc ∝ 1/Z
+              6 % = the negotiated middle ground
+  </pre>
+  <div class="note">
+    <p>All values are <strong>indicative</strong> on the Rev 3 basis (2 × 1600 kVA, 13.8/0.4 kV Dyn11, 60 Hz, 50 °C ambient); transformer test certificates and the project voltage-drop study govern.</p>
+  </div>
+</article>

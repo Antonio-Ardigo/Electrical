@@ -1,7 +1,8 @@
 <!-- ============================================================
-     Appendices — quick-reference and printable tools
+     Appendices — quick-reference and printable tools (Rev 3, Saudi/SEC)
      Sections: a-glossary | a-standards | a-formula | a-tags |
-               a-blankforms | a-hardening | a-mtbf
+               a-blankforms | a-hardening | a-mtbf | a-saso |
+               a-vendors | a-concepts
      ============================================================ -->
 
 <div class="note" style="margin-bottom:1em;">
@@ -19,7 +20,9 @@
   <p>
     Alphabetical table of abbreviations and terms used across this manual.
     Expand from the course overview glossary and includes terms introduced in Parts 4 and 5.
-    All voltage and frequency references follow the IEC basis of this manual (11 kV MV, 400/415 V LV, 50 Hz).
+    All voltage and frequency references follow the Saudi (SEC) Rev 3 basis of this manual
+    (13.8 kV MV, 400/230 V LV, 60 Hz, 50 &deg;C design ambient), with standards cited as
+    SASO-adopted IEC plus the SEC Distribution Code / Saudi Grid Code and SBC 401.
   </p>
 
   <table class="tbl">
@@ -43,30 +46,36 @@
       <tr><td><strong>DB</strong></td><td>Distribution Board. Final-circuit LV panel fed from the <code>LV-MSB</code> or an MCC; supplies lighting, small power and HVAC loads via MCBs/RCBOs.</td></tr>
       <tr><td><strong>DCDB</strong></td><td>DC Distribution Board (battery and charger system). Provides 110 V DC (typical) for MV switchgear trip/close coils and protection relay auxiliary supplies. A DCDB failure silences protection — very high severity in the FMECA.</td></tr>
       <tr><td><strong>DCS</strong></td><td>Distributed Control System. Plant-wide process control system with operator HMI. Receives electrical status (breaker position, voltages, currents) and issues high-level electrical commands.</td></tr>
-      <tr><td><strong>DG</strong></td><td>Diesel Generator set. Standby power source sized for the essential-load bus (~800–1250 kVA indicative). Includes AVR, governor, fuel day-tank, battery starting and acoustic enclosure.</td></tr>
+      <tr><td><strong>Detuned filter</strong></td><td>A series reactor added to each PFC capacitor step so the branch is tuned <em>below</em> the lowest characteristic harmonic (7 % reactor &rarr; tuning frequency f/&radic;0.07 &asymp; 227 Hz on a 60 Hz system, safely below the 5th harmonic at 300 Hz). Prevents harmonic resonance between the capacitor bank and the supply impedance in VFD-rich plants. The plant <code>PFC</code> bank is 7 % detuned.</td></tr>
+      <tr><td><strong>DG</strong></td><td>Diesel Generator set. Standby power source sized for the essential-load bus (1250 kVA indicative, ESP rating at 50 &deg;C ambient). Includes AVR, governor, fuel day-tank, battery starting and acoustic enclosure.</td></tr>
       <tr><td><strong>DOL</strong></td><td>Direct-On-Line. Simplest motor starting method — motor connected straight to supply. Starting current typically 5–7 × FLC; suitable for motors up to ~7.5 kW or where the bus can absorb the inrush.</td></tr>
       <tr><td><strong>DVR</strong></td><td>Dynamic Voltage Restorer. Series power-electronics device injecting a compensating voltage to protect plant loads against upstream voltage sags and swells.</td></tr>
       <tr><td><strong>EDB</strong></td><td>Essential Distribution Board. Fed via the <code>ATS</code> from the <code>DG</code> (or utility essential bus). Supplies safety-critical loads that must remain energised during a utility outage.</td></tr>
+      <tr><td><strong>ESP / PRP / COP</strong></td><td>ISO 8528-1 genset duty ratings. <strong>ESP</strong> — Emergency Standby Power (variable load, limited hours/yr, no sustained overload); <strong>PRP</strong> — Prime Rated Power (variable load, unlimited hours, 10 % overload 1 h in 12); <strong>COP</strong> — Continuous Operating Power (constant base load). The plant <code>DG</code> is rated <strong>1250 kVA ESP at 50 &deg;C</strong> (indicative). Always read the rating <em>with its ambient</em> — Saudi summer temperatures derate engine output, so a nameplate quoted at 25 &deg;C is optimistic here.</td></tr>
       <tr><td><strong>FMECA</strong></td><td>Failure Mode, Effects and Criticality Analysis. Structured IEC 60812 method: list failure modes for each component, assess effects on the system, score Severity (S), Occurrence (O), Detectability (D), compute RPN = S × O × D, and rank for action. The primary SPOF quantification tool in this campaign.</td></tr>
       <tr><td><strong>FLC</strong></td><td>Full-Load Current. The rated continuous current at full load: I = S / (√3 · V) for 3-phase. Basis for breaker sizing, cable selection and protection relay pickup settings.</td></tr>
       <tr><td><strong>GOOSE</strong></td><td>Generic Object-Oriented Substation Event. IEC 61850 fast peer-to-peer message over the station bus used for inter-IED tripping, bus-transfer logic and load-shedding. Latency typically &lt;4 ms.</td></tr>
+      <tr><td><strong>IAC</strong></td><td>Internal Arc Classification per IEC 62271-200 (e.g. IAC AFLR 25 kA 1 s). States which sides of an MV switchgear panel (Front, Lateral, Rear) protect personnel against an internal arc of stated current and duration. Check the IAC rating plate on <code>MV-SWGR</code> during the site visit.</td></tr>
+      <tr><td><strong>IDMT</strong></td><td>Inverse Definite Minimum Time. Overcurrent relay characteristic (IEC 60255-151 curves: SI, VI, EI) where operating time decreases as fault current increases. The workhorse 51 element used for time-current grading between MV and LV devices in this plant.</td></tr>
       <tr><td><strong>IED</strong></td><td>Intelligent Electronic Device. Numerical multifunction protection relay performing overcurrent (50/51), earth-fault (50N/51N), differential (87T), voltage (27/59) and other protection functions, plus measurement and control.</td></tr>
-      <tr><td><strong>Isc</strong></td><td>Short-Circuit Current (symmetrical). The prospective fault current at a bus under bolted three-phase conditions. Used to specify the breaking capacity (Icu) of switchgear. Indicative: ~38.5 kA per 1600 kVA, Z = 6 % transformer.</td></tr>
+      <tr><td><strong>Incident energy</strong></td><td>The thermal energy per unit area (cal/cm&sup2;) deposited on a worker at the working distance during an arc-flash event, computed per IEEE 1584-2018 from bolted fault current, clearing time, gap and enclosure geometry. Sets the arc-rated PPE category and the label on <code>LV-MSB</code> / <code>MCC</code> doors. 1.2 cal/cm&sup2; is the onset-of-second-degree-burn threshold.</td></tr>
+      <tr><td><strong>Isc</strong></td><td>Short-Circuit Current (symmetrical). The prospective fault current at a bus under bolted three-phase conditions. Used to specify the breaking capacity (Icu) of switchgear. Indicative this plant: ~38.5 kA per 1600 kVA, Z = 6 % transformer at 400 V; ~77 kA with the bus-tie closed (both TX paralleled — a condition the interlock must prevent); 25 kA design at 13.8 kV (SEC range 25–40 kA).</td></tr>
       <tr><td><strong>LPL</strong></td><td>Lightning Protection Level. Classes I–IV per IEC 62305, determined by risk assessment. Sets air-termination geometry, down-conductor spacing and earth-electrode requirements.</td></tr>
       <tr><td><strong>LPS</strong></td><td>Lightning Protection System. The complete system of air terminations, down conductors and earth electrodes protecting the plant structure and equipment against direct lightning strikes.</td></tr>
-      <tr><td><strong>LV</strong></td><td>Low Voltage. Utilisation voltage; in this manual <strong>400/415 V, 3-phase, 50 Hz</strong> (IEC: ≤ 1 kV AC). Confirm per plant.</td></tr>
+      <tr><td><strong>LV</strong></td><td>Low Voltage. Utilisation voltage; in this manual <strong>400/230 V, 3-phase, 60 Hz</strong> per the SEC LV standard (IEC: ≤ 1 kV AC). Confirm per plant.</td></tr>
       <tr><td><strong>LVRT / UVRT</strong></td><td>Low / Under Voltage Ride-Through. The capability or protection settings that allow plant equipment (particularly VFD-driven loads) to remain connected through a defined voltage dip rather than tripping and exacerbating the disturbance.</td></tr>
       <tr><td><strong>MCC</strong></td><td>Motor Control Centre. LV assembly of motor starter bays (DOL, star-delta, soft-starter, VFD) feeding process motors. Tags <code>MCC-1</code> … <code>MCC-n</code> per the plant scheme.</td></tr>
       <tr><td><strong>MCCB</strong></td><td>Moulded-Case Circuit Breaker. Compact LV protective device for outgoing feeders and motor circuits. Breaking capacity ratings from ~10 kA to 85 kA; motor-protection versions incorporate thermal/magnetic or electronic trip units.</td></tr>
       <tr><td><strong>MMS</strong></td><td>Manufacturing Message Specification. IEC 61850 protocol for client–server monitoring, control and data exchange between IEDs and SCADA/EMS. Complements GOOSE for non-time-critical data.</td></tr>
       <tr><td><strong>MTBF</strong></td><td>Mean Time Between Failures. MTBF = 1/λ (h). Average operating time between successive failures. Higher MTBF = lower failure rate = more reliable. See <a href="#a-mtbf">Appendix G</a> for indicative values.</td></tr>
       <tr><td><strong>MTTR</strong></td><td>Mean Time To Repair / Restore. Average time from failure occurrence to return to service (detection + logistics + repair + recommissioning). MTTR is the key lever that automation (auto bus-tie, ATS) acts on — reducing it from hours (manual) to seconds (auto-transfer) dramatically raises availability.</td></tr>
-      <tr><td><strong>MV</strong></td><td>Medium Voltage. Higher distribution voltage; in this manual <strong>11 kV</strong> (IEC: 1 kV &lt; MV ≤ 36 kV). Actual utility voltage must be confirmed per plant.</td></tr>
+      <tr><td><strong>MV</strong></td><td>Medium Voltage. Higher distribution voltage; in this manual <strong>13.8 kV</strong> — the standard SEC industrial distribution voltage (IEC: 1 kV &lt; MV ≤ 36 kV; equipment is 17.5 kV class). Actual utility voltage must be confirmed per plant.</td></tr>
       <tr><td><strong>MV-MET</strong></td><td>MV Utility Revenue Metering Cubicle. Contains utility-grade CTs/VTs and the tariff meter at the point of supply. Not a protection device — verify its presence and metering-point location during desk study.</td></tr>
-      <tr><td><strong>MV-NER</strong></td><td>Neutral Earthing Resistor. Connected between the MV transformer neutral and earth to limit earth-fault current (typically 300–400 A) while keeping faults detectable. R ≈ 21 Ω for 300 A at 11 kV (indicative).</td></tr>
-      <tr><td><strong>MV-SWGR</strong></td><td>MV Metal-Clad (or metal-enclosed) Switchgear. 11 kV bus with vacuum circuit breakers; incomer, bus-section and transformer-feeder panels. Rated for prospective fault level (indicative: 25 kA/1 s).</td></tr>
+      <tr><td><strong>MV-NER</strong></td><td>Neutral Earthing Resistor. Connected between the MV transformer neutral and earth to limit earth-fault current (400 A in this plant) while keeping faults detectable. R = 7.97 kV (13.8 kV / &radic;3) &divide; 400 A &asymp; 19.9 &Omega;, rated 10 s (indicative).</td></tr>
+      <tr><td><strong>MV-SWGR</strong></td><td>MV Metal-Clad (or metal-enclosed) Switchgear. 13.8 kV bus (17.5 kV class) with vacuum circuit breakers; incomer, bus-section and transformer-feeder panels. Rated above the prospective fault level (indicative: 31.5 kA / 3 s withstand against a 25 kA design fault; SEC quotes 25–40 kA at the point of supply).</td></tr>
       <tr><td><strong>N+1 / N-1</strong></td><td>N+1: one more capacity unit than the minimum required — so one can be lost without losing the function. N-1: the condition after one unit has failed; the system must still serve the essential load. The 2 × 1600 kVA + bus-tie arrangement is N-1 secure for essential load (~55 % of total).</td></tr>
-      <tr><td><strong>NER</strong></td><td>Neutral Earthing Resistor — see <code>MV-NER</code>.</td></tr>
+      <tr><td><strong>NER</strong></td><td>Neutral Earthing Resistor — see <code>MV-NER</code>. (US literature: NGR, Neutral Grounding Resistor.)</td></tr>
+      <tr><td><strong>NER / NGR monitor</strong></td><td>A monitoring relay that continuously verifies the neutral earthing resistor path is intact (neither open-circuited nor shorted) by injecting a small sensing signal. An open NER is a <em>latent</em> failure: the system silently becomes unearthed and the first earth fault is then neither limited nor reliably detected. Common practice on resistance-earthed MV systems; a low-cost, high-value FMECA mitigation for <code>MV-NER</code>.</td></tr>
       <tr><td><strong>PCC</strong></td><td>Power Control Centre. The main LV switchboard that distributes power to MCCs and outgoing feeders. In this manual, <code>LV-MSB</code> is the PCC. Distinct from an MCC (which only controls motors).</td></tr>
       <tr><td><strong>PFC</strong></td><td>Power Factor Correction. Automatic capacitor bank (with 7 % detuned reactors to handle VFD harmonics) that raises plant power factor from ~0.85 to ≥ 0.95, reducing reactive demand and transformer / cable loading.</td></tr>
       <tr><td><strong>PMS</strong></td><td>Power Management System. Dedicated electrical controller responsible for: load shedding on generation failure, automatic bus transfer (bus-tie / ATS), generator synchronisation, and energy management. Interfaces with the DCS.</td></tr>
@@ -74,22 +83,31 @@
       <tr><td><strong>QHSE</strong></td><td>Quality, Health, Safety and Environment. Management system framework (ISO 9001 / 14001 / 45001) applied to all site activities. All surveys in this campaign are non-intrusive; QHSE and permit-to-work rules of the host facility always take precedence.</td></tr>
       <tr><td><strong>RAM</strong></td><td>Reliability, Availability, Maintainability. The quantitative study of system uptime: how often failures occur (R), what fraction of time the system works (A), and how quickly it is restored (M). See <a href="#s-fmeca">Part 3 — FMECA / RAM</a>.</td></tr>
       <tr><td><strong>RBD</strong></td><td>Reliability Block Diagram. Series / parallel model used to compute system availability from component data. Series elements degrade availability; parallel (redundant) paths multiply it up. See <a href="#s-fmeca">Part 3</a>.</td></tr>
+      <tr><td><strong>Ride-through</strong></td><td>The ability of equipment (VFDs, contactors, UPS-fed controls) to stay operational through a short supply disturbance — a voltage dip, phase jump or brief interruption — instead of tripping. Achieved by kinetic buffering in drives, DC-bus hold-up, delayed undervoltage settings, and UPS support. The Saudi Grid Code imposes fault ride-through duties on generating plant; inside the factory fence, ride-through settings determine whether a 200 ms utility dip becomes a full process trip.</td></tr>
       <tr><td><strong>ROCOF</strong></td><td>Rate of Change of Frequency. Measure of frequency volatility on the grid (Hz/s). Increases as synchronous generation (with inertia) is displaced by inverter-based renewables. High ROCOF can trip plant protection (df/dt relays) prematurely.</td></tr>
       <tr><td><strong>RPN</strong></td><td>Risk Priority Number. FMECA criticality score = Severity (S) × Occurrence (O) × Detection (D), each scored 1–5 (higher = worse outcome / more frequent / harder to detect). RPN max = 125. Used to rank FMECA findings for action priority. Priority bands: P1 = SPOF with S ≥ 4 or RPN ≥ 60; P2 = RPN 36–59; P3 = RPN 16–35; P4 &lt; 16. See <a href="#a-formula">Appendix C</a>.</td></tr>
+      <tr><td><strong>SABER</strong></td><td>Saudi Arabia's electronic conformity-assessment platform, operated under SASO. Regulated products (including much electrical equipment) require SABER product and shipment Certificates of Conformity before customs clearance. For the field engineer: missing SABER status is a procurement red flag, not a site finding. See <a href="#a-saso">Appendix H</a>.</td></tr>
+      <tr><td><strong>SASO</strong></td><td>Saudi Standards, Metrology and Quality Organization. The Kingdom's national standards body; adopts IEC standards (usually verbatim or with national deviations) as SASO IEC standards and operates the SABER conformity scheme. In this manual "SASO-adopted IEC" means: apply the IEC technical content, cited through its Saudi adoption. See <a href="#a-saso">Appendix H</a>.</td></tr>
+      <tr><td><strong>Saudi Grid Code</strong></td><td>The technical code governing connection to and operation of the Saudi transmission system (with the Distribution Code covering distribution-connected users such as this plant). Sets frequency/voltage operating ranges, fault ride-through, reactive and power-factor obligations, protection and metering requirements at the point of common coupling.</td></tr>
+      <tr><td><strong>SBC 401</strong></td><td>Saudi Building Code — Electrical (SBC 401). The Kingdom's statutory electrical installation code (technically based on NFPA 70/NEC with Saudi amendments), enforced through municipal permitting. Coexists with SASO-adopted IEC design practice on industrial plants; where requirements differ, the contractually specified code governs — flag conflicts, do not silently pick one.</td></tr>
       <tr><td><strong>SCADA</strong></td><td>Supervisory Control and Data Acquisition. Supervisory monitoring and control layer for the power system; aggregates IED data, trends energy, and provides alarm management to operators.</td></tr>
+      <tr><td><strong>SEC</strong></td><td>Saudi Electricity Company. The Kingdom's principal electricity utility and the supply authority assumed in this manual: 13.8 kV, 60 Hz point of supply, fault level 25–40 kA, connection per the SEC Distribution Code and SEC company standards (metering, protection interface, earthing at the intake). The utility intake arrangement (<code>MV-MET</code>, incomer protection) must be agreed with SEC.</td></tr>
       <tr><td><strong>SLD</strong></td><td>Single-Line Diagram. One-line schematic showing the power system's main components and their electrical connections, using IEC 60617 symbols. The primary document for SLD verification on site and for SPOF hunting.</td></tr>
+      <tr><td><strong>SPD (Type 1/2/3)</strong></td><td>Surge Protective Device per IEC 61643-11. <strong>Type 1</strong> (tested with 10/350 &micro;s impulse) at the service entrance / <code>LV-MSB</code> where lightning current can enter; <strong>Type 2</strong> (8/20 &micro;s) at distribution boards; <strong>Type 3</strong> close to sensitive terminal equipment. Installed as a coordinated cascade with status contacts wired to the DCS. Essential in the Saudi coastal lightning environment.</td></tr>
       <tr><td><strong>SPOF</strong></td><td>Single Point of Failure. A component or path whose failure alone disables a function or supply that must remain available. The central concept of this assessment campaign. See <a href="#s-checklist">Part 3</a> and <a href="#a-hardening">Appendix F</a>.</td></tr>
       <tr><td><strong>STATCOM / SVC</strong></td><td>Static Synchronous Compensator / Static VAr Compensator. Fast dynamic reactive-power devices used for voltage stabilisation and flicker / voltage-sag mitigation on weak or renewable-heavy grids.</td></tr>
       <tr><td><strong>TN-S</strong></td><td>TN-S earthing system. IEC 60364 LV earthing arrangement where the neutral (N) and protective earth (PE) conductors are kept separate throughout. Used at 400 V LV in this plant.</td></tr>
-      <tr><td><strong>TX-1 / TX-2</strong></td><td>MV/LV power transformers 1 and 2. Each indicatively 1600 kVA, 11 kV / 0.4 kV, Dyn11, Z ≈ 6 %, feeding the split <code>LV-MSB</code> busbar. Both together provide N-1 redundancy via the bus-tie.</td></tr>
-      <tr><td><strong>UPS</strong></td><td>Uninterruptible Power Supply. Battery-backed, no-break clean AC supply for the DCS/PLC/SCADA, field instrumentation and critical communications. Typical battery autonomy 15–30 min (to be specified per plant).</td></tr>
+      <tr><td><strong>TX-1 / TX-2</strong></td><td>MV/LV power transformers 1 and 2. Each indicatively 1600 kVA, 13.8 / 0.4 kV, Dyn11, Z ≈ 6 % (MV FLC 66.9 A, LV FLC 2309 A), feeding the split <code>LV-MSB</code> busbar. Both together provide N-1 redundancy via the bus-tie.</td></tr>
+      <tr><td><strong>UPS</strong></td><td>Uninterruptible Power Supply. Battery-backed, no-break clean AC supply for the DCS/PLC/SCADA, field instrumentation and critical communications. This plant: 100 kVA / 30 min autonomy, online double-conversion (VFI), indicative — confirm per plant.</td></tr>
       <tr><td><strong>VFD / VSD</strong></td><td>Variable Frequency Drive / Variable Speed Drive. Power-electronic converter providing continuously variable speed control of AC motors (pumps, fans, compressors). Reduces starting current to near FLC; generates harmonics requiring detuned PFC.</td></tr>
+      <tr><td><strong>VFI</strong></td><td>Voltage and Frequency Independent — the IEC 62040-3 classification (VFI-SS-111) of a true online double-conversion UPS: output voltage and frequency are independent of input disturbances because power is always rectified and re-inverted. The plant <code>UPS</code> (100 kVA / 30 min indicative) is specified VFI. Contrast VI (line-interactive) and VFD-class (off-line) topologies, which pass some disturbances through.</td></tr>
+      <tr><td><strong>WCR</strong></td><td>Withstand Current Rating (also rated short-time withstand, Icw). The RMS current a bus, switchboard or transfer switch can carry for a stated time (e.g. 65 kA / 1 s) without damage, while protection clears the fault. For the <code>ATS</code>, the WCR must be verified against the available fault current <em>and</em> the upstream device's clearing time — an ATS with a 3-cycle WCR behind a 0.3 s graded breaker is mis-applied.</td></tr>
       <tr><td><strong>ZSI</strong></td><td>Zone-Selective Interlocking. Communication scheme between LV ACBs and MCCBs that allows the faulted zone's device to trip instantaneously while upstream devices remain on their normal graded delay — achieving both selectivity and fast arc-flash clearance.</td></tr>
       <tr><td><strong>λ (lambda)</strong></td><td>Failure rate (failures per hour). λ = 1/MTBF. The primary input to reliability calculations. See <a href="#a-mtbf">Appendix G</a> for indicative values per equipment class.</td></tr>
     </tbody>
   </table>
 
-  <div class="key">Key takeaway: 46 terms defined. Use this table when reading the manual in the field or when completing FMECA and report forms. Cross-references to the relevant manual sections are embedded in key definitions.</div>
+  <div class="key">Key takeaway: 61 terms defined, including the Rev 3 Saudi regulatory vocabulary (SEC, SASO, SABER, SBC 401, Saudi Grid Code) and genset/UPS rating language (ESP/PRP/COP, VFI, WCR). Use this table when reading the manual in the field or when completing FMECA and report forms. Cross-references to the relevant manual sections are embedded in key definitions.</div>
 </section>
 
 <!-- ============================================================ -->
@@ -218,7 +236,7 @@
   </table>
 
   <div class="note">
-    <strong>Note:</strong> Standard numbers and editions are indicative. Always confirm the governing edition with the project specification and local regulatory authority. For Saudi Arabia plants, NEC/Saudi Electricity Company (SEC) technical standards may also apply and take precedence over the IEC defaults listed above.
+    <strong>Note — Saudi (Rev 3) application:</strong> Standard numbers and editions are indicative; always confirm the governing edition with the project specification and the local regulatory authority. In Saudi Arabia the IEC standards above are applied through their <strong>SASO adoptions</strong>, alongside the <strong>SEC Distribution Code / Saudi Grid Code</strong> (connection, metering, protection interface at the 13.8 kV point of supply) and <strong>SBC 401</strong> (statutory installation code). See <a href="#a-saso">Appendix H — SASO / SEC Standards Map</a> for the topic-by-topic mapping.
   </div>
 
   <div class="key">Key takeaway: 20 standards referenced. IEC 60812 (FMECA), IEC 60909 (fault level), IEC 62271-200 (MV switchgear) and IEEE 493 (reliability data) are the four you will use most in this campaign.</div>
@@ -233,6 +251,10 @@
     Consolidated printable reference of every key electrical calculation formula used in this manual.
     For worked examples and derivations see <a href="#c-formula-card">Part 2 — Calculations</a>.
     All quantities are SI; constants: &radic;3 = 1.732, 1 pu = 100 %.
+    All worked numbers are on the <strong>Rev 3 Saudi basis: 13.8 kV / 400-230 V, 60 Hz</strong>
+    (plant 2.0 MW at pf 0.85 &rarr; 2353 kVA; 2 &times; 1600 kVA, Z = 6 %).
+    Frequency-dependent quantities (reactance, motor speed, capacitor output) are evaluated at
+    <strong>f = 60 Hz</strong> — do not reuse 50 Hz table values without correction.
     All values are <em>indicative</em>.
   </p>
 
@@ -256,7 +278,7 @@
         <td><strong>3-phase current (from S)</strong></td>
         <td><code>I = S / (&radic;3 &times; V)</code></td>
         <td>I: line current (A); S: apparent power (VA); V: line-to-line voltage (V).</td>
-        <td>1600 kVA @ 400 V &rarr; 2310 A (TX LV FLC)</td>
+        <td>1600 kVA @ 400 V &rarr; 2309 A (TX LV FLC); 1600 kVA @ 13.8 kV &rarr; 66.9 A (TX MV FLC); 2353 kVA @ 13.8 kV &rarr; 98.4 A (plant total MV)</td>
       </tr>
       <tr>
         <td><strong>Motor full-load current</strong></td>
@@ -271,6 +293,18 @@
         <td>6.5 &times; 194 A = 1260 A</td>
       </tr>
       <tr>
+        <td><strong>Motor synchronous speed</strong></td>
+        <td><code>N_s = 120 &times; f / p</code></td>
+        <td>N_s: synchronous speed (rpm); f: frequency (Hz); p: number of poles. Actual speed = N_s &minus; slip. At 60 Hz all speeds are 20 % higher than the 50 Hz equivalents.</td>
+        <td>4-pole @ 60 Hz &rarr; 1800 rpm (2-pole 3600, 6-pole 1200); same motor at 50 Hz would run 1500 rpm</td>
+      </tr>
+      <tr>
+        <td><strong>Inductive reactance</strong></td>
+        <td><code>X = 2&pi; &times; f &times; L</code></td>
+        <td>X: reactance (&Omega;); f: frequency (Hz); L: inductance (H). At 60 Hz, reactances are 60/50 = 1.2 &times; the 50 Hz values — affects voltage drop, fault X/R and cable tables.</td>
+        <td>L = 0.35 mH &rarr; X = 2&pi; &times; 60 &times; 0.00035 = 0.132 &Omega; (vs 0.110 &Omega; at 50 Hz)</td>
+      </tr>
+      <tr>
         <td><strong>Transformer loading (pu)</strong></td>
         <td><code>Loading = S_load / S_rated</code></td>
         <td>Values &gt; 1.0 pu indicate overload; N-1 loading must be &le; 1.0 pu (continuous).</td>
@@ -280,7 +314,7 @@
         <td><strong>Short-circuit current</strong></td>
         <td><code>I_sc = I_fl / Z(pu)</code></td>
         <td>I_fl: transformer LV FLC (A); Z(pu): transformer impedance as decimal (e.g. 0.06). Assumes infinite upstream source — conservative.</td>
-        <td>2310 / 0.06 = 38.5 kA per TX</td>
+        <td>2309 / 0.06 &asymp; 38.5 kA per TX; both TX in parallel (bus-tie closed) &asymp; 77 kA — why the tie is interlocked open. MV design fault 25 kA (SEC range 25–40 kA)</td>
       </tr>
       <tr>
         <td><strong>Cable derating — required rating</strong></td>
@@ -291,20 +325,26 @@
       <tr>
         <td><strong>Voltage drop (3-phase feeder)</strong></td>
         <td><code>&Delta;V = &radic;3 &times; I &times; (R&middot;cos&phi; + X&middot;sin&phi;) &times; L</code></td>
-        <td>I: current (A); R, X: conductor resistance / reactance (&Omega;/km); L: length (km); cos&phi;/sin&phi; from load pf.</td>
-        <td>194 A, 120 m, 95 mm&sup2; Cu &rarr; 9.6 V = 2.4 % (limit &le; 5 %)</td>
+        <td>I: current (A); R, X: conductor resistance / reactance (&Omega;/km); L: length (km); cos&phi;/sin&phi; from load pf. <strong>Use 60 Hz reactance values</strong> (X is 1.2 &times; the 50 Hz table figure).</td>
+        <td>194 A, 120 m, 95 mm&sup2; Cu @ 60 Hz &rarr; &asymp; 9.8 V &asymp; 2.4 % (limit &le; 5 %)</td>
       </tr>
       <tr>
         <td><strong>PFC reactive power required</strong></td>
         <td><code>Q_c = P &times; (tan&phi;<sub>1</sub> &minus; tan&phi;<sub>2</sub>)</code></td>
         <td>P: active power (kW); &phi;<sub>1</sub>: present pf angle; &phi;<sub>2</sub>: target pf angle.</td>
-        <td>2000 &times; (0.620 &minus; 0.329) = 582 kVAr &rarr; ~600 kVAr bank</td>
+        <td>2000 &times; (0.620 &minus; 0.329) = 582 kvar &rarr; &asymp; 580 kvar bank, 7 % detuned (pf 0.85 &rarr; 0.95)</td>
+      </tr>
+      <tr>
+        <td><strong>Capacitor output vs frequency</strong></td>
+        <td><code>Q = 2&pi; &times; f &times; C &times; V&sup2;</code></td>
+        <td>Q: reactive output (var); C: capacitance (F); V: voltage (V). Output is proportional to frequency: a capacitor delivers 60/50 = 1.2 &times; its 50 Hz kvar at 60 Hz. Always order capacitor steps and detuned reactors specified <strong>for 60 Hz</strong>; a 7 % reactor then tunes the branch to 60/&radic;0.07 &asymp; 227 Hz, below the 5th harmonic (300 Hz).</td>
+        <td>A "50 kvar @ 400 V, 50 Hz" can &rarr; 60 kvar at 60 Hz (and its reactor detuning shifts) — never mix 50 Hz and 60 Hz PFC components</td>
       </tr>
       <tr>
         <td><strong>Generator sizing (essential load)</strong></td>
         <td><code>S_DG &ge; (P_ess / pf) &times; k_step</code></td>
-        <td>P_ess: essential active power (kW); pf: generator operating pf (0.8); k_step: step-load factor (~1.25).</td>
-        <td>(0.65 MW / 0.8) &times; 1.25 = 1.01 MVA &rarr; ~1000 kVA DG</td>
+        <td>P_ess: essential active power (kW); pf: generator operating pf (0.8); k_step: step-load factor (~1.25). Quote the rating <strong>ESP at 50 &deg;C ambient</strong> — high Saudi ambient derates the engine.</td>
+        <td>(0.65 MW / 0.8) &times; 1.25 = 1.02 MVA &rarr; 1250 kVA DG (next standard size, with margin for 50 &deg;C derating)</td>
       </tr>
       <tr>
         <td><strong>Transformer voltage regulation</strong></td>
@@ -328,7 +368,7 @@
         <td><strong>NER resistance</strong></td>
         <td><code>R_NER = (V_LL / &radic;3) / I_ef</code></td>
         <td>V_LL: MV line-to-line voltage (V); I_ef: target earth-fault current (A). Rate the NER for the fault duration (e.g. 10 s).</td>
-        <td>(11,000 / 1.732) / 300 &asymp; 21 &Omega;</td>
+        <td>(13,800 / 1.732) / 400 = 7970 / 400 &asymp; 19.9 &Omega; (NER 7.97 kV, 400 A / 10 s)</td>
       </tr>
       <tr>
         <td><strong>Earth conductor (adiabatic)</strong></td>
@@ -373,7 +413,34 @@
     <strong>Tip:</strong> For arc-flash and short-circuit studies, always use recognised power-system software (ETAP, DIgSILENT, SKM or equivalent) with the full IEC 60909 / IEEE 1584 models. The simplified formulas above are for quick manual checks and teaching purposes only.
   </div>
 
-  <div class="key">Key takeaway: 20 formulas on one page. The three you will use most in the field are the FLC formula, the short-circuit formula (I_sc = I_fl / Z), and the availability formula (A = MTBF / (MTBF + MTTR)). For full calculations, use the Part 2 worked examples.</div>
+  <h3 id="a-formula-60hz">50 Hz &harr; 60 Hz conversion quick table</h3>
+
+  <p>
+    Much published reference data (cable tables, motor catalogues, capacitor cans) is tabulated
+    at 50 Hz. Before reusing any such figure on this 60 Hz plant, apply the corrections below.
+    Resistance, kVA, FLC and thermal ratings do not change with frequency; everything built on
+    reactance or speed does.
+  </p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Quantity</th>
+        <th>50 &rarr; 60 Hz behaviour</th>
+        <th>Practical consequence on this plant</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Inductive reactance X<sub>L</sub></td><td>&times; 1.2 (proportional to f)</td><td>Cable and transformer X up 20 %: slightly higher reactive voltage drop, slightly lower X/R-driven peak factor differences — use 60 Hz impedance data in studies.</td></tr>
+      <tr><td>Capacitive reactance X<sub>C</sub></td><td>&divide; 1.2 (inversely proportional)</td><td>Capacitors draw 20 % more current and deliver 20 % more kvar at the same voltage — a 50 Hz-rated PFC can is overstressed at 60 Hz.</td></tr>
+      <tr><td>Motor synchronous speed</td><td>&times; 1.2 (1500 &rarr; 1800 rpm, 4-pole)</td><td>Centrifugal pump/fan power rises roughly with speed cubed — a 50 Hz motor-pump set moved to 60 Hz overloads unless re-rated or VFD-limited.</td></tr>
+      <tr><td>Transformer core flux (same V)</td><td>&divide; 1.2 (V/f lower)</td><td>A 50 Hz-designed transformer runs <em>less</em> saturated at 60 Hz and the same voltage — benign; the reverse direction (60 Hz unit on 50 Hz) is the dangerous one.</td></tr>
+      <tr><td>Detuned-filter tuning frequency</td><td>&times; 1.2 (7 % reactor: 189 &rarr; 227 Hz)</td><td>Reactor-capacitor steps must be engineered as a 60 Hz set; mixing 50 Hz reactors with 60 Hz cans detunes the detuning.</td></tr>
+      <tr><td>Relay / trip-unit settings in seconds</td><td>Unchanged</td><td>Time grading margins are frequency-agnostic; settings in <em>cycles</em>, however, are 16.7 ms per cycle at 60 Hz, not 20 ms.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="key">Key takeaway: 23 formulas on one page, all worked on the 13.8 kV / 400 V / 60 Hz Rev 3 basis. The three you will use most in the field are the FLC formula, the short-circuit formula (I_sc = I_fl / Z), and the availability formula (A = MTBF / (MTBF + MTTR)). Remember the three 60 Hz traps: reactance is 1.2 &times; the 50 Hz value, motor speeds are 1.2 &times; (1800 rpm for 4-pole), and capacitor kvar is 1.2 &times; nameplate-at-50 Hz. For full calculations, use the Part 2 worked examples.</div>
 </section>
 
 <!-- ============================================================ -->
@@ -402,44 +469,44 @@
       <tr>
         <td><code>MV-MET</code></td>
         <td>Utility revenue metering cubicle</td>
-        <td>11 kV (MV)</td>
+        <td>13.8 kV (MV)</td>
         <td>Utility billing / revenue metering point. Contains utility-grade CTs and VTs and the tariff meter. Not a protection or switching device.</td>
       </tr>
       <tr>
         <td><code>MV-SWGR</code></td>
         <td>MV metal-clad switchgear</td>
-        <td>11 kV (MV)</td>
-        <td>The main 11 kV distribution assembly. Houses the utility incomer CB (52-I), MV bus-section CB, transformer-feeder CBs (52-T1, 52-T2) with protection IEDs (50/51, 50N/51N, 87T). Rated ~25 kA/1 s. Fault level basis for all downstream short-circuit ratings.</td>
+        <td>13.8 kV (MV)</td>
+        <td>The main 13.8 kV distribution assembly (17.5 kV class). Houses the utility incomer CB (52-I), MV bus-section CB, transformer-feeder CBs (52-T1, 52-T2) with protection IEDs (50/51, 50N/51N, 87T). Withstand 31.5 kA / 3 s against a 25 kA design fault (SEC range 25–40 kA). Fault level basis for all downstream short-circuit ratings.</td>
       </tr>
       <tr>
         <td><code>MV-PROT</code></td>
         <td>MV protection and control IEDs</td>
-        <td>11 kV (MV)</td>
+        <td>13.8 kV (MV)</td>
         <td>Numerical IEDs providing overcurrent (50/51), earth-fault (50N/51N), transformer differential (87T), and under/over-voltage (27/59) protection. Relays are supplied from the DCDB so they remain operative even on AC failure. A latent FMECA row — loss of DC supply to MV-PROT disables protection.</td>
       </tr>
       <tr>
         <td><code>MV-NER</code></td>
         <td>Neutral Earthing Resistor</td>
-        <td>11 kV (MV)</td>
-        <td>Resistance-earthing of the MV system neutral. Limits earth-fault current to ~300–400 A (indicative), controlling arc damage while keeping faults detectable. R &asymp; 21 &Omega; (indicative at 11 kV, 300 A). Rated for fault duration (e.g. 10 s).</td>
+        <td>13.8 kV (MV)</td>
+        <td>Resistance-earthing of the MV system neutral. Limits earth-fault current to 400 A (indicative), controlling arc damage while keeping faults detectable. R = 7.97 kV / 400 A &asymp; 19.9 &Omega; (indicative at 13.8 kV). Rated for fault duration (10 s). Consider an NER monitoring relay — an open NER is a latent failure.</td>
       </tr>
       <tr>
         <td><code>TX-1</code></td>
         <td>MV/LV power transformer 1</td>
-        <td>11 kV / 400 V boundary</td>
-        <td>Steps down 11 kV to 400 V for LV distribution. Indicative: 1600 kVA, Dyn11, Z &asymp; 6 %, ONAN or cast-resin. Feeds Bus A of <code>LV-MSB</code>. Normal loading ~73 % (indicative).</td>
+        <td>13.8 kV / 400 V boundary</td>
+        <td>Steps down 13.8 kV to 400 V for LV distribution. Indicative: 1600 kVA, Dyn11, Z &asymp; 6 %, ONAN or cast-resin (MV FLC 66.9 A, LV FLC 2309 A). Feeds Bus A of <code>LV-MSB</code>. Normal loading ~73 % (indicative).</td>
       </tr>
       <tr>
         <td><code>TX-2</code></td>
         <td>MV/LV power transformer 2</td>
-        <td>11 kV / 400 V boundary</td>
+        <td>13.8 kV / 400 V boundary</td>
         <td>As TX-1. Feeds Bus B of <code>LV-MSB</code>. Together with TX-1, the two transformers provide N-1 redundancy via the bus-tie (BT).</td>
       </tr>
       <tr>
         <td><code>LV-MSB</code></td>
         <td>Main LV switchboard / PCC</td>
         <td>400 V (LV)</td>
-        <td>The Power Control Centre. Split busbar (Bus A / Bus B) with ACB incomers from TX-1 and TX-2, a motorised normally-open bus-tie (BT), and MCCB outgoing feeders to MCCs, VFDs, PFC, UPS and DBs. Form 4b segregation (indicative). Bus rated ~2500–3200 A, 50–65 kA withstand.</td>
+        <td>The Power Control Centre. Split busbar (Bus A / Bus B) with ACB incomers from TX-1 and TX-2, a motorised normally-open bus-tie (BT), and MCCB outgoing feeders to MCCs, VFDs, PFC, UPS and DBs. Form 4b segregation (indicative). Bus rated ~3200–4000 A (total plant LV current &asymp; 3396 A), 50–65 kA withstand against 38.5 kA per-TX fault current; the bus-tie interlock prevents the 77 kA paralleled condition.</td>
       </tr>
       <tr>
         <td><code>BT</code></td>
@@ -463,13 +530,13 @@
         <td><code>PFC</code></td>
         <td>Power factor correction bank</td>
         <td>400 V (LV)</td>
-        <td>Automatic capacitor bank with 7 % detuned reactors. Corrects plant pf from ~0.85 to ~0.95+. Sized ~580–600 kVAr (indicative). Detuning prevents resonance with VFD harmonic currents. Loss of PFC causes reactive demand increase and potential utility penalty.</td>
+        <td>Automatic capacitor bank with 7 % detuned reactors, components rated for 60 Hz. Corrects plant pf from ~0.85 to ~0.95+. Sized &asymp; 580 kvar (indicative). Detuning prevents resonance with VFD harmonic currents. Loss of PFC causes reactive demand increase and exposure under the SEC power-factor regime.</td>
       </tr>
       <tr>
         <td><code>DG</code></td>
         <td>Diesel generator set</td>
         <td>400 V (LV)</td>
-        <td>Standby power source for the essential bus. Indicative rating ~800–1250 kVA; includes AVR, governor, day-tank, battery starting. Connected via the ATS. Verify weekly auto-test-on-load schedule, fuel level and battery condition during site visit.</td>
+        <td>Standby power source for the essential bus. Indicative rating 1250 kVA (ESP at 50 &deg;C ambient), 1800 rpm 4-pole at 60 Hz; includes AVR, governor, day-tank, battery starting. Connected via the ATS (open transition, &le; 10 s). Verify weekly auto-test-on-load schedule, fuel level and battery condition during site visit.</td>
       </tr>
       <tr>
         <td><code>ATS</code></td>
@@ -481,7 +548,7 @@
         <td><code>UPS</code></td>
         <td>Uninterruptible Power Supply</td>
         <td>400 V AC / battery</td>
-        <td>No-break, clean AC supply for DCS/PLC/SCADA, field instrumentation and critical communications. Battery autonomy typically 15–30 min (to be specified per plant). Loss of UPS during a supply disturbance can cause a DCS/PLC crash — verify battery condition and bypass availability.</td>
+        <td>No-break, clean AC supply for DCS/PLC/SCADA, field instrumentation and critical communications. Indicative: 100 kVA online double-conversion (VFI), 30 min battery autonomy (to be confirmed per plant). Loss of UPS during a supply disturbance can cause a DCS/PLC crash — verify battery condition (and temperature control of the battery room at 50 &deg;C ambient) and bypass availability.</td>
       </tr>
       <tr>
         <td><code>DCDB</code></td>
@@ -512,6 +579,10 @@
     when reading or red-lining the drawings on site.
   </p>
 
+  <div class="warning drawing-basis"><strong>Drawing basis note.</strong> The single-line
+diagrams on which these symbols appear were drawn for the original 11 kV / 415 V / 50 Hz
+reference design — read 11 kV as 13.8 kV, 415 V as 400 V and 50 Hz as 60 Hz.</div>
+
   <table class="tbl">
     <thead>
       <tr>
@@ -524,7 +595,7 @@
       <tr>
         <td>Utility / grid source</td>
         <td>Circle with AC sine-wave mark inside</td>
-        <td>11 kV utility feeder supply connection</td>
+        <td>13.8 kV SEC utility feeder supply connection</td>
       </tr>
       <tr>
         <td>Circuit breaker (closed)</td>
@@ -554,7 +625,7 @@
       <tr>
         <td>Neutral earthing resistor</td>
         <td>Resistor symbol in series to earth on the transformer neutral conductor</td>
-        <td>MV-NER (resistance earthing of the 11 kV neutral)</td>
+        <td>MV-NER (resistance earthing of the 13.8 kV system neutral)</td>
       </tr>
       <tr>
         <td>Earth / ground</td>
@@ -953,7 +1024,7 @@
       <tr><td>LV-MSB Bus A incomer ACB</td><td></td><td>—</td><td>400 V</td><td></td><td></td><td>(from TX-1 FLC)</td><td>(from TX-1 Isc)</td><td>&#9744; Pass &nbsp;&#9744; Fail</td><td></td></tr>
       <tr><td>LV-MSB Bus B incomer ACB</td><td></td><td>—</td><td>400 V</td><td></td><td></td><td>(from TX-2 FLC)</td><td>(from TX-2 Isc)</td><td>&#9744; Pass &nbsp;&#9744; Fail</td><td></td></tr>
       <tr><td>BT bus-tie ACB</td><td></td><td>—</td><td>400 V</td><td></td><td></td><td>(essential load A)</td><td>(N-1 Isc)</td><td>&#9744; Pass &nbsp;&#9744; Fail</td><td></td></tr>
-      <tr><td>DG</td><td></td><td>—</td><td>400 V / 415 V</td><td></td><td>—</td><td>(essential load A)</td><td>—</td><td>&#9744; Pass &nbsp;&#9744; Fail</td><td></td></tr>
+      <tr><td>DG</td><td></td><td>—</td><td>400 V, 60 Hz</td><td></td><td>—</td><td>(essential load A)</td><td>—</td><td>&#9744; Pass &nbsp;&#9744; Fail</td><td></td></tr>
       <tr><td>MCC-1 incomer MCCB</td><td></td><td>—</td><td>400 V</td><td></td><td></td><td>(MCC load A)</td><td>(MCC Isc)</td><td>&#9744; Pass &nbsp;&#9744; Fail</td><td></td></tr>
       <tr><td>MCC-2 incomer MCCB</td><td></td><td>—</td><td>400 V</td><td></td><td></td><td>(MCC load A)</td><td>(MCC Isc)</td><td>&#9744; Pass &nbsp;&#9744; Fail</td><td></td></tr>
       <tr><td>UPS</td><td></td><td>—</td><td>230/400 V</td><td></td><td>—</td><td>(DCS/relay load A)</td><td>—</td><td>&#9744; Pass &nbsp;&#9744; Fail</td><td></td></tr>
@@ -965,8 +1036,8 @@
   <p style="font-size:0.85em;"><em>
     Pass criteria (indicative): TX loading ≤ 80 % nameplate kVA in normal; ≤ 100 % in N-1.
     ACB / MCCB rated current ≥ calculated FLC × 1.25 (service factor). Switchgear Icu ≥ calculated Isc.
-    Cable ampacity ≥ FLC after derating. DG kVA ≥ essential load kVA × 1.1. UPS autonomy ≥ 15 min.
-    DCDB autonomy ≥ 2 h. All criteria indicative — confirm against governing specification.
+    Cable ampacity ≥ FLC after derating (XLPE in air at 50 &deg;C ambient: factor ≈ 0.82). DG kVA ≥ essential load kVA × 1.1 at the ESP/50 &deg;C rating. UPS autonomy ≥ 30 min.
+    DCDB autonomy ≥ 2 h. Nameplate frequency must read 60 Hz and TX ratio 13.8/0.4 kV. All criteria indicative — confirm against governing specification.
   </em></p>
 
 </section>
@@ -1033,14 +1104,14 @@
       <tr>
         <td><strong>Standby generation (DG + ATS)</strong></td>
         <td>A standby diesel generator, automatically started and connected via the ATS on utility loss, backs up the essential bus for safety-critical and process-critical loads.</td>
-        <td><code>DG</code> set (~1000 kVA indicative) + <code>ATS</code> + <code>EDB</code>. ATS transfer time typically &lt; 10 s (depends on DG run-up time). Auto-test on load weekly; fuel and battery monitoring continuous.</td>
+        <td><code>DG</code> set (1250 kVA ESP at 50 &deg;C, indicative) + <code>ATS</code> + <code>EDB</code>. ATS open-transition transfer typically &le; 10 s (depends on DG run-up time). Auto-test on load weekly; fuel and battery monitoring continuous.</td>
         <td>Total loss of supply to essential loads on utility outage</td>
         <td>H capital per kVA; H benefit for safety loads</td>
       </tr>
       <tr>
         <td><strong>UPS for control / protection</strong></td>
         <td>No-break, clean AC supply for the DCS/PLC/SCADA and instrumentation. Prevents a supply disturbance from crashing the control system and causing a process trip or safety incident.</td>
-        <td><code>UPS</code> (battery autonomy 15–30 min indicative) + <code>DCDB</code> (110 V DC for MV switchgear trip / close coils).</td>
+        <td><code>UPS</code> (100 kVA, 30 min autonomy indicative) + <code>DCDB</code> (110 V DC for MV switchgear trip / close coils).</td>
         <td>Loss of control / protection on any supply disturbance</td>
         <td>M capital; H benefit for control continuity and protection dependability</td>
       </tr>
@@ -1061,9 +1132,16 @@
       <tr>
         <td><strong>Earthing integrity</strong></td>
         <td>A continuous, low-impedance earth system (grid + bonding + NER) ensures earth faults are reliably detected, current limited, and touch/step voltages kept safe.</td>
-        <td><code>MV-NER</code> (R &asymp; 21 &Omega; indicative); LV TN-S; earth grid (&le; 1 &Omega; indicative); 120 mm&sup2; Cu earth conductors (indicative); bonding to <code>LV-MSB</code>, <code>MCC</code>, cable armour.</td>
+        <td><code>MV-NER</code> (R &asymp; 19.9 &Omega;, 400 A / 10 s indicative, with NER monitoring relay); LV TN-S; earth grid (&le; 1 &Omega; indicative, IEEE 80 touch/step check); 120 mm&sup2; Cu earth conductors (indicative); bonding to <code>LV-MSB</code>, <code>MCC</code>, cable armour.</td>
         <td>Undetected earth faults; personnel electrocution; equipment damage from high fault energy</td>
         <td>M capital; safety-critical</td>
+      </tr>
+      <tr>
+        <td><strong>Environmental hardening (Rev 3 / Saudi)</strong></td>
+        <td>Design every rating and enclosure for the actual environment: 50 &deg;C ambient, dust/sand, coastal salt. Heat is a slow common-mode failure mechanism — it ages every battery, capacitor and power module on site simultaneously.</td>
+        <td>Min IP54 outdoor enclosures; switchroom/battery-room HVAC (itself on the essential bus); cable derating &asymp; 0.82 for air at 50 &deg;C; DG rated ESP <em>at 50 &deg;C</em>; filter maintenance on <code>VFD</code> and <code>UPS</code> cooling paths.</td>
+        <td>Common-mode thermal degradation of all electronics and batteries; HVAC loss silently shortening UPS/DCDB autonomy</td>
+        <td>M capital; H benefit — and the HVAC itself must appear in the FMECA</td>
       </tr>
     </tbody>
   </table>
@@ -1081,9 +1159,11 @@
     <li>Are transformer differential protection (87T) and earth-fault protection (50N/51N) commissioned on both TX-1 and TX-2?</li>
     <li>Is the NER present and rated correctly? (Check neutral CT and earth-fault relay are connected).</li>
     <li>Is protection coordination current — does the study reflect the as-found breaker / relay configuration?</li>
+    <li>Is the switchroom / battery room HVAC healthy and alarmed? (At 50 &deg;C ambient, HVAC loss is a common-mode threat to UPS, DCDB and VFD electronics.)</li>
+    <li>Is the NER supervised by a monitoring relay? An unmonitored open NER silently unearths the 13.8 kV system.</li>
   </ul>
 
-  <div class="key">Key takeaway: Ten hardening principles; ten SPOF-hunt checklist items. The five most common findings are: no bus-tie auto-transfer, duty and standby on the same MCC, single utility incomer with no DG coverage, ATS not commissioned, and outdated protection coordination study. Address these first.</div>
+  <div class="key">Key takeaway: Eleven hardening principles; twelve SPOF-hunt checklist items. The five most common findings are: no bus-tie auto-transfer, duty and standby on the same MCC, single utility incomer with no DG coverage, ATS not commissioned, and outdated protection coordination study. Address these first.</div>
 </section>
 
 <!-- ============================================================ -->
@@ -1284,7 +1364,7 @@
         <td>ATS (manual MTTR ~8 h vs auto ~0.003 h)</td>
         <td>Manual: A = 30000/(30000+8) = 0.99973<br>Auto: A = 30000/(30000+0.003) = 0.99999990</td>
         <td>Manual: 0.99973<br>Auto: ~1.000</td>
-        <td>Manual: ~2.3 h/yr<br>Auto: ~90 s/yr</td>
+        <td>Manual: ~2.3 h/yr<br>Auto: ~3 s/yr (each transfer event additionally imposes ~10 s of dead time per demand, which the UPS rides through)</td>
       </tr>
       <tr>
         <td>DG + ATS (both must work)</td>
@@ -1297,6 +1377,18 @@
     </tbody>
   </table>
 
+  <div class="warning">
+    <strong>Warning — Saudi environment adjustment.</strong> The indicative figures above are
+    temperate-climate base values. At a 50 &deg;C design ambient with dust and (on coastal
+    sites) salt, expect the electronics-rich classes — <code>VFD</code>, <code>UPS</code>,
+    battery systems, <code>PFC</code> capacitors — to sit at the worse end of their ranges or
+    beyond: electrolytic capacitor and battery life roughly halves per 8–10 &deg;C of sustained
+    over-temperature. Treat switchroom HVAC as a reliability-critical system in its own right
+    (it appears in the hardening table of <a href="#a-hardening">Appendix F</a>), and bias the
+    FMECA Occurrence score upward for thermally stressed equipment rather than quoting the
+    table values unmodified.
+  </div>
+
   <div class="note">
     <strong>Note — MTTR as the key lever:</strong> The ATS example illustrates why auto-transfer
     (MTTR reduced from 8 h to ~10 s) delivers a far larger availability improvement than any
@@ -1305,5 +1397,466 @@
     the recommendations generated by this campaign.
   </div>
 
-  <div class="key">Key takeaway: 14 equipment classes tabulated. Use these indicative figures for initial FMECA scoring only. Replace with IEEE 493 / ISO 14224 / plant maintenance records for formal studies. The single most impactful design choice visible in the MTBF data is the auto-transfer MTTR reduction: from ~8 h (manual) to seconds (auto), turning ~2 h/yr loss into &lt; 2 min/yr.</div>
+  <div class="key">Key takeaway: 14 equipment classes tabulated. Use these indicative figures for initial FMECA scoring only. Replace with IEEE 493 / ISO 14224 / plant maintenance records for formal studies. The single most impactful design choice visible in the MTBF data is the auto-transfer MTTR reduction: from ~8 h (manual) to seconds (auto), turning ~2.3 h/yr loss into a few seconds per year (plus ~10 s of dead time per transfer demand, ridden through by the UPS).</div>
+</section>
+
+<!-- ============================================================ -->
+
+<section id="a-saso" data-title="H — SASO / SEC Standards Map" data-part="Appendices">
+  <h2>H — SASO / SEC Standards Map</h2>
+
+  <p>
+    This appendix explains <em>how standards work in Saudi Arabia</em> for an electrical
+    engineer used to plain-IEC projects, and then maps every major topic in this manual to
+    its IEC/IEEE technical basis and its Saudi regulatory reference. Nothing in the engineering
+    changes — Ohm's law is the same in Jubail as in Geneva — but the <em>citation chain</em>
+    that makes a design contractually and legally acceptable in the Kingdom is different,
+    and getting it wrong delays procurement, customs clearance and energisation approval.
+    All references in this appendix are <em>indicative</em>; the project specification and the
+    authority having jurisdiction define the governing editions.
+  </p>
+
+  <h3 id="a-saso-framework">How SASO adopts IEC standards</h3>
+
+  <p>
+    <strong>SASO</strong> (Saudi Standards, Metrology and Quality Organization) is the
+    Kingdom's national standards body. Rather than writing electrical standards from scratch,
+    SASO <strong>adopts</strong> international standards — overwhelmingly IEC for electrical
+    equipment — and publishes them as Saudi standards, usually with the structure
+    <code>SASO IEC xxxxx</code>. An adoption may be <em>identical</em> (the IEC text verbatim)
+    or <em>modified</em> (with national deviations — the classic example being the LV supply
+    voltage and the 60 Hz frequency). The practical consequences for you:
+  </p>
+
+  <ul>
+    <li><strong>The technical content you learned from the IEC standard almost always applies.</strong>
+        When this manual cites IEC 60909 for fault calculations or IEC 61439 for switchboard
+        verification, the SASO adoption carries the same clauses.</li>
+    <li><strong>Check the national deviations first.</strong> They cluster around voltage
+        (400/230 V LV), frequency (60 Hz), ambient temperature (calibration of ratings to
+        Saudi climate) and marking/language requirements.</li>
+    <li><strong>Cite the Saudi adoption in deliverables.</strong> A datasheet that references
+        "IEC 60076" is technically fine; a datasheet that references "SASO IEC 60076 (IEC 60076)"
+        clears review faster. This manual uses the shorthand <em>SASO-adopted IEC</em>.</li>
+  </ul>
+
+  <div class="note">
+    <strong>Note — the dual-code reality.</strong> Saudi industrial practice runs IEC-based
+    equipment standards alongside <strong>SBC 401</strong>, the Saudi Building Code electrical
+    chapter, which is technically derived from NFPA 70 (the US NEC). On a process plant you
+    will routinely see IEC switchgear installed under an NEC-flavoured installation code, with
+    IEEE 80 earthing and IEEE 1584 arc-flash studies on top. This mix is normal and workable —
+    but it means <em>you must always ask which code governs a given scope</em> and flag
+    conflicts (e.g. cable sizing tables, earthing terminology) rather than silently assuming
+    one family.
+  </div>
+
+  <h3 id="a-saso-saber">SABER — conformity before the box ships</h3>
+
+  <p>
+    <strong>SABER</strong> is SASO's electronic conformity-assessment platform. For regulated
+    products — which include a large share of LV electrical equipment — the importer must
+    obtain a <em>Product Certificate of Conformity</em> (valid typically one year) and a
+    per-shipment <em>Shipment Certificate</em> through SABER before customs clearance.
+    Equipment families also fall under Saudi <em>Technical Regulations</em> (for example for
+    LV electrical equipment and appliances), which define which standards the certificate must
+    attest against.
+  </p>
+
+  <ul>
+    <li><strong>For the desk study:</strong> SABER status is a procurement/QA document, not a
+        site observation. Ask the supply chain for the certificates with the test reports.</li>
+    <li><strong>For recommendations:</strong> when an FMECA action implies new equipment
+        (e.g. adding an NER monitor or SPDs), note that delivery time must include SABER
+        certification if the vendor has no current Saudi certificate.</li>
+    <li><strong>Red flag:</strong> a vendor who cannot state their SABER/SASO position for the
+        offered family. The major manufacturers in <a href="#a-vendors">Appendix I</a> maintain
+        Saudi certification as a matter of course.</li>
+  </ul>
+
+  <h3 id="a-saso-sec">SEC company standards and the grid codes</h3>
+
+  <p>
+    The <strong>Saudi Electricity Company (SEC)</strong> is both the utility you connect to and
+    a de-facto standards authority: its <em>Distribution Materials Specifications</em> and
+    company standards govern everything at and upstream of the point of supply — the 13.8 kV
+    connection, the revenue metering arrangement (<code>MV-MET</code>), the intake protection
+    interface, and approved-vendor requirements for utility-facing equipment. Two codes sit
+    above this:
+  </p>
+
+  <ul>
+    <li><strong>Saudi Grid Code</strong> — connection to the transmission system and duties of
+        large users/generators: operating frequency band around 60 Hz, voltage ranges, fault
+        ride-through, reactive capability.</li>
+    <li><strong>SEC Distribution Code</strong> — the distribution-level counterpart that applies
+        to a 13.8 kV-connected plant like this one: supply standards, power-factor expectations
+        (the &asymp; 580 kvar <code>PFC</code> bank exists largely to live comfortably under
+        this regime), harmonic emission limits, metering and protection coordination at the
+        intake.</li>
+  </ul>
+
+  <div class="tip">
+    <strong>Tip — three questions to settle with SEC early.</strong> (1) The confirmed fault
+    level at the point of supply (design value here: 25 kA, SEC range 25–40 kA — it sizes
+    <code>MV-SWGR</code>). (2) The required intake protection and metering single-line
+    (it fixes the <code>MV-MET</code> panel arrangement). (3) The earthing interface — whether
+    the SEC network earthing and the plant <code>MV-NER</code> philosophy are compatible.
+    All three are desk-study items; none can be verified by site inspection alone.
+  </div>
+
+  <h3 id="a-saso-sbc">SBC 401 — the statutory installation code</h3>
+
+  <p>
+    The <strong>Saudi Building Code (SBC)</strong> series is the Kingdom's statutory
+    construction code, enforced through municipal permitting; <strong>SBC 401</strong> is its
+    electrical volume, technically based on NFPA 70 (NEC) with Saudi amendments. On industrial
+    plants its practical reach is mostly buildings, life safety and final-circuit installations
+    (the <code>DB</code>/<code>EDB</code> world), while the process electrical system is
+    specified to SASO-adopted IEC. Where both could apply, the contract's order of precedence
+    governs — and where you find a genuine conflict (conductor sizing method, RCD vs GFCI
+    language, earthing terminology), record it as a finding rather than improvising a hybrid.
+  </p>
+
+  <h3 id="a-saso-map">Topic-by-topic standards map (indicative)</h3>
+
+  <p>
+    The table maps each technical topic of this manual to its international basis and the
+    Saudi reference you should cite alongside it. <em>All rows indicative</em> — adoption
+    status, edition years and regulation numbers change; verify on SASO's catalogue and in the
+    project specification before citing in a formal deliverable.
+  </p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Topic (manual section)</th>
+        <th>International basis</th>
+        <th>Saudi reference (indicative)</th>
+        <th>Field note</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>LV installation design (<a href="#c-cables">Part 2 — cables</a>)</td><td>IEC 60364 series</td><td>SASO IEC 60364 adoptions; SBC 401 for building scopes</td><td>Watch the IEC-vs-NEC seam on mixed projects; confirm which governs final circuits.</td></tr>
+      <tr><td>MV switchgear <code>MV-SWGR</code></td><td>IEC 62271-200 (assembly), 62271-100 (CBs), 62271-1 (common)</td><td>SASO IEC 62271 adoptions; SEC material specs at the intake</td><td>17.5 kV class, 31.5 kA / 3 s, IAC classification; SEC approval needed for the intake panels.</td></tr>
+      <tr><td>LV assemblies <code>LV-MSB</code> / <code>MCC</code></td><td>IEC 61439-1/-2</td><td>SASO IEC 61439 adoptions</td><td>Design verification at 50 &deg;C ambient — temperature-rise verification is the Saudi pain point.</td></tr>
+      <tr><td>Power transformers <code>TX-1/TX-2</code></td><td>IEC 60076 series (60076-11 dry-type)</td><td>SASO IEC 60076 adoptions; SASO energy-efficiency (MEPS) regulation for distribution transformers</td><td>Saudi MEPS sets minimum efficiency tiers — a cheap high-loss unit may be non-importable.</td></tr>
+      <tr><td>MV/LV power cables</td><td>IEC 60502-1/-2 (XLPE 1–36 kV)</td><td>SASO IEC 60502 adoptions; SEC specs for utility-side cables</td><td>Derate for 50 &deg;C air / hot soil; 90 &deg;C XLPE is the default conductor system here.</td></tr>
+      <tr><td>Protection relays / IEDs (<a href="#c-protection">protection</a>)</td><td>IEC 60255 series; IEC 61850 (communications)</td><td>SASO IEC adoptions; SEC protection interface requirements at the incomer</td><td>SEC will state required intake protection functions and grading limits toward the network.</td></tr>
+      <tr><td>Short-circuit calculation (<a href="#c-shortcircuit">Part 2</a>)</td><td>IEC 60909</td><td>Cited via SASO adoption / project spec</td><td>Use the SEC-confirmed source fault level (25–40 kA at 13.8 kV) as the boundary condition.</td></tr>
+      <tr><td>Earthing / grounding (<a href="#c-earthing">Part 2</a>)</td><td>IEC 60364-5-54; <strong>IEEE 80</strong> (substation grids — common practice)</td><td>SBC 401 earthing rules for buildings; IEEE 80 accepted practice for substations</td><td>IEEE 80 touch/step design is the regional norm even on IEC plants; soil is dry and resistive — test, don't assume.</td></tr>
+      <tr><td>Lightning protection (<a href="#c-lightning">Part 2</a>)</td><td>IEC 62305 series</td><td>SASO IEC 62305 adoptions; SBC requirements for buildings</td><td>Risk assessment per 62305-2; coastal east-coast sites see real storm days — do not skip the study.</td></tr>
+      <tr><td>Surge protection (SPDs)</td><td>IEC 61643-11</td><td>SASO IEC 61643 adoptions</td><td>Type 1/2/3 cascade per the zone concept; status contacts to DCS.</td></tr>
+      <tr><td>Arc flash (<a href="#c-arcflash">Part 2</a>)</td><td><strong>IEEE 1584-2018</strong>; NFPA 70E (PPE programme) — common practice</td><td>Host QHSE systems typically invoke NFPA 70E directly</td><td>US-style arc-flash labels are the regional expectation, including on IEC switchgear.</td></tr>
+      <tr><td>UPS <code>UPS</code></td><td>IEC 62040 series (62040-3 performance classes)</td><td>SASO IEC 62040 adoptions; SABER certification for the product family</td><td>Specify VFI-SS-111; battery room HVAC matters more than the inverter at 50 &deg;C.</td></tr>
+      <tr><td>DC systems <code>DCDB</code></td><td>IEC 62485 (battery safety); IEEE 485 sizing (common practice)</td><td>Cited via project spec</td><td>110 V DC tripping supply; duty-cycle sizing per IEEE 485 is the regional norm.</td></tr>
+      <tr><td>Diesel generator <code>DG</code></td><td>ISO 8528 series (ratings, governing, acceptance)</td><td>SASO ISO 8528 adoptions; environmental/noise rules for enclosures</td><td>State the rating as ESP/PRP <em>at 50 &deg;C</em>; 1800 rpm 4-pole at 60 Hz.</td></tr>
+      <tr><td>ATS <code>ATS</code></td><td>IEC 60947-6-1 (transfer switching equipment); UL 1008 family equally common</td><td>SASO IEC adoptions / SABER</td><td>Check WCR vs available fault current and upstream clearing time.</td></tr>
+      <tr><td>LV circuit breakers (ACB/MCCB)</td><td>IEC 60947-2</td><td>SASO IEC 60947 adoptions; SABER for the families</td><td>Icu/Ics at 50 &deg;C and altitude per site; 38.5 kA duty on <code>LV-MSB</code> feeders.</td></tr>
+      <tr><td>Motors (<a href="#c-motors">Part 2</a>)</td><td>IEC 60034 series</td><td>SASO IEC 60034 adoptions; SASO motor MEPS (IE-class efficiency tiers)</td><td>60 Hz nameplates: 1800/3600 rpm; verify service factor at 50 &deg;C ambient.</td></tr>
+      <tr><td>VFDs <code>VFD</code></td><td>IEC 61800 series (61800-5-1 safety, -3 EMC)</td><td>SASO IEC adoptions / SABER</td><td>Derate or oversize for 50 &deg;C switchroom; harmonics interact with the SEC emission limits.</td></tr>
+      <tr><td>PFC capacitors <code>PFC</code></td><td>IEC 60831-1/-2 (LV shunt capacitors)</td><td>SASO IEC 60831 adoptions</td><td>60 Hz-rated cans and reactors only; 7 % detuning &rarr; &asymp; 227 Hz tuning at 60 Hz.</td></tr>
+      <tr><td>FMECA / reliability (<a href="#s-fmeca">Part 3</a>)</td><td>IEC 60812; IEC 61078; IEEE 493; ISO 14224</td><td>Methodology standards — cited as-is</td><td>No Saudi deviation; data sources unchanged.</td></tr>
+      <tr><td>Energy metering / tariff</td><td>IEC 62052/62053 meter standards</td><td>SEC metering specifications at <code>MV-MET</code></td><td>Utility owns the metering point; you verify location and CT/VT classes only.</td></tr>
+      <tr><td>Grid connection & power quality</td><td>IEC 61000 series (EMC/harmonics)</td><td><strong>Saudi Grid Code / SEC Distribution Code</strong>; ECRA/regulator rules</td><td>Harmonic and pf obligations at the point of common coupling; the detuned PFC and VFD filters serve these.</td></tr>
+    </tbody>
+  </table>
+
+  <h3 id="a-saso-fieldnotes">Field notes — what to ask for, per document</h3>
+
+  <p>
+    During the desk study, the Saudi regulatory layer translates into a short list of extra
+    documents to request alongside the usual drawing set (SF-01). The table below lists them
+    with the question each one answers.
+  </p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Document to request</th>
+        <th>Issued by / held by</th>
+        <th>What it tells you</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>SEC connection agreement / service confirmation</td><td>SEC ↔ plant owner</td><td>Confirmed supply voltage (13.8 kV), capacity, metering point, and the contractual fault level — the boundary condition for the whole short-circuit study.</td></tr>
+      <tr><td>SEC-approved intake protection single-line and settings</td><td>SEC / commissioning contractor</td><td>The grading limit you must coordinate under at the incomer; changing intake settings needs SEC concurrence.</td></tr>
+      <tr><td>SABER product / shipment certificates for main equipment</td><td>Importer / procurement</td><td>Conformity status of <code>MV-SWGR</code>, <code>TX</code>, <code>LV-MSB</code>, <code>UPS</code> etc.; absence is a procurement finding, not a safety finding.</td></tr>
+      <tr><td>SBC 401 permit / municipal electrical approval</td><td>Municipality / owner</td><td>Which scopes were permitted under the building code — usually buildings and life safety; mismatches with as-built are findings.</td></tr>
+      <tr><td>Transformer MEPS / efficiency declaration</td><td>Manufacturer</td><td>Compliance with the Saudi minimum-efficiency regulation for distribution transformers; relevant when recommending replacements.</td></tr>
+      <tr><td>Power-factor / harmonic compliance statements</td><td>Owner / consultant</td><td>Standing of the plant under the SEC Distribution Code reactive and harmonic limits; explains the sizing of <code>PFC</code> and any filters.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="warning">
+    <strong>Warning — do not self-certify.</strong> Nothing in this appendix authorises an
+    assessor to declare equipment compliant with SASO regulations, the SEC codes or SBC 401.
+    Your deliverable records <em>which documents exist, which are missing, and where the
+    as-found plant contradicts them</em>. Compliance declarations belong to the manufacturer
+    (SABER), the installer (permits) and the owner (SEC agreement).
+  </div>
+
+  <div class="key">Key takeaway: in Saudi Arabia the engineering is IEC, the citation is SASO, the
+  connection is SEC, the building is SBC 401, and the customs gate is SABER. Twenty-one topic
+  rows above give the indicative mapping; the project specification and the authority having
+  jurisdiction always define the governing editions.</div>
+</section>
+
+<!-- ============================================================ -->
+
+<section id="a-vendors" data-title="I — Vendor Family Index" data-part="Appendices">
+  <h2>I — Vendor Family Index</h2>
+
+  <p>
+    A one-stop index of every vendor product family discussed in
+    <a href="#cat-mv-swgr">Part 6 — Equipment Catalogues</a>, grouped by equipment class and
+    linked to the catalogue section where each family is described in context (typical
+    parameters, selection logic, Saudi support position). Use this appendix when you are
+    standing in front of a panel trying to place a nameplate brand, or when drafting a
+    recommendation and you want to point the reader at the right catalogue chapter.
+  </p>
+
+  <div class="warning"><strong>Indicative catalogue data.</strong> Product families and typical
+parameters are listed for training and familiarisation only, are approximate, and change with
+manufacturer revisions. No part numbers are given; always obtain current certified data sheets
+and SASO/SEC acceptance status from the manufacturer.</div>
+
+  <h3 id="a-vendors-how">How to use this index</h3>
+
+  <ul>
+    <li><strong>Identify:</strong> read the brand and family from the nameplate (e.g.
+        "UniGear ZS1", "Masterpact MTZ2", "SIVACON S8") and find the row below — the
+        link takes you to the catalogue section with the family's typical ratings.</li>
+    <li><strong>Specify:</strong> when an FMECA recommendation implies new equipment, cite the
+        equipment class and two or three reference families from the table — never a part
+        number — and let procurement obtain certified, SABER-cleared offers.</li>
+    <li><strong>Beware look-alikes:</strong> families evolve (ComPacT NSX vs the older Compact
+        NSX, Emax 2 vs Emax) and licence-built local variants exist. The vintage matters for
+        spares — record the <em>exact</em> family string and year from the nameplate.</li>
+  </ul>
+
+  <h3 id="a-vendors-table">Index by equipment class</h3>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Equipment class (plant tag)</th>
+        <th>Vendor</th>
+        <th>Product family / families</th>
+        <th>Catalogue section</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td rowspan="4">MV switchgear, 13.8 kV (<code>MV-SWGR</code>)</td>
+          <td>ABB</td><td>UniGear ZS1 (air-insulated, withdrawable VCB); SafeRing / SafePlus (gas-insulated RMU); ZX series (GIS); eco-gas "blue-line" variants</td><td><a href="#cat-mv-swgr">Part 6 — MV switchgear</a></td></tr>
+      <tr><td>Siemens</td><td>NXAIR (air-insulated); NXPLUS (GIS); "Blue" vacuum / clean-air portfolio</td><td><a href="#cat-mv-swgr">Part 6 — MV switchgear</a></td></tr>
+      <tr><td>Schneider Electric</td><td>PIX (air-insulated); SM6 (modular RMU); AirSeT (SF6-free evolution)</td><td><a href="#cat-mv-swgr">Part 6 — MV switchgear</a></td></tr>
+      <tr><td>(panel IEDs)</td><td>See protection relay rows below — ABB Relion, Siemens SIPROTEC, Schneider Easergy/MiCOM, SEL, GE Multilin</td><td><a href="#cat-relays">Part 6 — protection relays</a></td></tr>
+
+      <tr><td rowspan="3">MV/LV transformers (<code>TX-1</code>, <code>TX-2</code>)</td>
+          <td>Siemens (Siemens Energy)</td><td>GEAFOL cast-resin dry-type</td><td><a href="#cat-transformers">Part 6 — transformers</a></td></tr>
+      <tr><td>Schneider Electric</td><td>Trihal cast-resin; Minera oil-immersed (hermetic ONAN)</td><td><a href="#cat-transformers">Part 6 — transformers</a></td></tr>
+      <tr><td>Hitachi Energy (ABB heritage)</td><td>Dry-type ranges incl. EcoDry; hermetic oil-immersed distribution units</td><td><a href="#cat-transformers">Part 6 — transformers</a></td></tr>
+
+      <tr><td rowspan="4">LV breakers — ACB and MCCB (<code>LV-MSB</code> incomers, BT, feeders)</td>
+          <td>ABB</td><td>Emax 2 (ACB); Tmax XT (MCCB)</td><td><a href="#cat-lv-breakers">Part 6 — LV breakers</a></td></tr>
+      <tr><td>Schneider Electric</td><td>Masterpact MTZ1/MTZ2/MTZ3 (ACB); ComPacT NSX (MCCB)</td><td><a href="#cat-lv-breakers">Part 6 — LV breakers</a></td></tr>
+      <tr><td>Siemens</td><td>3WA (ACB); 3VA (MCCB)</td><td><a href="#cat-lv-breakers">Part 6 — LV breakers</a></td></tr>
+      <tr><td>Eaton</td><td>NZM (MCCB) and associated ACB line-up</td><td><a href="#cat-lv-breakers">Part 6 — LV breakers</a></td></tr>
+
+      <tr><td rowspan="4">Motor control centres (<code>MCC-1…n</code>)</td>
+          <td>Rockwell Automation</td><td>CENTERLINE 2500 (IEC MCC); E300 electronic overload relays</td><td><a href="#cat-mcc">Part 6 — MCC</a></td></tr>
+      <tr><td>ABB</td><td>MNS / MNS Digital; UMC100 motor controllers</td><td><a href="#cat-mcc">Part 6 — MCC</a></td></tr>
+      <tr><td>Siemens</td><td>SIVACON S8 (with SIMOCODE motor management)</td><td><a href="#cat-mcc">Part 6 — MCC</a></td></tr>
+      <tr><td>Schneider Electric</td><td>Okken and BlokSeT (with TeSys starters)</td><td><a href="#cat-mcc">Part 6 — MCC</a></td></tr>
+
+      <tr><td rowspan="4">Variable frequency drives (<code>VFD</code>)</td>
+          <td>ABB</td><td>ACS580 (general purpose); ACS880 (industrial flagship)</td><td><a href="#cat-vfd">Part 6 — VFD</a></td></tr>
+      <tr><td>Danfoss</td><td>VLT FC302 family</td><td><a href="#cat-vfd">Part 6 — VFD</a></td></tr>
+      <tr><td>Siemens</td><td>SINAMICS G120 / G150</td><td><a href="#cat-vfd">Part 6 — VFD</a></td></tr>
+      <tr><td>Rockwell Automation</td><td>PowerFlex 755</td><td><a href="#cat-vfd">Part 6 — VFD</a></td></tr>
+
+      <tr><td rowspan="4">UPS, online double-conversion (<code>UPS</code>)</td>
+          <td>Eaton</td><td>93PM and 9395 families</td><td><a href="#cat-ups">Part 6 — UPS</a></td></tr>
+      <tr><td>Schneider Electric</td><td>Galaxy family</td><td><a href="#cat-ups">Part 6 — UPS</a></td></tr>
+      <tr><td>Vertiv</td><td>Liebert EXL family</td><td><a href="#cat-ups">Part 6 — UPS</a></td></tr>
+      <tr><td>ABB</td><td>Industrial UPS with decentralised parallel architecture</td><td><a href="#cat-ups">Part 6 — UPS</a></td></tr>
+
+      <tr><td rowspan="3">DC systems — chargers and batteries (<code>DCDB</code>)</td>
+          <td>AEG Power Solutions</td><td>SVS-type industrial thyristor chargers</td><td><a href="#cat-dc">Part 6 — DC systems</a></td></tr>
+      <tr><td>Benning</td><td>Thyrotronic industrial charger family</td><td><a href="#cat-dc">Part 6 — DC systems</a></td></tr>
+      <tr><td>GE / ABB heritage</td><td>Industrial battery charger lines</td><td><a href="#cat-dc">Part 6 — DC systems</a></td></tr>
+
+      <tr><td rowspan="3">Diesel generator sets (<code>DG</code>)</td>
+          <td>Caterpillar</td><td>Diesel genset ranges with EMCP control panels</td><td><a href="#cat-gensets">Part 6 — gensets</a></td></tr>
+      <tr><td>Cummins Power Generation</td><td>Genset ranges with PowerCommand controls</td><td><a href="#cat-gensets">Part 6 — gensets</a></td></tr>
+      <tr><td>Kohler Energy (SDMO heritage)</td><td>Genset ranges with DEC / APM controllers (DSE controllers common on packagers' sets)</td><td><a href="#cat-gensets">Part 6 — gensets</a></td></tr>
+
+      <tr><td rowspan="3">Automatic transfer switches (<code>ATS</code>)</td>
+          <td>ASCO Power Technologies (Schneider Electric)</td><td>7000 Series (heavy duty); 300 Series (standard tier)</td><td><a href="#cat-ats">Part 6 — ATS</a></td></tr>
+      <tr><td>Cummins</td><td>OTPC / BTPC transfer switches (PowerCommand-integrated)</td><td><a href="#cat-ats">Part 6 — ATS</a></td></tr>
+      <tr><td>Caterpillar</td><td>ATS lines integrated with EMCP genset controls</td><td><a href="#cat-ats">Part 6 — ATS</a></td></tr>
+
+      <tr><td rowspan="5">Protection relays / IEDs (<code>MV-PROT</code>)</td>
+          <td>ABB</td><td>Relion 615 / 620 series (REF/RET/REM)</td><td><a href="#cat-relays">Part 6 — relays</a></td></tr>
+      <tr><td>Siemens</td><td>SIPROTEC 5 (and Compact) series</td><td><a href="#cat-relays">Part 6 — relays</a></td></tr>
+      <tr><td>Schneider Electric</td><td>Easergy P3 / MiCOM heritage series</td><td><a href="#cat-relays">Part 6 — relays</a></td></tr>
+      <tr><td>SEL (Schweitzer)</td><td>700 series — SEL-751 (feeder), SEL-787 (transformer), SEL-710 (motor); MIRRORED BITS communications</td><td><a href="#cat-relays">Part 6 — relays</a></td></tr>
+      <tr><td>GE Vernova</td><td>Multilin 8 series (and the installed-base 469/745, Multilin 850/869)</td><td><a href="#cat-relays">Part 6 — relays</a></td></tr>
+
+      <tr><td rowspan="4">Auxiliaries — NER, SPD, PFC (<code>MV-NER</code>, <code>PFC</code>)</td>
+          <td>Post Glover; Cressall</td><td>Neutral earthing resistor assemblies (NER/NGR)</td><td><a href="#cat-aux">Part 6 — auxiliaries</a></td></tr>
+      <tr><td>DEHN; OBO Bettermann; Phoenix Contact</td><td>DEHNventil / DEHNguard; V-series; FLASHTRAB / VALVETRAB — SPD Type 1/2/3 cascades</td><td><a href="#cat-aux">Part 6 — auxiliaries</a></td></tr>
+      <tr><td>Schneider Electric</td><td>VarSet PFC banks with PowerLogic controllers; switchboard-integrated SPDs</td><td><a href="#cat-aux">Part 6 — auxiliaries</a></td></tr>
+      <tr><td>ABB; TDK (EPCOS)</td><td>QCap capacitors / Dynacomp dynamic compensation; capacitor elements</td><td><a href="#cat-aux">Part 6 — auxiliaries</a></td></tr>
+    </tbody>
+  </table>
+
+  <h3 id="a-vendors-saudi">Saudi support and spares considerations</h3>
+
+  <p>
+    Family choice in the Kingdom is rarely decided on electrical performance — the major
+    families above are all competent. The differentiators an assessor should note are:
+  </p>
+
+  <ul>
+    <li><strong>Local presence:</strong> the global majors (ABB, Siemens, Schneider, Eaton,
+        Rockwell, Caterpillar, Cummins, Kohler/SDMO, SEL) maintain Saudi sales, service and in
+        several cases assembly/panel-building operations; response time for a failed VFD power
+        module or ACB pole differs by weeks between a locally supported family and an orphan
+        import. Record the nameplate family <em>and</em> the local service route in SF-01.</li>
+    <li><strong>SASO/SABER position:</strong> mainstream families ship with current Saudi
+        conformity certificates; an exotic family may be technically excellent but slow to
+        re-import — an MTTR input to the FMECA, not just a procurement note.</li>
+    <li><strong>50 &deg;C data availability:</strong> insist on vendor derating curves at site
+        ambient. Families marketed primarily for European 40 &deg;C practice may need one frame
+        size up; the catalogue sections in Part 6 flag this per class.</li>
+    <li><strong>Installed-base continuity:</strong> matching the plant's existing family
+        (e.g. adding an MTZ to a Masterpact board) simplifies spares, tools and training —
+        but verify the new generation is form-fit compatible; family names persist across
+        incompatible generations.</li>
+  </ul>
+
+  <div class="note">
+    <strong>Note — single-vendor pull.</strong> Part 6 repeatedly observes that vendors bundle:
+    Schneider MV (PIX/SM6) pulls Schneider relays and LV boards; a Rockwell DCS pulls
+    CENTERLINE MCCs; a Siemens DCS pulls SIVACON and SINAMICS; ASCO pairs naturally with the
+    Schneider ecosystem, PowerCommand ATS with Cummins sets. Bundling simplifies interfaces and
+    spares but concentrates your supply-chain and obsolescence risk in one vendor — note it in
+    the FMECA when a plant is 100 % single-brand.
+  </div>
+
+  <ul class="checklist">
+    <li>Nameplate family string and generation recorded exactly (photo PH-xx referenced).</li>
+    <li>Catalogue section in Part 6 reviewed for the family's typical ratings at 50 &deg;C.</li>
+    <li>Local Saudi service/spares route identified for the installed family.</li>
+    <li>SABER/SASO conformity status confirmed for any newly recommended equipment class.</li>
+    <li>Recommendation cites equipment class + two or three reference families — no part numbers.</li>
+  </ul>
+
+  <div class="key">Key takeaway: eleven equipment classes, every family name used in Part 6 in
+  one table. Identify the family from the nameplate, follow the link for typical parameters and
+  selection logic, and remember: families and Saudi acceptance status change — certified
+  manufacturer data governs, and no part numbers are ever cited in this manual.</div>
+</section>
+
+<!-- ============================================================ -->
+
+<section id="a-concepts" data-title="J — Concepts Companion Index" data-part="Appendices">
+  <h2>J — Concepts Companion Index</h2>
+
+  <p>
+    Alongside this manual there is a separate, self-contained companion file,
+    <code>concepts-rev3.html</code>, built with the concept-explainer method: one chapter per
+    core concept, each developed from first principles — the problem the concept solves, the
+    physical intuition, the governing mathematics, and a conceptual map tying it to its
+    neighbours. The companion is deliberately <em>plant-agnostic</em>: it teaches the physics
+    and the engineering logic, while this manual applies them to the specific 13.8 kV / 400 V /
+    60 Hz plant. This appendix lists the fourteen concepts, what each chapter covers in one
+    line, and which section of <em>this manual</em> applies it — so you can move between
+    "why is it so" (companion) and "what do I do about it here" (manual) without hunting.
+  </p>
+
+  <h3 id="a-concepts-what">What the companion is (and is not)</h3>
+
+  <ul>
+    <li><strong>It is</strong> a tutorial: generous explanations, analogies before algebra,
+        worked micro-examples on round numbers, and a concept map per chapter.</li>
+    <li><strong>It is</strong> self-contained and offline, like this manual — no external
+        links, no scripts.</li>
+    <li><strong>It is not</strong> a substitute for the calculations in Part 2 of this manual:
+        the companion's numbers are pedagogical; the manual's worked examples are on the
+        binding Rev 3 plant basis (2 &times; 1600 kVA, Z = 6 %, Isc 38.5 kA, NER 19.9 &Omega;,
+        and so on).</li>
+    <li><strong>It is not</strong> hyperlinked from here — the manual is a single file and links
+        below stay within it; open the companion file separately when you want the deep dive.</li>
+  </ul>
+
+  <h3 id="a-concepts-list">The fourteen concepts</h3>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Concept chapter</th>
+        <th>One-line summary</th>
+        <th>Applied in this manual</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>Per-unit system</td><td>Why engineers divide everything by a base value — so transformers "disappear" and a 13.8 kV fault study and a 400 V fault study speak the same dimensionless language.</td><td><a href="#c-perunit">Part 2 — per-unit</a></td></tr>
+      <tr><td>2</td><td>Short-circuit currents</td><td>Where fault current comes from, why it is tens of times load current, and how source and transformer impedance set the 38.5 kA / 77 kA numbers that size every breaker.</td><td><a href="#c-shortcircuit">Part 2 — short circuit</a></td></tr>
+      <tr><td>3</td><td>Transformers</td><td>How two windings and a core trade voltage for current, what Dyn11, Z % and losses really mean, and why impedance is both a fuse and a voltage-drop tax.</td><td><a href="#c-transformer">Part 2 — transformer</a></td></tr>
+      <tr><td>4</td><td>Circuit breakers</td><td>How you stop a 38 kA arc in a box — interruption physics (vacuum at MV, air at LV), the meaning of Icu/Ics/Icw, and trip-unit anatomy.</td><td><a href="#c-breaker">Part 2 — breakers</a></td></tr>
+      <tr><td>5</td><td>Protection &amp; coordination</td><td>Relays as the system's reflexes: pickup, time grading, IDMT curves and zones — tripping the smallest possible slice of plant, fast.</td><td><a href="#c-protection">Part 2 — protection</a></td></tr>
+      <tr><td>6</td><td>Arc flash</td><td>The fireball, not the shock: incident energy, working distance and clearing time per IEEE 1584, and why faster tripping is the cheapest PPE.</td><td><a href="#c-arcflash">Part 2 — arc flash</a></td></tr>
+      <tr><td>7</td><td>Earthing</td><td>Why current must have a deliberate way home: TN-S, the NER trade-off (limit damage vs keep faults detectable), touch and step voltage.</td><td><a href="#c-earthing">Part 2 — earthing</a></td></tr>
+      <tr><td>8</td><td>Power factor correction</td><td>Reactive power as froth on the beer: kvar, the tariff incentive, capacitor banks, and why VFD harmonics force 7 % detuning.</td><td><a href="#c-pfc">Part 2 — PFC</a></td></tr>
+      <tr><td>9</td><td>Motors &amp; starting</td><td>The induction motor as a transformer with a rotating secondary: slip, 1800 rpm at 60 Hz, the 6–7 &times; DOL inrush problem and the starter family tree up to VFDs.</td><td><a href="#c-motors">Part 2 — motors</a></td></tr>
+      <tr><td>10</td><td>UPS</td><td>Clean, unbreakable power from a battery and an inverter: double conversion (VFI), autonomy sizing, battery ageing — and why the control system never notices the grid blink.</td><td><a href="#c-ups">Part 2 — UPS</a></td></tr>
+      <tr><td>11</td><td>Automatic transfer</td><td>The decision machinery that swaps a dead source for a live one: ATS topologies, open vs closed transition, WCR, and the failure mode that tops the FMECA.</td><td><a href="#c-ats">Part 2 — ATS</a></td></tr>
+      <tr><td>12</td><td>Diesel generators</td><td>A power station in a box: engine-alternator dynamics, AVR and governor, ISO 8528 ratings (ESP/PRP/COP), step loading and the start-reliability problem.</td><td><a href="#c-genset">Part 2 — genset</a></td></tr>
+      <tr><td>13</td><td>Lightning protection</td><td>Catching a 100 kA, microsecond event: the rolling sphere, LPL classes, down-conductors and the SPD cascade that protects the electronics.</td><td><a href="#c-lightning">Part 2 — lightning</a></td></tr>
+      <tr><td>14</td><td>FMECA &amp; reliability</td><td>Failure as a quantity you can engineer: failure modes, S-O-D scoring and RPN, MTBF/MTTR, and series/parallel availability — the mathematics behind SPOF hunting.</td><td><a href="#s-fmeca">Part 3 — FMECA</a></td></tr>
+    </tbody>
+  </table>
+
+  <h3 id="a-concepts-use">Suggested reading paths</h3>
+
+  <ul>
+    <li><strong>New to power engineering:</strong> read companion chapters 1–3 (per-unit,
+        short circuit, transformers) before Part 2 of this manual; everything in the
+        calculations rests on those three.</li>
+    <li><strong>Preparing a site visit:</strong> chapters 4–7 (breakers, protection, arc flash,
+        earthing) cover everything you will stand in front of in the switchrooms.</li>
+    <li><strong>Writing the FMECA:</strong> chapters 10–12 and 14 (UPS, ATS, genset,
+        reliability) map one-to-one onto the highest-RPN rows of a typical assessment.</li>
+    <li><strong>Refreshing one topic:</strong> go straight to the chapter; each is
+        self-contained by design.</li>
+  </ul>
+
+  <div class="tip">
+    <strong>Tip — pair the chapters with the appendices.</strong> The fastest revision loop for
+    a field engineer is: companion chapter for the concept &rarr;
+    <a href="#a-formula">Appendix C</a> for the formula with the Rev 3 plant numbers &rarr;
+    <a href="#a-glossary">Appendix A</a> for any unfamiliar term met along the way. Fifteen
+    minutes per concept, fourteen concepts — a complete first-principles refresh of this
+    manual's technical core in under four hours.
+  </div>
+
+  <div class="note">
+    <strong>Note — keeping the two documents consistent.</strong> The companion teaches with
+    illustrative numbers; this manual's appendices (especially
+    <a href="#a-formula">Appendix C — Formula Card</a> and the
+    <a href="#a-glossary">Glossary</a>) carry the binding Rev 3 plant values. If a number in
+    the companion differs from the Plant Data Card values used here (13.8 kV, 60 Hz,
+    2 &times; 1600 kVA, 66.9 A / 2309 A FLC, 38.5 kA, DG 1250 kVA, UPS 100 kVA / 30 min,
+    NER 19.9 &Omega;, PFC &asymp; 580 kvar), the manual governs for this plant — and detailed
+    studies govern over both.
+  </div>
+
+  <div class="key">Key takeaway: fourteen first-principles chapters in
+  <code>concepts-rev3.html</code>, each mapped above to the manual section that applies it on
+  the Rev 3 plant. Concept first, application second: when a calculation in Part 2 feels like
+  recipe-following, the companion chapter is the missing "why".</div>
 </section>

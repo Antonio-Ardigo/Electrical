@@ -1,0 +1,806 @@
+<!-- ============================================================
+     §CAT-UPS / §CAT-DC  UPS Systems + DC Systems & Batteries
+     Rev 3 (Saudi/SEC edition) — 13.8 kV / 400-230 V / 60 Hz / 50 °C
+     Part 6 — Equipment Catalogues. How to read, compare and select
+     the plant UPS (100 kVA / 30 min) and the 110 V DC system (DCDB)
+     for switchgear tripping/closing. All data indicative; certified
+     manufacturer data sheets and SASO/SEC acceptance govern.
+============================================================ -->
+<section id="cat-ups" data-title="UPS Systems" data-part="Part 6 — Equipment Catalogues">
+
+  <h2>UPS Systems</h2>
+
+  <div class="warning"><strong>Indicative catalogue data.</strong> Product families and typical
+parameters are listed for training and familiarisation only, are approximate, and change with
+manufacturer revisions. No part numbers are given; always obtain current certified data sheets
+and SASO/SEC acceptance status from the manufacturer.</div>
+
+  <p><strong>Goal:</strong> learn to read a UPS catalogue the way a specifying engineer
+  reads it — starting from what this plant actually needs (tag <code>UPS</code>:
+  <strong>100&nbsp;kVA, 30&nbsp;minutes autonomy</strong>, feeding the control system,
+  operator stations and other loads that must not see even a flicker), mapping each
+  requirement onto the catalogue parameter that answers it, and finishing with a worked
+  selection. The vendor families named here are the ones most often met on Saudi
+  industrial sites. For the engineering behind the UPS itself — topology, battery
+  sizing, transfer behaviour — this section leans on
+  <a href="#c-ups">the UPS and DC systems tutorial</a>; for how Part 6 catalogue
+  sections are meant to be used, see <a href="#cat-intro">the catalogue
+  introduction</a>.</p>
+
+  <!-- ────────────────────────────────────────────────────────────
+       A1. WHAT THE PLANT NEEDS
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-ups-overview">What the Plant Needs — Double-Conversion Online as the Standard</h3>
+
+  <p>IEC 62040-3 recognises three UPS topologies, and a catalogue will happily sell you
+  any of them. <strong>Offline (VFD class)</strong> passes raw mains to the load and
+  switches to the inverter only when the mains fails — a transfer gap of several
+  milliseconds that office PCs tolerate and process controllers may not.
+  <strong>Line-interactive (VI class)</strong> adds voltage regulation but still exposes
+  the load to mains frequency and most disturbances. <strong>Double-conversion online
+  (VFI class)</strong> rectifies the incoming AC to DC and re-creates a new, clean AC
+  waveform continuously: the load is <em>always</em> on the inverter, the battery sits
+  on the DC link ready to take over with literally zero transfer time, and no mains
+  disturbance short of total rectifier failure reaches the output.</p>
+
+  <p>For an industrial process plant the choice is not really a choice:
+  <strong>double-conversion online (VFI) is the plant standard</strong>, and everything
+  in this catalogue section assumes it. The plant's 100&nbsp;kVA UPS carries the DCS/PMS
+  controllers, marshalling and server cabinets, operator workstations, critical
+  instrumentation and telecoms — loads whose value lies not in their kW but in what
+  happens to the other 2&nbsp;MW when they go dark. The 30-minute autonomy is not sized
+  for riding out a long outage; it is sized to bridge the gap to the
+  <strong>1250&nbsp;kVA diesel generator</strong> (ATS open transition &le;10&nbsp;s —
+  see <a href="#c-ats">the standby power section</a>) with a wide margin, and, if the
+  DG fails to start, to give operators time to drive the process to a safe, orderly
+  stop instead of a crash stop.</p>
+
+  <div class="note"><strong>Where the UPS sits.</strong> The UPS is an LV load like any
+  other — fed at 400/230&nbsp;V, 60&nbsp;Hz from the essential side of the plant LV
+  system (downstream of the DG/ATS arrangement), with its output distributed on a
+  dedicated UPS distribution board. It is a separate system from the 110&nbsp;V DC
+  switchgear tripping supply (<code>DCDB</code>) covered in
+  <a href="#cat-dc">the DC systems catalogue section</a> — do not let a vendor merge
+  the two to save a battery bank.</div>
+
+  <div class="key">Key takeaway: specify <strong>VFI (double-conversion online) to
+  IEC 62040-3</strong>, 100&nbsp;kVA, 30&nbsp;min autonomy, 400/230&nbsp;V 60&nbsp;Hz —
+  and treat every catalogue page as a yes/no answer to that line. All values
+  indicative; the load schedule and formal studies govern.</div>
+
+
+
+  <!-- ────────────────────────────────────────────────────────────
+       A2. VENDOR FAMILIES
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-ups-families">The Vendor Families You Will Meet</h3>
+
+  <p>Four manufacturers dominate the three-phase industrial UPS market in the Gulf, and
+  each fields a family that comfortably covers the 100&nbsp;kVA point. All are VFI
+  double-conversion machines with transformerless IGBT power stages; the meaningful
+  differences are modularity, footprint, efficiency strategy and local service depth,
+  not topology. Typical indicative ranges:</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Family</th><th>Vendor</th><th>Typical range</th><th>Architecture</th>
+          <th>Efficiency (typ., VFI / eco)</th><th>Parallel / redundant</th>
+          <th>Notes for this plant</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>93PM / 9395</strong></td><td>Eaton</td>
+          <td>93PM ~30&ndash;500&nbsp;kVA; 9395 to ~1.2&nbsp;MVA</td>
+          <td>93PM modular (hot-swap power modules in one frame); 9395 large monolithic/core</td>
+          <td>~96&ndash;97&nbsp;% VFI; ~98&ndash;99&nbsp;% in high-efficiency mode</td>
+          <td>Internal N+1 via modules; external parallel of frames</td>
+          <td>93PM at 100&nbsp;kVA gives N+1 inside a single frame — attractive where
+          floor space is tight.</td></tr>
+      <tr><td><strong>Galaxy VS / VX</strong></td><td>Schneider Electric</td>
+          <td>VS ~10&ndash;150&nbsp;kVA; VX ~500&nbsp;kVA&ndash;1.5&nbsp;MVA</td>
+          <td>VS modular power-module design; VX large frame</td>
+          <td>~96&ndash;97&nbsp;% VFI; ~99&nbsp;% in "eCS" eco-style mode</td>
+          <td>VS parallels several units; internal module redundancy option</td>
+          <td>Galaxy VS sits squarely on the 100&nbsp;kVA point; often bundled with
+          Schneider LV gear for single-vendor packages.</td></tr>
+      <tr><td><strong>Liebert ITA2 / EXL S1</strong></td><td>Vertiv</td>
+          <td>ITA2 ~5&ndash;80&nbsp;kVA (parallel to higher); EXL S1 ~100&nbsp;kVA&ndash;1.2&nbsp;MVA</td>
+          <td>ITA2 compact monolithic; EXL S1 large monolithic, optional core redundancy</td>
+          <td>~95&ndash;96.5&nbsp;% VFI; ~98&ndash;99&nbsp;% eco/dynamic-online</td>
+          <td>Both parallel up to 4&ndash;8 units</td>
+          <td>At 100&nbsp;kVA you are at the top of ITA2 paralleling or the bottom of
+          EXL S1 — ask the vendor which platform they actually offer here.</td></tr>
+      <tr><td><strong>PowerValue / MegaFlex</strong></td><td>ABB</td>
+          <td>PowerValue ~10&ndash;120&nbsp;kVA; MegaFlex ~250&nbsp;kVA&ndash;1.6&nbsp;MVA (modular DPA relatives below)</td>
+          <td>PowerValue monolithic; DPA families decentralised modular (each module a complete UPS)</td>
+          <td>~95&ndash;96.5&nbsp;% VFI; ~98&ndash;99&nbsp;% eco</td>
+          <td>DPA modular lines offer true module-level N+1 with hot-swap</td>
+          <td>ABB's decentralised-parallel-architecture pitch is strongest where
+          online module swap matters.</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Modular versus monolithic — what you are really buying</h4>
+
+  <p>A <strong>monolithic</strong> UPS is one power path in one box: simple, cheap per
+  kVA, but a power-stage failure means the whole machine drops to bypass until a service
+  visit. A <strong>modular</strong> UPS builds the rating from hot-swappable power
+  modules (e.g. 5 &times; 25&nbsp;kVA for a 100&nbsp;kVA N+1 system): a failed module is
+  ejected and replaced in minutes with the load still on inverter, and N+1 redundancy
+  costs one extra module rather than a whole second machine. The prices cross over
+  surprisingly low; at 100&nbsp;kVA a modular frame with N+1 is routinely competitive
+  with two paralleled monolithic units, and far more competitive on floor area. The
+  catch to check in the catalogue: a modular frame has shared elements (static switch,
+  backplane, controls) — ask the vendor which of these are redundant, because a
+  "fully redundant" brochure claim sometimes ends at the power modules.</p>
+
+  <h4>Efficiency classes — VFI versus eco-mode</h4>
+
+  <p>Every catalogue now headlines two efficiency numbers. The honest one is
+  <strong>double-conversion (VFI) efficiency</strong>, typically 95&ndash;97&nbsp;% at
+  the 100&nbsp;kVA class: the load is always on the inverter and the missing 3&ndash;5&nbsp;%
+  becomes heat in the UPS room (at 100&nbsp;kVA that is 3&ndash;5&nbsp;kW of continuous
+  HVAC load — budget it). The headline 98&ndash;99&nbsp;% figure is
+  <strong>eco-mode</strong> (and its "advanced"/"dynamic" variants): the load runs on
+  raw mains through the static bypass and the inverter wakes only when a disturbance is
+  detected — which reintroduces exactly the transfer gap VFI was bought to eliminate.
+  For an office or data hall with tolerant IT loads, eco-mode is a defensible energy
+  play; for a process plant control system, <strong>run in full VFI and say so in the
+  specification</strong>, and treat eco-mode as a commissioning setting to be locked
+  out. Compare vendors on VFI efficiency at <em>your</em> load point, not on the
+  brochure headline.</p>
+
+  <div class="tip">As with the MV board, the brand decision at 100&nbsp;kVA is rarely
+  won on electrical performance — all four families pass. It is won on service: local
+  Saudi service centre and spares, guaranteed response time, battery supply chain, and
+  the vendor's willingness to certify performance at elevated ambient
+  (<a href="#cat-ups-datasheet">next sub-section</a>).</div>
+
+
+
+  <!-- ────────────────────────────────────────────────────────────
+       A3. HOW TO READ A UPS DATASHEET
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-ups-datasheet">How to Read a UPS Datasheet</h3>
+
+  <p>A UPS datasheet is two pages of numbers, perhaps eight of which matter. Read them
+  in this order.</p>
+
+  <h4>1. The IEC 62040-3 classification string — VFI-SS-111</h4>
+
+  <p>The single most information-dense line on the sheet. Decode
+  <strong>VFI-SS-111</strong>:</p>
+
+  <ul>
+    <li><strong>VFI</strong> — output is independent of input <em>V</em>oltage and
+    <em>F</em>requency variations (true double conversion). The alternatives are VI
+    (voltage independent) and VFD (voltage and frequency dependent) — reject both for
+    this duty.</li>
+    <li><strong>SS</strong> — output waveform is <em>S</em>inusoidal both in normal
+    operation and in battery operation. (Letters X or Y here flag non-sinusoidal
+    behaviour under some conditions — fine for a cheap office unit, not here.)</li>
+    <li><strong>111</strong> — dynamic output performance classes for three test
+    conditions (mode change, linear step load, non-linear step load). Class 1 is the
+    tightest tolerance band; <strong>111</strong> means the output stays inside it for
+    all three. A "311" machine lets the voltage dip well outside limits on mode
+    change — exactly the moment your controls care about most.</li>
+  </ul>
+
+  <p>Specify <strong>VFI-SS-111</strong> verbatim and ask for the type-test evidence.
+  A vendor who quotes "online double conversion" without the classification string is
+  asking you to take the dynamic performance on trust.</p>
+
+  <h4>2. Efficiency at part load — where your UPS will actually live</h4>
+
+  <p>Catalogue efficiency is usually quoted at 100&nbsp;% load. Your UPS will never be
+  there: a 100&nbsp;kVA machine carrying a 50&ndash;60&nbsp;kVA control-system load —
+  and half of that in an N+1 or 2N arrangement — operates at 25&ndash;60&nbsp;% load
+  for its whole life. Modern transformerless machines hold efficiency well down to
+  ~25&nbsp;% load (typically within 1&ndash;2 points of peak), but older or cheaper
+  designs fall off a cliff below 50&nbsp;%. Demand the <strong>efficiency curve</strong>
+  (25 / 50 / 75 / 100&nbsp;% load points) rather than the single headline figure, and
+  evaluate lifetime losses at your realistic operating point. Modular machines have a
+  structural advantage here: some can put surplus modules to sleep and keep the active
+  ones at their efficiency sweet spot.</p>
+
+  <h4>3. Overload and the static bypass</h4>
+
+  <p>The overload table tells you how the UPS behaves when downstream loads gang-start
+  or a fault begins to develop. A typical inverter overload claim reads:
+  <strong>110&nbsp;% for 60&nbsp;min, 125&nbsp;% for 10&nbsp;min, 150&nbsp;% for
+  1&nbsp;min</strong> (indicative — every family differs). Beyond that, the static
+  bypass takes over: it can typically carry 1000&nbsp;% for a cycle or two — but only
+  <em>if the mains is present and healthy</em>. On battery, with no mains behind the
+  bypass, the overload capability is whatever the inverter alone can do. Read the
+  overload table twice: once for "mains available" and once for "on battery", because
+  the second column is the one that applies during the DG start window.</p>
+
+  <h4>4. Inverter short-circuit capability — the coordination trap</h4>
+
+  <p>This is the number engineers most often fail to look up, and it bites hardest. A
+  400&nbsp;V utility supply feeds a downstream fault with tens of kiloamps, and
+  miniature circuit breakers trip magnetically in 10&nbsp;ms. An inverter is a
+  current-limited electronic source: on battery, it can deliver only about
+  <strong>2&ndash;3&nbsp;&times;&nbsp;I<sub>n</sub></strong> into a fault, and only for
+  around 100&nbsp;ms to a few hundred ms before it shuts down to protect its IGBTs.
+  For the plant's 100&nbsp;kVA UPS, I<sub>n</sub>&nbsp;&asymp;&nbsp;144&nbsp;A at
+  400&nbsp;V, so the fault current available on battery is roughly
+  300&ndash;430&nbsp;A — total, for the whole board.</p>
+
+  <p>Now follow the consequence: a B-curve MCB needs 3&ndash;5&nbsp;&times; its own
+  rating to trip magnetically, a C-curve 5&ndash;10&nbsp;&times;. A 32&nbsp;A C-curve
+  MCB on the UPS distribution board needs up to 320&nbsp;A — most of the inverter's
+  entire fault capability — to clear instantaneously. A fault on one branch circuit
+  while on battery can therefore drag the whole UPS bus down (every healthy load sees
+  the voltage collapse) until either the MCB trips thermally (seconds — far too slow)
+  or the inverter trips on overload, killing every control system the UPS exists to
+  protect. The fixes are design decisions, not settings: keep UPS final circuits small
+  (10&ndash;20&nbsp;A), use B-curve or fast electronic protection, consider fuses
+  (which clear far faster at low fault multiples), and check every branch device
+  against the vendor's declared fault-clearing figure. When the mains is present, the
+  static bypass masks all this by feeding the fault from the mains — which is why the
+  problem only ever reveals itself during a real outage.</p>
+
+  <div class="warning"><strong>Classic failure scenario.</strong> Power fails; the UPS
+  rides through perfectly; ninety seconds later a borderline cable fault on one
+  operator-station circuit flashes over. On any normal board it would be a one-MCB
+  event. On the inverter, the 350&nbsp;A available cannot fire the 32&nbsp;A C-curve
+  magnetically; the bus voltage collapses; every controller on the UPS reboots
+  simultaneously — during a plant-wide blackout. Selectivity on a UPS board must be
+  engineered against 2&ndash;3&nbsp;&times;&nbsp;I<sub>n</sub>, not against the mains
+  fault level.</div>
+
+  <h4>5. Input THDi and the generator handshake</h4>
+
+  <p>The UPS rectifier is a non-linear load on whatever feeds it. Legacy 6-pulse
+  thyristor rectifiers drew 25&ndash;30&nbsp;% THDi; modern IGBT/PFC front ends draw
+  <strong>&lt;3&ndash;5&nbsp;% THDi</strong> at near-unity input power factor. This
+  matters twice in this plant: it pollutes the LV bus less (helping the PFC and other
+  loads), and — critically — it is kind to the <strong>1250&nbsp;kVA DG</strong>. A
+  high-THDi rectifier load on a standby generator distorts the alternator voltage and
+  can confuse its AVR exactly when the UPS is recharging a depleted battery at maximum
+  rectifier demand. Specify input THDi &le;5&nbsp;% at full load, input pf &ge;0.99,
+  and a configurable <strong>battery-recharge current limit / walk-in</strong> so the
+  UPS ramps its demand gently when the ATS lands it on the generator
+  (<a href="#c-ats">standby power section</a>).</p>
+
+  <h4>6. Temperature rating — the 40 °C default versus the 50 °C site</h4>
+
+  <p>Almost every UPS datasheet quotes full rating at <strong>40&nbsp;&deg;C</strong>
+  (some at 35&nbsp;&deg;C), with operation to 50&nbsp;&deg;C only at derated power —
+  typically in the region of 10&ndash;20&nbsp;% derate, vendor-specific. The plant
+  design ambient is 50&nbsp;&deg;C. The standard answer is the same as for the
+  switchgear: the UPS lives in an <strong>HVAC-conditioned room held at
+  20&ndash;25&nbsp;&deg;C</strong> — which the batteries demand anyway, far more
+  urgently than the electronics (see <a href="#cat-dc-saudi">the battery-room
+  notes</a>). But the specification must still ask two questions in writing: the
+  certified output rating at 50&nbsp;&deg;C (the HVAC-failure case), and the
+  electronics' maximum survival/alarm temperature. An over-temperature alarm to the
+  control system is mandatory; a UPS that quietly derates or trips on a
+  50&nbsp;&deg;C afternoon during an HVAC fault is a single point of failure hiding
+  behind a comfort statistic.</p>
+
+
+
+  <!-- ────────────────────────────────────────────────────────────
+       A4. SELECTION FOR THIS PLANT
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-ups-selection">Selection for This Plant — 100 kVA / 30 min, Worked</h3>
+
+  <p>The plant requirement (Rev 3 Plant Data Card): <strong>UPS 100&nbsp;kVA,
+  30&nbsp;minutes autonomy</strong>, 400/230&nbsp;V, 60&nbsp;Hz, feeding the control
+  and safety-critical auxiliary loads. Translate that into catalogue language line by
+  line:</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Plant requirement</th><th>Catalogue parameter to demand</th>
+          <th>Value to write (indicative)</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Clean, no-break supply to controls</td>
+          <td>IEC 62040-3 classification</td>
+          <td>VFI-SS-111, true online double conversion; eco-mode lockable out</td></tr>
+      <tr><td>Rating</td>
+          <td>Output power at pf 0.9&ndash;1.0 (modern machines are kVA&nbsp;=&nbsp;kW
+          rated at unity)</td>
+          <td>100&nbsp;kVA / &ge;90&nbsp;kW, three-phase 400/230&nbsp;V, 60&nbsp;Hz</td></tr>
+      <tr><td>Autonomy</td>
+          <td>Battery runtime at design load and end-of-life capacity</td>
+          <td>30&nbsp;min at design load, batteries aged (80&nbsp;% EOL factor) and at
+          declared room temperature</td></tr>
+      <tr><td>Availability</td>
+          <td>Redundancy architecture</td>
+          <td>N+1 (modular frame or two paralleled units) — see discussion below</td></tr>
+      <tr><td>Fault clearing downstream</td>
+          <td>Inverter fault current and duration, on battery</td>
+          <td>Declared A and ms figures; UPS board selectivity study based on them</td></tr>
+      <tr><td>Generator compatibility</td>
+          <td>Input THDi, input pf, walk-in / recharge current limit</td>
+          <td>THDi &le;5&nbsp;%, pf &ge;0.99, programmable recharge limit
+          (DG 1250&nbsp;kVA upstream)</td></tr>
+      <tr><td>Maintenance without outage</td>
+          <td>Bypass arrangement</td>
+          <td>Internal static bypass + <strong>external wrap-around maintenance
+          bypass</strong> with interlocked make-before-break switching</td></tr>
+      <tr><td>50&nbsp;&deg;C site</td>
+          <td>Ratings at 40 / 50&nbsp;&deg;C; alarm/derate behaviour</td>
+          <td>Conditioned room declared; certified 50&nbsp;&deg;C behaviour in
+          writing</td></tr>
+    </tbody>
+  </table>
+
+  <h4>N or N+1?</h4>
+
+  <p>A single 100&nbsp;kVA machine (N) protects against <em>supply</em> failures but is
+  itself a single point of failure: an inverter fault drops the controls onto raw
+  bypass mains — which, during the very outage the UPS was bought for, is dead. The
+  step up is <strong>N+1</strong>: either a modular frame with one redundant power
+  module (e.g. 5&nbsp;&times;&nbsp;25&nbsp;kVA for a 100&nbsp;kVA duty) or two
+  paralleled 100&nbsp;kVA units. For a control system whose loss stops a 2&nbsp;MW
+  plant, the modular-N+1 route is the usual sweet spot: near-2N availability at far
+  less than 2N cost and footprint. Whichever is chosen, the <em>battery</em> and the
+  <em>static bypass</em> must be examined separately — an N+1 set of inverters hanging
+  off one battery string and one bypass is N+1 in name only. Two battery strings (or a
+  centre-tapped dual-string bank) and a per-unit bypass close those holes.</p>
+
+  <div class="worked">
+    <h4>Worked selection — rating, battery handshake and bypass</h4>
+    <p><strong>Step 1 — confirm the rating.</strong> Indicative audited control-load
+    schedule: DCS/PMS cabinets 28&nbsp;kW, operator stations and servers 12&nbsp;kW,
+    critical instruments and analysers 8&nbsp;kW, telecoms/network 5&nbsp;kW, UPS
+    distribution losses and margin 7&nbsp;kW &rarr; ~60&nbsp;kW. At a design power
+    factor of 0.9:</p>
+    <code class="formula">S = P / pf = 60 kW / 0.9 ≈ 67 kVA</code>
+    <p>Apply a growth/diversity allowance of ~25&nbsp;% and round to the standard
+    frame:</p>
+    <code class="formula">67 kVA × 1.25 ≈ 84 kVA → next standard frame = 100 kVA ✓</code>
+    <p>The Plant Data Card's 100&nbsp;kVA is confirmed, loaded at ~60&ndash;70&nbsp;%
+    — a healthy point for efficiency and overload headroom.</p>
+    <p><strong>Step 2 — battery energy for 30 min.</strong> The energy the battery must
+    deliver, taking inverter efficiency ~0.95:</p>
+    <code class="formula">E = P × t / η = 60 kW × 0.5 h / 0.95 ≈ 31.6 kWh</code>
+    <p>With design factors for aging (÷0.8, so a battery at its 80&nbsp;% end-of-life
+    capacity still delivers the duty) and temperature/design margin (÷0.9):</p>
+    <code class="formula">E_design = 31.6 / (0.8 × 0.9) ≈ 44 kWh</code>
+    <p>On a typical ~432&nbsp;V DC link (36 &times; 12&nbsp;V blocks):</p>
+    <code class="formula">Capacity ≈ 44 000 Wh / 432 V ≈ 102 Ah → specify ~100–120 Ah blocks (30-min rate)</code>
+    <p><strong>Sanity check:</strong> 44&nbsp;kWh is roughly the energy in four
+    domestic EV-charger-hours — physically about two battery cabinets of 100&nbsp;Ah
+    VRLA blocks; plausible. The vendor sizes the real string from the cell maker's
+    constant-power tables at the 30-minute rate, which differ from the 10-hour Ah
+    rating — the full method, including why short-rate discharge punishes Ah capacity,
+    is worked in <a href="#c-ups">the UPS battery sizing calculation</a>. Note that
+    30&nbsp;min &gg; the 10&nbsp;s ATS transfer (<a href="#c-ats">standby section</a>):
+    the autonomy is sized for the DG <em>failing</em>, not for the DG starting.</p>
+    <p><strong>Step 3 — bypass arrangement.</strong> Specify: internal static bypass
+    (automatic, on inverter overload/failure), plus an external
+    <strong>wrap-around maintenance bypass panel</strong> so the entire UPS — static
+    switch included — can be isolated and replaced with the load fed from mains.
+    Interlock it make-before-break, and feed the bypass line from the same essential
+    (DG-backed) source as the rectifier so a transfer to bypass during an outage still
+    lands on a live supply. All figures indicative; the load schedule and the vendor's
+    certified battery calculation govern.</p>
+  </div>
+
+  <div class="key">Key takeaway: the order is rating &rarr; topology (VFI-SS-111)
+  &rarr; redundancy (N+1, including battery and bypass) &rarr; battery (30&nbsp;min,
+  aged, at temperature) &rarr; bypass (static + external maintenance) &rarr; generator
+  handshake (THDi, walk-in). A UPS bought on kVA alone answers one line of
+  eight.</div>
+
+
+
+</section>
+
+<section id="cat-dc" data-title="DC Systems &amp; Batteries" data-part="Part 6 — Equipment Catalogues">
+
+  <h2>DC Systems &amp; Batteries</h2>
+
+  <div class="warning"><strong>Indicative catalogue data.</strong> Product families and typical
+parameters are listed for training and familiarisation only, are approximate, and change with
+manufacturer revisions. No part numbers are given; always obtain current certified data sheets
+and SASO/SEC acceptance status from the manufacturer.</div>
+
+  <p><strong>Goal:</strong> learn to read battery and charger catalogues for the plant's
+  <strong>110&nbsp;V DC system</strong> (tag <code>DCDB</code>) — the supply that trips
+  and closes the switchgear. The structure mirrors the UPS section: what the plant
+  needs, the technology families on offer, the charger/rectifier catalogue, a worked
+  sizing sketch, and the Saudi-specific practice. Engineering background:
+  <a href="#c-ups">the UPS and DC systems tutorial</a>; usage of Part 6:
+  <a href="#cat-intro">the catalogue introduction</a>.</p>
+
+  <!-- ────────────────────────────────────────────────────────────
+       B1. WHAT THE PLANT NEEDS
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-dc-overview">What the Plant Needs — Why DC Security Outranks the UPS</h3>
+
+  <p>Every circuit breaker in the MV switchgear, and the main LV breakers, trip and
+  close from a <strong>110&nbsp;V DC</strong> battery system distributed through the DC
+  distribution board (<code>DCDB</code>). The same system typically carries protection
+  relay (IED) power supplies, trip-circuit supervision, switchgear indication, and
+  often emergency lighting and SCADA/RTU loads. It is a battery + charger(s) + DCDB
+  arrangement, deliberately independent of every AC supply in the plant — because its
+  defining duty arrives precisely when the AC is in trouble.</p>
+
+  <p>Here is the ranking that surprises newcomers: <strong>the DC system matters more
+  than the UPS</strong>. If the UPS dies, the control system goes dark and the plant
+  trips — expensive, but the protection still works; the plant fails <em>safe</em>. If
+  the DC system dies, the protection relays may still measure a fault perfectly and
+  close their output contacts into a dead trip coil — <strong>and nothing trips</strong>.
+  A fault then burns until some upstream device (perhaps SEC's own protection, seconds
+  away) clears it, by which time a transformer or a busbar is destroyed and people have
+  been exposed to an arc that should have lived for 100&nbsp;ms. A dead battery does
+  not announce itself the way a dead UPS does: the chargers keep the bus voltage up,
+  every indication lamp glows, and the system looks healthy right up to the moment it
+  is asked to deliver a 10&ndash;20&nbsp;A trip-coil pulse from a battery with no
+  capacity left. This is why DC systems get dual chargers, continuous battery
+  monitoring, trip-circuit supervision and disciplined discharge testing — and why
+  this catalogue section exists separately from the UPS one.</p>
+
+  <div class="warning"><strong>The silent failure mode.</strong> A failed battery on
+  float looks identical to a healthy one — full voltage, no alarms on a basic charger.
+  The failure is only discoverable by measurement: impedance/conductance trending,
+  periodic capacity discharge tests, and a battery-monitoring option on the charger.
+  Buy the monitoring with the system; retrofitting it after the first
+  failure-to-trip investigation is the expensive way to learn.</div>
+
+  <div class="note"><strong>110 V DC versus the UPS — division of labour.</strong>
+  Switchgear tripping/closing, IED supplies and trip-circuit supervision live on the
+  110&nbsp;V DC system; the DCS/PMS, operator stations and instrumentation live on the
+  230&nbsp;V AC UPS (<a href="#cat-ups">UPS catalogue section</a>). Keep them separate:
+  different voltages, different duty cycles (continuous IT load versus rare brutal
+  pulses), different battery technologies, different failure consequences. Vendors
+  occasionally propose a combined "one big battery" scheme — decline it.</div>
+
+
+
+  <!-- ────────────────────────────────────────────────────────────
+       B2. BATTERY TECHNOLOGIES
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-dc-batteries">Battery Technologies — VRLA, Vented NiCd, Li-ion</h3>
+
+  <p>Three battery technologies compete for stationary duty, and the catalogue
+  comparison is dominated by one variable this plant has in abundance:
+  <strong>temperature</strong>. Typical indicative characteristics:</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Parameter (typ., indicative)</th><th>VRLA (AGM)</th>
+          <th>Vented NiCd</th><th>Li-ion (LFP)</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Design life at 20&nbsp;&deg;C</td>
+          <td>5&ndash;10&nbsp;y (long-life classes to ~12&nbsp;y)</td>
+          <td><strong>20&ndash;25+&nbsp;y</strong></td>
+          <td>10&ndash;15&nbsp;y (calendar)</td></tr>
+      <tr><td>Effect of heat</td>
+          <td><strong>Life halves per 8&ndash;10&nbsp;&deg;C above 20&nbsp;&deg;C</strong> —
+          a "10-year" block at a 35&nbsp;&deg;C average lasts ~2&ndash;3&nbsp;y</td>
+          <td>Tolerant — capacity and life degrade only mildly at high ambient;
+          survives excursions that destroy VRLA</td>
+          <td>Better than VRLA, worse than NiCd; BMS derates or blocks charge at
+          high cell temperature</td></tr>
+      <tr><td>Energy density / footprint</td>
+          <td>Moderate — compact cabinets</td>
+          <td>Low — biggest footprint and weight per kWh; open stands</td>
+          <td><strong>High</strong> — smallest and lightest, ~50&ndash;70&nbsp;% less
+          floor area than VRLA</td></tr>
+      <tr><td>Maintenance</td>
+          <td>Low ("maintenance-free" is marketing — impedance trending and torque
+          checks still needed)</td>
+          <td>Periodic electrolyte topping-up, cleaning; honest, inspectable
+          condition</td>
+          <td>Minimal manual work; BMS does the monitoring (and becomes a component
+          to maintain)</td></tr>
+      <tr><td>Failure behaviour</td>
+          <td>Sudden open-circuit or dry-out possible; hard to see coming without
+          monitoring</td>
+          <td>Gradual, graceful capacity loss; very rugged against deep discharge
+          and ripple</td>
+          <td>BMS-supervised; cell faults isolated, but BMS itself is a
+          single point of attention</td></tr>
+      <tr><td>Typical replacement cycle in GCC service</td>
+          <td>~3&ndash;5&nbsp;y in imperfectly cooled rooms</td>
+          <td>~15&ndash;20+&nbsp;y</td>
+          <td>~10&ndash;12&nbsp;y projected (field history still short)</td></tr>
+      <tr><td>Relative first cost per kWh</td><td>Lowest</td>
+          <td>2&ndash;3&times; VRLA</td><td>2&ndash;3&times; VRLA and falling</td></tr>
+      <tr><td>Natural home in this plant</td>
+          <td>UPS battery (conditioned room, cost-driven)</td>
+          <td><strong>Switchgear 110&nbsp;V DC tripping battery</strong></td>
+          <td>Emerging alternative for the UPS battery</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Reading the table for a Saudi plant</h4>
+
+  <p><strong>VRLA AGM</strong> (valve-regulated lead-acid, absorbed glass mat) is the
+  default catalogue offer because it is cheapest and compact. Its Achilles heel is the
+  Arrhenius arithmetic in row two: every 8&ndash;10&nbsp;&deg;C above 20&nbsp;&deg;C
+  halves its life. At Saudi ambients an unconditioned battery room sits at
+  35&ndash;45&nbsp;&deg;C for months — a nominal 10-year VRLA block becomes a 2-year
+  consumable, and it fails towards open-circuit, the failure mode that kills a trip
+  supply silently. VRLA is acceptable <em>only</em> with a reliably cooled room, and
+  even then it earns its keep on the UPS, not on the trip battery.</p>
+
+  <p><strong>Vented (flooded) NiCd</strong> is the heavy, expensive, ugly option that
+  refuses to die. Pocket-plate NiCd tolerates heat, deep discharge, high ripple and
+  abuse; its capacity loss is gradual and measurable; design lives of 20+ years are
+  routine and achieved in practice. Its costs are real: topping-up maintenance,
+  2&ndash;3&times; the price, the largest footprint, and a lower cell voltage
+  (1.2&nbsp;V/cell, so ~92 cells for 110&nbsp;V versus ~54 lead-acid cells) — more
+  connections to torque and inspect. For switchgear tripping duty in the Gulf,
+  <strong>vented NiCd is the preferred technology</strong>, and most regional utility
+  and oil-and-gas specifications say so explicitly
+  (<a href="#cat-dc-saudi">Saudi notes</a>).</p>
+
+  <p><strong>Li-ion (LFP — lithium iron phosphate)</strong> has crossed from EVs into
+  the stationary catalogues, mainly as a UPS battery: a quarter of the weight, half the
+  footprint, 5&ndash;10&times; the cycle life of VRLA, integrated battery management
+  (BMS) with cell-level monitoring as standard. For UPS autonomy duty it is genuinely
+  attractive where floor space or cooling capacity is tight. For the 110&nbsp;V
+  switchgear battery it remains the cautious choice for now: certification trails
+  lead-acid/NiCd (IEEE/IEC sizing practice is newer), the BMS adds an electronic
+  dependency into the one system that must not have any, and fire-safety review
+  (thermal runaway, room suppression) is extra engineering. Watch this space; specify
+  it for the UPS if footprint demands, not yet for the trip battery.</p>
+
+  <div class="key">Key takeaway: chemistry selection is a temperature decision before
+  it is a cost decision. In this climate: <strong>NiCd for the 110&nbsp;V DC trip
+  battery; VRLA (or increasingly LFP) for the UPS battery in a conditioned room</strong>.
+  Whole-life cost, not purchase price, is the comparison that matters — a NiCd bank
+  outlives 4&ndash;6 generations of badly-housed VRLA. All values indicative.</div>
+
+
+
+  <!-- ────────────────────────────────────────────────────────────
+       B3. CHARGERS / RECTIFIERS
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-dc-chargers">Chargers and Rectifiers — the Other Half of the Catalogue</h3>
+
+  <p>The battery makes the headlines; the charger does the work. In normal operation
+  the charger (a controlled rectifier, thyristor or switch-mode) carries the entire
+  standing DC load <em>and</em> float-charges the battery; the battery only ever
+  discharges when the AC input is lost or a load pulse exceeds the charger's limit.
+  Indicative vendor families you will meet on Gulf projects: <strong>AEG SVS</strong>
+  (industrial thyristor chargers, a de-facto standard in oil and gas),
+  <strong>Benning</strong> (Thyrotronic/Tebetron lines), <strong>Chloride/Exide</strong>
+  (industrial chargers with a long regional install base), and <strong>GE/ABB</strong>
+  industrial rectifier lines. All offer the same functional menu; the specification
+  decides which options are ticked.</p>
+
+  <h4>Float and boost charge</h4>
+
+  <p>Two charging regimes, selected automatically or by key-switch.
+  <strong>Float</strong> is the permanent state: constant voltage chosen so the battery
+  stays full without gassing — for a 110&nbsp;V nominal system, typically around
+  1.40&ndash;1.42&nbsp;V/cell for NiCd or 2.23&ndash;2.27&nbsp;V/cell for lead-acid
+  (≈&nbsp;120&ndash;125&nbsp;V at the bus for a ~54-cell lead-acid string; the 92-cell NiCd
+  string in this plant floats at ≈&nbsp;130&nbsp;V — hence the dropper diodes discussed
+  below; indicative, per cell maker).
+  <strong>Boost (equalise)</strong> is a temporary elevated voltage —
+  ~1.45&ndash;1.55&nbsp;V/cell NiCd — used to recharge quickly after a discharge or to
+  recondition cells. Boost voltage can push the bus towards or beyond the upper limit
+  of connected equipment (110&nbsp;% of U<sub>n</sub> = 121&nbsp;V, see
+  <a href="#cat-dc-selection">the voltage window below</a>), so the catalogue option to
+  demand is either automatic boost with a bus-voltage limiter, or
+  <strong>dropper diodes</strong>/a dual-bus arrangement that keeps the load bus inside
+  its window while the battery sees the boost voltage. Verify this in the catalogue
+  rather than discovering it when the IEDs alarm on overvoltage during commissioning.</p>
+
+  <h4>Dual-charger redundancy</h4>
+
+  <p>The standard high-integrity arrangement is <strong>two 100&nbsp;% chargers</strong>
+  on the one battery and DCDB — either both floating in load-share, or one duty and
+  one auto-standby. The point: a charger failure then leaves the system fully
+  functional with no time pressure, instead of starting a silent countdown defined by
+  battery autonomy. For a plant this size a single charger plus a rigorous alarm
+  scheme is the economy option; given that the whole DC system costs a fraction of one
+  MV panel, dual chargers fed from <strong>different LV sources</strong> (one each
+  side of the LV-MSB bus-tie, or one DG-backed) are cheap availability. Each charger
+  needs: AC fail, charger fail, DC undervoltage/overvoltage alarms — all wired to the
+  control system, not just to a lamp on the front of a panel in an unmanned room.</p>
+
+  <h4>Battery monitoring and supervision</h4>
+
+  <p>The catalogue options worth their price: <strong>battery monitoring</strong>
+  (string current, voltage, temperature; per-block or per-cell modules on better
+  systems; impedance/conductance trending on premium ones), <strong>battery circuit
+  continuity supervision</strong> (detects an open fuse, corroded link or open cell —
+  the silent killers), <strong>end-of-discharge protection</strong> (low-voltage
+  disconnect, set to protect the battery without stranding the trip duty), and a
+  <strong>discharge-test facility</strong> (a test load connection or charger
+  current-walk-down mode so the periodic capacity test does not require dismantling
+  the system). Temperature-compensated float charging is near-mandatory for VRLA and
+  useful for NiCd in this climate.</p>
+
+  <h4>DC earth-fault monitoring — the unearthed IT bus</h4>
+
+  <p>Tripping DC systems are run <strong>unearthed (IT)</strong>: neither pole is
+  bonded to earth. The reason is availability — a single earth fault on an IT bus
+  causes no current to flow and nothing trips; the system carries on working. But a
+  <em>second</em> earth fault, on the other pole, short-circuits part of the system —
+  and the classic catastrophic version is a positive-pole earth fault plus an earth
+  fault on a trip-coil wire, which can <strong>trip breakers spuriously or, worse,
+  hold trip circuits inoperative</strong>. The first fault is therefore an urgent
+  maintenance alarm even though nothing has failed yet. Every charger catalogue offers
+  an <strong>earth-fault monitoring relay</strong> (balanced-bridge or pulse-injection
+  type) that continuously measures the insulation resistance of each pole to earth and
+  alarms below a threshold (indicatively tens of k&Omega;). Specify it, alarm it to
+  the control system, and make "find the first earth fault this week" a maintenance
+  rule — the second one chooses its own time.</p>
+
+  <div class="tip">Charger sizing rule of thumb from the catalogues: rated DC current
+  &ge; continuous standing load + battery recharge current (commonly recharge to
+  90&nbsp;% in &le;10&nbsp;h, i.e. roughly C<sub>10</sub>/7 to C<sub>10</sub>/5 for
+  NiCd per the maker's tables). For the plant's system that lands at an indicative
+  25&ndash;40&nbsp;A charger — small hardware, outsized consequences.</div>
+
+
+
+  <!-- ────────────────────────────────────────────────────────────
+       B4. SELECTION / SIZING SKETCH
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-dc-selection">Selection for This Plant — a Worked 110 V DC Sizing Sketch</h3>
+
+  <p>Battery sizing for a DC system is a duty-cycle exercise: list every load, when it
+  occurs and for how long across the design backup period, then size the cell so the
+  bus voltage never leaves its window even at the end of the period, aged, at the room
+  temperature. The full formal method (IEEE 485 for lead-acid, IEEE 1115 for NiCd,
+  period-by-period with the cell maker's published rate tables) belongs to the vendor
+  and the detailed design; what follows is the engineer's sketch that checks the
+  vendor's answer for sanity. Backup period: <strong>8&nbsp;hours</strong> — long
+  enough to cover an extended grid outage with a failed DG, holding protection,
+  emergency lighting and SCADA alive while the plant is made safe.</p>
+
+  <h4>The voltage window first</h4>
+
+  <p>The window is what actually sizes the battery. Connected equipment must work
+  across the whole excursion of an unregulated battery bus:
+  <strong>breaker shunt trip coils are typically rated 70&ndash;110&nbsp;% of
+  U<sub>n</sub></strong> (77&ndash;121&nbsp;V for 110&nbsp;V), closing coils typically
+  85&ndash;110&nbsp;%, IEDs commonly 80&ndash;120&nbsp;%. The design convention is to
+  end the discharge at <strong>&ge;80&nbsp;% U<sub>n</sub> = 88&nbsp;V at the
+  battery terminals</strong>, leaving the margin between 88&nbsp;V and the 77&nbsp;V
+  trip-coil floor to cover cable voltage drop to the furthest trip coil at full pulse
+  current — check that drop explicitly on long DCDB runs. The top of the window
+  (121&nbsp;V) is what constrains boost charging, as flagged in
+  <a href="#cat-dc-chargers">the charger sub-section</a>.</p>
+
+  <div class="worked">
+    <h4>Worked sizing sketch — 110 V DC battery, 8 h duty</h4>
+    <p><strong>Step 1 — duty cycle (indicative load list).</strong></p>
+    <table class="tbl">
+      <thead>
+        <tr><th>Load</th><th>Current</th><th>When</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Continuous: IED/relay supplies, indication, trip-circuit supervision,
+            SCADA/RTU</td><td>~8&nbsp;A</td><td>0&ndash;8&nbsp;h</td></tr>
+        <tr><td>Emergency lighting (DC luminaires, switchrooms)</td>
+            <td>~10&nbsp;A</td><td>0&ndash;3&nbsp;h</td></tr>
+        <tr><td>Momentary: tripping burst — several breakers trip on loss of supply
+            (~5 coils &times; ~10&nbsp;A)</td><td>~50&nbsp;A</td>
+            <td>first minute</td></tr>
+        <tr><td>Momentary: close/spring-charge duty at restoration (~2 motors
+            &times; ~10&nbsp;A + closing coils)</td><td>~30&nbsp;A</td>
+            <td>last minute</td></tr>
+      </tbody>
+    </table>
+    <p><strong>Step 2 — ampere-hours, crude integration.</strong></p>
+    <code class="formula">Ah = 8 A × 8 h + 10 A × 3 h + (50 A + 30 A) × (1/60) h ≈ 64 + 30 + 1.3 ≈ 95 Ah</code>
+    <p>Note where the energy lives: the dramatic 50&nbsp;A trip burst contributes
+    ~1&nbsp;Ah; the boring 8&nbsp;A standing load contributes 64&nbsp;Ah. Capacity is
+    bought for the long tail; the burst instead stresses <em>voltage dip</em>, which is
+    where NiCd's flat, stiff discharge behaviour earns its price.</p>
+    <p><strong>Step 3 — design factors.</strong> Aging factor 1.25 (system still
+    delivers at 80&nbsp;% end-of-life capacity), temperature/derating factor ~1.1
+    (room design temperature versus the 20&ndash;25&nbsp;&deg;C rating basis;
+    cell-maker table value governs), design margin 1.1 (future breakers, load
+    growth):</p>
+    <code class="formula">C ≈ 95 Ah × 1.25 × 1.1 × 1.1 ≈ 144 Ah → specify ~150–160 Ah (C10) cells</code>
+    <p><strong>Step 4 — string.</strong> Vented NiCd at 1.2&nbsp;V/cell nominal:
+    ~92 cells gives 110&nbsp;V nominal; float at ~1.41&nbsp;V/cell &asymp; 130&nbsp;V
+    battery voltage — confirm against the load bus upper limit and use dropper diodes
+    or tap arrangement per the charger catalogue. End-of-discharge at
+    1.00&ndash;1.05&nbsp;V/cell &asymp; 92&ndash;97&nbsp;V &ge; the 88&nbsp;V floor ✓.</p>
+    <p><strong>Sanity check:</strong> ~150&nbsp;Ah &times; 110&nbsp;V &asymp;
+    16.5&nbsp;kWh — about a third of the UPS battery's energy, in a bank that costs
+    more; that is the price of 20-year heat-tolerant certainty. The real sizing is
+    period-by-period to IEEE 1115 with the manufacturer's discharge tables, done and
+    stamped by the vendor; this sketch exists so you can tell a sensible quotation
+    from a wrong one. All figures indicative.</p>
+  </div>
+
+  <div class="note"><strong>Spec card in one line each:</strong> 110&nbsp;V DC unearthed
+  (IT); vented pocket-plate NiCd, ~92 cells, ~150&nbsp;Ah C<sub>10</sub> (vendor-sized
+  to IEEE 1115 / SASO-adopted IEC 62259); dual 100&nbsp;% chargers, float/boost,
+  temperature compensation; earth-fault, battery-continuity and voltage alarms to the
+  control system; DCDB with fused/MCB outgoing ways, segregated trip and close
+  supplies per board; end-of-discharge &ge;88&nbsp;V; boost limited to keep the load
+  bus &le;121&nbsp;V.</div>
+
+
+
+  <!-- ────────────────────────────────────────────────────────────
+       B5. SAUDI-SPECIFIC PRACTICE
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-dc-saudi">Saudi-Specific Practice — Heat, Hydrogen, SASO and the NiCd Habit</h3>
+
+  <h4>The battery room at 50 &deg;C — HVAC as protection infrastructure</h4>
+
+  <p>Batteries are the most temperature-sensitive equipment in the plant, sited in the
+  country least inclined to indulge them. Cell-maker ratings are referenced to
+  20&ndash;25&nbsp;&deg;C; the site design ambient is <strong>50&nbsp;&deg;C</strong>.
+  For VRLA the Arrhenius rule (life halves per 8&ndash;10&nbsp;&deg;C above
+  20&nbsp;&deg;C) makes an uncooled room a battery shredder; even NiCd, though it
+  survives, loses some capacity and life at sustained high temperature. The design
+  conclusions: condition the battery/UPS rooms to a stable
+  <strong>20&ndash;25&nbsp;&deg;C</strong>; treat that HVAC as <em>protection
+  infrastructure</em>, not comfort — alarm its failure to the control system and state
+  in the design what happens during an HVAC outage on a 50&nbsp;&deg;C day (this is
+  exactly the case where NiCd's tolerance buys you days of grace and VRLA's
+  intolerance buys you an incident report). Record room temperature continuously; the
+  battery's warranty and its real capacity both follow that log.</p>
+
+  <h4>Ventilation and hydrogen</h4>
+
+  <p>Charging batteries electrolyse water and evolve <strong>hydrogen</strong> —
+  vented NiCd routinely (especially on boost), VRLA only slightly in normal float but
+  significantly in fault/overcharge. Hydrogen is explosive from 4&nbsp;% in air, and
+  it pools at the ceiling. Practice per SASO-adopted IEC 62485-2: calculate the
+  ventilation air flow from cell count and charge current; for a vented NiCd room
+  provide dedicated mechanical extract (high-level), interlock or alarm the fans with
+  charging, keep ignition sources and unsealed fittings out of the hydrogen zone, and
+  fit eyewash facilities for the electrolyte. The HVAC therefore does two safety jobs
+  at once — cooling and dilution — and its failure alarm matters twice.</p>
+
+  <h4>SASO/SABER and SEC expectations</h4>
+
+  <p>The same two regulatory tracks as the switchgear apply. Imported batteries,
+  chargers and UPS equipment clear customs through the <strong>SABER</strong> platform
+  with SASO certificates of conformity against the SASO-adopted IEC standards
+  (IEC 62040 series for UPS, IEC 62259/60623 for NiCd cells, IEC 62485-2 for
+  installation safety) — make the vendor contractually responsible for the
+  certificates, because a battery bank stuck in port ages in the container.
+  <strong>SEC</strong> acceptance touches the DC system indirectly but firmly: the
+  intake protection that SEC reviews assumes a healthy 110&nbsp;V DC supply, and SEC
+  (and SBC 401) expectations for substation auxiliary supplies follow the same
+  dual-charger, monitored-battery pattern described here. Align the spec card with
+  the SEC interface requirements before the RFQ goes out.</p>
+
+  <h4>Why the Gulf specifies NiCd — the rationale in one paragraph</h4>
+
+  <p>Regional utility, ARAMCO-style and large-industrial specifications converge on
+  vented NiCd for switchgear DC duties, and the logic is exactly this section's
+  arithmetic: the trip battery is the one component whose failure converts a cleared
+  fault into a destroyed substation; lead-acid life collapses exponentially with the
+  temperature this region supplies for free; NiCd's failure mode is gradual and
+  measurable rather than sudden and silent; and over a 25-year plant life one NiCd
+  bank is cheaper than the 4&ndash;6 VRLA banks (plus one failure-to-trip
+  investigation) it replaces. Buy VRLA where the room is reliably cold and the
+  consequence of failure is a reboot; buy NiCd where the consequence is a fire.
+  Indicative guidance — the project specification and reliability study govern.</p>
+
+  <h4>Acceptance and routine-test checklist</h4>
+
+  <ul class="checklist">
+    <li>Verify ratings plates and certificates: UPS VFI-SS-111 to IEC 62040-3 at 60&nbsp;Hz; NiCd cells to SASO-adopted IEC 62259; SABER/SASO documents complete before shipment.</li>
+    <li>Witness UPS FAT: full-load heat run, transfer tests (mains fail, return, overload to bypass and back), efficiency at 25/50/75/100&nbsp;% load, and the declared inverter fault-current test.</li>
+    <li>Witness an 8&nbsp;h (DC) / 30&nbsp;min (UPS) capacity discharge test on the actual battery strings, at declared temperature, to the end-of-discharge voltage — and file the curves as the baseline.</li>
+    <li>Confirm dual chargers load-share and that AC-fail, charger-fail, DC over/undervoltage, battery-continuity and earth-fault alarms each reach the control system individually.</li>
+    <li>Inject a deliberate single earth fault on each DC pole and verify the IT-bus earth-fault monitor alarms at the specified insulation threshold.</li>
+    <li>Check the voltage window end to end: boost charge with load bus &le;110&nbsp;% U<sub>n</sub>; measured voltage at the furthest trip coil &ge;70&nbsp;% U<sub>n</sub> during a simulated multi-breaker trip burst.</li>
+    <li>Inspect battery room provisions against IEC 62485-2: ventilation flow calculation, high-level extract, HVAC failure alarm, temperature recording, eyewash and signage.</li>
+  </ul>
+
+  <div class="note"><strong>Closing the loop.</strong> Everything here is indicative
+  training data. The binding chain for the real purchase is: audited load schedules
+  (UPS kW and DC duty cycle) &rarr; the worked methods in
+  <a href="#c-ups">the UPS/DC tutorial</a> &rarr; vendor IEEE/IEC battery sizing and
+  certified data sheets &rarr; FAT with witnessed discharge tests &rarr; site
+  commissioning inside the voltage window. The catalogue's job is to make you fluent
+  for that conversation — and to make sure the quietest system in the plant is never
+  the one that fails loudest.</div>
+
+</section>

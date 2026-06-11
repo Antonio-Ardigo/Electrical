@@ -1,0 +1,1592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Concepts Companion — Field Manual Rev 3 (Saudi / SEC Edition)</title>
+<style>
+  :root{
+    --ink:#1c2330; --muted:#4a5260; --faint:#9aa0ad;
+    --accent:#11457e; --accent2:#0e6f5c;
+    --bg:#ffffff; --panel:#f5f6f8; --line:#e2e4e9;
+    --warn-bg:#fff3d6; --warn-bd:#f0c060;
+    --key-bg:#e8f2ee; --key-bd:#9ec9ba;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; padding:0 1rem 4rem;
+    font-family:Georgia,'Times New Roman',serif;
+    font-size:1.02rem; line-height:1.65; color:var(--ink); background:var(--bg);
+  }
+  main{max-width:54rem; margin:0 auto}
+  h1,h2,h3,h4{font-family:system-ui,-apple-system,'Segoe UI',Arial,sans-serif; color:var(--accent); line-height:1.25}
+  h1{font-size:1.9rem; font-weight:800; margin:2.5rem 0 .4rem}
+  h2{font-size:1.45rem; font-weight:750; margin:3rem 0 .8rem; padding-top:1.2rem; border-top:3px solid var(--accent)}
+  h3{font-size:1.08rem; font-weight:700; color:var(--accent2); margin:1.8rem 0 .5rem; text-transform:uppercase; letter-spacing:.04em}
+  h4{font-size:1rem; margin:1.2rem 0 .4rem; color:var(--ink)}
+  p{margin:.6rem 0}
+  .subtitle{color:var(--muted); font-family:system-ui,Arial,sans-serif}
+  .badges{display:flex; gap:1.2rem; flex-wrap:wrap; font-family:system-ui,Arial,sans-serif;
+    font-size:.8rem; color:var(--faint); border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+    padding:.6rem 0; margin:1rem 0 1.5rem}
+  .disclaimer{background:var(--warn-bg); border:1px solid var(--warn-bd); border-radius:4px;
+    padding:.8rem 1.1rem; font-size:.88rem; font-family:system-ui,Arial,sans-serif; margin:1rem 0}
+  .note{background:var(--panel); border-left:4px solid var(--faint); padding:.6rem 1rem; margin:1rem 0; font-size:.95rem}
+  .key{background:var(--key-bg); border:1px solid var(--key-bd); border-radius:4px; padding:.7rem 1rem; margin:1rem 0}
+  .warning{background:var(--warn-bg); border:1px solid var(--warn-bd); border-radius:4px; padding:.7rem 1rem; margin:1rem 0}
+  .worked{background:var(--panel); border:1px solid var(--line); border-radius:6px; padding:.9rem 1.2rem; margin:1.2rem 0}
+  .worked h4{margin-top:.2rem; color:var(--accent)}
+  code{font-family:Consolas,'Courier New',monospace; font-size:.92em; background:var(--panel); padding:.08em .35em; border-radius:3px}
+  code.formula{display:block; padding:.55rem .9rem; margin:.5rem 0; border:1px solid var(--line); border-radius:4px; background:#fbfbfc; overflow-x:auto}
+  pre{background:var(--panel); border:1px solid var(--line); border-radius:6px; padding:.8rem 1rem;
+    overflow-x:auto; font-family:Consolas,'Courier New',monospace; font-size:.85rem; line-height:1.5}
+  pre code{background:none; padding:0}
+  table.tbl{border-collapse:collapse; width:100%; margin:1rem 0; font-family:system-ui,Arial,sans-serif; font-size:.88rem}
+  table.tbl th{background:var(--accent); color:#fff; text-align:left; padding:.45rem .6rem}
+  table.tbl td{border:1px solid var(--line); padding:.4rem .6rem; vertical-align:top}
+  table.tbl tr:nth-child(even) td{background:var(--panel)}
+  ul,ol{margin:.5rem 0 .8rem; padding-left:1.5rem}
+  li{margin:.25rem 0}
+  a{color:var(--accent)}
+  nav.toc{background:var(--panel); border:1px solid var(--line); border-radius:6px;
+    padding:1rem 1.4rem; margin:1.5rem 0; font-family:system-ui,Arial,sans-serif; font-size:.92rem}
+  nav.toc ol{columns:2; column-gap:2.5rem; margin:.4rem 0 0}
+  nav.toc a{text-decoration:none}
+  nav.toc a:hover{text-decoration:underline}
+  article.concept{margin-bottom:1rem}
+  .backlink{font-family:system-ui,Arial,sans-serif; font-size:.82rem; color:var(--faint); margin:-.4rem 0 1rem}
+  @media print{
+    body{font-size:10.5pt}
+    article.concept{page-break-before:always}
+    nav.toc ol{columns:1}
+  }
+</style>
+</head>
+<body>
+<main>
+
+<header>
+  <h1>Concepts Companion</h1>
+  <p class="subtitle">The ideas behind the numbers — 14 core concepts of MV/LV plant electrical engineering,
+  explained from first principles.<br>Companion to the <em>Field Manual Rev 3 — Saudi (SEC) Edition</em>.</p>
+  <div class="badges">
+    <span>Basis: <strong>13.8 kV / 400–230 V / 60 Hz / 50 °C</strong></span>
+    <span>Plant: <strong>~2 MW indicative process plant</strong></span>
+    <span>Standards: <strong>SASO-adopted IEC / SEC / SBC 401</strong></span>
+  </div>
+  <div class="disclaimer"><strong>Indicative / Training material.</strong> All values are indicative and for
+  training only. Each chapter follows the same seven-step structure: the problem, core principles, key
+  innovations, a fully worked example, an intuitive formalization, a CTQ (critical-to-quality) mapping, and a
+  conceptual map. Cross-references point to sections of <code>manual-rev3.html</code>.</div>
+</header>
+
+<nav class="toc">
+  <strong>Contents</strong>
+  <ol>
+    <li><a href="#concept-perunit">Per-unit thinking</a></li>
+    <li><a href="#concept-fault">Fault current</a></li>
+    <li><a href="#concept-impedance">Transformer impedance</a></li>
+    <li><a href="#concept-interruption">Breaker arc interruption</a></li>
+    <li><a href="#concept-selectivity">Time–current selectivity</a></li>
+    <li><a href="#concept-arcflash">Arc flash energy</a></li>
+    <li><a href="#concept-earthing">Earthing &amp; the NER</a></li>
+    <li><a href="#concept-pfc">Power factor correction</a></li>
+    <li><a href="#concept-harmonics">Harmonics &amp; VFDs</a></li>
+    <li><a href="#concept-motorstart">Motor starting</a></li>
+    <li><a href="#concept-ups">The UPS</a></li>
+    <li><a href="#concept-transfer">ATS &amp; standby transfer</a></li>
+    <li><a href="#concept-lightning">Lightning &amp; surge protection</a></li>
+    <li><a href="#concept-n1">N-1 and the SPOF mindset</a></li>
+  </ol>
+</nav>
+
+<!-- CHAPTERS -->
+
+<article class="concept" id="concept-perunit">
+  <h2>1. Per-Unit Thinking</h2>
+  <p class="backlink">Manual deep-dive: <a href="manual-rev3.html#c-perunit">open the full section</a></p>
+
+  <h3>The Problem</h3>
+  <p>Our plant lives on two voltage levels at once: SEC delivers at <strong>13.8 kV</strong>, and almost everything that actually does work — motors, heaters, lighting — runs at <strong>400/230 V</strong>. Between them sit two 1600 kVA transformers. Now try to answer a simple question in ordinary amperes: "how much fault current flows if the LV busbar is short-circuited?" The current on the LV side is about 38 500 A; the <em>same fault, same instant</em>, seen on the MV side, is about 1 115 A. Same event, numbers 34.5 times apart. Every cable, every relay, every calculation on the MV side speaks one numerical language; the LV side speaks another. Before per-unit, engineers carried transformer turns ratios through every line of every fault study, and one missed ratio — one impedance left un-referred across a winding — silently corrupted the whole study.</p>
+  <p>It got worse with size: a real network has several transformations (transmission, sub-transmission, distribution, LV). Referring every impedance through every ratio by hand was the dominant source of error in protection and fault studies. People tried colour-coded tables of "ohms referred to 13.8 kV" — workable for one substation, hopeless for a network, and meaningless the day the tap-changer moved.</p>
+  <p>What was at stake is not academic tidiness. A fault calculation that is wrong by a transformer ratio squared (impedance refers with the <em>square</em> of the ratio — a factor of about 1 190 for 13.8 kV/400 V) leads to switchgear bought with the wrong interrupting rating, or relays set to trip never, or always.</p>
+  <h3>Core Principles</h3>
+  <h4>Principle 1: Measure everything as a fraction of a chosen "normal"</h4>
+  <p><strong>Statement:</strong> instead of volts, amps and ohms, express every quantity as a fraction of a deliberately chosen <em>base</em> value: <code>quantity (pu) = actual value ÷ base value</code>. "pu" means <em>per-unit</em> — per unit of the base. If the base current is 2 309 A and you measure 2 309 A, the current is 1.0 pu: the equipment is at exactly its normal full load. If you measure 38 500 A, the current is 16.7 pu — 16.7 times normal — and the number itself screams "fault".</p>
+  <p><strong>Example:</strong> a transformer at 0.85 pu load is at 85 % of nameplate, whether it is our 1600 kVA unit or a 160 MVA grid transformer. The per-unit number carries the <em>meaning</em>; the base carries the size.</p>
+
+  <h4>Principle 2: Only two bases are free — the rest follow</h4>
+  <p><strong>Statement:</strong> choose a base power <code>S_base</code> (one value for the whole system) and a base voltage <code>V_base</code> (one per voltage level, set equal to the nominal voltage there). Base current and base impedance are then forced by Ohm's law and the power equation:</p>
+  <div class="worked">
+    <code class="formula">I_base = S_base / (√3 × V_base)</code>
+    <code class="formula">Z_base = V_base² / S_base</code>
+  </div>
+  <p>You never pick a base current; you derive it. That discipline is what keeps the system self-consistent.</p>
+
+  <h4>Principle 3: The transformer disappears</h4>
+  <p><strong>Statement:</strong> if the base voltages on the two sides of a transformer are chosen in the ratio of its windings (13.8 kV and 0.4 kV for TX-1), then a per-unit impedance has the <em>same numerical value seen from either side</em>. The ratio referral — the historical source of errors — cancels exactly, because the base impedances themselves differ by the ratio squared. The transformer becomes just a series impedance of 0.06 pu in the circuit diagram; the magic 34.5:1 ratio is gone.</p>
+
+  <h4>Principle 4: Nameplate percent impedance is already per-unit</h4>
+  <p><strong>Statement:</strong> the "Z = 6 %" stamped on TX-1's nameplate is a per-unit impedance on the transformer's own rating: 6 % = 0.06 pu on 1600 kVA. Manufacturers worldwide publish in this form precisely so that the number is size-independent and directly usable. (When mixing equipment of different ratings, convert to a common base: <code>Z_new = Z_old × S_base,new / S_base,old</code>.)</p>
+
+  <h3>Key Innovations</h3>
+  <h4>The normalised network (early 20th-century power engineers, formalised ~1930s)</h4>
+  <p><strong>What:</strong> redraw the entire multi-voltage network as a single circuit in which every element — grid source, transformer, cable, motor — is one per-unit impedance on a common power base.</p>
+  <p><strong>Why it mattered:</strong> fault studies, load flow and stability studies became single-circuit problems. Every modern power-system program (ETAP, DIgSILENT, SKM) works internally in per-unit; the software you will see study reports from is per-unit thinking, automated.</p>
+  <p><strong>Example:</strong> our plant from grid to LV bus is, in per-unit on 1600 kVA: grid source ≈ 0.0027 pu (a 25 kA source at 13.8 kV is enormous compared to our base — nearly a perfect source) in series with TX-1 at 0.06 pu. The transformer dominates: that single observation, visible at a glance only in per-unit, is why "Isc ≈ FLC ÷ Z%" works so well at LV.</p>
+  <h4>Percent impedance as a universal nameplate language (IEC 60076 practice)</h4>
+  <p><strong>What:</strong> standardising that transformer impedance is declared as a percentage on own rating, measured by the short-circuit test.</p>
+  <p><strong>Why it mattered:</strong> a field engineer can estimate the LV fault level of any substation on Earth from two nameplate numbers — rating and Z % — with no other data. That estimate is usually within a few percent of the full study.</p>
+  <h3>Worked Example</h3>
+  <p><strong>Scenario:</strong> convert the Rev 3 plant to per-unit on a 1600 kVA base and find the LV bolted-fault current through one transformer. <strong>Given:</strong> TX-1 = 1600 kVA, 13.8/0.4 kV, Z = 6 %; system 60 Hz; all values indicative.</p>
+  <div class="worked">
+    <p><strong>Step 1 — Choose the bases.</strong> Take S_base = 1600 kVA (the transformer's own rating — so its nameplate Z needs no conversion). Base voltages: 13.8 kV on the MV side, 0.4 kV on the LV side (the winding ratio, so the transformer "disappears").</p>
+    <p><strong>Step 2 — Derive the base currents.</strong></p>
+    <code class="formula">I_base(LV) = S_base / (√3 × V_base) = 1 600 000 VA / (1.732 × 400 V) = 2 309 A</code>
+    <code class="formula">I_base(MV) = 1 600 000 VA / (1.732 × 13 800 V) = 66.9 A</code>
+    <p><em>Why:</em> note these are exactly the Plant Data Card full-load currents — choosing the transformer rating as base makes "1.0 pu current" mean "transformer at full load" on both sides at once.</p>
+    <p><strong>Step 3 — Express the impedance.</strong></p>
+    <code class="formula">Z_TX = 6 % = 6/100 = 0.06 pu  (on 1600 kVA — no conversion needed)</code>
+    <p><strong>Step 4 — Solve the fault in per-unit.</strong> A bolted fault on the LV bus, fed from a strong grid (source impedance ≈ 0.003 pu, neglected here for the field estimate), sees only the transformer:</p>
+    <code class="formula">I_fault = V / Z = 1.0 pu / 0.06 pu = 16.7 pu</code>
+    <p><em>Why:</em> the driving voltage is the normal system voltage, i.e. 1.0 pu by construction. The answer reads directly as "16.7 times full load".</p>
+    <p><strong>Step 5 — Convert back to amperes, on whichever side you care about.</strong></p>
+    <code class="formula">LV side: I_fault = 16.7 × 2 309 A = 38 500 A ≈ 38.5 kA</code>
+    <code class="formula">MV side: I_fault = 16.7 × 66.9 A ≈ 1 115 A  (same fault, same 16.7 pu)</code>
+    <p><strong>Sanity check:</strong> 38.5 kA matches the Plant Data Card LV fault level, and 1 115 A × (13 800/400) voltage ratio... cross-check: 1 115 A × 34.5 = 38 470 A ≈ 38.5 kA. The two sides agree through the turns ratio, exactly as they must. Including the grid impedance would lower this by only ~4 % — the 6 % transformer dominates.</p>
+  </div>
+  <div class="key">
+    <p><strong>The field rule this buys you:</strong> <code>Isc(LV) ≈ FLC / Z(pu)</code>. For any transformer: full-load current divided by per-unit impedance. 2 309 A / 0.06 = 38.5 kA. Two nameplate numbers, one division.</p>
+  </div>
+
+  <h3>Intuitive Formalization</h3>
+  <p>The whole method is three definitions and one consequence. Each symbol: <code>S_base</code> = chosen reference power (VA), <code>V_base</code> = nominal voltage of the level (V), <code>X(pu)</code> = any quantity X divided by its base.</p>
+  <div class="worked">
+    <code class="formula">X(pu) = X_actual / X_base          (definition — a pure, unitless ratio)</code>
+    <code class="formula">I_base = S_base / (√3 × V_base)    (forced by the 3-phase power equation)</code>
+    <code class="formula">Z_base = V_base² / S_base          (forced by Ohm's law)</code>
+    <code class="formula">Z(pu) seen from HV = Z(pu) seen from LV   (because Z_base scales by ratio² too)</code>
+  </div>
+  <p>Physical meaning: per-unit measures <em>stress relative to design</em>. Voltage at 0.95 pu is 5 % undervoltage anywhere in the world. Current at 16.7 pu is a fault, whether the amperes read 38 500 or 38.5. The base values are the "100 % marks" you draw on every gauge; per-unit is reading the gauges in percent instead of raw units. Ohm's law, Kirchhoff's laws and power equations all keep their familiar forms in per-unit — that is the honest mathematical content: a change of units carefully rigged so the transformer ratio becomes 1.</p>
+
+  <h3>CTQ Mapping</h3>
+  <table class="tbl">
+    <thead><tr><th>Critical-to-quality requirement</th><th>How the concept delivers it</th><th>What to check in the field</th></tr></thead>
+    <tbody>
+      <tr><td>Switchgear interrupting ratings match real fault duty</td><td>Two-number estimate Isc ≈ FLC/Z(pu) gives an instant, ratio-error-free fault level at any bus</td><td>LV-MSB nameplate Icu (50–65 kA) ≥ 38.5 kA single-TX; verify tie-closed operation (77 kA) is procedurally blocked</td></tr>
+      <tr><td>Fault studies free of referral errors across 13.8 kV / 400 V</td><td>Equal pu impedance on both sides eliminates the ratio² conversion entirely</td><td>Study reports state the S_base used; all nameplate Z % converted to that common base</td></tr>
+      <tr><td>Loading judged consistently across unequal equipment</td><td>1.0 pu always means "at rating", independent of size</td><td>Trend transformer load in pu (or %) on the PMS, not raw amperes; alarm above ~0.9 pu sustained</td></tr>
+      <tr><td>Indicative hand checks agree with software studies</td><td>Same per-unit model underlies both; hand result should land within a few % of ETAP/DIgSILENT</td><td>If hand estimate and study differ by &gt;10 %, suspect a base-conversion or tap-position assumption</td></tr>
+    </tbody>
+  </table>
+  <h3>Conceptual Map</h3>
+  <pre>
+                       PER-UNIT THINKING (core)
+                       "measure stress, not units"
+                                |
+        +-----------------------+----------------------+
+        | rests on              | rests on             | rests on
+        v                       v                      v
+  [Ratio definition]     [Bases derived,         [Base voltages follow
+   X(pu)=X/X_base         not chosen]             winding ratios]
+        |                 I_base=S/(√3·V)               |
+        |                 Z_base=V²/S                   | led to
+        |                       |                       v
+        |                       |              [TRANSFORMER DISAPPEARS]
+        |                       |               same Z(pu) both sides
+        |                       |                       |
+        +-----------+-----------+-----------------------+
+                    | enables
+                    v
+        +---------------------------+---------------------------+
+        v                           v                           v
+  [Nameplate Z% used         [One-line fault rule        [Single normalised
+   directly: 6%=0.06 pu]      Isc ≈ FLC/Z(pu)            network model]
+        |                     = 2309/0.06 = 38.5 kA]            |
+        | feeds                     | feeds                     | feeds
+        v                           v                           v
+  Ch.3 Transformer            Ch.2 Fault Current          Protection studies,
+  Impedance                   Ch.6 Arc Flash              Ch.5 Selectivity
+  </pre>
+  <div class="note">
+    <p>All numeric values in this chapter are <strong>indicative</strong>, drawn from the Rev 3 plant basis (SEC 13.8 kV, 60 Hz, 50 °C design ambient); the project short-circuit and protection studies govern final figures.</p>
+  </div>
+</article>
+
+<article class="concept" id="concept-fault">
+  <h2>2. Fault Current</h2>
+  <p class="backlink">Manual deep-dive: <a href="manual-rev3.html#c-shortcircuit">open the full section</a></p>
+
+  <h3>The Problem</h3>
+  <p>Every conductor in the plant is sized for its job: the LV main bus carries up to about 3 396 A on a hot Saudi afternoon, a motor feeder maybe 100 A. Then a cable lug works loose, a rodent bridges two busbars, a tool is left in a panel — and the careful hierarchy of currents collapses. A <strong>bolted fault</strong> (a short circuit with effectively zero resistance at the fault point) connects the full system voltage directly across almost nothing. The current is no longer decided by the load; it is decided by how little impedance stands between the source and the fault. At our LV main switchboard that is about <strong>38 500 A</strong> — roughly 17 times the transformer's full-load current, through equipment that was happily carrying hundreds.</p>
+  <p>The historical failure mode was buying switchgear by load current alone. A board rated to <em>carry</em> 2 500 A but only to <em>withstand</em> 20 kA, installed where 38.5 kA is available, does not merely trip on a fault — busbars tear off their supports, breakers that try to open are destroyed mid-operation, and the panel can burst. Load current tells you what the equipment must carry all day; fault current tells you what it must survive for the worst tenth of a second of its life. They are different questions with different answers, and the second one is the expensive one.</p>
+  <p>What is at stake: equipment selection (interrupting and withstand ratings), busbar bracing, cable thermal limits, protection settings (Ch. 5) and arc-flash energy (Ch. 6) all start from one number — the prospective fault current at each bus.</p>
+  <h3>Core Principles</h3>
+  <h4>Principle 1: Fault current is set by impedance, not by load</h4>
+  <p><strong>Statement:</strong> during a short circuit the load vanishes from the equation; <code>I_fault = V / Z_path</code>, where Z_path is the total impedance from all sources to the fault. At our LV bus the path is essentially one 1600 kVA transformer at Z = 6 %, because the SEC 13.8 kV grid behind it is comparatively enormous (25 kA design fault level — a near-ideal source from the LV bus's point of view).</p>
+  <p><strong>Example:</strong> in per-unit (Ch. 1): I_fault = 1.0/0.06 = 16.7 pu = 16.7 × 2 309 A ≈ 38.5 kA.</p>
+
+  <h4>Principle 2: Sources add — every path in parallel contributes</h4>
+  <p><strong>Statement:</strong> fault current at a bus is the sum of contributions from every source connected to it. Close the normally-open bus-tie so both transformers feed one bus, and two 38.5 kA contributions superpose: ≈ <strong>77 kA</strong>. Running motors also contribute for a few cycles (each motor briefly acts as a small generator, feeding roughly its own starting current back into the fault), which is why studies add a motor contribution on top of the transformer figure.</p>
+  <p><strong>Example:</strong> this single principle is why our LV-MSB is rated 50–65 kA and the bus-tie is operated <em>normally open</em> with interlocks — the tie-closed condition (77 kA) must remain a controlled, short-duration switching state, not a running arrangement.</p>
+
+  <h4>Principle 3: The first instant is worse than the steady value — the DC offset</h4>
+  <p><strong>Statement:</strong> a 60 Hz current cannot jump instantly; if the fault strikes at the wrong point of the voltage wave, a decaying DC component rides on top of the AC, and the first peak can reach about 2.0–2.2 times the RMS symmetrical value. For 38.5 kA RMS that is a first peak of roughly <strong>80 kA</strong>. Mechanical forces follow the peak; breaker "making" and busbar bracing ratings are peak ratings.</p>
+
+  <h4>Principle 4: Damage scales with the square of current</h4>
+  <p><strong>Statement:</strong> the two destructive agents both go as I². Magnetic force between parallel conductors is proportional to I² (double the current, four times the force). Heat deposited in a conductor is proportional to I²t (the "let-through energy"). This square law is why a 17× current is not "17 times worse" — mechanically and thermally it is nearly <strong>300 times</strong> worse than full load, and why milliseconds of clearing time matter.</p>
+
+  <h3>Key Innovations</h3>
+  <h4>The prospective fault level as a design quantity (codified in IEC 60909)</h4>
+  <p><strong>What:</strong> standardising how to compute the worst-case ("prospective") short-circuit current at every bus — voltage factors, impedance corrections, motor contribution, decay — so that one declared number per bus (e.g. "38.5 kA at LV-MSB") can be compared directly against equipment ratings.</p>
+  <p><strong>Why it mattered:</strong> it turned fault current from a research calculation into a procurement checkbox: every breaker carries an interrupting rating (Icu), every panel a 1 s or 3 s withstand, and the rule is simply rating ≥ prospective level. Our MV switchgear is specified 31.5 kA/3 s against the SEC 25 kA design level (SEC range 25–40 kA); the LV board 50–65 kA against 38.5 kA.</p>
+  <h4>Current limitation — clearing inside the first rise (fuses, current-limiting MCCBs)</h4>
+  <p><strong>What:</strong> devices fast enough to interrupt before the first peak even forms, "cutting off" the current at a fraction of its prospective value.</p>
+  <p><strong>Why it mattered:</strong> downstream equipment then never sees the full 38.5 kA, allowing cheaper, smaller gear behind a current-limiting device — the basis of cascade/back-up arrangements in our MCCs. The trade-off: extreme speed conflicts with selectivity (Ch. 5), so current limitation is used at the edges of the network, not at the main board.</p>
+  <h3>Worked Example</h3>
+  <p><strong>Scenario:</strong> bolted three-phase fault on the LV main switchboard, single transformer in service; then assess what that current physically does to the busbars. <strong>Given:</strong> TX-1 = 1600 kVA, 13.8/0.4 kV, Z = 6 %, LV FLC = 2 309 A; busbar phase spacing assumed 0.20 m (indicative).</p>
+  <div class="worked">
+    <p><strong>Step 1 — Symmetrical fault current (one transformer).</strong></p>
+    <code class="formula">Isc = FLC / Z(pu) = 2 309 A / 0.06 = 38 483 A ≈ 38.5 kA</code>
+    <p><em>Why:</em> with a stiff 13.8 kV grid behind it, the transformer impedance is effectively the whole path (Ch. 1). Including grid impedance would trim this ~4 %; studies keep it, field estimates may not.</p>
+    <p><strong>Step 2 — Tie-closed case.</strong> Both transformers in parallel halve the source impedance:</p>
+    <code class="formula">Isc(tie closed) = 2 × 38.5 kA = 77 kA</code>
+    <p><em>Why:</em> two equal impedances in parallel give Z/2, so current doubles. This exceeds the 50–65 kA board rating — hence the normally-open tie and interlocking.</p>
+    <p><strong>Step 3 — First-cycle peak.</strong> With a typical LV X/R, the IEC peak factor is about 2.1:</p>
+    <code class="formula">i_peak ≈ 2.1 × 38.5 kA ≈ 81 kA (first peak, ~4 ms after fault inception at 60 Hz)</code>
+    <p><strong>Step 4 — Magnetic force on the busbars at that peak.</strong> Force per metre between two parallel conductors:</p>
+    <code class="formula">F/L = 2×10⁻⁷ × i² / d  [N/m, i in A, d in m]</code>
+    <code class="formula">F/L = 2×10⁻⁷ × (81 000)² / 0.20 = 2×10⁻⁷ × 6.56×10⁹ / 0.20 ≈ 6 600 N/m</code>
+    <p><em>Why:</em> this is the standard parallel-conductor force law; the i² term is Principle 4 made visible. 6 600 N/m is like hanging a <strong>670 kg load on every metre of busbar</strong> — applied sideways, reversing direction 120 times per second at 60 Hz. This is what busbar supports and bracing are designed against, and why withstand ratings are mechanical, not just thermal.</p>
+    <p><strong>Step 5 — Thermal let-through for a 50 ms (3-cycle) clearance.</strong></p>
+    <code class="formula">I²t = (38 500)² × 0.05 = 1.48×10⁹ × 0.05 ≈ 7.4×10⁷ A²s</code>
+    <p><em>Why:</em> I²t is the quantity compared against cable and busbar thermal withstand (k²S² for cables). It is also why every extra cycle of clearing time costs real copper temperature.</p>
+    <p><strong>Sanity check:</strong> 38.5 kA / 2 309 A = 16.7 — consistent with 1/0.06 pu. Peak factor 2.1 lies in the standard 2.0–2.2 LV band. Forces in the kN/m range match typical LV switchboard bracing design values.</p>
+  </div>
+  <div class="warning">
+    <p><strong>Field consequence:</strong> never parallel TX-1 and TX-2 by closing the bus-tie with both incomers closed, except under the approved interlock scheme. The 77 kA tie-closed level is above the board's withstand; the interlock is a fault-rating boundary, not an operational convenience.</p>
+  </div>
+
+  <h3>Intuitive Formalization</h3>
+  <p>Strip the standard apparatus away and three relations remain. Symbols: <code>V</code> = pre-fault line voltage (V), <code>Z</code> = total source-to-fault impedance (Ω or pu), <code>i</code> = instantaneous current (A), <code>d</code> = conductor spacing (m), <code>t</code> = duration (s).</p>
+  <div class="worked">
+    <code class="formula">Isc = V / (√3 × Z)        — how big      (Ohm's law; load is irrelevant)</code>
+    <code class="formula">F/L = 2×10⁻⁷ × i² / d     — how hard it pushes   (∝ i²)</code>
+    <code class="formula">E_heat ∝ I² × t           — how hot it gets      (∝ I², ∝ t)</code>
+  </div>
+  <p>Physical reading: the first line says a fault is a property of the <em>network</em>, fixed the day the transformer was bought; you cannot operate your way out of it, only clear it fast and rate equipment above it. The second and third lines say the destructiveness is quadratic in current but only linear in time — which is precisely why protection (Ch. 5) trades time, and equipment ratings trade current.</p>
+
+  <h3>CTQ Mapping</h3>
+  <table class="tbl">
+    <thead><tr><th>Critical-to-quality requirement</th><th>How the concept delivers it</th><th>What to check in the field</th></tr></thead>
+    <tbody>
+      <tr><td>Switchgear survives the worst credible fault</td><td>Prospective level per bus (38.5 kA LV, 25 kA design MV) compared against Icu/Icw ratings</td><td>Nameplates: LV-MSB ≥ 50 kA, MV gear 31.5 kA/3 s; no device anywhere rated below its bus fault level</td></tr>
+      <tr><td>Tie-closed overstress never occurs in service</td><td>Sources-add principle quantifies the 77 kA paralleled case</td><td>Bus-tie interlock functional test; operating procedure forbids sustained 3-breaker-closed state</td></tr>
+      <tr><td>Cables not damaged before protection clears</td><td>I²t let-through compared with cable k²S² withstand</td><td>Study confirms each cable's adiabatic check at its actual clearing time, at 50 °C ratings</td></tr>
+      <tr><td>Busbar bracing adequate for peak forces</td><td>Peak (≈81 kA) drives the i²/d force calculation</td><td>Board type-test certificate covers rated peak withstand (Ipk), not only RMS Icw</td></tr>
+    </tbody>
+  </table>
+  <h3>Conceptual Map</h3>
+  <pre>
+                         FAULT CURRENT (core)
+                "the network's worst day, quantified"
+                                |
+       +------------------------+------------------------+
+       | rests on               | rests on               | rests on
+       v                        v                        v
+ [Impedance decides]      [Sources superpose]      [DC offset: first
+  Isc = V/(√3·Z)           1 TX: 38.5 kA            peak ≈ 2.1 × RMS
+  load irrelevant          tie closed: 77 kA        ≈ 81 kA]
+       |                        |                        |
+       | requires               | led to                 | led to
+       v                        v                        v
+ [Ch.1 Per-unit:          [Normally-open tie +     [Peak (making) and
+  Isc ≈ FLC/Z(pu)]         interlocks]              bracing ratings]
+       |
+       +------------- I² damage laws -------------+
+       |                                          |
+       v                                          v
+ [Force ∝ i²/d ≈ 6.6 kN/m]              [Heat ∝ I²t ≈ 7.4×10⁷ A²s]
+       | enables                                  | enables
+       v                                          v
+ Equipment withstand ratings             Ch.4 Interruption, Ch.5
+ (Icu, Icw, Ipk ≥ bus level)             Selectivity, Ch.6 Arc Flash
+  </pre>
+  <div class="note">
+    <p>All figures are <strong>indicative</strong> Rev 3 plant-basis values (SEC 13.8 kV, 60 Hz; LV 400/230 V TN-S). The IEC 60909 short-circuit study governs equipment selection.</p>
+  </div>
+</article>
+
+<article class="concept" id="concept-impedance">
+  <h2>3. Transformer Impedance</h2>
+  <p class="backlink">Manual deep-dive: <a href="manual-rev3.html#c-transformer">open the full section</a></p>
+
+  <h3>The Problem</h3>
+  <p>A perfect transformer — zero internal impedance — sounds like exactly what you want: the LV bus voltage would never sag no matter what load you threw at it, motors would start without a flicker, and the bus would be perfectly "stiff". But run the fault arithmetic of Ch. 2 on that perfect machine: with nothing limiting the current except the (huge) SEC grid, an LV bus fault would draw not 38.5 kA but hundreds of kiloamperes. No purchasable LV switchgear could survive it. The very imperfection of the transformer — its leakage impedance — is the only thing standing between the 13.8 kV grid and the LV busbars during a fault.</p>
+  <p>So the impedance stamped <strong>Z = 6 %</strong> on TX-1's nameplate is not a defect to be minimised. It is a deliberately chosen design parameter sitting on a genuine engineering trade-off: every percent of impedance you remove to make the bus stiffer (less voltage drop, easier motor starting) raises the fault current the switchgear must interrupt and withstand; every percent you add to tame the fault current makes the bus softer (more sag under load, dimmer lights when the big compressor starts, more voltage rise to manage at light load).</p>
+  <p>Without understanding this double role, engineers make two opposite mistakes: specifying ultra-low-Z transformers and then discovering the switchboard needs an unaffordable 100 kA rating; or specifying high-Z units "for safety" and then living with a bus that sags so much at 50 °C peak load that contactors drop out during motor starts.</p>
+  <h3>Core Principles</h3>
+  <h4>Principle 1: Z % is a measured voltage, expressed as a ratio</h4>
+  <p><strong>Statement:</strong> the nameplate impedance is defined by the short-circuit test — short the LV winding, raise the MV voltage until rated current flows; the voltage needed, as a fraction of rated voltage, <em>is</em> Z. For TX-1, 6 % of 13.8 kV ≈ 828 V drives full 66.9 A into a dead short. Equivalently (Ch. 1): Z = 0.06 pu on 1600 kVA.</p>
+  <p><strong>Example:</strong> read backwards, the same test result says: apply <em>full</em> voltage to a dead short and 1/0.06 = 16.7 × rated current flows — the 38.5 kA of Ch. 2. The fault current is the short-circuit test run at full voltage.</p>
+
+  <h4>Principle 2: The same impedance drops voltage under ordinary load</h4>
+  <p><strong>Statement:</strong> load current flowing through Z drops voltage continuously, every hour of the plant's life. The drop depends on the load's power factor because Z is mostly reactance: <code>ΔV(pu) ≈ R(pu)·cosφ + X(pu)·sinφ</code>, where R is the resistive part (copper losses), X the leakage reactance, and φ the load phase angle (cosφ = power factor, here 0.85 before correction).</p>
+  <p><strong>Example:</strong> at full load our 6 % unit drops about 4 % — the LV bus sits near 384 V instead of 400 V unless taps compensate (worked below).</p>
+
+  <h4>Principle 3: One knob, two consequences — the stiffness trade-off</h4>
+  <p><strong>Statement:</strong> fault current scales as 1/Z; voltage drop scales roughly as Z. You cannot improve one without worsening the other on the same winding. Low Z (4 %) = stiff bus, ~58 kA fault. High Z (8 %) = soft bus (~5.3 % drop), but only ~29 kA fault. The chosen 6 % puts the fault at 38.5 kA — inside standard 50 kA LV switchgear — while keeping full-load drop ≈ 4 %, recoverable by the tap-changer.</p>
+
+  <h4>Principle 4: Taps shift the curve; they do not flatten it</h4>
+  <p><strong>Statement:</strong> off-circuit taps (typically ±2 × 2.5 %) change the turns ratio, raising the whole LV voltage profile to compensate the <em>average</em> drop. They do nothing about the <em>swing</em> between light load and full load, which remains set by Z. Stiffness is bought in copper and flux at the factory, not adjusted on site.</p>
+
+  <h3>Key Innovations</h3>
+  <h4>Controlled leakage reactance as a design variable (early transformer engineering)</h4>
+  <p><strong>What:</strong> the discovery that winding geometry — spacing between the MV and LV windings, winding height, interleaving — sets leakage flux, and therefore X, precisely and repeatably. Manufacturers can hit a specified Z within IEC 60076 tolerance (±10 % of declared Z).</p>
+  <p><strong>Why it mattered:</strong> it turned the fault level of every downstream installation into a <em>purchasable quantity</em>. When the project specified 1600 kVA at Z = 6 %, it was effectively ordering "38.5 kA at the LV bus" and sizing the entire LV system around that promise.</p>
+  <h4>Standardised impedance families (IEC 60076 practice)</h4>
+  <p><strong>What:</strong> conventional Z values by rating band — around 4 % for small distribution units, 6 % near 1600–2000 kVA, 8 %+ for larger units — so that switchgear, cables and protection could standardise too.</p>
+  <p><strong>Why it mattered:</strong> 6 % at 1600 kVA is the sweet spot where the fault current (≈38.5 kA) still fits mass-produced 50 kA LV boards. It also caps the paralleling penalty: equal Z is a precondition for the two transformers to share load correctly if ever paralleled — unequal Z makes the stiffer unit hog current in proportion to the mismatch.</p>
+  <h3>Worked Example</h3>
+  <p><strong>Scenario:</strong> compute both faces of Z = 6 % for TX-1 — the full-load voltage drop and the fault current — and show the trade-off numerically. <strong>Given:</strong> 1600 kVA, 13.8/0.4 kV, Z = 6 %; assume R = 1 %, so X = √(6² − 1²) ≈ 5.92 % (typical for this rating); plant power factor 0.85 (before PFC); LV FLC = 2 309 A. All values indicative.</p>
+  <div class="worked">
+    <p><strong>Step 1 — Split Z into its parts.</strong></p>
+    <code class="formula">R = 0.01 pu,  X = √(0.06² − 0.01²) = √(0.0036 − 0.0001) = √0.0035 ≈ 0.0592 pu</code>
+    <p><em>Why:</em> the resistive and reactive parts drop voltage differently depending on load angle, so they must be separated. R comes from the load-loss test; X dominates at this size.</p>
+    <p><strong>Step 2 — Load angle terms at pf 0.85.</strong></p>
+    <code class="formula">cosφ = 0.85,  sinφ = √(1 − 0.85²) = √(1 − 0.7225) = √0.2775 ≈ 0.527</code>
+    <p><strong>Step 3 — Full-load voltage drop (regulation, first-order formula).</strong></p>
+    <code class="formula">ΔV ≈ R·cosφ + X·sinφ = 0.01 × 0.85 + 0.0592 × 0.527</code>
+    <code class="formula">ΔV ≈ 0.0085 + 0.0312 = 0.0397 pu ≈ 4.0 %</code>
+    <code class="formula">LV bus at full load ≈ 400 V × (1 − 0.040) ≈ 384 V  (≈ 222 V phase-neutral)</code>
+    <p><em>Why:</em> the reactive term dominates (0.0312 of the 0.0397) — a direct consequence of X ≫ R and a lagging load. Note what PFC does: at the corrected pf 0.95, sinφ = 0.312 and ΔV drops to 0.01×0.95 + 0.0592×0.312 ≈ 2.8 % — power-factor correction is also a voltage tool.</p>
+    <p><strong>Step 4 — Fault current from the same 6 %.</strong></p>
+    <code class="formula">Isc = FLC / Z(pu) = 2 309 / 0.06 ≈ 38.5 kA</code>
+    <p><strong>Step 5 — The trade-off table.</strong> Re-run Steps 3–4 for alternative impedances (same R assumption):</p>
+    <code class="formula">Z = 4 %:  ΔV ≈ 2.5 %  |  Isc ≈ 2 309/0.04 ≈ 57.7 kA  → needs &gt;65 kA board</code>
+    <code class="formula">Z = 6 %:  ΔV ≈ 4.0 %  |  Isc ≈ 38.5 kA               → fits 50 kA board ✓</code>
+    <code class="formula">Z = 8 %:  ΔV ≈ 5.3 %  |  Isc ≈ 28.9 kA               → soft bus, motor-start sag</code>
+    <p><strong>Sanity check:</strong> 4 % regulation at full load is recoverable with a +5 % tap setting; 38.5 kA matches Ch. 2 and the Plant Data Card; the product ΔV × Isc is roughly constant across the rows — the visible signature of the 1/Z vs Z trade-off.</p>
+  </div>
+  <div class="key">
+    <p><strong>One number, two duties:</strong> Z = 6 % simultaneously promises "no more than ≈4 % sag at full load" and "no more than ≈38.5 kA into a fault". Specify Z and you have co-specified the switchgear rating and the bus stiffness.</p>
+  </div>
+
+  <h3>Intuitive Formalization</h3>
+  <p>Everything reduces to one series impedance and two readings of Ohm's law. Symbols: <code>Z, R, X</code> = per-unit impedance and its parts; <code>φ</code> = load phase angle; <code>FLC</code> = full-load current.</p>
+  <div class="worked">
+    <code class="formula">Under load:   ΔV(pu) ≈ R·cosφ + X·sinφ        (the everyday face)</code>
+    <code class="formula">Under fault:  Isc = FLC / Z(pu)                 (the worst-day face)</code>
+    <code class="formula">Trade-off:    ΔV ∝ Z   while   Isc ∝ 1/Z       (one knob, opposite hands)</code>
+  </div>
+  <p>Physical meaning: Z is leakage flux — magnetic field that links one winding but not the other, an air path deliberately built between MV and LV windings. Under load it behaves as a series voltage divider (you lose a slice of voltage proportional to current). Under fault it is a current valve (the only impedance left in the circuit). The cosφ/sinφ weighting says reactive current is the expensive kind for voltage: it pushes straight through the big X term — which is why the ≈580 kvar PFC bank, by carrying the reactive current locally, gives back more than a percent of bus voltage for free.</p>
+
+  <h3>CTQ Mapping</h3>
+  <table class="tbl">
+    <thead><tr><th>Critical-to-quality requirement</th><th>How the concept delivers it</th><th>What to check in the field</th></tr></thead>
+    <tbody>
+      <tr><td>LV voltage within limits across the load range at 50 °C</td><td>ΔV ≈ R·cosφ + X·sinφ predicts ≈4 % full-load sag; taps and PFC compensate</td><td>Bus voltage at peak load ≥ ~95 % of 400 V; tap position recorded and consistent on TX-1 and TX-2</td></tr>
+      <tr><td>Fault duty stays inside switchgear ratings</td><td>Isc = FLC/Z fixes 38.5 kA at the board the day Z was specified</td><td>Replacement transformers ordered with the same Z = 6 % (±IEC tolerance) — a "better" low-Z spare silently raises the fault level</td></tr>
+      <tr><td>Correct load sharing if units are ever paralleled</td><td>Equal pu impedance → equal current share; mismatch → proportional overload of the stiffer unit</td><td>Nameplates of TX-1/TX-2 agree on Z, vector group Dyn11 and ratio before any paralleling operation</td></tr>
+      <tr><td>Motor starts do not collapse the bus</td><td>Z sets the sag per ampere of starting current; 6 % keeps large DOL starts tolerable, VFDs reduce the demand further</td><td>Largest DOL start observed/calculated sag &lt; contactor drop-out threshold (~80–85 % V)</td></tr>
+    </tbody>
+  </table>
+  <h3>Conceptual Map</h3>
+  <pre>
+                    TRANSFORMER IMPEDANCE  Z = 6 % (core)
+                    "the imperfection that protects you"
+                                   |
+            +----------------------+---------------------+
+            | rests on             | rests on             | requires
+            v                      v                      v
+   [Z defined by SC test]   [Z = R + jX, X ≫ R]    [Ch.1 Per-unit:
+    828 V drives 66.9 A      R≈1 %, X≈5.92 %        6 % = 0.06 pu]
+            |                      |
+            |          +-----------+------------+
+            |          |                        |
+            v          v                        v
+      EVERYDAY FACE: load drop            WORST-DAY FACE: fault valve
+      ΔV ≈ R·cosφ + X·sinφ ≈ 4 %          Isc = FLC/Z = 38.5 kA
+            |                                   |
+            | mitigated by                      | contained by
+            v                                   v
+   [Taps ±2×2.5 % shift avg]            [50–65 kA LV board rating]
+   [PFC 580 kvar cuts sinφ]             [feeds Ch.2, Ch.4, Ch.6]
+            |                                   |
+            +---------- TRADE-OFF --------------+
+                  ΔV ∝ Z  vs  Isc ∝ 1/Z
+              6 % = the negotiated middle ground
+  </pre>
+  <div class="note">
+    <p>All values are <strong>indicative</strong> on the Rev 3 basis (2 × 1600 kVA, 13.8/0.4 kV Dyn11, 60 Hz, 50 °C ambient); transformer test certificates and the project voltage-drop study govern.</p>
+  </div>
+</article>
+
+<article class="concept" id="concept-interruption">
+  <h2>4. Breaker Arc Interruption</h2>
+  <p class="backlink">Manual deep-dive: <a href="manual-rev3.html#c-breaker">open the full section</a></p>
+
+  <h3>The Problem</h3>
+  <p>Intuition says stopping a current is easy: pull the contacts apart and the circuit is broken. At 38 500 A, intuition is wrong in the most dramatic way available to electrical engineering. The instant the contacts separate, the current does not stop — it cannot, because the circuit's inductance insists on continuity of current — so it leaps the gap as an <strong>electric arc</strong>: a channel of ionised metal vapour and plasma at 5 000–20 000 °C, hotter than the surface of the sun, and an excellent conductor. Opening the contacts has not interrupted anything; it has merely inserted a small plasma furnace into the circuit. Pull the contacts further apart and the arc simply stretches.</p>
+  <p>Early switchgear builders learned this destructively: knife switches opened under fault load became flame-throwers; the arc burned until something melted, welded or exploded. A switch that can <em>carry</em> 2 500 A and a device that can <em>extinguish</em> a 38.5 kA arc are entirely different machines — and the second one is what "circuit breaker" actually means. Its true job description is not "opens the circuit" but "<strong>kills an arc, reliably, in a few hundredths of a second, and survives</strong>".</p>
+  <p>What is at stake: every protection scheme in Ch. 5 and every arc-flash calculation in Ch. 6 silently assumes that when a trip command is issued, the breaker really does clear the fault within its rated time. Arc interruption is the physical foundation under the entire protection philosophy.</p>
+  <h3>Core Principles</h3>
+  <h4>Principle 1: Inductance forbids instant interruption</h4>
+  <p><strong>Statement:</strong> the energy stored in the circuit's magnetic field (½LI²) must go somewhere; current through an inductance cannot step to zero. Force it to and the inductance answers with whatever voltage it takes (<code>v = L·di/dt</code>) to keep current flowing — thousands of volts across a millimetre gap, which is precisely what strikes the arc. The arc is not an accident; it is the circuit's stored energy refusing to vanish.</p>
+
+  <h4>Principle 2: AC gives you a free gift — current zero every 8.33 ms</h4>
+  <p><strong>Statement:</strong> a 60 Hz alternating current passes through exactly zero twice per cycle, i.e. every <code>1/(2×60) = 8.33 ms</code>. At that instant the arc carries no current and momentarily stops being heated. Every practical AC breaker works by exploiting this instant: it does not fight the 38.5 kA — it waits for the natural zero, then makes sure the arc cannot re-ignite.</p>
+  <p><strong>Example:</strong> this is why DC breaking is notoriously harder than AC (no free zero — the breaker must force one) and why our 110 V DC distribution (DCDB) uses breakers specifically rated for DC duty.</p>
+
+  <h4>Principle 3: Interruption is a race — dielectric recovery vs voltage recovery</h4>
+  <p><strong>Statement:</strong> after current zero, two things rise simultaneously: the gap's <em>dielectric strength</em> (the cooling, de-ionising gas regaining its insulation) and the <em>transient recovery voltage</em> (TRV — the system voltage reappearing across the open contacts, with an oscillatory overshoot). If insulation wins the race, the fault is cleared; if the voltage wins, the arc re-strikes and the breaker gets another try 8.33 ms later. A breaker's interrupting rating is fundamentally a statement about winning this race at that current.</p>
+
+  <h4>Principle 4: The interrupting medium is the design choice</h4>
+  <p><strong>Statement:</strong> what fills the contact gap decides how fast de-ionisation happens. <em>Air with arc chutes</em> (our LV ACBs and MCCBs): splitter plates chop the arc into many short arcs in series, multiplying arc voltage and cooling surface. <em>Vacuum</em> (our 13.8 kV breakers): with almost no gas to ionise, the metal-vapour arc collapses at current zero and the gap recovers dielectric strength in microseconds — compact, maintenance-light, ideal at MV. <em>SF6</em>: an electronegative gas that captures free electrons; superb at transmission voltages, now retreating where vacuum suffices because SF6 is a potent greenhouse gas.</p>
+
+  <h3>Key Innovations</h3>
+  <h4>The arc chute / deion plate stack (early 20th century, refined by every LV OEM since)</h4>
+  <p><strong>What:</strong> a stack of steel/copper plates above the contacts; magnetic forces (the same i² forces of Ch. 2, here put to work) drive the arc up into the stack, splitting one long arc into 10–20 short arcs in series.</p>
+  <p><strong>Why it mattered:</strong> each short arc needs ~20–30 V to sustain near its electrodes, so the stack forces total arc voltage to several hundred volts — comparable to the 400 V system voltage. The arc then starves: the system can no longer drive full current through it, current is actively pushed down ("current limiting" in fast MCCBs), and at the next zero the segmented, cooled arc cannot re-strike. This is the technology inside our LV-MSB ACBs and every MCC breaker.</p>
+  <h4>The vacuum interrupter (commercialised 1960s)</h4>
+  <p><strong>What:</strong> contacts sealed in a ceramic bottle at ~10⁻⁶ mbar; contact geometry spins or spreads the arc magnetically so it does not bore into one spot.</p>
+  <p><strong>Why it mattered:</strong> dielectric recovery in a vacuum gap is so fast that a contact gap of barely 10–15 mm interrupts 31.5 kA at 17.5 kV class — which is why our MV switchgear is a fraction of the size of its oil-breaker ancestors, needs no arc-products venting, and survives tens of thousands of operations. Vacuum + 60 Hz current zeros is the quiet workhorse of the whole MV system.</p>
+  <h3>Worked Example</h3>
+  <p><strong>Scenario:</strong> order-of-magnitude energy handled by an LV air-break ACB clearing the 38.5 kA bus fault in 3 cycles at 60 Hz. <strong>Given:</strong> Isc = 38.5 kA RMS (Ch. 2); arc voltage in the chute ≈ 300 V (typical for a multi-plate LV stack, indicative); 60 Hz. Every number is an estimate of scale, not a design figure.</p>
+  <div class="worked">
+    <p><strong>Step 1 — Clearing time for a "3-cycle" breaker at 60 Hz.</strong></p>
+    <code class="formula">1 cycle = 1/60 s = 16.7 ms   →   t_clear ≈ 3 × 16.7 ms ≈ 50 ms</code>
+    <p><em>Why:</em> ~1–1.5 cycles of mechanism/relay action plus arcing until a favourable current zero. Note at 60 Hz everything is ~17 % faster per cycle than the 50 Hz figures in older references — current zeros arrive every 8.33 ms, not 10 ms.</p>
+    <p><strong>Step 2 — Of that, how long does the arc actually burn?</strong> Contacts part after the mechanism delay; take arcing time ≈ 1 to 1.5 cycles:</p>
+    <code class="formula">t_arc ≈ 1.5 × 16.7 ms ≈ 25 ms  (arc rides through 2–3 current zeros at worst)</code>
+    <p><strong>Step 3 — Power dissipated in the arc while it burns.</strong></p>
+    <code class="formula">P_arc ≈ V_arc × I ≈ 300 V × 38 500 A ≈ 11.6 MW</code>
+    <p><em>Why:</em> the arc behaves roughly as a constant-voltage element (~300 V across the chute) carrying the fault current. Eleven megawatts — about six times the whole plant's demand — concentrated in a shoebox of steel plates.</p>
+    <p><strong>Step 4 — Energy absorbed over the arcing time.</strong></p>
+    <code class="formula">E_arc ≈ P_arc × t_arc ≈ 11.6×10⁶ W × 0.025 s ≈ 290 kJ</code>
+    <code class="formula">Pessimistic bound (arc for the full 50 ms clear): E ≈ 11.6 MW × 0.05 s ≈ 580 kJ</code>
+    <p><em>Why:</em> so the chute must swallow roughly <strong>0.3–0.6 MJ</strong>. For feel: ≈ a 2 kW kettle running for 3–5 minutes, or the kinetic energy of a 1.5 t car at 70–100 km/h — released in a fortieth of a second, inside the panel. This is the energy budget the arc chute, venting and contact materials are type-tested against, and why an ACB that has cleared its rated fault must be inspected before re-service.</p>
+    <p><strong>Step 5 — Sanity check.</strong> Compare with the let-through I²t of Ch. 2 (7.4×10⁷ A²s over 50 ms): the arc takes a few hundred kJ; the rest of the circuit's I²R heating spreads along cables and bus. Orders of magnitude are consistent: MJ-class energy, MW-class power, ms-class time — exactly the regime where only "wait for the zero, win the recovery race" works, and why no one "just opens" 38.5 kA.</p>
+  </div>
+  <div class="warning">
+    <p><strong>Field rule:</strong> never defeat or hand-slow a breaker mechanism, and never put a non-rated device (isolator, contactor, switch-disconnector) in a position where it could be called on to break fault current. Isolators isolate <em>dead</em> circuits; only breakers kill arcs.</p>
+  </div>
+
+  <h3>Intuitive Formalization</h3>
+  <p>The physics fits in four short statements. Symbols: <code>L</code> = circuit inductance (H), <code>i</code> = current (A), <code>f</code> = 60 Hz, <code>V_arc</code> = arc voltage (V), <code>t_arc</code> = arcing time (s).</p>
+  <div class="worked">
+    <code class="formula">E_stored = ½ L i²            — what must be dissipated (you can't delete it)</code>
+    <code class="formula">t_zero = 1/(2f) = 8.33 ms    — how often nature offers a way out</code>
+    <code class="formula">E_arc ≈ V_arc × I × t_arc    — the bill the breaker pays meanwhile</code>
+    <code class="formula">Clear if: dielectric recovery rate &gt; TRV rise rate at current zero</code>
+  </div>
+  <p>Physical meaning: the first line is why the arc exists at all (magnetic energy demanding an exit). The second is the entire reason AC switchgear is practical — at 60 Hz the exit door opens 120 times a second. The third prices each missed door. The fourth is the pass/fail criterion: interruption is not brute force but a race won at a zero crossing, by a medium (air chute, vacuum, SF6) engineered to regain insulation faster than the system voltage returns.</p>
+
+  <h3>CTQ Mapping</h3>
+  <table class="tbl">
+    <thead><tr><th>Critical-to-quality requirement</th><th>How the concept delivers it</th><th>What to check in the field</th></tr></thead>
+    <tbody>
+      <tr><td>Every breaker can actually clear its bus fault</td><td>Interrupting rating = proven win of the recovery race at rated current</td><td>Icu ≥ bus fault level: LV ACBs ≥ 50 kA vs 38.5 kA; MV vacuum breakers 31.5 kA vs 25 kA design</td></tr>
+      <tr><td>Clearing times assumed in Ch. 5/6 are real</td><td>3-cycle ≈ 50 ms at 60 Hz comes from mechanism + arcing physics, not the relay alone</td><td>Breaker operating-time test results (timing tests) on record; add breaker time to relay time in grading and arc-flash studies</td></tr>
+      <tr><td>Breaker remains serviceable after fault duty</td><td>Arc chute/contacts are type-tested for the ~0.3–0.6 MJ energy bill, a finite number of times</td><td>After any full fault clearance: inspect contacts/chutes per OEM; track cumulative interrupted-current duty</td></tr>
+      <tr><td>No arc-breaking duty on non-rated devices</td><td>Only an interrupting medium can de-ionise the gap; isolators have none</td><td>Interlocks prevent opening isolators/earth switches on load; switching procedures name the breaker first, always</td></tr>
+      <tr><td>Mechanism ready at 50 °C, dusty ambient</td><td>The "race" is won by stored-energy springs and clean contacts — both degrade silently</td><td>Periodic spring-charge, trip-coil and timing checks; IP54 integrity and panel filters maintained</td></tr>
+    </tbody>
+  </table>
+  <h3>Conceptual Map</h3>
+  <pre>
+                    ARC INTERRUPTION (core)
+              "kill the plasma, win the race"
+                            |
+        +-------------------+--------------------+
+        | rests on          | rests on           | rests on
+        v                   v                    v
+  [½LI² must go        [60 Hz current zero   [Race at the zero:
+   somewhere →          every 8.33 ms =       dielectric recovery
+   arc strikes]         free exit door]       vs TRV rise]
+        |                   |                    |
+        | led to            | led to             | led to
+        v                   v                    v
+  [Arc = working      [AC breakers wait,    [Interrupting MEDIUM
+   element: ~300 V,    never fight 38.5 kA   is the design choice]
+   ~11.6 MW burn]      head-on]                  |
+        |                            +-----------+-----------+
+        | enables                    v           v           v
+        v                        [Air chute] [Vacuum]     [SF6]
+  [Energy budget ≈ 0.3–0.6 MJ     LV ACB/     13.8 kV     HV legacy,
+   per clear → type tests,        MCCB        bottles     GHG retreat
+   post-fault inspection]            |           |
+                                     +-----+-----+
+                                           | enables
+                                           v
+                            Trustworthy clearing times →
+                            Ch.5 Selectivity, Ch.6 Arc Flash
+  </pre>
+  <div class="note">
+    <p>Arc voltages, times and energies above are <strong>indicative order-of-magnitude</strong> values on the Rev 3 basis (400 V / 13.8 kV, 60 Hz); breaker type-test certificates and OEM data govern.</p>
+  </div>
+</article>
+
+<article class="concept" id="concept-selectivity">
+  <h2>5. Time–Current Selectivity</h2>
+  <p class="backlink">Manual deep-dive: <a href="manual-rev3.html#c-protection">open the full section</a></p>
+
+  <h3>The Problem</h3>
+  <p>A fault on one motor feeder in MCC-1 puts fault current through <em>every</em> device between the fault and the grid: the feeder MCCB, the MCC incomer, the LV-MSB ACB, the transformer's MV breaker, even the SEC supply relay. Each of them sees the same abnormal current at the same instant, and each is perfectly entitled to trip. If they all do, a single welder's damaged cable blacks out the entire plant — the 2 MW process, the control room, everything — and the operators spend an hour discovering which of five open breakers marks the actual fault.</p>
+  <p>The naive fixes both fail. Make everything trip fast, and any small fault cascades into a total shutdown; spurious trips of the MV incomer become routine and SEC starts asking questions. Make upstream devices insensitive so they "never" trip, and a fault the downstream device fails to clear burns unattended. What the plant actually needs is a <strong>hierarchy of patience</strong>: the device nearest the fault trips first and fast; each device upstream waits just long enough to give its downstream colleague a fair chance — and no longer, because every extra tenth of a second is paid in I²t damage and arc-flash energy (Ch. 6).</p>
+  <p>This discipline — <strong>selectivity</strong> (also called discrimination or coordination) — is what turns a pile of individually excellent breakers into a protection <em>system</em>. It is bought almost entirely with one currency: time.</p>
+  <h3>Core Principles</h3>
+  <h4>Principle 1: Trip the smallest possible slice of the network</h4>
+  <p><strong>Statement:</strong> for any fault, exactly one device should operate — the nearest one upstream of the fault. Everything above it holds. The measure of a good scheme is not how fast it trips but how <em>little</em> it trips.</p>
+  <p><strong>Example:</strong> motor cable fault → feeder MCCB only; MCC-1 keeps running its other motors; LV-MSB never notices beyond a voltage dip.</p>
+
+  <h4>Principle 2: Every device is a curve, not a number</h4>
+  <p><strong>Statement:</strong> protection devices are characterised on a <em>time–current curve</em> (TCC): operating time versus current, both on log scales. MCCBs have a thermal (long-time) region, sometimes a short-time delay region, and an instantaneous region. Relays have settable curves. Selectivity is a geometric statement: <strong>the downstream curve must lie entirely below and to the left of the upstream curve</strong>, with a margin, over the whole range of currents both can see.</p>
+
+  <h4>Principle 3: Grading margin — the honest minimum gap between curves</h4>
+  <p><strong>Statement:</strong> the time gap between successive curves is not arbitrary. It must cover, in series: the downstream <em>breaker's</em> clearing time (the upstream relay keeps measuring fault current until the arc actually dies, Ch. 4); upstream relay overshoot (a relay almost at its trip point coasts a little after current stops); timing errors of both devices (IEC accuracy classes); and a safety remainder. Summed honestly this gives the classical <strong>0.3–0.4 s</strong> between IDMT relay stages, and ~0.2 s between modern numerical devices with breaker times known.</p>
+
+  <h4>Principle 4: IDMT — patience proportional to provocation</h4>
+  <p><strong>Statement:</strong> an IDMT (Inverse Definite Minimum Time) relay trips faster the larger the current. The IEC standard-inverse curve is <code>t = TMS × 0.14 / (M^0.02 − 1)</code>, where <code>M</code> = fault current ÷ pickup setting, and <code>TMS</code> (time-multiplier setting) scales the whole curve up or down. Inverseness mirrors physics: big currents do I²t damage faster, so they deserve less patience — and it lets successive relays grade naturally across a range of fault positions.</p>
+
+  <h3>Key Innovations</h3>
+  <h4>The time-graded ladder (induction-disc relays, early 1900s → numerical relays today)</h4>
+  <p><strong>What:</strong> assigning each level of the radial network a deliberate operating time, stepped by the grading margin: in our plant, indicatively — feeder MCCB instantaneous (&lt;0.05 s) → LV-MSB incomer ACB short-time delay <strong>0.3 s</strong> → MV transformer-feeder relay <strong>≈0.6 s</strong> → SEC upstream above that.</p>
+  <p><strong>Why it mattered:</strong> radial selectivity became a paper (now software) exercise: stack the TCCs, check the daylight between curves. The cost is explicit too — the highest-energy bus (LV-MSB, 38.5 kA) gets the <em>slowest</em> protection, which is the central tension Ch. 6 inherits.</p>
+  <h4>Zone selective interlocking and energy-based tricks (modern trip units)</h4>
+  <p><strong>What:</strong> breakers that talk: a downstream device seeing the fault sends a blocking signal upstream; an upstream device that receives no block knows the fault is in its own zone and trips with minimal delay instead of waiting out its grading time. Related: current-limiting cascade at the network edges, and maintenance switches that temporarily collapse the ladder to fast settings while a person works on the board.</p>
+  <p><strong>Why it mattered:</strong> it breaks the cruel trade "selectivity = slow main breakers". With ZSI, a genuine LV-MSB bus fault is cleared in ~0.1 s while feeder faults still grade normally — directly cutting the arc-flash numbers worked in Ch. 6.</p>
+  <h3>Worked Example</h3>
+  <p><strong>Scenario:</strong> build the grading margin from first principles, then set the MV IDMT relay above the LV-MSB incomer ACB for an LV bus fault. <strong>Given:</strong> LV bus fault 38.5 kA (Ch. 2); ACB short-time setting 0.3 s; MV relay IEC standard-inverse, CT-side pickup 80 A primary (≈1.2 × MV FLC 66.9 A); transformer ratio 13.8/0.4 kV. Indicative values.</p>
+  <div class="worked">
+    <p><strong>Step 1 — Assemble the margin budget (why "0.3–0.4 s" is not folklore).</strong></p>
+    <code class="formula">Downstream breaker clearing:        ~0.07 s  (3–4 cycles at 60 Hz, Ch. 4)</code>
+    <code class="formula">Upstream relay overshoot:           ~0.05 s</code>
+    <code class="formula">Timing tolerances, both devices:    ~0.13 s  (IEC accuracy + CT errors)</code>
+    <code class="formula">Safety remainder:                   ~0.10 s</code>
+    <code class="formula">Total grading margin ≈ 0.07+0.05+0.13+0.10 = 0.35 s</code>
+    <p><em>Why:</em> each line is a real, physical delay or uncertainty. Skipping any of them produces a scheme that grades on paper and races in reality.</p>
+    <p><strong>Step 2 — Refer the LV fault to the MV side.</strong> The MV relay sees the LV bus fault through the transformer:</p>
+    <code class="formula">I_MV = 38 500 A × (400 / 13 800) = 38 500 × 0.029 = 1 116 A</code>
+    <p><strong>Step 3 — Multiple of pickup.</strong></p>
+    <code class="formula">M = I_MV / I_pickup = 1 116 / 80 = 13.95</code>
+    <p><strong>Step 4 — Relay time at TMS = 1 (IEC standard inverse).</strong></p>
+    <code class="formula">M^0.02 = 13.95^0.02 ≈ 1.054   →   M^0.02 − 1 = 0.054</code>
+    <code class="formula">t(TMS=1) = 0.14 / 0.054 ≈ 2.59 s</code>
+    <p><em>Why:</em> the exponent 0.02 makes the curve very flat at high multiples — the relay's "patience" barely changes between 10× and 20× pickup, which is exactly what makes grading at high fault currents predictable.</p>
+    <p><strong>Step 5 — Choose TMS to sit one margin above the ACB.</strong> Target time = ACB 0.3 s + margin 0.35 s = 0.65 s:</p>
+    <code class="formula">TMS = t_target / t(TMS=1) = 0.65 / 2.59 ≈ 0.251   →  set TMS = 0.25</code>
+    <code class="formula">Actual relay time: t = 0.25 × 2.59 ≈ 0.65 s</code>
+    <p><strong>Step 6 — Verify the ladder, bottom to top, at the LV bus fault.</strong></p>
+    <code class="formula">Feeder MCCB:   instantaneous &lt; 0.05 s   (its own zone faults)</code>
+    <code class="formula">LV-MSB ACB:    0.30 s                    (gap to MCCB ≈ 0.25 s ✓ with ZSI/known breaker times)</code>
+    <code class="formula">MV relay:      0.65 s                    (gap to ACB = 0.35 s ✓)</code>
+    <p><strong>Sanity check:</strong> 1 116 A on the MV side ÷ 66.9 A FLC ≈ 16.7 — the same per-unit multiple as the LV side (Ch. 1), confirming the referral. The MV relay also stays below the transformer through-fault damage curve at 0.65 s — the upper boundary every grading study must respect.</p>
+  </div>
+  <div class="key">
+    <p><strong>The trade made explicit:</strong> the plant bought "lose one feeder, not the plant" at the price of a main bus protected at 0.3 s and an MV stage at 0.65 s. That price is paid in arc-flash energy at the LV-MSB — which is Ch. 6's opening line.</p>
+  </div>
+
+  <h3>Intuitive Formalization</h3>
+  <p>Symbols: <code>M</code> = fault current as a multiple of pickup; <code>TMS</code> = time multiplier; <code>Δt</code> = grading margin; <code>t_n</code> = operating time of level n (counting up from the fault).</p>
+  <div class="worked">
+    <code class="formula">IEC SI curve:  t = TMS × 0.14 / (M^0.02 − 1)</code>
+    <code class="formula">Ladder rule:   t_(n+1) ≥ t_n + Δt,   with Δt ≈ 0.3–0.4 s (electromech.) or ≈0.2 s (numerical)</code>
+    <code class="formula">Margin truth:  Δt = t_breaker + t_overshoot + Σerrors + safety</code>
+  </div>
+  <p>Physical meaning: M is "how sure are we this is a real fault" — the curve gives big, unambiguous faults less patience. TMS slides the whole curve vertically: it is the knob that places a relay on its rung of the ladder. The ladder rule is just queueing etiquette with a stopwatch; the margin truth is the reminder that the stopwatch must include the <em>breaker's</em> physical arc-killing time (Ch. 4), not merely the relay's decision time.</p>
+
+  <h3>CTQ Mapping</h3>
+  <table class="tbl">
+    <thead><tr><th>Critical-to-quality requirement</th><th>How the concept delivers it</th><th>What to check in the field</th></tr></thead>
+    <tbody>
+      <tr><td>A feeder fault never blacks out the plant</td><td>Curve-below-curve geometry guarantees only the nearest device trips</td><td>After any trip: exactly one device open, and it is the nearest one; multiple-device trips trigger a coordination review</td></tr>
+      <tr><td>Grading margins are real, not nominal</td><td>Margin built from breaker time + overshoot + tolerances + safety (≈0.35 s)</td><td>Settings as per the latest coordination study; secondary-injection test times within tolerance; breaker timing tests current</td></tr>
+      <tr><td>Upstream relay never beats downstream device</td><td>IDMT flatness at high M keeps the gap stable across fault positions</td><td>TCC overlay (study printout) shows daylight at 38.5 kA, at minimum fault, and at the tie-open/closed configurations studied</td></tr>
+      <tr><td>Transformer protected against through-faults</td><td>MV stage (0.65 s at 16.7 pu) sits below the IEC through-fault damage curve</td><td>Damage curve plotted on the same TCC as the MV relay; clearance confirmed at the 38.5 kA referred point</td></tr>
+      <tr><td>Arc-flash exposure not silently inflated</td><td>ZSI / maintenance settings collapse the ladder when people are at the board</td><td>Maintenance switch procedure used before live work; ZSI wiring functionally tested, not just configured</td></tr>
+    </tbody>
+  </table>
+  <h3>Conceptual Map</h3>
+  <pre>
+                 TIME–CURRENT SELECTIVITY (core)
+                "lose the feeder, keep the plant"
+                              |
+        +---------------------+---------------------+
+        | rests on            | rests on            | rests on
+        v                     v                     v
+  [Smallest-slice       [Devices are TCC      [Margin = breaker time
+   tripping rule]        curves; downstream    + overshoot + errors
+        |                below upstream]       + safety ≈ 0.35 s]
+        | requires            |                     ^
+        v                     | led to              | requires
+  [Radial topology:           v                     |
+   one path to fault]   [IDMT curves:         [Ch.4 real clearing
+                         t = TMS·0.14/         times at 60 Hz]
+                         (M^0.02 − 1)]
+                              |
+                              | enables
+                              v
+              THE LADDER (LV bus fault, 38.5 kA / 1 116 A MV)
+              MCCB inst &lt;0.05 s → ACB 0.30 s → MV IDMT 0.65 s
+                              |
+              +---------------+----------------+
+              | costs                          | mitigated by
+              v                                v
+       [Slow protection at the          [ZSI, maintenance switch,
+        highest-energy bus →             current-limiting edges]
+        Ch.6 Arc Flash]
+  </pre>
+  <div class="note">
+    <p>Settings shown are <strong>indicative</strong> on the Rev 3 basis (SEC 13.8 kV, 60 Hz); the project protection coordination study — including SEC interface requirements at the intake — governs all final settings.</p>
+  </div>
+</article>
+
+<article class="concept" id="concept-arcflash">
+  <h2>6. Arc Flash Energy</h2>
+  <p class="backlink">Manual deep-dive: <a href="manual-rev3.html#c-arcflash">open the full section</a></p>
+
+  <h3>The Problem</h3>
+  <p>Everything in Chapters 2–5 treated the fault as a problem for <em>equipment</em>: busbars, breakers, cables. But the most likely moment for a fault at the LV-MSB is precisely when a <em>person</em> is standing in front of it — racking a breaker, lifting a cover, taking a measurement. If the fault current of Ch. 2 flows not through a bolted joint but through open air, it becomes an <strong>arc flash</strong>: the same 5 000–20 000 °C plasma that lives briefly inside a breaker's arc chute (Ch. 4), except now unconfined, a metre from someone's chest, accompanied by a pressure wave, molten copper droplets and vaporised metal.</p>
+  <p>For decades electrical safety meant shock safety: don't touch live parts. Workers in ordinary overalls were severely burned at distances where they touched nothing at all — the injury arrived as radiant and convective heat. The blind spot was that nothing in the equipment specifications bounded the <em>thermal dose a person could receive</em>. A switchboard could meet every withstand rating in this manual and still deliver lethal burns through 60 cm of air.</p>
+  <p>The cruellest twist comes from Ch. 5: selectivity deliberately makes the main bus protection <em>slow</em> (0.3 s short-time delay at the LV-MSB) to keep the plant running through feeder faults. Arc-flash energy is almost exactly proportional to time. The engineering that protects production is the same engineering that, unmanaged, cooks the electrician. Quantifying that — and then choosing where on the trade-off to stand — is what this concept is for.</p>
+  <h3>Core Principles</h3>
+  <h4>Principle 1: The arcing current is less than the bolted current — and that is bad news</h4>
+  <p><strong>Statement:</strong> an arc has resistance, so the arcing fault draws less than the bolted value — at 400 V typically only 50–60 % of it (≈22 kA against our 38.5 kA). The bad news: protection devices are graded against <em>high</em> currents; a reduced arcing current can sit below an instantaneous pickup and ride the slow part of the curve, burning for longer. Arc-flash studies always check the protection at the <em>arcing</em> current, including a low tolerance case, not the bolted one.</p>
+
+  <h4>Principle 2: Incident energy = power density × time, falling off with distance</h4>
+  <p><strong>Statement:</strong> the hazard metric is <em>incident energy</em> — thermal energy per unit area arriving at the worker, in cal/cm² (1 cal/cm² = 4.184 J/cm²). To first order it scales with arcing current × arc duration, and decreases with working distance (roughly as 1/distance² in open air, more slowly out of a box, whose walls focus the blast forward — an LV switchboard compartment is a directed heater).</p>
+  <p><strong>Example:</strong> the benchmark is <strong>1.2 cal/cm²</strong> — the dose that gives bare skin the onset of a second-degree burn. Everything is judged against this small number.</p>
+
+  <h4>Principle 3: Of the three levers — current, distance, time — time is the one you own</h4>
+  <p><strong>Statement:</strong> arcing current is fixed by the network (Ch. 2–3). Working distance is constrained by the task. But <em>clearing time</em> is a setting. Energy is linear in time: clear in 0.1 s instead of 0.3 s and the dose falls threefold. No other lever in the plant converts a relay parameter into burns avoided at this exchange rate.</p>
+
+  <h4>Principle 4: PPE is a last line, rated in the same currency</h4>
+  <p><strong>Statement:</strong> arc-rated clothing carries an arc thermal performance value in cal/cm²; PPE categories run CAT 1 (4), CAT 2 (8), CAT 3 (25), CAT 4 (40 cal/cm²). PPE caps the burn, not the blast, shrapnel or pressure; above ~40 cal/cm² the correct PPE is distance, de-energisation or engineering controls — there is no suit for everything.</p>
+
+  <h3>Key Innovations</h3>
+  <h4>Quantifying the hazard (Ralph Lee 1982; IEEE 1584 empirical model, 2002/2018)</h4>
+  <p><strong>What:</strong> Lee's theoretical paper first put numbers on arc thermal exposure; IEEE 1584 then fitted equations to hundreds of staged arc tests in real enclosures, giving arcing current, incident energy and an <em>arc-flash boundary</em> (the distance where the dose falls to 1.2 cal/cm²) as functions of bolted current, voltage, gap, geometry, time and distance.</p>
+  <p><strong>Why it mattered:</strong> "be careful around switchboards" became a calculable engineering quantity, bus by bus — printed on the orange label on the panel door, with the boundary distance and required PPE category. The label on LV-MSB is the output of exactly the calculation worked below, done rigorously in the study.</p>
+  <h4>Energy-reduction engineering (ZSI, maintenance switches, arc-quenching systems)</h4>
+  <p><strong>What:</strong> applying Principle 3 in hardware: zone-selective interlocking and "maintenance mode" switches (Ch. 5) that cut clearing to ~0.1 s while a person is at the board; arc-detection relays using light + current that trip in a few ms; arc-resistant switchgear that channels the blast away from the operator.</p>
+  <p><strong>Why it mattered:</strong> these inventions decouple the production trade-off from the safety one — the ladder of Ch. 5 protects uptime when the board is closed, and collapses to fast clearing when a human opens it. The worked example shows that single mode switch is worth two full PPE categories.</p>
+  <h3>Worked Example</h3>
+  <p><strong>Scenario:</strong> estimate the incident energy at the LV-MSB for the protection as set in Ch. 5 (0.3 s), then for a maintenance-mode setting (0.1 s). <strong>Given:</strong> bolted fault 38.5 kA (Ch. 2); 400 V switchboard, working distance 450 mm; simplified field model — for a 400 V enclosed board at 450 mm, incident energy ≈ <code>3.5 cal/cm² per (kA of arcing current × second)</code>, an indicative linearisation of the IEEE 1584 behaviour for this voltage/geometry. The formal study uses the full IEEE 1584 equations; this estimate shows the structure and the lever.</p>
+  <div class="worked">
+    <p><strong>Step 1 — Arcing current from bolted current.</strong> At 400 V the arc's own resistance typically cuts current to ~55–60 % of bolted:</p>
+    <code class="formula">I_arc ≈ 0.57 × 38.5 kA ≈ 22 kA</code>
+    <p><em>Why:</em> all protection times must now be read off the TCCs at 22 kA, not 38.5 kA. Check: 22 kA is still far above the ACB short-time pickup, so the 0.3 s stage governs — but a feebler arc on a long feeder might not be, which is why studies also run an 85 % arcing-current case.</p>
+    <p><strong>Step 2 — Clearing time as set (Ch. 5 ladder).</strong></p>
+    <code class="formula">t = 0.3 s (ACB short-time delay) + ~0.05 s breaker ≈ 0.35 s; use 0.3 s for the estimate</code>
+    <p><strong>Step 3 — Incident energy at 450 mm, normal settings.</strong></p>
+    <code class="formula">E ≈ 3.5 cal/cm²·(kA·s)⁻¹ × 22 kA × 0.3 s ≈ 23 cal/cm²</code>
+    <p><em>Why:</em> compare to the 1.2 cal/cm² burn threshold — this is ~19 times the dose that blisters skin. In SI: 23 × 4.184 ≈ 96 J/cm²; over the ~0.5 m² of a torso facing the board, of the order of a megajoule-class event delivering tens of kJ to the body in a third of a second. PPE: 23 &lt; 25, so CAT 3 arc-rated clothing at minimum — in practice treated as the top of CAT 3, with CAT 4 commonly mandated for margin.</p>
+    <p><strong>Step 4 — Same fault, maintenance-mode 0.1 s.</strong></p>
+    <code class="formula">E ≈ 3.5 × 22 × 0.1 ≈ 7.7 cal/cm²</code>
+    <p><em>Why:</em> energy is linear in time (Principle 3): one-third the time, one-third the dose. 7.7 &lt; 8 cal/cm² → CAT 2 — ordinary arc-rated shirt and trousers plus face protection instead of a full flash suit. One switch position changed the worker's worst day by a factor of three.</p>
+    <p><strong>Step 5 — Sanity checks.</strong></p>
+    <code class="formula">Ratio check: 23 / 7.7 = 3.0 = 0.3 s / 0.1 s ✓ (linear in t)</code>
+    <code class="formula">Scale check: LV boards at tens of kA with 0.2–0.5 s clearing typically study out at 10–40 cal/cm² — 23 sits mid-range ✓</code>
+    <p><em>Note:</em> the tie-closed case (77 kA bolted) roughly doubles the dose again — one more reason the normally-open tie (Ch. 2) is also a safety boundary, and why racking/live work is forbidden in that configuration.</p>
+  </div>
+  <div class="warning">
+    <p><strong>Hierarchy of controls, in order:</strong> de-energise and prove dead (the only zero-energy state) → reduce the energy (maintenance switch ON before opening the board, ZSI healthy) → increase distance (remote racking, remote operation) → and only then PPE per the panel label. The orange label is a study output: if settings, transformers or the tie status change, the label is stale until the study is revised.</p>
+  </div>
+
+  <h3>Intuitive Formalization</h3>
+  <p>Symbols: <code>I_arc</code> = arcing current (kA); <code>t</code> = arc duration (s); <code>D</code> = working distance; <code>E</code> = incident energy (cal/cm²); <code>k</code> = geometry/voltage constant (here ≈3.5 at 450 mm, 400 V box).</p>
+  <div class="worked">
+    <code class="formula">I_arc ≈ (0.5–0.6) × I_bolted        at 400 V — the arc throttles itself</code>
+    <code class="formula">E ≈ k × I_arc × t                    linear in BOTH, but only t is yours to set</code>
+    <code class="formula">E falls roughly as 1/D^x, x ≈ 1–2    distance helps; boxes focus the blast forward</code>
+    <code class="formula">Boundary: distance where E = 1.2 cal/cm² — the line on the floor</code>
+  </div>
+  <p>Physical meaning: an arc is a resistor made of plasma; V_arc × I_arc is megawatts of radiant power (Ch. 4 measured it at ~11.6 MW <em>inside</em> a chute — here it is in the open). The product I·t is the dose integral; the constant k hides enclosure focusing and distance. The 1.2 cal/cm² threshold converts all of it into the only unit that finally matters: human skin.</p>
+
+  <h3>CTQ Mapping</h3>
+  <table class="tbl">
+    <thead><tr><th>Critical-to-quality requirement</th><th>How the concept delivers it</th><th>What to check in the field</th></tr></thead>
+    <tbody>
+      <tr><td>Worker thermal dose known before the cover comes off</td><td>IEEE 1584 study converts bus data + settings into cal/cm² and a boundary per bus</td><td>Orange label on LV-MSB/MCCs: energy, boundary, PPE category present, dated, and matching the current study revision</td></tr>
+      <tr><td>Protection actually operates at arcing current</td><td>Principle 1 forces TCC checks at ~22 kA and at the 85 % low case</td><td>Study shows the governing device and time at the arcing current — not assumed instantaneous</td></tr>
+      <tr><td>Energy reduced while humans are exposed</td><td>Time is the lever: 0.3 s→0.1 s cuts 23→7.7 cal/cm² (CAT 3→CAT 2)</td><td>Maintenance-mode switch used and logged before live diagnostics/racking; ZSI function-tested</td></tr>
+      <tr><td>Configuration changes don't silently raise the dose</td><td>E ∝ I_arc: tie-closed ≈ doubles it; transformer Z changes shift it</td><td>No racking or live work with bus-tie closed; study revalidated after any setting or equipment change</td></tr>
+      <tr><td>PPE matched, not guessed</td><td>PPE categories rated in the same cal/cm² currency as the hazard</td><td>Flash suit/CAT rating on the permit ≥ label value; above ~40 cal/cm², task is redesigned, not re-dressed</td></tr>
+    </tbody>
+  </table>
+  <h3>Conceptual Map</h3>
+  <pre>
+                       ARC FLASH ENERGY (core)
+                "the fault, priced in human skin"
+                                |
+        +-----------------------+-----------------------+
+        | requires              | rests on              | rests on
+        v                       v                       v
+  [Ch.2 bolted fault      [Arc throttles itself:   [Dose = k·I_arc·t,
+   38.5 kA at LV-MSB]      I_arc ≈ 0.57×I_bolted    falls with distance,
+        |                  ≈ 22 kA]                  focused by the box]
+        |                       |                       |
+        |                       | led to                | led to
+        |                       v                       v
+        |              [Check protection at      [IEEE 1584 / Lee:
+        |               ARCING current,           label per bus,
+        |               +85 % low case]           1.2 cal/cm² boundary]
+        |                                               |
+        +---------- inherits Ch.5's trade-off ----------+
+                                |
+                 0.3 s clear → 23 cal/cm² (CAT 3)
+                 0.1 s clear → 7.7 cal/cm² (CAT 2)
+                                |
+                                | answered by
+                                v
+        +-----------------------+-----------------------+
+        v                       v                       v
+  [De-energise,           [TIME lever: ZSI,       [Distance + PPE:
+   prove dead]             maintenance switch,     remote racking,
+   the only zero           arc-detection ms        arc-rated suits
+                           relays]                 as LAST line]
+  </pre>
+  <div class="note">
+    <p>The 3.5 cal/cm² per kA·s factor and all results are <strong>indicative teaching values</strong> on the Rev 3 basis (400 V, 60 Hz, 450 mm working distance); the project IEEE 1584 arc-flash study and panel labels govern PPE selection.</p>
+  </div>
+</article>
+
+<article class="concept" id="concept-earthing">
+  <h2>7. Earthing &amp; the NER</h2>
+  <p class="backlink">Manual deep-dive: <a href="manual-rev3.html#c-earthing">open the full section</a></p>
+
+  <h3>The Problem</h3>
+  <p>Most faults are not the clean three-phase short of Ch. 2. The overwhelming majority — cable insulation failing against an armour, a motor winding breaking down to the frame — involve <strong>one phase and earth</strong>. How much current flows then is not decided by the transformer impedance alone; it is decided by a choice the designer made at the star point of the winding: <em>how is the neutral connected to earth?</em></p>
+  <p>Both extremes fail, in opposite ways. <strong>Bolt the neutral solidly to earth</strong> at 13.8 kV, and a single cable fault to a steel tray drives thousands of amperes through that tray, through the soil, through whatever path it finds: massive iron-burning damage at the fault point, and the local ground around the fault rises to a potential that can kill someone standing nearby — the soil itself becomes a resistor with kilovolts across it. <strong>Leave the neutral isolated</strong>, and the first earth fault drives almost no current at all — nothing trips, the plant keeps running — but the two healthy phases now sit at full line-to-line voltage to earth (a 73 % overstress on all insulation), transient overvoltages from the arcing fault can reach several times normal, and the <em>second</em> fault, on another phase somewhere else, is a violent phase-to-phase short through the whole earthing system.</p>
+  <p>The problem, then, is a dial, not a switch: earth-fault current must be <em>large enough to detect and trip reliably, small enough to neither destroy the fault point nor endanger the people standing on the soil above it</em>. The component that sets the dial in our plant is the <strong>NER — the Neutral Earthing Resistor</strong>: 19.9 Ω of deliberately inserted resistance between the transformer star point and earth, sized to cap any MV earth fault at 400 A.</p>
+  <h3>Core Principles</h3>
+  <h4>Principle 1: The driving voltage of an earth fault is the phase voltage</h4>
+  <p><strong>Statement:</strong> when one phase touches earth, the voltage pushing current around the loop is the line-to-neutral (phase) voltage: <code>V_ph = V_LL / √3 = 13 800 / 1.732 = 7 967 V ≈ 7.97 kV</code>. Whatever impedance sits in the neutral-to-earth connection is in series with that loop — which is exactly why putting a resistor there controls the current.</p>
+
+  <h4>Principle 2: The neutral impedance is a current dial</h4>
+  <p><strong>Statement:</strong> with a resistor R in the star point, the worst-case (bolted, zero-impedance) earth fault current is simply <code>I_ef ≈ V_ph / R</code> — the resistor dominates everything else in the loop. Choose R and you have chosen the maximum earth-fault current anywhere on that MV system. Our 19.9 Ω caps it at 400 A: about 6 × MV full-load current — easily seen by every earth-fault relay, yet 60-odd times smaller than a solidly-earthed fault would be.</p>
+
+  <h4>Principle 3: Touch and step voltage — the soil is part of the circuit</h4>
+  <p><strong>Statement:</strong> earth-fault current returning through the ground grid raises the station earth potential by <code>V_rise = I_ef × R_grid</code> (grid resistance to remote earth). A person touching a faulted structure spans a fraction of that rise (<em>touch voltage</em>); a person walking spans the gradient between their feet (<em>step voltage</em>). Both scale directly with I_ef — so capping the current at 400 A caps, at the source, the voltage a human body can be asked to bridge. With a typical ~1 Ω grid: 400 A × 1 Ω = 400 V of grid rise to manage, instead of several kilovolts in the solidly-earthed case.</p>
+
+  <h4>Principle 4: Different levels, different answers — and that is correct</h4>
+  <p><strong>Statement:</strong> the LV system (400/230 V, <strong>TN-S</strong>) is <em>solidly</em> earthed, with separate neutral (N) and protective earth (PE) conductors. This is not an inconsistency: at 230 V to earth, a solid earth fault is a big, fast-clearing current with modest touch-voltage consequences, and 230 V loads <em>need</em> a stable neutral. At 13.8 kV the same philosophy would be destructive — hence the NER. Earthing design is per-voltage-level optimisation, with one common plant earth grid binding it together.</p>
+
+  <h3>Key Innovations</h3>
+  <h4>Resistance earthing of MV systems (industrial practice, early-mid 20th century)</h4>
+  <p><strong>What:</strong> inserting an engineered resistor — metal grid elements in a ventilated enclosure, ours rated 7.97 kV, 400 A for 10 s — between star point and earth, with current chosen to suit protection (hundreds of amperes, "low-resistance earthing") rather than the thousands the system could deliver.</p>
+  <p><strong>Why it mattered:</strong> it ended the false choice between "destructive but detectable" (solid) and "gentle but treacherous" (isolated). 400 A is detectable by simple, sensitive earth-fault relays (core-balance CTs see it easily, set far below 400 A), limits burning damage at the fault point to repairable scale, keeps healthy-phase voltage rise within the insulation's short-duration capability, and contains transient overvoltages that plague isolated systems.</p>
+  <h4>The time-rated resistor + standby earth-fault relay pair</h4>
+  <p><strong>What:</strong> the NER is rated to carry its 400 A for a declared <em>time</em> (10 s), not forever; a "standby earth fault" relay on the NER current, graded slower than all feeder earth-fault relays, guarantees the fault is cleared (by tripping the incomer if necessary) well inside that window.</p>
+  <p><strong>Why it mattered:</strong> it makes the resistor small, affordable and honest: it is an energy-absorbing fuse-of-last-resort with a calculated heat budget (worked below), protected by its own dedicated relay. The 10 s rating is a contract between the resistor's thermal mass and the protection scheme's slowest clearance — both sides of which can be verified in the field.</p>
+  <h3>Worked Example</h3>
+  <p><strong>Scenario:</strong> size-check the plant NER from first principles — current limit, resistance, thermal duty — and read off the touch-voltage consequence. <strong>Given:</strong> system 13.8 kV, 60 Hz; design earth-fault limit 400 A; rated time 10 s; assume station earth-grid resistance ≈ 1 Ω (indicative — the earthing study measures the real value).</p>
+  <div class="worked">
+    <p><strong>Step 1 — Driving voltage seen by the resistor.</strong></p>
+    <code class="formula">V_ph = V_LL / √3 = 13 800 V / 1.732 = 7 967 V ≈ 7.97 kV</code>
+    <p><em>Why:</em> a bolted single-phase-to-earth fault puts the full phase voltage across the neutral path; this is the NER's rated voltage on its nameplate.</p>
+    <p><strong>Step 2 — Resistance for a 400 A limit.</strong></p>
+    <code class="formula">R = V_ph / I_ef = 7 967 V / 400 A = 19.9 Ω</code>
+    <p><em>Why:</em> the resistor is sized assuming it alone limits the current (cable and transformer zero-sequence impedances only reduce it further — conservative by construction). This is the Plant Data Card's 19.9 Ω.</p>
+    <p><strong>Step 3 — Heat the resistor must absorb in its rated 10 s.</strong></p>
+    <code class="formula">E = I² × R × t = 400² × 19.9 × 10</code>
+    <code class="formula">E = 160 000 × 19.9 × 10 = 31 840 000 J ≈ 32 MJ</code>
+    <p><em>Why:</em> during the fault, essentially the whole 7.97 kV × 400 A ≈ 3.2 MW sits on the resistor — one and a half times the entire plant's electrical demand, concentrated in one steel-grid cabinet. Over 10 s that is 32 MJ: enough heat to take roughly <strong>95 litres of water from 20 °C to boiling</strong> (32×10⁶ / (4 186 × 80) ≈ 96 kg). The resistor survives by mass and short time, not by dissipation — its elements simply heat up (adiabatic), which is why the 10 s limit is real and why repeated closely-spaced faults are forbidden until it cools.</p>
+    <p><strong>Step 4 — Grid potential rise and touch-voltage logic.</strong></p>
+    <code class="formula">V_rise = I_ef × R_grid ≈ 400 A × 1 Ω = 400 V</code>
+    <p><em>Why:</em> compare the solid-earthing alternative: if the same system delivered, say, 8 kA to earth, the rise would be ≈8 kV. Touch and step voltages are fractions of the rise, compared against IEC 60479-based body-current limits for the clearing time; capping I_ef at 400 A is what makes those criteria achievable with an ordinary buried grid in dry Saudi soil conditions (high resistivity — measured, not assumed).</p>
+    <p><strong>Step 5 — Protection consistency check.</strong></p>
+    <code class="formula">Feeder EF relays: pickup ~10–20 % of 400 A, trip &lt; 1 s</code>
+    <code class="formula">Standby EF on NER: graded above all feeders, trips incomer ≪ 10 s ✓</code>
+    <p><strong>Sanity check:</strong> 7 967 / 19.9 = 400.4 A ✓; 400 A ≈ 6 × MV FLC (66.9 A) — well above load unbalance leakage, well below damage-scale current; 32 MJ matches typical NER nameplate energy class for 400 A/10 s units ✓.</p>
+  </div>
+  <div class="warning">
+    <p><strong>Field rule:</strong> the NER is live plant, not passive copper. A broken NER (open-circuited element, corroded connection) silently converts the MV system to <em>isolated</em> neutral — every consequence of the isolated case returns, with no alarm unless the NER monitoring relay is healthy. Its continuity monitoring and the standby EF relay deserve the same test discipline as any feeder protection.</p>
+  </div>
+
+  <h3>Intuitive Formalization</h3>
+  <p>Symbols: <code>V_ph</code> = phase-to-earth voltage (V); <code>R</code> = NER resistance (Ω); <code>I_ef</code> = earth-fault current (A); <code>t</code> = rated time (s); <code>R_grid</code> = earth-grid resistance to remote earth (Ω).</p>
+  <div class="worked">
+    <code class="formula">I_ef ≈ V_ph / R                — the dial: choose R, choose the fault current</code>
+    <code class="formula">E = I_ef² × R × t              — the resistor's heat bill (adiabatic, ~32 MJ)</code>
+    <code class="formula">V_rise = I_ef × R_grid         — what the soil does with the current you allowed</code>
+    <code class="formula">Design window: detectable ≪ I_ef ≪ destructive   (400 A sits in the middle)</code>
+  </div>
+  <p>Physical meaning: the first line says earth-fault severity is a <em>policy decision</em> implemented in 19.9 Ω of steel. The second prices the policy in joules and explains the 10 s contract. The third connects amperes in the neutral to volts across a human stride. The window in the last line is the entire philosophy: enough current to be seen by relays every time, too little to dig craters or electrify the ground people stand on.</p>
+
+  <h3>CTQ Mapping</h3>
+  <table class="tbl">
+    <thead><tr><th>Critical-to-quality requirement</th><th>How the concept delivers it</th><th>What to check in the field</th></tr></thead>
+    <tbody>
+      <tr><td>Every MV earth fault detected and tripped, first time</td><td>400 A limit is ~6 × FLC — far above relay pickups (core-balance CTs at tens of amperes)</td><td>EF relay pickups/timing per study; secondary injection tests current; standby EF on the NER proven to trip the incomer</td></tr>
+      <tr><td>People near a fault are not exposed to lethal touch/step voltages</td><td>Capping I_ef caps grid rise (≈400 V vs kilovolts solid-earthed)</td><td>Earthing study with measured soil resistivity; grid resistance test results; bonding of trays/structures intact</td></tr>
+      <tr><td>NER survives its worst duty</td><td>I²Rt budget (≈32 MJ/10 s) matched to slowest clearance with margin</td><td>NER nameplate 7.97 kV / 400 A / 10 s / 19.9 Ω; ventilation clear at 50 °C; no repeat fault before cool-down</td></tr>
+      <tr><td>System never silently becomes isolated-neutral</td><td>The resistor only works if it is connected — continuity is a protection function</td><td>NER open-circuit/monitoring relay alarmed to the control room and tested; star-point connection inspected</td></tr>
+      <tr><td>LV TN-S integrity preserved</td><td>Solid LV earthing + separate PE gives fast LV fault clearing and a stable 230 V neutral</td><td>N–PE separation maintained (no downstream bridges); single N–PE link at the source only; PE continuity test records</td></tr>
+    </tbody>
+  </table>
+  <h3>Conceptual Map</h3>
+  <pre>
+                    EARTHING &amp; THE NER (core)
+              "earth-fault current is a design choice"
+                              |
+        +---------------------+----------------------+
+        | rests on            | rests on             | rests on
+        v                     v                      v
+  [Phase voltage       [Neutral impedance      [Soil is a resistor:
+   drives the fault:    is a current dial:      V_rise = I_ef × R_grid
+   7.97 kV]             I_ef ≈ V_ph / R]        → touch/step voltage]
+        |                     |                      |
+        |          +----------+----------+           |
+        |          v                     v           |
+        |   [Solid earth:          [Isolated:        |
+        |    kA, craters,           no trip, 73 %    |
+        |    kV ground rise]        overvoltage,     |
+        |        X                  2nd-fault bomb]  |
+        |                X both rejected X           |
+        |                     |                      |
+        +---------- led to ---+----------------------+
+                              v
+              [NER: 19.9 Ω → 400 A / 10 s / ≈32 MJ]
+                 detectable ≪ 400 A ≪ destructive
+                              |
+              +---------------+----------------+
+              | enables       | enables        | contrasts with
+              v               v                v
+       [Sensitive EF     [Standby EF      [LV TN-S: SOLIDLY
+        relays, core-     relay guards     earthed, N+PE split —
+        balance CTs]      the 10 s         right answer at 230 V]
+                          contract]
+  </pre>
+  <div class="note">
+    <p>All values are <strong>indicative</strong> on the Rev 3 basis (SEC 13.8 kV, 60 Hz, 50 °C, high-resistivity desert soil); the project earthing study (measured soil resistivity, grid design, touch/step verification per IEC) governs.</p>
+  </div>
+</article>
+
+<article class="concept" id="concept-pfc">
+  <h2>8. Power Factor Correction</h2>
+  <p class="backlink">Manual deep-dive: <a href="manual-rev3.html#c-pfc">open the full section</a></p>
+
+  <h3>The Problem</h3>
+  <p>Every motor, transformer and reactor in the plant needs a magnetic field to work, and that field is built and collapsed 60 times a second. The energy that swings in and out of those fields is <strong>reactive power</strong> (measured in kvar). It does no useful work — no shaft turns because of it, no product is made — yet the current that carries it is just as real as the current that delivers kilowatts. It heats cables, loads transformers, drops voltage and occupies switchgear ampacity.</p>
+  <p>Our Rev 3 plant draws an indicative <strong>2.0 MW at power factor 0.85</strong>. That means the apparent power the network must deliver is about <strong>2353 kVA</strong>, not 2000 kVA. Roughly 15 % of the current flowing through the SEC metering point, the 13.8 kV switchgear, both 1600 kVA transformers and the LV main switchboard is doing nothing but magnetising iron. Without correction, the plant pays for that three ways: a <strong>Saudi Electricity Company (SEC) tariff penalty</strong> when the metered power factor falls below the contractual threshold (SEC applies reactive-power charges below roughly 0.9, per the Distribution Code and its tariff rules — exact clause to be confirmed in the supply agreement), extra I²R losses in every cable, and transformer capacity that is bought, installed and cooled at 50 °C ambient but never converted into product.</p>
+  <p>What did plants do before correction? They simply oversized everything — bigger transformers, bigger cables — and paid the penalty. That works, but it is the most expensive way imaginable to make magnetism. Power factor correction (PFC) is the alternative: generate the reactive power <em>locally</em>, with capacitors, a few metres from the loads that consume it.</p>
+
+  <h3>Core Principles</h3>
+  <h4>Principle 1: Power has two components, and only one of them is useful</h4>
+  <p><strong>Statement:</strong> Apparent power S (kVA) is the vector combination of real power P (kW), which does work, and reactive power Q (kvar), which sustains magnetic and electric fields.</p>
+  <p>The classic picture is a glass of beer: the liquid is kW (you drink it), the foam is kvar (you must carry it, but it quenches no thirst), and the glass is kVA (what the barman — SEC — actually has to hand over the counter). The three are related by Pythagoras: <code>S² = P² + Q²</code>. Power factor is simply <code>pf = P / S</code> — the fraction of the glass that is beer.</p>
+  <h4>Principle 2: Current follows kVA, not kW</h4>
+  <p><strong>Statement:</strong> For a given real power, line current scales as 1/pf, so every piece of copper between source and load is sized by the power factor.</p>
+  <p>At 400 V, our 2.0 MW plant at pf 0.85 draws about 3396 A total; at pf 1.0 the same 2.0 MW would need only 2887 A. The 509 A difference flows through both transformers, the LV-MSB, and every feeder — pure overhead. Cable losses scale with current <em>squared</em>, so a 15 % current reduction cuts I²R losses by about 28 %.</p>
+  <h4>Principle 3: Capacitors are local kvar generators</h4>
+  <p><strong>Statement:</strong> A capacitor draws current that leads the voltage by 90°, exactly opposite to the lagging magnetising current of motors, so the two cancel.</p>
+  <p>An induction motor and a capacitor connected to the same bus swap reactive energy back and forth between the motor's magnetic field and the capacitor's electric field, 120 times a second at 60 Hz. The grid no longer has to carry that exchange — it stays inside the plant. The capacitor does not "consume" anything in steady state except its small dielectric losses.</p>
+  <h4>Principle 4: Compensate close to the demand, control to a target</h4>
+  <p><strong>Statement:</strong> Reactive power is best produced electrically close to where it is consumed, and the amount must follow the load, because over-correction (leading power factor) causes overvoltage and is also penalised.</p>
+  <p>That is why the Rev 3 plant puts an automatic <strong>≈580 kvar detuned bank (tag PFC)</strong> on the 400 V main switchboard rather than a fixed bank at 13.8 kV: it relieves the transformers as well as the utility, and it switches in steps as compressors start and stop.</p>
+
+  <h3>Key Innovations</h3>
+  <h4>The automatic multi-step capacitor bank (mid-20th century onward)</h4>
+  <p><strong>What:</strong> A var controller measures bus kvar via a CT, compares it to a target power factor (here 0.95), and switches capacitor steps (e.g. 6 × 100 kvar) in and out through contactors with discharge resistors.</p>
+  <p><strong>Why it mattered:</strong> A fixed bank sized for full load over-corrects at night and under-corrects at peak. Automatic stepping keeps the metered power factor inside the SEC band around the clock without an operator touching anything.</p>
+  <h4>The detuned reactor (1970s onward)</h4>
+  <p><strong>What:</strong> A series reactor in front of each capacitor step — 7 % in our plant — that tunes the branch to 227 Hz at 60 Hz, safely below the 5th harmonic at 300 Hz.</p>
+  <p><strong>Why it mattered:</strong> Plain capacitors form a resonant circuit with the transformer inductance and can amplify VFD harmonics catastrophically. The detuned reactor makes the bank look inductive to all characteristic harmonics, so it cannot resonate with them. Chapter <a href="09-harmonics.html">9 — Harmonics &amp; VFDs</a> works this out in numbers.</p>
+  <h4>LV placement economics</h4>
+  <p><strong>What:</strong> Installing the bank at 400 V on LV-MSB instead of at 13.8 kV.</p>
+  <p><strong>Why it mattered:</strong> LV capacitors and switching are cheaper per kvar at this size, maintenance is simpler, and — crucially — the reactive current disappears from the 1600 kVA transformers themselves, releasing transformer capacity, not just utility capacity.</p>
+
+  <h3>Worked Example: Sizing the Rev 3 PFC bank from 0.85 to 0.95</h3>
+  <div class="worked">
+    <p><strong>Given:</strong> Plant real power P = 2.0 MW (2000 kW), existing power factor pf₁ = 0.85 lagging, target pf₂ = 0.95 lagging, bus 400 V / 60 Hz. All values indicative.</p>
+    <p><strong>Step 1 — Reactive power at pf 0.85.</strong> First convert each power factor to its phase angle and tangent. cos φ₁ = 0.85 → φ₁ = 31.8° → tan φ₁ = 0.620.</p>
+    <p><code class="formula">Q₁ = P × tan φ₁</code></p>
+    <p><code class="formula">Q₁ = 2000 kW × 0.620 = 1239 kvar</code></p>
+    <p><em>Why:</em> tan φ is the ratio of foam to beer — kvar per kW. At pf 0.85 the plant drags 1239 kvar through the metering point.</p>
+    <p><strong>Step 2 — Reactive power allowed at pf 0.95.</strong> cos φ₂ = 0.95 → φ₂ = 18.2° → tan φ₂ = 0.329.</p>
+    <p><code class="formula">Q₂ = 2000 kW × 0.329 = 657 kvar</code></p>
+    <p><strong>Step 3 — Capacitor bank size.</strong> The bank must supply the difference:</p>
+    <p><code class="formula">Q_c = Q₁ − Q₂ = 1239 − 657 = 582 kvar</code></p>
+    <p>Select the next standard build-up: <strong>600 kvar in 6 × 100 kvar detuned steps</strong> (≈580 kvar effective at the bus once the 7 % reactor and tolerance are accounted for — matching the Plant Data Card).</p>
+    <p><em>Note:</em> with a detuned bank the capacitor units themselves are rated above 400 V (typically 480 V class) because the series reactor raises the voltage across the capacitor; the <em>bank</em> nameplate kvar is quoted at the bus.</p>
+    <p><strong>Step 4 — Apparent power released.</strong></p>
+    <p><code class="formula">S₁ = P / pf₁ = 2000 / 0.85 = 2353 kVA</code></p>
+    <p><code class="formula">S₂ = P / pf₂ = 2000 / 0.95 = 2105 kVA</code></p>
+    <p><code class="formula">ΔS = 2353 − 2105 = 248 kVA released (≈ 10.5 %)</code></p>
+    <p><em>Why:</em> 248 kVA of transformer and switchgear capacity — already bought and derated for 50 °C ambient — becomes available for future load, free.</p>
+    <p><strong>Step 5 — Current and loss reduction.</strong> At 400 V:</p>
+    <p><code class="formula">I₁ = 2 353 000 / (√3 × 400) = 3396 A&nbsp;&nbsp;→&nbsp;&nbsp;I₂ = 2 105 000 / (√3 × 400) = 3038 A</code></p>
+    <p><code class="formula">Loss ratio = (I₂/I₁)² = (0.85/0.95)² = 0.80 → ≈ 20 % lower I²R losses</code></p>
+    <p><strong>Sanity check:</strong> 582 kvar is about 29 % of the 2000 kW load — a normal ratio for a motor-heavy plant moving from 0.85 to 0.95. The bank current is 600 000 / (√3 × 400) ≈ 866 A, well within a dedicated LV-MSB feeder. Result: <strong>≈600 kvar automatic detuned bank, target pf 0.95</strong>, SEC penalty avoided, 248 kVA freed.</p>
+  </div>
+
+  <h3>Intuitive Formalization</h3>
+  <p>Everything in this chapter follows from one right-angled triangle. Draw P horizontally (the work you sell), Q vertically (the field energy you shuttle), and S as the hypotenuse (the current-carrying burden):</p>
+  <p><code class="formula">S² = P² + Q²&nbsp;&nbsp;&nbsp;pf = cos φ = P / S&nbsp;&nbsp;&nbsp;Q = P × tan φ</code></p>
+  <p>Here <strong>P</strong> is real power in kW (rate of doing work), <strong>Q</strong> is reactive power in kvar (peak rate of energy exchange with fields — it averages to zero over a cycle, which is exactly why it earns nothing), <strong>S</strong> is apparent power in kVA (what determines current: S = √3 × U × I), and <strong>φ</strong> is the time-shift angle between voltage and current waves. The whole design method is one line:</p>
+  <p><code class="formula">Q_c = P × (tan φ₁ − tan φ₂)</code></p>
+  <p>Physical meaning: the capacitor bank's job is to shrink the vertical leg of the triangle from tan φ₁ per kW down to tan φ₂ per kW, while the horizontal leg — the product you actually make — stays untouched. The hypotenuse shortens, the current falls, and everything upstream breathes easier. Over-correct (Q_c &gt; Q₁) and the triangle flips below the axis: leading power factor, rising bus voltage, and a different SEC complaint.</p>
+
+  <h3>CTQ Mapping</h3>
+  <table class="tbl">
+    <thead><tr><th>Critical-to-quality requirement</th><th>How the concept delivers it</th><th>What to check in the field</th></tr></thead>
+    <tbody>
+      <tr><td>No SEC reactive-power penalty on the monthly bill</td><td>Automatic bank holds metered pf at target 0.95 across the load cycle</td><td>Var controller target setting; metered pf trend at MV-MET over a full production day</td></tr>
+      <tr><td>Transformer capacity available for plant growth</td><td>Correction at LV-MSB removes ≈580 kvar from TX-1/TX-2 loading</td><td>TX load (A) before/after bank steps switch; compare with LV FLC 2309 A</td></tr>
+      <tr><td>No harmonic resonance or capacitor failure</td><td>7 % detuning reactors tune the bank to 227 Hz, below the 5th harmonic</td><td>Reactor nameplate (p = 7 %); capacitor can temperature; THD-V at the bus (&lt;5 %)</td></tr>
+      <tr><td>No overvoltage at light load</td><td>Steps switch out automatically; no fixed over-correction</td><td>Night-time bus voltage and step status; pf never leading</td></tr>
+      <tr><td>Safe maintenance</td><td>Discharge resistors drain each step below 50 V within 1 min (IEC 60831)</td><td>Discharge time verified before touching; lockout procedure includes wait time</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Conceptual Map</h3>
+  <pre>
+                       POWER FACTOR CORRECTION (core)
+                                  |
+        +------------ rests on ---+--------------------+
+        |                         |                    |
+  P-Q-S triangle          Current follows kVA    Capacitor = local
+  S² = P² + Q²            I = S/(√3·U)           kvar generator
+        |                         |                    |
+        |                  led to |             led to |
+        v                         v                    v
+  Q_c = P(tanφ1−tanφ2)    Losses ∝ I²       Automatic stepped bank
+  (sizing rule)           (28 % saved)      + 7 % detuning reactor
+        |                         |                    |
+        +-------- enables --------+--------------------+
+                                  |
+              +-------------------+-------------------+
+              |                   |                   |
+        SEC penalty         248 kVA released     Harmonic safety
+        avoided (pf≥0.95)   on TX-1/TX-2         (see Ch. 9, 227 Hz)
+  </pre>
+  <div class="note"><p>All values indicative, on the Rev 3 basis (13.8 kV / 400-230 V / 60 Hz / 50 °C); the detailed power factor and harmonic study governs final bank size and step count.</p></div>
+</article>
+
+<article class="concept" id="concept-harmonics">
+  <h2>9. Harmonics &amp; VFDs</h2>
+  <p class="backlink">Manual deep-dive: <a href="manual-rev3.html#c-pfc">open the full section</a> (harmonics are treated with the PFC bank; see also <a href="manual-rev3.html#c-motors">the motors &amp; VFD section</a>)</p>
+
+  <h3>The Problem</h3>
+  <p>The Rev 3 plant, like every modern process plant, is full of variable frequency drives (tag <strong>VFD</strong>): pumps, fans and compressors whose speed is controlled electronically. Each drive front-end is a rectifier that does not draw current smoothly from the 400 V / 60 Hz bus — it gulps current in pulses, twice per phase per cycle, only when the incoming sine wave is near its peak. The bus sees a current waveform that is no longer a sine wave at all.</p>
+  <p>Any distorted but repeating wave can be decomposed into a family of clean sine waves: the 60 Hz <strong>fundamental</strong> plus <strong>harmonics</strong> at integer multiples — 300 Hz (5th), 420 Hz (7th), 660 Hz (11th) and so on. These harmonic currents are invisible to a standard ammeter reading "amps", yet they heat transformers and neutrals, make motors growl and run hot in a 50 °C ambient that has no margin to spare, trip breakers mysteriously, and corrupt the voltage wave that every other load on LV-MSB shares.</p>
+  <p>The lethal twist is the interaction with power factor capacitors. A plain capacitor bank and the 1600 kVA transformer's inductance form a parallel resonant circuit — an electrical bell. If a VFD happens to "ring the bell" at one of its harmonic frequencies, a modest 5th or 7th harmonic current is amplified many times over, and the first casualties are the capacitors themselves: bulging cans, blown fuses, and in the worst case a switchboard fire. Before this was understood, plants installed capacitors and drives independently and watched the capacitors die in months. The fix — the detuned bank — is the centrepiece of this chapter.</p>
+
+  <h3>Core Principles</h3>
+  <h4>Principle 1: A distorted wave is a sum of clean waves (Fourier)</h4>
+  <p><strong>Statement:</strong> Any periodic waveform equals a fundamental sine wave plus harmonics at integer multiples of the fundamental frequency.</p>
+  <p>At 60 Hz the family is 60, 120, 180, 240, 300 Hz… Think of a violin string: the same string vibrates at its fundamental pitch and simultaneously at overtones, and the mix is the timbre. A VFD input current has a very harsh "timbre". Distortion is quantified by <strong>THD</strong> (total harmonic distortion): the RMS of all harmonics divided by the fundamental, in percent.</p>
+  <h4>Principle 2: A 6-pulse rectifier produces the h = 6k ± 1 family</h4>
+  <p><strong>Statement:</strong> A three-phase bridge rectifier (six diodes — the standard small/medium VFD front-end) draws characteristic harmonics at orders 5, 7, 11, 13, 17, 19…, with magnitude falling roughly as 1/h.</p>
+  <p>Why those numbers: the bridge takes six current pulses per cycle, and the symmetry of that pattern cancels the triplen (3rd, 9th) and even harmonics, leaving 6k ± 1. So the dominant pollutants are the <strong>5th (300 Hz, typically ~30 % of fundamental)</strong> and the <strong>7th (420 Hz, ~10 %)</strong>. Define on first use: "order h" simply means h × 60 Hz.</p>
+  <h4>Principle 3: Harmonic currents create harmonic voltages across impedance</h4>
+  <p><strong>Statement:</strong> Each harmonic current flowing back through the supply impedance (transformer + grid) drops a harmonic voltage, distorting the bus voltage for <em>every</em> consumer on it.</p>
+  <p>Ohm's law per frequency: U_h = I_h × Z_h, and inductive impedance grows with frequency (Z_h ≈ h × Z₁). A small high-order current can therefore make a disproportionate voltage mess. IEEE 519 and the SEC Distribution Code limit voltage THD (typically ≤5 % at LV) for exactly this reason.</p>
+  <h4>Principle 4: A capacitor plus an inductance is a resonant circuit</h4>
+  <p><strong>Statement:</strong> The PFC bank (capacitive, impedance falling with frequency) in parallel with the transformer (inductive, impedance rising with frequency) has one frequency where the two are equal — parallel resonance — at which harmonic currents are amplified instead of absorbed.</p>
+  <p>The resonant order is set by the ratio of available fault level to capacitor size: <code>h_res = √(S_sc / Q_c)</code>. If that lands on 5 or 7, the bell rings. The worked example below shows it lands uncomfortably close in our plant.</p>
+
+  <h3>Key Innovations</h3>
+  <h4>The detuned reactor (1970s, European LV practice)</h4>
+  <p><strong>What:</strong> A series reactor added to each capacitor step, sized so that reactor reactance is a fixed percentage p (here <strong>7 %</strong>) of the capacitor reactance. The branch becomes a series L-C circuit tuned to <code>f_tune = f₁ / √p</code> — <strong>227 Hz at 60 Hz</strong> — deliberately <em>below</em> the lowest characteristic harmonic (300 Hz).</p>
+  <p><strong>Why it mattered:</strong> Above its tuning frequency a series L-C branch looks <em>inductive</em>. So at 300 Hz and everything above, the "capacitor" bank is no longer a capacitor at all — parallel resonance with the transformer can no longer occur at any harmonic the VFDs produce. The bank still delivers its kvar at 60 Hz almost unchanged. One cheap reactor converts a fire hazard into a mildly helpful harmonic sink.</p>
+  <h4>Multi-pulse and active front ends (1980s–2000s)</h4>
+  <p><strong>What:</strong> 12-pulse rectifiers (two 6-pulse bridges fed by a phase-shifting transformer) cancel the 5th and 7th, leaving 11th and 13th; active front ends (AFE) use switched transistors to draw a near-sinusoidal current (THD-i &lt; 5 %).</p>
+  <p><strong>Why it mattered:</strong> Treats the disease at the source instead of the symptom at the bus — used for the largest drives where one machine dominates the harmonic budget.</p>
+  <h4>The active harmonic filter (1990s onward)</h4>
+  <p><strong>What:</strong> A power-electronic device that measures the distorted bus current in real time and injects the exact anti-phase harmonic current — noise-cancelling headphones for the switchboard.</p>
+  <p><strong>Why it mattered:</strong> Retrofittable, adaptive, and the standard remedy when a plant grows more drives than its original harmonic study assumed.</p>
+
+  <h3>Worked Example: Resonance check — plain bank vs 7 % detuned bank on LV-MSB</h3>
+  <div class="worked">
+    <p><strong>Given:</strong> LV bus 400 V / 60 Hz fed by one TX (1600 kVA, Z = 6 %), short-circuit current Isc ≈ 38.5 kA; PFC bank Q_c ≈ 580 kvar (Chapter 8). All values indicative.</p>
+    <p><strong>Step 1 — Short-circuit (stiffness) level of the bus.</strong></p>
+    <p><code class="formula">S_sc = √3 × U × I_sc = 1.732 × 400 V × 38 500 A ≈ 26.7 MVA</code></p>
+    <p><em>Why:</em> S_sc measures how "stiff" the bus is — the inductance behind it. It is the L of the resonant circuit. (Cross-check: S_sc ≈ S_tx / Z = 1600 kVA / 0.06 = 26.7 MVA. Consistent.)</p>
+    <p><strong>Step 2 — Resonant order with a PLAIN (no reactor) bank.</strong></p>
+    <p><code class="formula">h_res = √(S_sc / Q_c) = √(26 700 / 580) = √46.0 = 6.8</code></p>
+    <p><code class="formula">f_res = 6.8 × 60 Hz ≈ 407 Hz</code></p>
+    <p><em>Why:</em> 407 Hz sits almost exactly on the <strong>7th harmonic (420 Hz)</strong> — one of the two frequencies every 6-pulse VFD in the plant pumps out. The 7th-harmonic currents would be amplified by the resonance, circulate between transformer and capacitors, and cook the bank. <em>Note:</em> the result also moves with switching state — close the bus-tie (Isc ≈ 77 kA, S_sc ≈ 53.3 MVA) and h_res shifts to √(53 300/580) = 9.6 (≈575 Hz). You cannot "tune around" a resonance that moves; you must remove it.</p>
+    <p><strong>Step 3 — Tuning frequency of the 7 % DETUNED bank.</strong> Detuning factor p = X_L/X_C = 0.07.</p>
+    <p><code class="formula">f_tune = f₁ / √p = 60 / √0.07 = 60 / 0.2646 = 227 Hz&nbsp;&nbsp;(order n = 3.78)</code></p>
+    <p><em>Why:</em> The series reactor and capacitor resonate (series) at 227 Hz. Above 227 Hz the branch impedance is net inductive.</p>
+    <p><strong>Step 4 — Verdict at the harmonic frequencies.</strong></p>
+    <p><code class="formula">5th = 300 Hz &gt; 227 Hz → branch inductive → no parallel resonance possible</code></p>
+    <p><code class="formula">7th = 420 Hz &gt; 227 Hz → inductive → safe;&nbsp; same for 11th, 13th…</code></p>
+    <p><strong>Sanity check:</strong> 227 Hz lies below 300 Hz with ~25 % margin, but above the 3rd (180 Hz) — triplens are scarce on a balanced three-wire system, so the bank cannot be overloaded by them either. The 7 % reactor raises the capacitor terminal voltage by roughly 1/(1−p) − 1 ≈ 7.5 %, which is why the cans are 480 V-class units on a 400 V bus. <strong>Result: plain bank = resonance at ≈407 Hz, on top of the 7th harmonic — reject. Detuned 7 % bank = tuned to 227 Hz, inductive at all VFD harmonics — accept.</strong></p>
+  </div>
+
+  <h3>Intuitive Formalization</h3>
+  <p>Three short formulas carry the whole chapter. First, frequencies: harmonic order h means frequency <code>f_h = h × 60 Hz</code>, and a 6-pulse rectifier emits <code>h = 6k ± 1</code> (k = 1, 2, 3…) with current magnitude roughly <code>I_h ≈ I₁ / h</code>. Second, the danger condition for a plain capacitor bank:</p>
+  <p><code class="formula">h_res = √(S_sc / Q_c)</code></p>
+  <p>where <strong>S_sc</strong> (MVA) is the bus short-circuit level — physically, the strength of the transformer/grid inductance behind the bus — and <strong>Q_c</strong> (Mvar) is the connected capacitor power. The square root appears because resonance happens where inductive and capacitive reactances cross, and each scales linearly (one up, one down) with frequency. If h_res lands near 5, 7, 11 or 13, expect amplification. Third, the cure:</p>
+  <p><code class="formula">f_tune = f₁ / √p</code></p>
+  <p>where <strong>p</strong> is the reactor's reactance as a fraction of the capacitor's (p = 0.07 → 227 Hz at 60 Hz, n = 3.78). Physical meaning: below f_tune the branch behaves as the capacitor you wanted; above f_tune the reactor wins and the branch is an inductor — and an inductor cannot parallel-resonate with another inductor. Everything a field engineer needs is: compute h_res, see that it threatens, specify p = 7 %, verify f_tune &lt; 300 Hz.</p>
+
+  <h3>CTQ Mapping</h3>
+  <table class="tbl">
+    <thead><tr><th>Critical-to-quality requirement</th><th>How the concept delivers it</th><th>What to check in the field</th></tr></thead>
+    <tbody>
+      <tr><td>Bus voltage clean enough for all loads (THD-V ≤ 5 %, IEEE 519 / SEC code)</td><td>Detuned bank absorbs part of the 5th/7th instead of amplifying them; large drives use 12-pulse/AFE or line reactors</td><td>Power-quality meter snapshot at LV-MSB at full production; THD-V and individual h₅, h₇</td></tr>
+      <tr><td>Capacitor bank survives its design life</td><td>227 Hz tuning prevents resonance; 480 V-class cans absorb the 7.5 % voltage rise</td><td>Reactor nameplate p = 7 %; can temperatures; step currents balanced; no bulged cans</td></tr>
+      <tr><td>Transformers not derated by stealth</td><td>Harmonic heating (eddy losses ∝ h²) kept inside the K-factor/THDI assumed in sizing</td><td>TX top-oil/winding temperature vs load; THD-I at TX secondary &lt; study value</td></tr>
+      <tr><td>No nuisance tripping or metering error</td><td>True-RMS sensing assumed in breaker trip units and meters; harmonic study sets limits</td><td>Trip units set per coordination study; meters specified true-RMS</td></tr>
+      <tr><td>Resonance stays absent in every switching state</td><td>Detuning works regardless of S_sc (tie open/closed, on DG)</td><td>Confirm bank behaviour and THD with bus-tie closed during commissioning, and on DG supply</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Conceptual Map</h3>
+  <pre>
+                       HARMONICS &amp; VFDs (core)
+                                |
+        +----------- rests on --+----------------------+
+        |                       |                      |
+   Fourier:                6-pulse bridge         U_h = I_h × Z_h
+   wave = Σ harmonics      → h = 6k±1             (current pollution
+   (THD metric)            (5th 300 Hz,            becomes voltage
+        |                   7th 420 Hz)            pollution)
+        |                       |                      |
+        +---------- collides with PFC capacitors ------+
+                                |
+                   h_res = √(S_sc/Q_c) ≈ 6.8
+                   → ≈407 Hz, ON the 7th  (danger)
+                                |
+                    led to      |      led to
+            +-------------------+------------------+
+            |                   |                  |
+     DETUNED BANK         12-pulse / AFE      Active filter
+     p = 7 % → 227 Hz     (fix at source)     (anti-noise
+     &lt; 300 Hz → safe                           injection)
+            |                   |                  |
+            +------- enables ---+------------------+
+                                |
+              Clean 400 V bus: THD-V ≤ 5 %, cool
+              transformers, long capacitor life
+  </pre>
+  <div class="note"><p>All values indicative on the Rev 3 basis (60 Hz, Isc 38.5 kA / 77 kA tie-closed, PFC ≈580 kvar detuned 7 %); the plant harmonic study (per IEEE 519 and the SEC Distribution Code) governs.</p></div>
+</article>
+
+<article class="concept" id="concept-motorstart">
+  <h2>10. Motor Starting</h2>
+  <p class="backlink">Manual deep-dive: <a href="manual-rev3.html#c-motors">open the full section</a></p>
+
+  <h3>The Problem</h3>
+  <p>An induction motor at standstill is, electrically, a transformer whose secondary winding has been short-circuited by the rotor cage. Switch it straight onto the 400 V bus — <strong>direct-on-line (DOL)</strong> starting — and it draws <strong>6 to 7 times its full-load current</strong> for as long as it takes to accelerate, typically 2–10 seconds. The current arrives at a miserable power factor of about 0.2, almost pure magnetisation, and it does not care how big your transformer is.</p>
+  <p>That inrush has to be pushed through the 6 % impedance of a 1600 kVA transformer (TX-1/TX-2), and impedance times current equals voltage <em>lost</em>. The bus voltage dips for the whole acceleration. Other motors on the same MCC see less voltage; their torque falls with voltage <em>squared</em>, so a 10 % dip costs 19 % of torque — loaded machines slow down and draw even more current. Contactor coils hold in down to roughly 80 % voltage; below that they drop out and trip healthy loads. The DCS flags low-voltage alarms across the plant. In the worst case, one big compressor start ripples into a partial plant trip.</p>
+  <p>In Saudi conditions the problem is sharper still: at 50 °C ambient everything already runs near its thermal limit, and when the plant is on the 1250 kVA diesel generator (tag DG) the "grid" behind the bus is twenty times weaker than SEC. The engineering question of this chapter is brutally practical: <em>which motors may start DOL, and which must be eased onto the bus — and how do you prove it with arithmetic a field engineer can redo on a phone?</em></p>
+
+  <h3>Core Principles</h3>
+  <h4>Principle 1: A stalled motor is a short-circuited transformer</h4>
+  <p><strong>Statement:</strong> At zero speed the rotor conductors see the full 60 Hz field, so only the machine's leakage impedance limits current — hence the locked-rotor current of 6–7 × In at pf ≈ 0.2.</p>
+  <p>As the rotor accelerates, the frequency it "sees" (the slip frequency) falls, apparent rotor resistance rises, and current drops — but only near full speed. The current stays close to locked-rotor value for most of the run-up; it is a cliff, not a slope.</p>
+  <h4>Principle 2: Voltage dip is a voltage-divider problem</h4>
+  <p><strong>Statement:</strong> The starting kVA divides the voltage across the source impedance and the motor; to first order the dip at the bus is the starting kVA as a fraction of the total.</p>
+  <p><code class="formula">ΔU/U ≈ S_start / (S_start + S_sc)</code></p>
+  <p>Here S_sc, the short-circuit level (defined in Chapter 9), is the measure of bus stiffness. Big motor + weak source = deep dip. This single fraction is the screening tool used in the worked example.</p>
+  <h4>Principle 3: Torque scales with voltage squared</h4>
+  <p><strong>Statement:</strong> Induction motor torque at any speed is proportional to U², so a dip hurts twice — the starting motor accelerates more slowly (longer dip) and every running motor loses torque.</p>
+  <p>This is why dip limits exist: typically <strong>≤ 10 % at the switchboard</strong> (protects everyone else) and <strong>≤ 15 % at the starting motor's own terminals</strong> (ensures it can still break away and accelerate its load). These are common plant-specification values; the project motor-starting study sets the binding ones.</p>
+  <h4>Principle 4: Reduced-voltage starting trades current for torque</h4>
+  <p><strong>Statement:</strong> Any method that lowers the voltage (or reshapes the frequency) at the motor terminals during start reduces current proportionally — but torque falls with the square, so the driven load must still be accelerable.</p>
+  <p>A pump with a quadratic torque curve is easy to start gently; a loaded screw conveyor is not. Starting method selection is always a two-sided check: bus dip on one side, accelerating torque on the other.</p>
+
+  <h3>Key Innovations</h3>
+  <h4>Star-delta starting (early 20th century)</h4>
+  <p><strong>What:</strong> Start with the windings in star (each winding sees 400/√3 = 231 V), then switch to delta at speed. Current and torque both drop to <strong>1/3</strong> of DOL values.</p>
+  <p><strong>Why it mattered:</strong> The first cheap reduced-voltage method — three contactors and a timer. Its weakness is the open transition: a current spike at the star→delta changeover, and only 33 % of starting torque, fine for fans, marginal for much else.</p>
+  <h4>The soft starter (1970s–80s, thyristor era)</h4>
+  <p><strong>What:</strong> Anti-parallel thyristors chop the voltage smoothly from ~30 % to 100 % over an adjustable ramp; current limit settable, typically 2.5–4 × In.</p>
+  <p><strong>Why it mattered:</strong> Continuous, shockless control of the trade-off in Principle 4 — no changeover spike, adjustable in the field, and it doubles as a soft <em>stop</em> for pumps (kills water hammer).</p>
+  <h4>The VFD as a starter (1990s onward)</h4>
+  <p><strong>What:</strong> A variable frequency drive starts the motor at low frequency and low voltage simultaneously, keeping the magnetic flux constant. The motor never experiences locked-rotor conditions; line current stays near or below <strong>1.5 × In</strong> while delivering up to full torque from zero speed.</p>
+  <p><strong>Why it mattered:</strong> It decouples starting current from starting torque — the only method that does. Where the process wants speed control anyway (most pumps and fans, for energy saving), the starting problem disappears for free. The price is harmonics — Chapter <a href="09-harmonics.html">9</a>.</p>
+  <p>The practical selection ladder, cheapest first: <strong>DOL → star-delta → soft starter → VFD</strong>. Climb only as far as the dip calculation and the load's torque curve force you to.</p>
+
+  <h3>Worked Example: Can a 160 kW pump motor start DOL on TX-1?</h3>
+  <div class="worked">
+    <p><strong>Given:</strong> Motor 160 kW, 400 V, 60 Hz, 4-pole (≈1800 rpm), efficiency η = 0.96, pf = 0.86, locked-rotor current 6 × In at pf ≈ 0.2. Source: one transformer TX-1, 1600 kVA, Z = 6 %, on a stiff 13.8 kV grid. Dip criteria: ≤ 10 % at LV-MSB. All values indicative.</p>
+    <p><strong>Step 1 — Full-load current of the motor.</strong> Input apparent power first:</p>
+    <p><code class="formula">S_motor = P / (η × pf) = 160 / (0.96 × 0.86) = 193.8 kVA</code></p>
+    <p><code class="formula">In = 193 800 / (√3 × 400) = 193 800 / 692.8 = 280 A</code></p>
+    <p><em>Why:</em> shaft kW must be grossed up for losses (η) and reactive demand (pf) before converting to amps.</p>
+    <p><strong>Step 2 — Starting current and starting kVA.</strong></p>
+    <p><code class="formula">I_start = 6 × In = 6 × 280 = 1680 A</code></p>
+    <p><code class="formula">S_start = √3 × 400 × 1680 = 1164 kVA</code></p>
+    <p><em>Note:</em> 1164 kVA of starting demand from a 160 kW motor — 73 % of the whole transformer rating, for several seconds. This is why the question must be asked at all.</p>
+    <p><strong>Step 3 — Bus stiffness behind LV-MSB.</strong></p>
+    <p><code class="formula">S_sc ≈ S_tx / Z = 1600 / 0.06 = 26 700 kVA&nbsp;&nbsp;(matches Isc ≈ 38.5 kA at 400 V)</code></p>
+    <p><strong>Step 4 — Voltage dip on the grid supply.</strong></p>
+    <p><code class="formula">ΔU/U ≈ S_start / (S_start + S_sc) = 1164 / (1164 + 26 700) = 1164 / 27 864 = 0.042</code></p>
+    <p><code class="formula">ΔU ≈ 4.2 %</code></p>
+    <p><em>Verdict:</em> 4.2 % &lt; 10 % limit → <strong>DOL start accepted on normal supply</strong>, even with the bus-tie open and one transformer alone.</p>
+    <p><strong>Step 5 — Same motor on the 1250 kVA diesel generator.</strong> A generator's transient stiffness is set by its transient reactance x′d ≈ 14 %:</p>
+    <p><code class="formula">S_sc,DG ≈ S_DG / x′d = 1250 / 0.14 ≈ 8930 kVA</code></p>
+    <p><code class="formula">ΔU/U ≈ 1164 / (1164 + 8930) = 1164 / 10 094 = 0.115 → ≈ 11.5 %</code></p>
+    <p><em>Verdict:</em> 11.5 % &gt; 10 % → <strong>DOL start rejected on DG</strong>. Options: soft starter limited to ~3 × In (S_start ≈ 580 kVA → dip ≈ 580/9510 ≈ 6 % — accept), or PMS-staged restart so this motor starts alone on a lightly loaded DG.</p>
+    <p><strong>Sanity check:</strong> the grid case (26.7 MVA) is three times stiffer than the DG case (8.9 MVA), and the dip is roughly three times smaller — the numbers scale as the physics says they should. Also note the dip duration: a quadratic-torque pump accelerates in ~3–5 s; the dip is brief but long enough to matter to contactors if it were deeper.</p>
+  </div>
+
+  <h3>Intuitive Formalization</h3>
+  <p>The whole subject reduces to one screening formula and two scaling laws. The screening formula is the voltage divider:</p>
+  <p><code class="formula">ΔU/U ≈ S_start / (S_start + S_sc)</code></p>
+  <p>where <strong>S_start</strong> (kVA) is the locked-rotor demand — physically, how hard the stalled motor pulls on the bus — and <strong>S_sc</strong> (kVA) is the short-circuit level — physically, how hard the source can push back. The dip is simply the motor's share of the tug-of-war. Two scaling laws decide what to do when the dip is too deep:</p>
+  <p><code class="formula">I_start ∝ U_motor&nbsp;&nbsp;&nbsp;but&nbsp;&nbsp;&nbsp;T_start ∝ U_motor²</code></p>
+  <p>Current falls linearly with applied voltage (Ohm's law on the leakage impedance), but torque falls with its square (torque is flux × current, and both shrink together). Every starting method is a different point on this trade-off: DOL (100 % U, 100 % T, 6–7 × In), star-delta (58 % U → 33 % I and 33 % T), soft starter (adjustable ramp), VFD (the cheat — it changes frequency too, keeping flux and torque while current stays ≈1.5 × In). The field method is always: compute the dip, compare to the limit, climb the ladder one rung at a time, then verify the remaining torque still accelerates the load.</p>
+
+  <h3>CTQ Mapping</h3>
+  <table class="tbl">
+    <thead><tr><th>Critical-to-quality requirement</th><th>How the concept delivers it</th><th>What to check in the field</th></tr></thead>
+    <tbody>
+      <tr><td>No plant-wide disturbance when large motors start (dip ≤ 10 % at LV-MSB)</td><td>Dip screening per motor; starting method ladder applied where screening fails</td><td>Motor-starting study vs installed starter type; record dip with a power-quality meter during commissioning starts</td></tr>
+      <tr><td>Motor actually reaches speed without tripping</td><td>Torque-vs-voltage check (T ∝ U²) against the driven load curve; acceleration time inside thermal limits</td><td>Measured run-up time vs the protection relay's locked-rotor/excessive-start-time setting</td></tr>
+      <tr><td>Starts succeed on DG supply, not just on SEC</td><td>Separate dip check at S_sc,DG ≈ 8.9 MVA; PMS staged restart sequence</td><td>Black-building test: staged restart order and timers in the PMS; soft-start current limit settings</td></tr>
+      <tr><td>Motor thermal life at 50 °C ambient</td><td>Limited starts per hour (typically 2–3 hot starts for large machines); start current duration bounded</td><td>Starts-per-hour counter / relay setting; winding temperature alarms after repeated starts</td></tr>
+      <tr><td>Contactors and undervoltage relays ride through normal starts</td><td>Dip kept above ~80 % contactor hold-in voltage with margin</td><td>UV relay delay settings coordinate with worst-case start duration</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Conceptual Map</h3>
+  <pre>
+                        MOTOR STARTING (core)
+                                 |
+        +----------- rests on ---+--------------------+
+        |                        |                    |
+  Stalled motor =          Voltage divider       Torque ∝ U²
+  shorted transformer      ΔU ≈ S_start /        (dip hurts the
+  → 6–7×In @ pf 0.2        (S_start + S_sc)       starter AND
+        |                        |                 the neighbours)
+        |                        |                    |
+        +--------- led to: the starting ladder -------+
+                                 |
+     DOL ──→ star-delta ──→ soft starter ──→ VFD
+    (6–7×In)   (1/3 I, 1/3 T)  (2.5–4×In,     (≈1.5×In, full
+     cheap                      ramp+softstop)  torque; harmonics
+        |                        |              → Ch. 9)
+        +--------- enables ------+--------------------+
+                                 |
+        160 kW DOL on TX-1: dip 4.2 % ✓ on SEC grid
+        same motor on DG 1250 kVA: 11.5 % ✗ → soft start
+        + PMS staged restart after transfer (Ch. 12)
+  </pre>
+  <div class="note"><p>All values indicative on the Rev 3 basis (400 V / 60 Hz / 1800 rpm 4-pole / 50 °C); the project motor-starting and coordination studies govern accept/reject limits and settings.</p></div>
+</article>
+
+<article class="concept" id="concept-ups">
+  <h2>11. The UPS</h2>
+  <p class="backlink">Manual deep-dive: <a href="manual-rev3.html#c-ups">open the full section</a></p>
+
+  <h3>The Problem</h3>
+  <p>When SEC supply fails, Chapter <a href="12-transfer.html">12</a> shows the plant goes dark for roughly 12 seconds before the diesel generator picks up. Twelve seconds is nothing to a motor — and an eternity to a computer. The DCS controllers, the safety (ESD) system, the protection relays' auxiliary supplies, telecoms and the operator stations will all reboot, and a process plant whose control system reboots mid-process does not pause — it trips, vents, and takes hours to restart. Worse, electronics do not even need 12 seconds to die: a voltage dip of a few <em>cycles</em> — 50 milliseconds, the kind caused by a remote 13.8 kV fault or a big motor start — is enough to crash an unprotected PLC.</p>
+  <p>The historical attempts are instructive. Plants first tried "essential" feeders from two transformers — but both share the same upstream dips. Then rotary sets (motor-generator with a flywheel) — robust, but maintenance-heavy and only seconds of ride-through. What the control room actually needs is power that is <em>continuously manufactured on site from stored energy</em>, with the mains relegated to the role of keeping the store topped up.</p>
+  <p>That is the <strong>UPS — uninterruptible power supply</strong>. The Rev 3 plant carries a <strong>100 kVA double-conversion UPS with 30 minutes of battery autonomy</strong> (tag UPS), feeding the DCS, ESD, critical instruments and operator interfaces. Thirty minutes is not arbitrary: it covers the DG start (12 s) hundreds of times over, and if the DG <em>fails</em> to start, it gives operators time to shut the process down in an orderly, safe sequence rather than wherever the lights went out.</p>
+
+  <h3>Core Principles</h3>
+  <h4>Principle 1: Double conversion — the load never sees the mains</h4>
+  <p><strong>Statement:</strong> Incoming AC is rectified to a DC bus, the battery floats on that DC bus, and an inverter manufactures a brand-new sine wave for the load — always, not just during outages.</p>
+  <p>This is the "online double-conversion" topology (VFI — voltage and frequency independent, per IEC 62040-3). The load is fed from the inverter 24/7; mains dips, harmonics and frequency wobbles are absorbed at the rectifier and never reach the DCS. When the mains dies, <em>nothing switches</em> — the battery simply stops being charged and starts being discharged. Transfer time to battery: zero milliseconds, by construction.</p>
+  <h4>Principle 2: The battery is an energy tank sized in kWh</h4>
+  <p><strong>Statement:</strong> Autonomy is energy: battery kWh = load kW × backup hours, grossed up for inverter losses, battery aging and design margin.</p>
+  <p>Power (kVA/kW) sizes the electronics; <em>energy</em> (kWh) sizes the battery. The two are independent purchases — the same 100 kVA UPS can carry 10 minutes or 2 hours depending on how many battery blocks you bolt on. The worked example sizes ours.</p>
+  <h4>Principle 3: The static bypass is the escape route</h4>
+  <p><strong>Statement:</strong> A thyristor switch can connect the load directly to raw mains in under a quarter-cycle if the inverter is overloaded, fails, or must clear a downstream fault.</p>
+  <p>It seems paradoxical — a device whose whole point is to isolate the load from the mains keeps a direct mains path on hot standby. But the inverter is a polite, current-limited source (Principle 4); when brute force is needed, the bypass supplies it. The bypass only works if inverter output and mains are kept synchronised, which the UPS does continuously whenever mains is healthy.</p>
+  <h4>Principle 4: An inverter is a current-limited source — fault clearing changes character</h4>
+  <p><strong>Statement:</strong> Transistors cannot survive the 10–20 × overcurrents a transformer delivers happily; an inverter electronically limits fault current to about <strong>2–3 × In</strong>.</p>
+  <p>Downstream protection philosophy must be rethought: a breaker that relies on a big magnetic-trip current to open instantly may simply never see it. This single fact drives the UPS distribution board design (small breaker ratings, careful grading, bypass-assisted fault clearing) and is computed explicitly below.</p>
+
+  <h3>Key Innovations</h3>
+  <h4>The static transfer switch (1960s–70s)</h4>
+  <p><strong>What:</strong> Anti-parallel thyristor pairs that transfer the load between inverter and mains in &lt; 5 ms — faster than any electromechanical device, faster than electronics can notice.</p>
+  <p><strong>Why it mattered:</strong> It made the double-conversion topology trustworthy: the UPS can fail, overload or clear faults without the load ever rebooting. It also enables maintenance bypass — the whole UPS can be wrapped out of the circuit for service while the load runs on raw mains.</p>
+  <h4>VRLA batteries, and now Li-ion (1980s / 2010s)</h4>
+  <p><strong>What:</strong> Valve-regulated lead-acid blocks — sealed, rack-mounted, no acid handling, no battery room ventilation in the classic sense. Li-ion arrives with twice the life, half the footprint and far better tolerance of the 25 °C+ battery-room temperatures that plague Saudi installations (VRLA life halves for every ~10 °C above 20–25 °C).</p>
+  <p><strong>Why it mattered:</strong> The battery is the UPS's mortal component. Chemistry and room temperature, not electronics, decide whether the promised 30 minutes exists on the day it is needed.</p>
+  <h4>Eco/hybrid modes — and why we decline them (2000s)</h4>
+  <p><strong>What:</strong> Running the load on bypass (raw mains) with the inverter idling, achieving ~99 % efficiency instead of ~94 %, and transferring to inverter only when the mains misbehaves.</p>
+  <p><strong>Why it mattered:</strong> A genuine saving in data centres — but the load briefly tastes the raw mains disturbance before transfer. For a process plant ESD/DCS at 50 °C in a weak-grid corner of the network, the few-percent efficiency is not worth the exposure; Rev 3 specifies true double conversion.</p>
+
+  <h3>Worked Example: Battery energy for 100 kVA / 30 min — and the selectivity trap</h3>
+  <div class="worked">
+    <p><strong>Given:</strong> UPS 100 kVA, load power factor 0.8 → 80 kW; autonomy 30 min (0.5 h); inverter efficiency η_inv = 0.94; end-of-life aging factor 1.25 (battery is replaced when capacity falls to 80 %); design margin 1.1 (temperature, tolerance, future load creep); battery string 432 V DC nominal (216 lead-acid cells × 2 V). All values indicative.</p>
+    <p><strong>Step 1 — Power the battery must deliver.</strong> The inverter sits between battery and load, so battery power is grossed up for its losses:</p>
+    <p><code class="formula">P_dc = P_load / η_inv = 80 / 0.94 = 85.1 kW</code></p>
+    <p><strong>Step 2 — Raw energy for 30 minutes.</strong></p>
+    <p><code class="formula">E_raw = P_dc × t = 85.1 kW × 0.5 h = 42.6 kWh</code></p>
+    <p><em>Why:</em> energy = power × time. Note it is the DC-side 85.1 kW, not the 80 kW load, that drains the tank.</p>
+    <p><strong>Step 3 — Aging and design margin.</strong></p>
+    <p><code class="formula">E_design = 42.6 × 1.25 × 1.1 = 58.5 kWh</code></p>
+    <p><em>Why:</em> the 30 minutes must exist on the battery's <em>last</em> good day, not its first, and at the real room temperature, not the datasheet's 20 °C.</p>
+    <p><strong>Step 4 — Convert to amp-hours at the string voltage.</strong></p>
+    <p><code class="formula">C = E_design / U_dc = 58 500 Wh / 432 V ≈ 135 Ah → select 150 Ah blocks</code></p>
+    <p><em>Note:</em> real selection uses the manufacturer's constant-power discharge tables (a 30 min discharge extracts less than the 10 h-rate Ah), so vendors typically land on 150–180 Ah for this duty — our arithmetic puts us in the right aisle of the catalogue.</p>
+    <p><strong>Sanity check:</strong> 58.5 kWh is about 1.5 hours of an average Saudi villa's summer consumption packed into two battery cabinets — believable for ~10 m² of plant room.</p>
+    <p><strong>Step 5 — The selectivity trap.</strong> UPS full-load current and fault current:</p>
+    <p><code class="formula">In = 100 000 / (√3 × 400) = 144 A</code></p>
+    <p><code class="formula">I_fault,inverter ≈ 2 to 3 × In = 290–430 A&nbsp;&nbsp;(for ~100–200 ms)</code></p>
+    <p>Now take a 32 A C-curve MCB on the UPS distribution board: its instantaneous (magnetic) trip needs 5–10 × 32 A = <strong>160–320 A</strong>. The inverter's 290–430 A <em>may</em> just reach it — or may not, leaving the fault to a slow thermal trip while the whole UPS bus sags and every other critical load browns out.</p>
+    <p><em>Verdict and fixes:</em> keep downstream breakers small relative to UPS size (rule of thumb ≤ 20–25 % of In per outgoing way, here ≤ ~32 A, with B-curves preferred), use fast fuses where selectivity is critical, and rely on the <strong>static bypass</strong>: a healthy mains delivers thousands of amps through the bypass for the few cycles needed to blow the faulty way's protection cleanly, then the load returns to the inverter.</p>
+  </div>
+
+  <h3>Intuitive Formalization</h3>
+  <p>Two small equations size the machine; one inequality governs its protection. Sizing:</p>
+  <p><code class="formula">E_batt = (P_load / η_inv) × t × k_age × k_margin</code></p>
+  <p>Symbols and their physical meaning: <strong>P_load</strong> (kW) — the real power the critical loads draw (kVA × their power factor); <strong>η_inv</strong> — the inverter's efficiency, i.e. the toll the electronics charge on every watt-hour leaving the tank; <strong>t</strong> (h) — the autonomy promise; <strong>k_age</strong> ≈ 1.25 — the battery you will own in year 4, not the one you bought; <strong>k_margin</strong> ≈ 1.1 — humility about temperature and load growth. Then <code>C (Ah) = E_batt / U_dc</code> converts energy to the catalogue quantity, with U_dc the DC string voltage.</p>
+  <p>Protection: the inverter can deliver at most <code>I_f ≈ (2–3) × In</code>, so any downstream device that must open instantly on inverter power alone needs:</p>
+  <p><code class="formula">I_magnetic-trip &lt; 2 × In,UPS&nbsp;&nbsp;(with margin)</code></p>
+  <p>If that cannot be met, the fault-clearing muscle must come from the static bypass — design the board assuming it.</p>
+
+  <h3>CTQ Mapping</h3>
+  <table class="tbl">
+    <thead><tr><th>Critical-to-quality requirement</th><th>How the concept delivers it</th><th>What to check in the field</th></tr></thead>
+    <tbody>
+      <tr><td>DCS/ESD ride through every dip and the 12 s transfer gap with zero reboots</td><td>Double conversion: load fed from inverter continuously; 0 ms transfer to battery</td><td>UPS in VFI (online) mode, not eco-mode; event log shows no load-side transfers during recorded mains dips</td></tr>
+      <tr><td>30 minutes of real autonomy for orderly shutdown if DG fails</td><td>Battery sized 58.5 kWh with aging and margin factors</td><td>Annual discharge test result vs 30 min; battery room temperature ≤ 25 °C; block impedance trend</td></tr>
+      <tr><td>A fault on one UPS-fed circuit does not crash the rest</td><td>Downstream breakers ≤ ~25 % of UPS In; static bypass clears big faults</td><td>DB schedule breaker sizes and curves; bypass "available/synchronised" indication healthy</td></tr>
+      <tr><td>UPS maintainable without dropping the control room</td><td>Maintenance bypass switch wraps the whole UPS</td><td>Documented bypass procedure; staff trained; bypass interlock tested at commissioning</td></tr>
+      <tr><td>Battery does not become the hidden single point of failure</td><td>Monitoring (voltage, impedance, temperature per block), replacement at 80 % capacity</td><td>Battery monitor alarms wired to DCS; replacement date vs design life at actual room temperature</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Conceptual Map</h3>
+  <pre>
+                          THE UPS (core)
+                               |
+        +--------- rests on ---+----------------------+
+        |                      |                      |
+  Double conversion      Battery = kWh tank     Inverter = polite,
+  AC→DC→AC, load         E = P·t·k_age·k_mar    current-limited
+  never sees mains       (autonomy promise)     source (2–3×In)
+        |                      |                      |
+  led to|               led to |               led to |
+        v                      v                      v
+  Static bypass /        VRLA → Li-ion          Selectivity rules:
+  static transfer        (temperature is        small breakers,
+  switch (&lt;5 ms)         the real enemy)        fuses, bypass-
+        |                      |                assisted clearing
+        +------- enables ------+----------------------+
+                               |
+        DCS · ESD · relays · telecom ride through:
+        50 ms dips, the 12 s DG gap (Ch. 12),
+        and a failed DG start (30 min orderly shutdown)
+  </pre>
+  <div class="note"><p>All values indicative on the Rev 3 basis (UPS 100 kVA / 30 min, 400-230 V, 60 Hz); IEC 62040 series and the vendor's discharge tables govern final battery selection.</p></div>
+</article>
+
+<article class="concept" id="concept-transfer">
+  <h2>12. ATS &amp; Standby Transfer</h2>
+  <p class="backlink">Manual deep-dive: <a href="manual-rev3.html#c-ats">open the ATS section</a> · <a href="manual-rev3.html#c-genset">open the generator section</a></p>
+
+  <h3>The Problem</h3>
+  <p>However good the SEC 13.8 kV supply is, one day it will fail — a feeder fault, a substation outage, a sandstorm taking down an overhead line. When it does, the plant has loads that can wait (most of the process restarts after an outage anyway), loads that cannot wait long (cooling for hot equipment, emergency lighting, instrument air, fire-fighting), and loads that cannot wait at all (the control and safety systems — Chapter <a href="11-ups.html">11</a>'s territory).</p>
+  <p>For the "cannot wait long" class, the Rev 3 plant carries a <strong>1250 kVA standby diesel generator (tag DG)</strong>, declared at ESP rating for 50 °C ambient, and an <strong>automatic transfer switch (tag ATS)</strong> that moves the essential bus from mains to generator and back without a human in the loop. The question this chapter answers is deceptively simple: <em>what actually happens, second by second, between the lights going out and the generator carrying load — and why is the gap as long as it is?</em></p>
+  <p>The naive answer — "switch instantly" — fails twice. First, a diesel engine physically cannot deliver power instantly: it must crank, fire, run up to 1800 rpm (60 Hz), and build voltage. Second, you must not even <em>try</em> to connect two live sources, or a live source to a bus full of still-spinning motors, without care: out-of-phase closure onto residual motor voltage can break shafts and trip everything the transfer was meant to save. The whole discipline of standby transfer is the management of these ~12 seconds — and of the temptation to shortcut them by paralleling with the grid, which, as we shall see, requires SEC's written consent.</p>
+
+  <h3>Core Principles</h3>
+  <h4>Principle 1: Open transition — break before make</h4>
+  <p><strong>Statement:</strong> The ATS disconnects the load from the dead mains <em>before</em> connecting it to the generator; the two sources are never electrically joined, even for a millisecond.</p>
+  <p>This is the Rev 3 scheme: mechanically interlocked contactor pair (or motorised changeover), physically incapable of closing both ways at once. Its virtue is absolute safety from source-to-source faults; its price is a guaranteed dead interval. The opposite — <strong>closed transition</strong>, a brief (≤100 ms) overlap with both sources paralleled — eliminates the second outage on <em>return</em> to mains, but it momentarily makes the plant a generator operating in parallel with the SEC network. That is an act regulated by the SEC Distribution Code / Saudi Grid Code: it requires utility consent, synchronising equipment, and protection (reverse power, vector shift) that proves the DG cannot backfeed a dead or faulted grid. Hence Rev 3 stays open-transition unless a future agreement says otherwise.</p>
+  <h4>Principle 2: Detection must be deliberately slow</h4>
+  <p><strong>Statement:</strong> The ATS waits 1–3 seconds of confirmed undervoltage before declaring the mains dead, because most disturbances are dips and auto-reclose events that heal themselves.</p>
+  <p>An SEC overhead-line fault is typically cleared and re-closed within a second. A hair-trigger ATS would start the diesel and drop the bus for every passing dip — converting minor disturbances into 12-second outages. The delay is not sloth; it is statistics.</p>
+  <h4>Principle 3: A diesel needs ~10 seconds, by physics not by choice</h4>
+  <p><strong>Statement:</strong> Crank (2–3 s), fire and accelerate to 1800 rpm (3–5 s), build and stabilise voltage via the AVR (1–2 s) — about 10 s to "ready to load" for a standby-class set, per ISO 8528.</p>
+  <p>Jargon on first use: <strong>AVR</strong> — automatic voltage regulator, the device exciting the alternator field. Faster is possible (jacket-water heaters keep the engine warm precisely to make 10 s achievable at any hour), but loading a diesel before speed and voltage are stable just stalls it.</p>
+  <h4>Principle 4: The transfer is not over until the loads are back</h4>
+  <p><strong>Statement:</strong> Closing the ATS onto the generator is the midpoint, not the end: motor contactors dropped out at t ≈ 0.1 s, so the PMS must restart essential motors in stages the 1250 kVA set can swallow (Chapter <a href="10-motorstart.html">10</a>).</p>
+  <p>A dead bus suddenly reconnected to every contactor that happened to reseal would demand several thousand kVA of simultaneous starting current from a 1250 kVA machine. Staged restart — biggest critical motor first, alone — is part of the transfer design, not an afterthought.</p>
+
+  <h3>Key Innovations</h3>
+  <h4>The mechanically interlocked automatic transfer switch (mid-20th century)</h4>
+  <p><strong>What:</strong> One mechanism, two positions, physically unable to bridge sources; with integral voltage/frequency sensing on both sides and adjustable timers (transfer delay, retransfer delay, engine cooldown).</p>
+  <p><strong>Why it mattered:</strong> It removed the human — and human error — from a sequence that happens at 3 a.m. The interlock turns "we must never parallel accidentally" from a procedure into a piece of steel.</p>
+  <h4>Engine readiness engineering (ISO 8528 standby practice)</h4>
+  <p><strong>What:</strong> Jacket-water heaters, trickle-charged starting batteries (often duplicated), fuel polishing, and weekly automatic test runs — everything needed so a machine that sits idle 99.9 % of its life starts within 10 s on demand.</p>
+  <p><strong>Why it mattered:</strong> Standby generation fails at the start attempt or not at all; the innovations are all about the first ten seconds. Field statistics consistently blame starting batteries first — which is why they are tested, monitored and often doubled.</p>
+  <h4>PMS-supervised transfer and load shedding (1990s onward)</h4>
+  <p><strong>What:</strong> The power management system pre-sheds non-essential feeders before transfer, sequences motor restarts after it, and supervises retransfer to mains only after the grid has been stable for minutes (typically 5–30 min, adjustable).</p>
+  <p><strong>Why it mattered:</strong> It matches the 2353 kVA plant to the 1250 kVA lifeboat. The DG was never meant to carry the plant — it carries the <em>essential</em> half, and the PMS enforces that arithmetic automatically.</p>
+
+  <h3>Worked Example: The transfer timeline, second by second — and what each second costs</h3>
+  <div class="worked">
+    <p><strong>Given:</strong> SEC 13.8 kV supply lost at t = 0. ATS undervoltage pickup 80 %, confirmation delay 2 s; DG 1250 kVA standby set, ready-to-load ≤ 10 s; ATS operating time 0.5 s; PMS staged restart program. All values indicative.</p>
+    <p><strong>Step 1 — Build the timeline by simple addition.</strong></p>
+    <p><code class="formula">t = 0.0 s&nbsp;&nbsp;: mains voltage collapses; bus dead</code></p>
+    <p><code class="formula">t ≈ 0.1 s&nbsp;: motor contactors drop out (hold-in fails &lt; ~80 % U) — process is already stopping</code></p>
+    <p><code class="formula">t = 0–2 s&nbsp;: ATS confirms outage (2 s deliberate delay, Principle 2)</code></p>
+    <p><code class="formula">t = 2 s&nbsp;&nbsp;&nbsp;: engine start command; crank → fire → 1800 rpm → AVR stabilises</code></p>
+    <p><code class="formula">t = 12 s&nbsp;&nbsp;: DG at rated 400 V / 60 Hz, ready to load (2 + 10)</code></p>
+    <p><code class="formula">t = 12.5 s: ATS opens mains side, closes generator side (0.5 s)</code></p>
+    <p><code class="formula">→ dead-bus interval ≈ 12.5 s</code></p>
+    <p><code class="formula">t = 12.5–120 s: PMS staged restart of essential motors (Ch. 10: one large motor at a time)</code></p>
+    <p><em>Why each term exists:</em> 2 s buys immunity from auto-reclose dips; 10 s is engine physics; 0.5 s is the mechanism. None can be safely deleted — only the detection delay is even adjustable, and shortening it trades nuisance transfers for one second saved.</p>
+    <p><strong>Step 2 — What each second costs.</strong> The 2.0 MW process stopped at t ≈ 0.1 s regardless of the ATS — the dead-bus time determines not whether production stops, but how <em>deep</em> the stoppage goes:</p>
+    <p><code class="formula">Energy not delivered during transfer: 2 MW × 12.5 s = 25 MJ ≈ 7 kWh (trivial)</code></p>
+    <p><em>The real costs are state, not energy:</em> cooling pumps off for 12.5 s + restart time → thermal excursion on hot equipment; instrument air compressor off → header pressure falls (a typical receiver holds minutes, so 12.5 s is survivable — verify); process trips at t ≈ 0.1 s → restart sequence measured in <em>hours</em>, the dominant cost. The UPS (Ch. 11) keeps DCS/ESD alive throughout, so the restart begins from a controlled, observed state instead of a blind one — that is what the 30 minutes of battery actually buys.</p>
+    <p><strong>Step 3 — Check the DG can take the essential block.</strong> Essential load (PMS-shed list) say ≈ 900 kVA:</p>
+    <p><code class="formula">900 / 1250 = 72 % steady loading — accept (&lt;~80 % good practice for standby sets at 50 °C)</code></p>
+    <p><em>Plus</em> the staged-start check of Chapter 10: largest motor start dip on DG ≈ 11.5 % DOL → soft-started or started first, alone.</p>
+    <p><strong>Step 4 — Retransfer.</strong> Mains returns; ATS waits a stability timer (e.g. 10 min), then — being open-transition — takes a <em>second</em> brief outage to switch back, after which the DG cools down (5 min unloaded) and stops.</p>
+    <p><strong>Sanity check:</strong> total dead time 12.5 s ≪ UPS autonomy 30 min (×144 margin); essential load fits the DG with ~28 % headroom; the second outage at retransfer is why some plants later negotiate closed transition with SEC — eliminating it requires paralleling consent, synchronising gear and grid-protection relays, exactly as Principle 1 states.</p>
+  </div>
+
+  <h3>Intuitive Formalization</h3>
+  <p>The mathematics of standby transfer is honest addition — its difficulty is that every term is owned by a different physical phenomenon:</p>
+  <p><code class="formula">T_dead = t_detect + t_start + t_switch&nbsp;&nbsp;≈&nbsp;&nbsp;2 + 10 + 0.5 ≈ 12.5 s</code></p>
+  <p><strong>t_detect</strong> (1–3 s) is a <em>statistical</em> choice: long enough that self-healing grid events (auto-reclose, motor-start dips elsewhere) don't trigger transfers, short enough that the receiver air and thermal inertia of the process bridge the gap. <strong>t_start</strong> (~10 s) is <em>thermodynamics and rotating inertia</em>: fuel must burn, a multi-tonne crankshaft must reach 1800 rpm, and an AVR must settle — ISO 8528 codifies it. <strong>t_switch</strong> (~0.5 s) is <em>mechanics</em>. The companion inequality is the capacity check:</p>
+  <p><code class="formula">S_essential ≤ k × S_DG&nbsp;&nbsp;with k ≈ 0.8&nbsp;&nbsp;→&nbsp;&nbsp;S_essential ≤ 1000 kVA on the 1250 kVA set</code></p>
+  <p>where k is derating-plus-headroom at 50 °C, and S_essential is enforced — not hoped for — by PMS load shedding. Finally the bridging condition that makes the whole architecture coherent: <code>T_dead ≪ t_UPS (30 min)</code> for controls, and <code>T_dead + t_restart &lt; t_process-tolerance</code> for each essential mechanical service.</p>
+
+  <h3>CTQ Mapping</h3>
+  <table class="tbl">
+    <thead><tr><th>Critical-to-quality requirement</th><th>How the concept delivers it</th><th>What to check in the field</th></tr></thead>
+    <tbody>
+      <tr><td>Essential loads re-powered in ≤ ~12–15 s after any mains loss</td><td>Open-transition ATS with 2 s detection + 10 s standby-class DG start</td><td>Monthly live transfer test: measured dead-bus time vs design; DG start success rate trend</td></tr>
+      <tr><td>No nuisance transfers on grid dips</td><td>Deliberate 1–3 s undervoltage confirmation delay</td><td>ATS event log: transfers vs recorded dips; delay setting matches study</td></tr>
+      <tr><td>Sources can never be accidentally paralleled</td><td>Mechanical interlock; closed transition excluded without SEC consent</td><td>Interlock physically verified (attempt simultaneous closure during commissioning); no jumpers/bypasses</td></tr>
+      <tr><td>DG actually starts at 3 a.m. in January and July</td><td>Jacket-water heater, duplicated/monitored start batteries, weekly auto test run</td><td>Heater on; battery voltage/impedance logged; test-run records with load applied (not just idle)</td></tr>
+      <tr><td>DG not overloaded after transfer</td><td>PMS pre-shed to essential list (≈72 % loading) + staged motor restart</td><td>Shed list current vs DG rating; restart sequence timers; black-building test result</td></tr>
+      <tr><td>Orderly behaviour if the DG fails to start</td><td>UPS 30 min autonomy gives operators a controlled shutdown window</td><td>Documented operator procedure for "DG fail to start"; drill performed</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Conceptual Map</h3>
+  <pre>
+                    STANDBY TRANSFER (core)
+                             |
+       +--------- rests on --+---------------------------+
+       |                     |                           |
+  Open transition      Slow-by-design            Engine physics:
+  (break-before-       detection (1–3 s,         ~10 s to rated
+  make; never          rides through              speed + voltage
+  parallel)            auto-reclose)              (ISO 8528)
+       |                     |                           |
+       |              T_dead = t_detect + t_start + t_switch ≈ 12.5 s
+       |                     |                           |
+  contrasts with       led to|                    led to |
+       v                     v                           v
+  Closed transition    Mechanically             Readiness gear:
+  (≤100 ms parallel    interlocked ATS          heaters, dual start
+  → needs SEC          with timers              batteries, weekly
+  consent + sync                                test runs
+  + grid protection)         |                           |
+       +------- enables -----+---------------------------+
+                             |
+        Essential bus alive in ~12.5 s; PMS sheds to
+        ≤1000 kVA and stages restarts (Ch. 10);
+        UPS (Ch. 11) bridges the gap for DCS/ESD
+  </pre>
+  <div class="note"><p>All values indicative on the Rev 3 basis (DG 1250 kVA, ATS open transition ≤ 10 s, 60 Hz, 50 °C); ATS/DG settings are fixed by the transfer study, and any closed-transition scheme requires prior SEC approval under the Distribution Code.</p></div>
+</article>
+
+<article class="concept" id="concept-lightning">
+  <h2>13. Lightning &amp; Surge Protection</h2>
+  <p class="backlink">Manual deep-dive: <a href="manual-rev3.html#c-lightning">open the full section</a></p>
+
+  <h3>The Problem</h3>
+  <p>It is tempting to dismiss lightning in Saudi Arabia. The interior plateau sees perhaps 5–15 thunderstorm days a year — a tenth of the tropics — and months can pass without a cloud. But the plant's exposure is not measured in storms per year; it is measured in <em>consequences per strike</em>. A single discharge onto or near the incoming 13.8 kV overhead line injects tens of kilo-amps with a rise time of microseconds, and the travelling voltage wave it launches arrives at MV-SWGR at the speed of light in cable. Spring storms over the escarpments and the Red Sea coast are real, violent, and statistically certain over a 25-year plant life.</p>
+  <p>And lightning is only the loudest member of the surge family. Every capacitor-bank step switching (Chapter <a href="08-pfc.html">8</a>, several times a day), every transformer energisation, every fault clearance on the SEC network generates <strong>switching surges</strong> — smaller than lightning but vastly more frequent. The victims are always the same: insulation, and above all electronics. A 400 V variable frequency drive or a DCS input card has insulation designed to withstand perhaps 1.5–2.5 kV for microseconds; a surge of 6 kV at the main board, left untreated, is a dead drive, and dead drives across a plant are a production outage with a six-week lead time.</p>
+  <p>Before coordinated protection, plants relied on a lightning rod and hope. The rod protects the <em>building</em> from fire; it does nothing for the <em>electronics</em>, because the surge problem is conducted, not structural. The modern answer has two halves: capture the strike where it can do no harm (air terminals placed by the rolling-sphere method, down-conductors, earthing), and then clamp what still gets onto the wires with a <strong>cascade of surge protective devices (SPDs)</strong> whose let-through voltage steps down, board by board, below what each category of equipment can survive.</p>
+
+  <h3>Core Principles</h3>
+  <h4>Principle 1: A surge is a travelling wave, fast beyond intuition</h4>
+  <p><strong>Statement:</strong> Standard test waves codify reality: <strong>8/20 µs</strong> (current reaches crest in 8 µs, decays to half in 20 µs) for induced/switching surges, <strong>10/350 µs</strong> for direct strike currents carrying far more charge and energy.</p>
+  <p>For scale: an entire 8/20 surge is over in less time than the 400 V mains takes to move one degree of its 60 Hz cycle. No breaker, no relay, nothing mechanical can react — only physics already sitting in the circuit (spark gaps, metal-oxide varistors) can act on this timescale.</p>
+  <h4>Principle 2: Equipment withstand is graded in categories (IEC 60664-1)</h4>
+  <p><strong>Statement:</strong> On a 230/400 V system, insulation coordination assigns rated impulse withstand by location: <strong>Category IV 6 kV</strong> (origin of installation — metering, main incomer), <strong>Category III 4 kV</strong> (distribution boards, MCCs), <strong>Category II 2.5 kV</strong> (appliances, drives), <strong>Category I 1.5 kV</strong> (sensitive electronics — DCS cards, network gear).</p>
+  <p>This ladder is the design contract: the protection scheme's only job is to guarantee that the surge voltage actually arriving at each location stays below that location's number.</p>
+  <h4>Principle 3: An SPD is a voltage-controlled short circuit</h4>
+  <p><strong>Statement:</strong> A surge protective device is invisible (megohms) at 230 V but collapses to a near-short within nanoseconds when voltage rises, diverting surge current to earth and "clamping" the voltage at its protection level <strong>Up</strong>.</p>
+  <p>Two technologies split the work: <strong>spark gaps</strong> (Type 1) swallow the brutal 10/350 direct-strike energy; <strong>metal-oxide varistors (MOVs)</strong> (Type 2/3) clamp lower and faster but with less energy capacity. Jargon defined: Up = the voltage the SPD lets through at its rated discharge current — the single most important number on its nameplate.</p>
+  <h4>Principle 4: The lead length is part of the SPD</h4>
+  <p><strong>Statement:</strong> The voltage seen by downstream equipment is Up <em>plus</em> the inductive drop along the SPD's connection conductors: U = Up + L·di/dt, and at surge di/dt even half a metre of wire matters.</p>
+  <p>A perfect SPD on lazy 1 m tails is a mediocre SPD. The installation rule — total connection length ≤ 0.5 m, or use the V-wiring (through-terminal) connection — comes straight from this principle, and the worked example puts numbers on it.</p>
+
+  <h3>Key Innovations</h3>
+  <h4>The rolling-sphere method (electro-geometric model, 1960s–70s)</h4>
+  <p><strong>What:</strong> Imagine a sphere — radius 20 m for the strictest protection level LPL I, 30/45/60 m for LPL II–IV (IEC 62305) — rolled over every surface of the plant. Anywhere the sphere can touch, lightning can strike; air terminals are placed so the sphere rests only on them.</p>
+  <p><strong>Why it mattered:</strong> It replaced guesswork cones with a physical model of the final leader jump, and it reveals the unintuitive: tall tank edges, pipe-rack corners and roof-mounted coolers — not just the highest mast — are strike points needing terminals.</p>
+  <h4>The coordinated SPD cascade (IEC 61643 / 62305, 1990s)</h4>
+  <p><strong>What:</strong> Type 1 (spark-gap, 10/350-rated) at the service entrance / LV-MSB; Type 2 (MOV, 8/20-rated) at each distribution board; Type 3 at sensitive terminal equipment within 10 m of the load. Each stage absorbs energy and hands a smaller remnant to the next; decoupling inductance (≥10 m of cable, or coils) ensures they fire in the right order.</p>
+  <p><strong>Why it mattered:</strong> No single device can both swallow 25–100 kA of strike energy <em>and</em> clamp below 1.5 kV. The cascade divides the labour, exactly like the worked example shows.</p>
+  <h4>Lightning protection zones and bonding (IEC 62305-4)</h4>
+  <p><strong>What:</strong> The plant is mapped into nested zones LPZ 0 (exposed) → LPZ 1 (inside building) → LPZ 2 (inside cabinet); every conductive service crossing a boundary is bonded or surge-protected at the crossing, and all earths (lightning, protective, instrument, NER) meet a single earthing system.</p>
+  <p><strong>Why it mattered:</strong> Surges enter on <em>any</em> metal — armour, screens, pipes, fences. Zoning turns "protect everything" into a checkable boundary discipline, and a single bonded earth prevents the lethal potential differences that multiple "clean earths" create during a strike.</p>
+
+  <h3>Worked Example: A 10 kA 8/20 µs surge through the Type 1/2 cascade</h3>
+  <div class="worked">
+    <p><strong>Given:</strong> Surge 10 kA, 8/20 µs waveform, arriving on the 400 V system at LV-MSB. Type 1 SPD at LV-MSB: Up = 2.5 kV at its rated discharge current. Type 2 SPD at distribution board DB: Up = 1.5 kV. SPD connection leads at the MSB: 0.5 m phase tail + 0.5 m earth tail = 1.0 m total, wire inductance ≈ 1 µH/m. Equipment withstand per IEC 60664-1 (230/400 V): Cat III = 4 kV at boards, Cat II = 2.5 kV at drives, Cat I = 1.5 kV at DCS electronics. All values indicative.</p>
+    <p><strong>Step 1 — Rate of current rise.</strong> The 8/20 wave crests at 10 kA in 8 µs:</p>
+    <p><code class="formula">di/dt = 10 000 A / 8 µs = 1.25 kA/µs = 1.25 × 10⁹ A/s</code></p>
+    <p><em>Why:</em> inductive voltage depends on the <em>steepness</em>, not the size, of the current — this number drives everything that follows.</p>
+    <p><strong>Step 2 — Inductive voltage on the SPD leads.</strong></p>
+    <p><code class="formula">U_lead = L × di/dt = (1.0 m × 1 µH/m) × 1.25 × 10⁹ A/s = 1.0 × 10⁻⁶ × 1.25 × 10⁹ = 1250 V</code></p>
+    <p><em>Note:</em> one metre of ordinary wire "adds" 1.25 kV to a 2.5 kV protector — half the SPD's own rating. This is Principle 4 in cash terms, and why the ≤0.5 m total-lead rule exists.</p>
+    <p><strong>Step 3 — Let-through voltage at the main board.</strong></p>
+    <p><code class="formula">U_MSB = Up + U_lead = 2500 + 1250 = 3750 V ≈ 3.75 kV</code></p>
+    <p><strong>Step 4 — Compare to withstand categories.</strong></p>
+    <p><code class="formula">3.75 kV &lt; 4 kV (Cat III) → boards/MCC equipment at the MSB: protected, slim margin</code></p>
+    <p><code class="formula">3.75 kV &gt; 2.5 kV (Cat II) → drives, and &gt; 1.5 kV (Cat I) → DCS: NOT protected by Type 1 alone</code></p>
+    <p><em>Why:</em> the Type 1 did its job — it absorbed the energy and brought 10 kA down to a 3.75 kV remnant — but that remnant still kills electronics. The cascade must continue.</p>
+    <p><strong>Step 5 — Type 2 stage at the DB.</strong> At least 10 m of cable (inductance ≈ 10 µH) separates MSB from DB, attenuating the surge front and ensuring coordination; the Type 2 clamps the remnant:</p>
+    <p><code class="formula">U_DB ≈ Up(Type 2) + lead term = 1500 + (0.5 m × 1 µH/m × reduced di/dt ≈ 0.3 kA/µs) ≈ 1500 + 150 ≈ 1.65 kV</code></p>
+    <p><code class="formula">1.65 kV &lt; 2.5 kV (Cat II) → drives protected; for Cat I (1.5 kV) DCS cards: add Type 3 within 10 m</code></p>
+    <p><strong>Sanity check:</strong> each stage roughly halves the threat (≈3.75 kV → ≈1.65 kV → &lt;1.2 kV at Type 3), and every location ends below its IEC 60664 category with margin. Reverse check: without any SPD, even a modest induced surge of 6 kV exceeds every category below the service entrance — consistent with the field experience that unprotected VFDs die in the first spring storm. <strong>Result: Type 1 (MSB) + Type 2 (DBs) + Type 3 (DCS cabinets), short leads, one bonded earth — every equipment class sits below its withstand.</strong></p>
+  </div>
+
+  <h3>Intuitive Formalization</h3>
+  <p>Surge protection is governed by one additive equation per location and one inequality per equipment class:</p>
+  <p><code class="formula">U_equipment = Up + L_lead × di/dt&nbsp;&nbsp;&nbsp;and require&nbsp;&nbsp;&nbsp;U_equipment &lt; U_withstand(category)</code></p>
+  <p>Symbols and their physics: <strong>Up</strong> (kV) — the SPD's let-through voltage, the residual the clamp cannot remove (a MOV is a resistor whose value collapses with voltage, never to zero); <strong>L_lead</strong> (µH) — connection inductance, about 1 µH per metre of any practical wire, an irreducible property of geometry; <strong>di/dt</strong> (kA/µs) — the surge steepness, set by nature (8/20, 10/350) not by us; <strong>U_withstand</strong> — the IEC 60664-1 ladder (6 / 4 / 2.5 / 1.5 kV at 230/400 V). The cascade exists because no single device satisfies the inequality everywhere: energy capacity and low clamping are opposing virtues, so the Type 1 trades clamping for energy, the Type 3 trades energy for clamping, and the cable between them decouples the stages. For strike capture, the geometric rule is the rolling sphere: a strike terminates wherever a sphere of radius R (20 m at LPL I) can touch — protection means it touches only air terminals.</p>
+
+  <h3>CTQ Mapping</h3>
+  <table class="tbl">
+    <thead><tr><th>Critical-to-quality requirement</th><th>How the concept delivers it</th><th>What to check in the field</th></tr></thead>
+    <tbody>
+      <tr><td>No structural strike damage or fire</td><td>Air terminals placed by rolling sphere (LPL per IEC 62305 risk assessment); down-conductors; earthing</td><td>Terminal positions vs roof equipment added since design; down-conductor continuity; earth resistance test records</td></tr>
+      <tr><td>Electronics survive both lightning and daily switching surges</td><td>Type 1/2/3 cascade keeps every location below its IEC 60664 category</td><td>SPD status indicators (window/remote contact); Up ratings on nameplates match the study; Type 3 within 10 m of DCS</td></tr>
+      <tr><td>SPDs actually achieve their nameplate Up</td><td>≤0.5 m total lead rule / V-wiring</td><td>Measure installed tail lengths; reroute or re-terminate if longer</td></tr>
+      <tr><td>No side-flash or earth potential differences during a strike</td><td>Single bonded earthing system; all services bonded at zone boundaries</td><td>Bonding of cable armour, pipe entries, fences at LPZ boundaries; one earth bar lineage (incl. NER earth)</td></tr>
+      <tr><td>Protection still alive after years of desert duty</td><td>SPDs are sacrificial — they age with every absorbed surge; monitoring and replacement regime</td><td>Failed-SPD alarms wired to DCS; inspection after every storm season; spares held</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Conceptual Map</h3>
+  <pre>
+                LIGHTNING &amp; SURGE PROTECTION (core)
+                             |
+       +--------- rests on --+---------------------------+
+       |                     |                           |
+  Travelling waves      Withstand ladder          SPD = voltage-
+  8/20 &amp; 10/350 µs      IEC 60664-1:              controlled short
+  (too fast for         6 / 4 / 2.5 / 1.5 kV      (Up + L·di/dt is
+  anything mechanical)  (Cat IV→I)                what arrives)
+       |                     |                           |
+  led to|              led to|                    led to |
+       v                     v                           v
+  Rolling sphere        Coordinated cascade       ≤0.5 m lead rule,
+  (R = 20 m @ LPL I)    Type 1 → 2 → 3            V-wiring, LPZ
+  air terminals at      (energy ↓, clamping ↓     boundary bonding,
+  real strike points    stage by stage)           single earth
+       |                     |                           |
+       +------- enables -----+---------------------------+
+                             |
+     10 kA surge → 3.75 kV @ MSB → 1.65 kV @ DB → &lt;1.2 kV @ DCS:
+     every class below withstand, in a low-keraunic but
+     non-zero desert + daily capacitor/VFD switching surges
+  </pre>
+  <div class="note"><p>All values indicative on the Rev 3 basis (230/400 V, 60 Hz, SASO-adopted IEC 62305 / 61643 / 60664, SBC 401); the lightning risk assessment and surge coordination study govern device classes, Up values and placement.</p></div>
+</article>
+
+<article class="concept" id="concept-n1">
+  <h2>14. N-1 and the SPOF Mindset</h2>
+  <p class="backlink">Manual deep-dive: <a href="manual-rev3.html#s-fmeca">open the FMECA section</a> (and see Part 3 of the manual for the full SPOF walk-through of the plant SLDs)</p>
+
+  <h3>The Problem</h3>
+  <p>Ask why the Rev 3 plant has <strong>two</strong> 1600 kVA transformers instead of one 3200 kVA unit — same total copper and iron, one set of foundations, one MV breaker, visibly cheaper — and you have asked the central question of reliability engineering. The single big transformer is the better machine on every line of the procurement spreadsheet, and the worse machine on the only line that matters at 2 a.m. when its Buchholz relay trips: <em>with one transformer, a transformer failure is a 100 % plant outage measured in weeks</em> — large transformers are repaired in factories, and replacements at 50 °C desert spec are not shelf items.</p>
+  <p>A <strong>single point of failure (SPOF)</strong> is any component whose individual failure brings down the whole function. The deceptive thing about SPOFs is that they hide in plain sight: not just the big transformer, but the one bus-tie breaker, the one battery charger, the one NER (neutral earthing resistor) on the MV system, the one cable route through which both "redundant" feeders happen to run, the one operator who knows the changeover procedure. Plants that bought redundancy have still gone black because the redundancy shared a cable trench, a relay, or a wrong setting — the failure mode engineers call <strong>common cause</strong>.</p>
+  <p>The discipline that flushes SPOFs out is the <strong>N-1 criterion</strong>, borrowed from grid planning: take the system at its design duty, remove any ONE component — any one — and check what survives. Not "will it probably be fine", but arithmetic: how many kVA remain, which loads are shed, how long the switching takes. This chapter builds that mindset and runs the signature Rev 3 calculation: two 1600 kVA transformers versus one 3200 kVA unit, in numbers.</p>
+
+  <h3>Core Principles</h3>
+  <h4>Principle 1: N-1 — survive the loss of any single component</h4>
+  <p><strong>Statement:</strong> A system meets N-1 for a given function if removing any one component still leaves enough capacity, after defined switching actions, to carry that function's load.</p>
+  <p>The key honesty clause is "for a given function". Our split-bus design meets N-1 for the <em>essential</em> load, not for the full 2353 kVA — and saying so explicitly, with numbers, is the difference between engineering and marketing.</p>
+  <h4>Principle 2: Series elements multiply fragility, parallel elements multiply robustness</h4>
+  <p><strong>Statement:</strong> Components in series (all must work) have their unavailabilities <em>added</em>; components in parallel (any one suffices) have their unavailabilities <em>multiplied</em>.</p>
+  <p>Jargon defined: <strong>availability A</strong> is the long-run fraction of time a component works; <strong>unavailability U = 1 − A</strong>. For a chain: U_series ≈ U₁ + U₂ + … (each weak link adds). For true redundancy: U_parallel = U₁ × U₂ (both must be down at once). Multiplying two small numbers gives a tiny number — that multiplication is the entire mathematical case for redundancy.</p>
+  <h4>Principle 3: Availability = MTBF / (MTBF + MTTR) — repair time matters as much as failure rate</h4>
+  <p><strong>Statement:</strong> A component's availability depends equally on how rarely it fails (MTBF, mean time between failures = 1/λ, where λ is the failure rate) and how fast it is restored (MTTR, mean time to repair).</p>
+  <p>This is why the single 3200 kVA transformer is so damaging: its λ is no worse than a 1600 kVA unit's, but its MTTR — factory repair or long-lead replacement — is measured in weeks to months. Redundancy is, at bottom, a machine for converting "MTTR of the component" into "switching time of the system".</p>
+  <h4>Principle 4: Redundancy only counts if capacity, independence and switching are all real</h4>
+  <p><strong>Statement:</strong> Two of something is not N-1 unless (a) one alone can carry the protected load, (b) they cannot fail together (no common cause: separate routes, separate auxiliaries, no shared single relay), and (c) the changeover actually works — which only testing proves.</p>
+  <p>An untested bus-tie is decoration. A "redundant" pair fed through one cable trench is one component wearing two nameplates. FMECA (next section) is the tool that audits all three conditions, row by row.</p>
+
+  <h3>Key Innovations</h3>
+  <h4>The split LV bus with normally-open tie (classic industrial practice)</h4>
+  <p><strong>What:</strong> The Rev 3 architecture itself: TX-1 and TX-2 each feed half of LV-MSB; a normally-open bus-tie breaker joins the halves only when one transformer is lost. Running the tie open keeps fault level at 38.5 kA per half (closed it would be ≈77 kA, above the board's economic rating) and stops one bus fault from taking both halves.</p>
+  <p><strong>Why it mattered:</strong> It buys N-1 for the essential load at the cost of one breaker — provided the interlock (2-out-of-3: never all three of incomer + incomer + tie closed) and the load-shed scheme exist and are tested.</p>
+  <h4>FMECA — failure mode, effects and criticality analysis (aerospace, 1950s–60s; IEC 60812)</h4>
+  <p><strong>What:</strong> A table that walks every component asking: how can it fail? what happens plant-wide? how likely, how severe, how detectable? The manual's <a href="manual-rev3.html#s-fmeca">FMECA section</a> applies it to the whole SLD; criticality = likelihood × severity ranks where to spend money.</p>
+  <p><strong>Why it mattered:</strong> It converts the SPOF hunt from inspiration to procedure. The humbling discoveries are always the small items: the single 110 V DC battery charger feeding both halves' breaker tripping supplies, the single NER, the shared VT fuse.</p>
+  <h4>The reliability block diagram (RBD)</h4>
+  <p><strong>What:</strong> Redraw the electrical SLD as chains of series and parallel <em>reliability</em> blocks, then apply Principle 2 arithmetic end-to-end. Crucially, the RBD does not mirror the wiring: two parallel transformers feeding one bus-tie put the tie in <em>series</em> with the redundancy it enables.</p>
+  <p><strong>Why it mattered:</strong> It exposes exactly which components the redundancy still depends on — and they, not the duplicated items, set the system's availability ceiling. Part 3 of the manual works the full plant RBD.</p>
+
+  <h3>Worked Example: 2 × 1600 kVA vs 1 × 3200 kVA — capacity and availability arithmetic</h3>
+  <div class="worked">
+    <p><strong>Given:</strong> Plant demand 2.0 MW at pf 0.85 → S = 2353 kVA. Option A: 2 × 1600 kVA (Z = 6 %), split bus, NO tie. Option B: 1 × 3200 kVA. Indicative reliability data: transformer failure rate λ ≈ 0.02 failures/year; MTTR = 720 h (30 days, spare/repair) for a 1600 kVA unit, ≈ 2160 h (90 days) for a one-off 3200 kVA unit. All values indicative.</p>
+    <p><strong>Step 1 — Normal loading in Option A.</strong> Tie open, load split roughly evenly:</p>
+    <p><code class="formula">Load per TX = 2353 / 2 = 1176 kVA → 1176 / 1600 = 73.5 % each</code></p>
+    <p><em>Why:</em> healthy margin in normal operation; also room for the 50 °C ambient and harmonic duty.</p>
+    <p><strong>Step 2 — The N-1 event: lose TX-1, close the bus-tie.</strong> Survivor must not exceed its continuous rating; at 50 °C design ambient good practice caps it around 87.5 %:</p>
+    <p><code class="formula">Allowed on TX-2 ≈ 0.875 × 1600 = 1400 kVA&nbsp;&nbsp;(absolute ceiling 1600 kVA = 68 % of plant)</code></p>
+    <p><code class="formula">Load to shed = 2353 − 1400 = 953 kVA → carry 1400/2353 ≈ 60 %, shed ≈ 40 %</code></p>
+    <p><em>Note:</em> with short-time cyclic overload per IEC 60076-7 the survivor may briefly carry more, but the planning figure is the continuous one. Either way the essential load (PMS shed list, Ch. 12) fits comfortably under 1400 kVA.</p>
+    <p><strong>Step 3 — The same event in Option B.</strong></p>
+    <p><code class="formula">Surviving capacity = 0 kVA → 100 % outage for the full MTTR (≈90 days)</code></p>
+    <p><em>Verdict so far:</em> Option A converts "weeks of total outage" into "minutes of switching plus partial shed". That is Principle 3 in action: system MTTR became the tie-closing time.</p>
+    <p><strong>Step 4 — Availability numbers.</strong> Single 1600 kVA transformer: MTBF = 1/λ = 50 years = 438 000 h:</p>
+    <p><code class="formula">U₁ = MTTR / (MTBF + MTTR) = 720 / (438 000 + 720) = 0.00164 → ≈ 14.4 h/year expected outage</code></p>
+    <p><strong>Step 5 — Parallel pair (for the essential load, either TX suffices):</strong></p>
+    <p><code class="formula">U_pair = U₁ × U₁ = 0.00164² = 2.7 × 10⁻⁶ → ≈ 0.024 h/year ≈ 1.4 minutes/year</code></p>
+    <p><em>Why:</em> both must be down simultaneously. Multiplying two small unavailabilities collapses the risk by a factor of ~600.</p>
+    <p><strong>Step 6 — Option B for comparison (longer MTTR):</strong></p>
+    <p><code class="formula">U_single3200 = 2160 / (438 000 + 2160) = 0.0049 → ≈ 43 h/year expected FULL-plant outage</code></p>
+    <p><strong>Step 7 — The honesty check (series elements).</strong> The pair's 1.4 min/year is the ceiling, not the promise: the bus-tie breaker, its interlock, the shared 110 V DC tripping supply (DCDB) and the protection settings are all in <em>series</em> with the redundancy. If the tie fails to close on demand 1 time in 100, the effective gain shrinks accordingly — which is why the FMECA and the periodic live tie-closing test exist.</p>
+    <p><strong>Sanity check:</strong> orders of magnitude are credible — utility-grade transformers fail rarely (decades of MTBF), and the dominant design lever is visibly MTTR, exactly as Principle 3 predicts. <strong>Result: Option A — partial shed (~40 %) for minutes, ~1.4 min/yr dual-loss exposure; Option B — 100 % outage, ~43 h/yr expectation. The second transformer is the cheapest insurance on the plant.</strong></p>
+  </div>
+
+  <h3>Intuitive Formalization</h3>
+  <p>Three formulas carry the whole discipline. Availability of one component:</p>
+  <p><code class="formula">A = MTBF / (MTBF + MTTR)&nbsp;&nbsp;&nbsp;U = 1 − A ≈ λ × MTTR&nbsp;(when both are small)</code></p>
+  <p><strong>λ</strong> (failures/year) is how often fate knocks; <strong>MTTR</strong> (hours) is how long the door stays open when it does; <strong>U</strong> is the fraction of life spent broken — the product of the two, which is why halving repair time is exactly as valuable as halving failure rate. Combination rules:</p>
+  <p><code class="formula">Series (all needed):&nbsp;&nbsp;U_sys ≈ U₁ + U₂ + …&nbsp;&nbsp;&nbsp;Parallel (any one suffices):&nbsp;&nbsp;U_sys = U₁ × U₂</code></p>
+  <p>Physical meaning: a series chain is as bad as the <em>sum</em> of its parts (every element donates its downtime); a true parallel pair is as bad as the <em>coincidence</em> of its parts (downtime only when outages overlap). And the capacity test that makes redundancy real rather than nominal:</p>
+  <p><code class="formula">N-1 check: S_remaining ≥ S_protected-load&nbsp;&nbsp;(here 1400 kVA ≥ essential load &lt; 2353 kVA total)</code></p>
+  <p>The fine print — independence (no common cause) and proven switching — is not in the formulas, which is precisely why the formulas alone overestimate real systems and why FMECA exists.</p>
+
+  <h3>CTQ Mapping</h3>
+  <table class="tbl">
+    <thead><tr><th>Critical-to-quality requirement</th><th>How the concept delivers it</th><th>What to check in the field</th></tr></thead>
+    <tbody>
+      <tr><td>No single equipment failure causes total plant outage</td><td>N-1 walk of the SLD: 2 TXs + NO tie, DG, UPS, duplicated where critical</td><td>Part 3 SPOF register up to date; every "remove one component" line has a stated surviving capacity</td></tr>
+      <tr><td>Surviving transformer not destroyed by heroism</td><td>Capacity arithmetic: shed to ≈1400 kVA (87.5 % at 50 °C) before/while closing the tie</td><td>PMS shed list sums below 1400 kVA; tie-closing procedure includes shed step; interlock prevents 3-breaker closure</td></tr>
+      <tr><td>Redundancy works on demand, not just on paper</td><td>Switching is part of the design: tested tie, ATS, staged restart</td><td>Periodic live tie-closing and transfer tests with records; failure-to-operate events investigated</td></tr>
+      <tr><td>No hidden common-cause links between "redundant" paths</td><td>FMECA audits shared routes, auxiliaries, settings, single DC supplies</td><td>Cable routing drawings (separate trenches); DCDB/charger redundancy; relay setting files independent per half</td></tr>
+      <tr><td>Spending targeted where criticality is highest</td><td>FMECA criticality ranking (likelihood × severity) drives spares and maintenance priorities</td><td>Spares holding vs the ranking (e.g. tie breaker spare, NER elements); maintenance KPIs per critical item</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Conceptual Map</h3>
+  <pre>
+                 N-1 AND THE SPOF MINDSET (core)
+                             |
+       +--------- rests on --+---------------------------+
+       |                     |                           |
+  N-1 criterion         Series adds U,            A = MTBF/(MTBF+MTTR)
+  (remove ANY one;      parallel multiplies U     (repair time is half
+  check what            (U_pair = U₁ × U₂)         the battle)
+  survives, in kVA)          |                           |
+       |              led to |                    led to |
+       v                     v                           v
+  Split LV bus +        Reliability block         Redundancy converts
+  NO bus-tie            diagram (RBD):            component MTTR into
+  (TX-1 / TX-2)         tie &amp; DC supply are       system switching time
+       |                SERIES with the pair             |
+       |                     |                           |
+       +---- audited by FMECA (#s-fmeca): modes ---------+
+             × effects × criticality; common-cause hunt
+                             |
+                          enables
+                             |
+     2×1600: shed ~40 %, carry essentials, ~1.4 min/yr
+     dual-loss — vs 1×3200: 100 % outage, ~43 h/yr.
+     Same mindset cascades: DG, UPS, ATS, NER, DCDB (Part 3)
+  </pre>
+  <div class="note"><p>All reliability figures are indicative planning values; the plant RAM study (IEC 60812 FMECA, RBD) and tested switching procedures govern. Rev 3 basis throughout: 2 × 1600 kVA, 2353 kVA demand, 50 °C, 60 Hz.</p></div>
+</article>
+
+</main>
+</body>
+</html>

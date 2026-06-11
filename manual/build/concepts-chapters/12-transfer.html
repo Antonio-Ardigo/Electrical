@@ -1,0 +1,105 @@
+<article class="concept" id="concept-transfer">
+  <h2>12. ATS &amp; Standby Transfer</h2>
+  <p class="backlink">Manual deep-dive: <a href="manual-rev3.html#c-ats">open the ATS section</a> · <a href="manual-rev3.html#c-genset">open the generator section</a></p>
+
+  <h3>The Problem</h3>
+  <p>However good the SEC 13.8 kV supply is, one day it will fail — a feeder fault, a substation outage, a sandstorm taking down an overhead line. When it does, the plant has loads that can wait (most of the process restarts after an outage anyway), loads that cannot wait long (cooling for hot equipment, emergency lighting, instrument air, fire-fighting), and loads that cannot wait at all (the control and safety systems — Chapter <a href="11-ups.html">11</a>'s territory).</p>
+  <p>For the "cannot wait long" class, the Rev 3 plant carries a <strong>1250 kVA standby diesel generator (tag DG)</strong>, declared at ESP rating for 50 °C ambient, and an <strong>automatic transfer switch (tag ATS)</strong> that moves the essential bus from mains to generator and back without a human in the loop. The question this chapter answers is deceptively simple: <em>what actually happens, second by second, between the lights going out and the generator carrying load — and why is the gap as long as it is?</em></p>
+  <p>The naive answer — "switch instantly" — fails twice. First, a diesel engine physically cannot deliver power instantly: it must crank, fire, run up to 1800 rpm (60 Hz), and build voltage. Second, you must not even <em>try</em> to connect two live sources, or a live source to a bus full of still-spinning motors, without care: out-of-phase closure onto residual motor voltage can break shafts and trip everything the transfer was meant to save. The whole discipline of standby transfer is the management of these ~12 seconds — and of the temptation to shortcut them by paralleling with the grid, which, as we shall see, requires SEC's written consent.</p>
+
+  <h3>Core Principles</h3>
+  <h4>Principle 1: Open transition — break before make</h4>
+  <p><strong>Statement:</strong> The ATS disconnects the load from the dead mains <em>before</em> connecting it to the generator; the two sources are never electrically joined, even for a millisecond.</p>
+  <p>This is the Rev 3 scheme: mechanically interlocked contactor pair (or motorised changeover), physically incapable of closing both ways at once. Its virtue is absolute safety from source-to-source faults; its price is a guaranteed dead interval. The opposite — <strong>closed transition</strong>, a brief (≤100 ms) overlap with both sources paralleled — eliminates the second outage on <em>return</em> to mains, but it momentarily makes the plant a generator operating in parallel with the SEC network. That is an act regulated by the SEC Distribution Code / Saudi Grid Code: it requires utility consent, synchronising equipment, and protection (reverse power, vector shift) that proves the DG cannot backfeed a dead or faulted grid. Hence Rev 3 stays open-transition unless a future agreement says otherwise.</p>
+  <h4>Principle 2: Detection must be deliberately slow</h4>
+  <p><strong>Statement:</strong> The ATS waits 1–3 seconds of confirmed undervoltage before declaring the mains dead, because most disturbances are dips and auto-reclose events that heal themselves.</p>
+  <p>An SEC overhead-line fault is typically cleared and re-closed within a second. A hair-trigger ATS would start the diesel and drop the bus for every passing dip — converting minor disturbances into 12-second outages. The delay is not sloth; it is statistics.</p>
+  <h4>Principle 3: A diesel needs ~10 seconds, by physics not by choice</h4>
+  <p><strong>Statement:</strong> Crank (2–3 s), fire and accelerate to 1800 rpm (3–5 s), build and stabilise voltage via the AVR (1–2 s) — about 10 s to "ready to load" for a standby-class set, per ISO 8528.</p>
+  <p>Jargon on first use: <strong>AVR</strong> — automatic voltage regulator, the device exciting the alternator field. Faster is possible (jacket-water heaters keep the engine warm precisely to make 10 s achievable at any hour), but loading a diesel before speed and voltage are stable just stalls it.</p>
+  <h4>Principle 4: The transfer is not over until the loads are back</h4>
+  <p><strong>Statement:</strong> Closing the ATS onto the generator is the midpoint, not the end: motor contactors dropped out at t ≈ 0.1 s, so the PMS must restart essential motors in stages the 1250 kVA set can swallow (Chapter <a href="10-motorstart.html">10</a>).</p>
+  <p>A dead bus suddenly reconnected to every contactor that happened to reseal would demand several thousand kVA of simultaneous starting current from a 1250 kVA machine. Staged restart — biggest critical motor first, alone — is part of the transfer design, not an afterthought.</p>
+
+  <h3>Key Innovations</h3>
+  <h4>The mechanically interlocked automatic transfer switch (mid-20th century)</h4>
+  <p><strong>What:</strong> One mechanism, two positions, physically unable to bridge sources; with integral voltage/frequency sensing on both sides and adjustable timers (transfer delay, retransfer delay, engine cooldown).</p>
+  <p><strong>Why it mattered:</strong> It removed the human — and human error — from a sequence that happens at 3 a.m. The interlock turns "we must never parallel accidentally" from a procedure into a piece of steel.</p>
+  <h4>Engine readiness engineering (ISO 8528 standby practice)</h4>
+  <p><strong>What:</strong> Jacket-water heaters, trickle-charged starting batteries (often duplicated), fuel polishing, and weekly automatic test runs — everything needed so a machine that sits idle 99.9 % of its life starts within 10 s on demand.</p>
+  <p><strong>Why it mattered:</strong> Standby generation fails at the start attempt or not at all; the innovations are all about the first ten seconds. Field statistics consistently blame starting batteries first — which is why they are tested, monitored and often doubled.</p>
+  <h4>PMS-supervised transfer and load shedding (1990s onward)</h4>
+  <p><strong>What:</strong> The power management system pre-sheds non-essential feeders before transfer, sequences motor restarts after it, and supervises retransfer to mains only after the grid has been stable for minutes (typically 5–30 min, adjustable).</p>
+  <p><strong>Why it mattered:</strong> It matches the 2353 kVA plant to the 1250 kVA lifeboat. The DG was never meant to carry the plant — it carries the <em>essential</em> half, and the PMS enforces that arithmetic automatically.</p>
+
+  <h3>Worked Example: The transfer timeline, second by second — and what each second costs</h3>
+  <div class="worked">
+    <p><strong>Given:</strong> SEC 13.8 kV supply lost at t = 0. ATS undervoltage pickup 80 %, confirmation delay 2 s; DG 1250 kVA standby set, ready-to-load ≤ 10 s; ATS operating time 0.5 s; PMS staged restart program. All values indicative.</p>
+    <p><strong>Step 1 — Build the timeline by simple addition.</strong></p>
+    <p><code class="formula">t = 0.0 s&nbsp;&nbsp;: mains voltage collapses; bus dead</code></p>
+    <p><code class="formula">t ≈ 0.1 s&nbsp;: motor contactors drop out (hold-in fails &lt; ~80 % U) — process is already stopping</code></p>
+    <p><code class="formula">t = 0–2 s&nbsp;: ATS confirms outage (2 s deliberate delay, Principle 2)</code></p>
+    <p><code class="formula">t = 2 s&nbsp;&nbsp;&nbsp;: engine start command; crank → fire → 1800 rpm → AVR stabilises</code></p>
+    <p><code class="formula">t = 12 s&nbsp;&nbsp;: DG at rated 400 V / 60 Hz, ready to load (2 + 10)</code></p>
+    <p><code class="formula">t = 12.5 s: ATS opens mains side, closes generator side (0.5 s)</code></p>
+    <p><code class="formula">→ dead-bus interval ≈ 12.5 s</code></p>
+    <p><code class="formula">t = 12.5–120 s: PMS staged restart of essential motors (Ch. 10: one large motor at a time)</code></p>
+    <p><em>Why each term exists:</em> 2 s buys immunity from auto-reclose dips; 10 s is engine physics; 0.5 s is the mechanism. None can be safely deleted — only the detection delay is even adjustable, and shortening it trades nuisance transfers for one second saved.</p>
+    <p><strong>Step 2 — What each second costs.</strong> The 2.0 MW process stopped at t ≈ 0.1 s regardless of the ATS — the dead-bus time determines not whether production stops, but how <em>deep</em> the stoppage goes:</p>
+    <p><code class="formula">Energy not delivered during transfer: 2 MW × 12.5 s = 25 MJ ≈ 7 kWh (trivial)</code></p>
+    <p><em>The real costs are state, not energy:</em> cooling pumps off for 12.5 s + restart time → thermal excursion on hot equipment; instrument air compressor off → header pressure falls (a typical receiver holds minutes, so 12.5 s is survivable — verify); process trips at t ≈ 0.1 s → restart sequence measured in <em>hours</em>, the dominant cost. The UPS (Ch. 11) keeps DCS/ESD alive throughout, so the restart begins from a controlled, observed state instead of a blind one — that is what the 30 minutes of battery actually buys.</p>
+    <p><strong>Step 3 — Check the DG can take the essential block.</strong> Essential load (PMS-shed list) say ≈ 900 kVA:</p>
+    <p><code class="formula">900 / 1250 = 72 % steady loading — accept (&lt;~80 % good practice for standby sets at 50 °C)</code></p>
+    <p><em>Plus</em> the staged-start check of Chapter 10: largest motor start dip on DG ≈ 11.5 % DOL → soft-started or started first, alone.</p>
+    <p><strong>Step 4 — Retransfer.</strong> Mains returns; ATS waits a stability timer (e.g. 10 min), then — being open-transition — takes a <em>second</em> brief outage to switch back, after which the DG cools down (5 min unloaded) and stops.</p>
+    <p><strong>Sanity check:</strong> total dead time 12.5 s ≪ UPS autonomy 30 min (×144 margin); essential load fits the DG with ~28 % headroom; the second outage at retransfer is why some plants later negotiate closed transition with SEC — eliminating it requires paralleling consent, synchronising gear and grid-protection relays, exactly as Principle 1 states.</p>
+  </div>
+
+  <h3>Intuitive Formalization</h3>
+  <p>The mathematics of standby transfer is honest addition — its difficulty is that every term is owned by a different physical phenomenon:</p>
+  <p><code class="formula">T_dead = t_detect + t_start + t_switch&nbsp;&nbsp;≈&nbsp;&nbsp;2 + 10 + 0.5 ≈ 12.5 s</code></p>
+  <p><strong>t_detect</strong> (1–3 s) is a <em>statistical</em> choice: long enough that self-healing grid events (auto-reclose, motor-start dips elsewhere) don't trigger transfers, short enough that the receiver air and thermal inertia of the process bridge the gap. <strong>t_start</strong> (~10 s) is <em>thermodynamics and rotating inertia</em>: fuel must burn, a multi-tonne crankshaft must reach 1800 rpm, and an AVR must settle — ISO 8528 codifies it. <strong>t_switch</strong> (~0.5 s) is <em>mechanics</em>. The companion inequality is the capacity check:</p>
+  <p><code class="formula">S_essential ≤ k × S_DG&nbsp;&nbsp;with k ≈ 0.8&nbsp;&nbsp;→&nbsp;&nbsp;S_essential ≤ 1000 kVA on the 1250 kVA set</code></p>
+  <p>where k is derating-plus-headroom at 50 °C, and S_essential is enforced — not hoped for — by PMS load shedding. Finally the bridging condition that makes the whole architecture coherent: <code>T_dead ≪ t_UPS (30 min)</code> for controls, and <code>T_dead + t_restart &lt; t_process-tolerance</code> for each essential mechanical service.</p>
+
+  <h3>CTQ Mapping</h3>
+  <table class="tbl">
+    <thead><tr><th>Critical-to-quality requirement</th><th>How the concept delivers it</th><th>What to check in the field</th></tr></thead>
+    <tbody>
+      <tr><td>Essential loads re-powered in ≤ ~12–15 s after any mains loss</td><td>Open-transition ATS with 2 s detection + 10 s standby-class DG start</td><td>Monthly live transfer test: measured dead-bus time vs design; DG start success rate trend</td></tr>
+      <tr><td>No nuisance transfers on grid dips</td><td>Deliberate 1–3 s undervoltage confirmation delay</td><td>ATS event log: transfers vs recorded dips; delay setting matches study</td></tr>
+      <tr><td>Sources can never be accidentally paralleled</td><td>Mechanical interlock; closed transition excluded without SEC consent</td><td>Interlock physically verified (attempt simultaneous closure during commissioning); no jumpers/bypasses</td></tr>
+      <tr><td>DG actually starts at 3 a.m. in January and July</td><td>Jacket-water heater, duplicated/monitored start batteries, weekly auto test run</td><td>Heater on; battery voltage/impedance logged; test-run records with load applied (not just idle)</td></tr>
+      <tr><td>DG not overloaded after transfer</td><td>PMS pre-shed to essential list (≈72 % loading) + staged motor restart</td><td>Shed list current vs DG rating; restart sequence timers; black-building test result</td></tr>
+      <tr><td>Orderly behaviour if the DG fails to start</td><td>UPS 30 min autonomy gives operators a controlled shutdown window</td><td>Documented operator procedure for "DG fail to start"; drill performed</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Conceptual Map</h3>
+  <pre>
+                    STANDBY TRANSFER (core)
+                             |
+       +--------- rests on --+---------------------------+
+       |                     |                           |
+  Open transition      Slow-by-design            Engine physics:
+  (break-before-       detection (1–3 s,         ~10 s to rated
+  make; never          rides through              speed + voltage
+  parallel)            auto-reclose)              (ISO 8528)
+       |                     |                           |
+       |              T_dead = t_detect + t_start + t_switch ≈ 12.5 s
+       |                     |                           |
+  contrasts with       led to|                    led to |
+       v                     v                           v
+  Closed transition    Mechanically             Readiness gear:
+  (≤100 ms parallel    interlocked ATS          heaters, dual start
+  → needs SEC          with timers              batteries, weekly
+  consent + sync                                test runs
+  + grid protection)         |                           |
+       +------- enables -----+---------------------------+
+                             |
+        Essential bus alive in ~12.5 s; PMS sheds to
+        ≤1000 kVA and stages restarts (Ch. 10);
+        UPS (Ch. 11) bridges the gap for DCS/ESD
+  </pre>
+  <div class="note"><p>All values indicative on the Rev 3 basis (DG 1250 kVA, ATS open transition ≤ 10 s, 60 Hz, 50 °C); ATS/DG settings are fixed by the transfer study, and any closed-transition scheme requires prior SEC approval under the Distribution Code.</p></div>
+</article>

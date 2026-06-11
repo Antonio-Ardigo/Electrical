@@ -1,0 +1,100 @@
+<article class="concept" id="concept-ups">
+  <h2>11. The UPS</h2>
+  <p class="backlink">Manual deep-dive: <a href="manual-rev3.html#c-ups">open the full section</a></p>
+
+  <h3>The Problem</h3>
+  <p>When SEC supply fails, Chapter <a href="12-transfer.html">12</a> shows the plant goes dark for roughly 12 seconds before the diesel generator picks up. Twelve seconds is nothing to a motor — and an eternity to a computer. The DCS controllers, the safety (ESD) system, the protection relays' auxiliary supplies, telecoms and the operator stations will all reboot, and a process plant whose control system reboots mid-process does not pause — it trips, vents, and takes hours to restart. Worse, electronics do not even need 12 seconds to die: a voltage dip of a few <em>cycles</em> — 50 milliseconds, the kind caused by a remote 13.8 kV fault or a big motor start — is enough to crash an unprotected PLC.</p>
+  <p>The historical attempts are instructive. Plants first tried "essential" feeders from two transformers — but both share the same upstream dips. Then rotary sets (motor-generator with a flywheel) — robust, but maintenance-heavy and only seconds of ride-through. What the control room actually needs is power that is <em>continuously manufactured on site from stored energy</em>, with the mains relegated to the role of keeping the store topped up.</p>
+  <p>That is the <strong>UPS — uninterruptible power supply</strong>. The Rev 3 plant carries a <strong>100 kVA double-conversion UPS with 30 minutes of battery autonomy</strong> (tag UPS), feeding the DCS, ESD, critical instruments and operator interfaces. Thirty minutes is not arbitrary: it covers the DG start (12 s) hundreds of times over, and if the DG <em>fails</em> to start, it gives operators time to shut the process down in an orderly, safe sequence rather than wherever the lights went out.</p>
+
+  <h3>Core Principles</h3>
+  <h4>Principle 1: Double conversion — the load never sees the mains</h4>
+  <p><strong>Statement:</strong> Incoming AC is rectified to a DC bus, the battery floats on that DC bus, and an inverter manufactures a brand-new sine wave for the load — always, not just during outages.</p>
+  <p>This is the "online double-conversion" topology (VFI — voltage and frequency independent, per IEC 62040-3). The load is fed from the inverter 24/7; mains dips, harmonics and frequency wobbles are absorbed at the rectifier and never reach the DCS. When the mains dies, <em>nothing switches</em> — the battery simply stops being charged and starts being discharged. Transfer time to battery: zero milliseconds, by construction.</p>
+  <h4>Principle 2: The battery is an energy tank sized in kWh</h4>
+  <p><strong>Statement:</strong> Autonomy is energy: battery kWh = load kW × backup hours, grossed up for inverter losses, battery aging and design margin.</p>
+  <p>Power (kVA/kW) sizes the electronics; <em>energy</em> (kWh) sizes the battery. The two are independent purchases — the same 100 kVA UPS can carry 10 minutes or 2 hours depending on how many battery blocks you bolt on. The worked example sizes ours.</p>
+  <h4>Principle 3: The static bypass is the escape route</h4>
+  <p><strong>Statement:</strong> A thyristor switch can connect the load directly to raw mains in under a quarter-cycle if the inverter is overloaded, fails, or must clear a downstream fault.</p>
+  <p>It seems paradoxical — a device whose whole point is to isolate the load from the mains keeps a direct mains path on hot standby. But the inverter is a polite, current-limited source (Principle 4); when brute force is needed, the bypass supplies it. The bypass only works if inverter output and mains are kept synchronised, which the UPS does continuously whenever mains is healthy.</p>
+  <h4>Principle 4: An inverter is a current-limited source — fault clearing changes character</h4>
+  <p><strong>Statement:</strong> Transistors cannot survive the 10–20 × overcurrents a transformer delivers happily; an inverter electronically limits fault current to about <strong>2–3 × In</strong>.</p>
+  <p>Downstream protection philosophy must be rethought: a breaker that relies on a big magnetic-trip current to open instantly may simply never see it. This single fact drives the UPS distribution board design (small breaker ratings, careful grading, bypass-assisted fault clearing) and is computed explicitly below.</p>
+
+  <h3>Key Innovations</h3>
+  <h4>The static transfer switch (1960s–70s)</h4>
+  <p><strong>What:</strong> Anti-parallel thyristor pairs that transfer the load between inverter and mains in &lt; 5 ms — faster than any electromechanical device, faster than electronics can notice.</p>
+  <p><strong>Why it mattered:</strong> It made the double-conversion topology trustworthy: the UPS can fail, overload or clear faults without the load ever rebooting. It also enables maintenance bypass — the whole UPS can be wrapped out of the circuit for service while the load runs on raw mains.</p>
+  <h4>VRLA batteries, and now Li-ion (1980s / 2010s)</h4>
+  <p><strong>What:</strong> Valve-regulated lead-acid blocks — sealed, rack-mounted, no acid handling, no battery room ventilation in the classic sense. Li-ion arrives with twice the life, half the footprint and far better tolerance of the 25 °C+ battery-room temperatures that plague Saudi installations (VRLA life halves for every ~10 °C above 20–25 °C).</p>
+  <p><strong>Why it mattered:</strong> The battery is the UPS's mortal component. Chemistry and room temperature, not electronics, decide whether the promised 30 minutes exists on the day it is needed.</p>
+  <h4>Eco/hybrid modes — and why we decline them (2000s)</h4>
+  <p><strong>What:</strong> Running the load on bypass (raw mains) with the inverter idling, achieving ~99 % efficiency instead of ~94 %, and transferring to inverter only when the mains misbehaves.</p>
+  <p><strong>Why it mattered:</strong> A genuine saving in data centres — but the load briefly tastes the raw mains disturbance before transfer. For a process plant ESD/DCS at 50 °C in a weak-grid corner of the network, the few-percent efficiency is not worth the exposure; Rev 3 specifies true double conversion.</p>
+
+  <h3>Worked Example: Battery energy for 100 kVA / 30 min — and the selectivity trap</h3>
+  <div class="worked">
+    <p><strong>Given:</strong> UPS 100 kVA, load power factor 0.8 → 80 kW; autonomy 30 min (0.5 h); inverter efficiency η_inv = 0.94; end-of-life aging factor 1.25 (battery is replaced when capacity falls to 80 %); design margin 1.1 (temperature, tolerance, future load creep); battery string 432 V DC nominal (216 lead-acid cells × 2 V). All values indicative.</p>
+    <p><strong>Step 1 — Power the battery must deliver.</strong> The inverter sits between battery and load, so battery power is grossed up for its losses:</p>
+    <p><code class="formula">P_dc = P_load / η_inv = 80 / 0.94 = 85.1 kW</code></p>
+    <p><strong>Step 2 — Raw energy for 30 minutes.</strong></p>
+    <p><code class="formula">E_raw = P_dc × t = 85.1 kW × 0.5 h = 42.6 kWh</code></p>
+    <p><em>Why:</em> energy = power × time. Note it is the DC-side 85.1 kW, not the 80 kW load, that drains the tank.</p>
+    <p><strong>Step 3 — Aging and design margin.</strong></p>
+    <p><code class="formula">E_design = 42.6 × 1.25 × 1.1 = 58.5 kWh</code></p>
+    <p><em>Why:</em> the 30 minutes must exist on the battery's <em>last</em> good day, not its first, and at the real room temperature, not the datasheet's 20 °C.</p>
+    <p><strong>Step 4 — Convert to amp-hours at the string voltage.</strong></p>
+    <p><code class="formula">C = E_design / U_dc = 58 500 Wh / 432 V ≈ 135 Ah → select 150 Ah blocks</code></p>
+    <p><em>Note:</em> real selection uses the manufacturer's constant-power discharge tables (a 30 min discharge extracts less than the 10 h-rate Ah), so vendors typically land on 150–180 Ah for this duty — our arithmetic puts us in the right aisle of the catalogue.</p>
+    <p><strong>Sanity check:</strong> 58.5 kWh is about 1.5 hours of an average Saudi villa's summer consumption packed into two battery cabinets — believable for ~10 m² of plant room.</p>
+    <p><strong>Step 5 — The selectivity trap.</strong> UPS full-load current and fault current:</p>
+    <p><code class="formula">In = 100 000 / (√3 × 400) = 144 A</code></p>
+    <p><code class="formula">I_fault,inverter ≈ 2 to 3 × In = 290–430 A&nbsp;&nbsp;(for ~100–200 ms)</code></p>
+    <p>Now take a 32 A C-curve MCB on the UPS distribution board: its instantaneous (magnetic) trip needs 5–10 × 32 A = <strong>160–320 A</strong>. The inverter's 290–430 A <em>may</em> just reach it — or may not, leaving the fault to a slow thermal trip while the whole UPS bus sags and every other critical load browns out.</p>
+    <p><em>Verdict and fixes:</em> keep downstream breakers small relative to UPS size (rule of thumb ≤ 20–25 % of In per outgoing way, here ≤ ~32 A, with B-curves preferred), use fast fuses where selectivity is critical, and rely on the <strong>static bypass</strong>: a healthy mains delivers thousands of amps through the bypass for the few cycles needed to blow the faulty way's protection cleanly, then the load returns to the inverter.</p>
+  </div>
+
+  <h3>Intuitive Formalization</h3>
+  <p>Two small equations size the machine; one inequality governs its protection. Sizing:</p>
+  <p><code class="formula">E_batt = (P_load / η_inv) × t × k_age × k_margin</code></p>
+  <p>Symbols and their physical meaning: <strong>P_load</strong> (kW) — the real power the critical loads draw (kVA × their power factor); <strong>η_inv</strong> — the inverter's efficiency, i.e. the toll the electronics charge on every watt-hour leaving the tank; <strong>t</strong> (h) — the autonomy promise; <strong>k_age</strong> ≈ 1.25 — the battery you will own in year 4, not the one you bought; <strong>k_margin</strong> ≈ 1.1 — humility about temperature and load growth. Then <code>C (Ah) = E_batt / U_dc</code> converts energy to the catalogue quantity, with U_dc the DC string voltage.</p>
+  <p>Protection: the inverter can deliver at most <code>I_f ≈ (2–3) × In</code>, so any downstream device that must open instantly on inverter power alone needs:</p>
+  <p><code class="formula">I_magnetic-trip &lt; 2 × In,UPS&nbsp;&nbsp;(with margin)</code></p>
+  <p>If that cannot be met, the fault-clearing muscle must come from the static bypass — design the board assuming it.</p>
+
+  <h3>CTQ Mapping</h3>
+  <table class="tbl">
+    <thead><tr><th>Critical-to-quality requirement</th><th>How the concept delivers it</th><th>What to check in the field</th></tr></thead>
+    <tbody>
+      <tr><td>DCS/ESD ride through every dip and the 12 s transfer gap with zero reboots</td><td>Double conversion: load fed from inverter continuously; 0 ms transfer to battery</td><td>UPS in VFI (online) mode, not eco-mode; event log shows no load-side transfers during recorded mains dips</td></tr>
+      <tr><td>30 minutes of real autonomy for orderly shutdown if DG fails</td><td>Battery sized 58.5 kWh with aging and margin factors</td><td>Annual discharge test result vs 30 min; battery room temperature ≤ 25 °C; block impedance trend</td></tr>
+      <tr><td>A fault on one UPS-fed circuit does not crash the rest</td><td>Downstream breakers ≤ ~25 % of UPS In; static bypass clears big faults</td><td>DB schedule breaker sizes and curves; bypass "available/synchronised" indication healthy</td></tr>
+      <tr><td>UPS maintainable without dropping the control room</td><td>Maintenance bypass switch wraps the whole UPS</td><td>Documented bypass procedure; staff trained; bypass interlock tested at commissioning</td></tr>
+      <tr><td>Battery does not become the hidden single point of failure</td><td>Monitoring (voltage, impedance, temperature per block), replacement at 80 % capacity</td><td>Battery monitor alarms wired to DCS; replacement date vs design life at actual room temperature</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Conceptual Map</h3>
+  <pre>
+                          THE UPS (core)
+                               |
+        +--------- rests on ---+----------------------+
+        |                      |                      |
+  Double conversion      Battery = kWh tank     Inverter = polite,
+  AC→DC→AC, load         E = P·t·k_age·k_mar    current-limited
+  never sees mains       (autonomy promise)     source (2–3×In)
+        |                      |                      |
+  led to|               led to |               led to |
+        v                      v                      v
+  Static bypass /        VRLA → Li-ion          Selectivity rules:
+  static transfer        (temperature is        small breakers,
+  switch (&lt;5 ms)         the real enemy)        fuses, bypass-
+        |                      |                assisted clearing
+        +------- enables ------+----------------------+
+                               |
+        DCS · ESD · relays · telecom ride through:
+        50 ms dips, the 12 s DG gap (Ch. 12),
+        and a failed DG start (30 min orderly shutdown)
+  </pre>
+  <div class="note"><p>All values indicative on the Rev 3 basis (UPS 100 kVA / 30 min, 400-230 V, 60 Hz); IEC 62040 series and the vendor's discharge tables govern final battery selection.</p></div>
+</article>

@@ -28,7 +28,10 @@
   <div class="note">
     <strong>Note — indicative figures:</strong> All ratings, times and settings in this section
     are indicative and to be confirmed by project-specific studies, vendor data and the governing
-    grid code.
+    grid code. For this Saudi (SEC) Rev 3 edition the plant basis is <strong>13.8 kV / 400-230 V,
+    60 Hz, TN-S, 50 °C design ambient</strong>, and the governing documents are the
+    <strong>SASO-adopted IEC standards, the SEC Distribution Code / Saudi Grid Code, and SBC 401</strong>.
+    See also <a href="#p-saudi-grid">Saudi Grid Code &amp; On-Site Generation</a> at the end of this Part.
   </div>
 
   <!-- ─── P-1 ──────────────────────────────────────────────── -->
@@ -136,6 +139,17 @@
   <p><strong>When it applies.</strong> All plants with safety-critical or continuous-process
   loads that cannot tolerate a total utility blackout for more than the DG start-up period.</p>
 
+  <div class="note">
+    <strong>Reference-plant anchor (indicative).</strong> On the Rev 3 reference plant the
+    <code>DG</code> is <strong>1250 kVA</strong> (ESP rating at 50 °C site ambient) with an
+    open-transition <code>ATS</code> transferring within ≤ 10 s of utility-loss detection.
+    At 50 °C ambient, diesel engine and alternator outputs derate — always check that the
+    quoted kVA is the <em>site-rated</em> figure, not the 25 °C/ISO figure. If the DG ever
+    runs in parallel with the SEC network (even momentarily for closed-transition retransfer),
+    grid-code interface protection applies — see
+    <a href="#p-saudigrid-parallel">Saudi Grid Code — paralleling on-site generation</a>.
+  </div>
+
   <p><strong>How to verify on a site visit.</strong></p>
   <ul class="checklist">
     <li>Confirm <code>DG</code> nameplate kVA ≥ essential load (confirm essential load list exists and is current).</li>
@@ -207,7 +221,7 @@
   <ul class="checklist">
     <li>Confirm a written load-shedding philosophy document exists and is current.</li>
     <li>Verify priority assignments match the actual process criticality — ask the plant engineer.</li>
-    <li>Check relay/PMS settings: UF setpoints (e.g. 49.0 / 48.5 Hz staged), UV setpoints and time delays.</li>
+    <li>Check relay/PMS settings: UF setpoints on the 60 Hz base (e.g. 59.3 / 59.0 / 58.7 Hz staged — indicative; confirm against the Saudi Grid Code under-frequency bands), UV setpoints and time delays.</li>
     <li>Confirm load-shedding actuators (trip coils on MCC feeders or contactors) are wired and commissioned.</li>
     <li>Review test records showing the scheme has been function-tested within the last year.</li>
     <li>Check that critical <code>VFD</code>-driven loads are not shed before the drives have had time to attempt ride-through (coordinate with P-6).</li>
@@ -240,7 +254,12 @@
 
   <p>Both systems must have sufficient battery autonomy to ride through the longest credible outage
   before DG pick-up and reconnection (minimum 30 min autonomy for DCS; 2 h or more for DCDB
-  is common good practice — confirm per plant requirement).</p>
+  is common good practice — confirm per plant requirement). On the Rev 3 reference plant the
+  <code>UPS</code> is <strong>100 kVA / 30 min</strong> and the <code>DCDB</code> is
+  <strong>110 V DC</strong> — indicative; battery sizing at <strong>50 °C ambient</strong> needs
+  particular care, because VRLA battery life roughly halves for every 8–10 °C above 25 °C.
+  Specify an air-conditioned battery room (or Li-ion chemistry with a qualified BMS) and verify
+  the room cooling is itself fed from the essential bus.</p>
 
   <p><strong>When it applies.</strong> All plants — without this layer, protection relays cannot
   operate during a blackout and the DG/ATS sequence cannot be supervised.</p>
@@ -344,14 +363,15 @@
   ground-fault detection. This plant uses two distinct earthing regimes:</p>
 
   <ul>
-    <li><strong>MV system (11 kV) — resistance earthed via <code>MV-NER</code>:</strong> the
+    <li><strong>MV system (13.8 kV) — resistance earthed via <code>MV-NER</code>:</strong> the
     neutral of each MV/LV transformer (<code>TX-1</code>, <code>TX-2</code>) star winding is
     connected to earth through a neutral earthing resistor. The NER limits the single-phase
-    earth-fault current to a defined level (indicatively 200–400 A for 30 s) — high enough
+    earth-fault current to a defined level (indicatively <strong>400 A for 10 s</strong> on this
+    plant: 7.97 kV phase-to-neutral / 400 A ≈ <strong>19.9 Ω</strong>) — high enough
     for sensitive earth-fault relays to detect, low enough to limit damage and EPR.
     A running earth fault is detectable and the system can remain in service for a short period
     while the fault is located and isolated.</li>
-    <li><strong>LV system (400/415 V) — TN-S (solid neutral earth):</strong> the LV transformer
+    <li><strong>LV system (400/230 V) — TN-S (solid neutral earth):</strong> the LV transformer
     neutral is solidly earthed at the transformer; the protective earth (PE) and neutral (N)
     conductors are separate throughout the installation. Earth-fault current is high (limited
     only by loop impedance), enabling fast fuse/MCB/RCCB operation.
@@ -403,6 +423,10 @@
   <figure class="fig">
     <div class="svg-embed" data-src="diagrams/svg/control-architecture.svg"></div>
     <figcaption>Fig 4-1 — Layered control architecture: field IEDs and devices, IEC 61850 station bus, Power Management System (PMS), and DCS/SCADA supervisory level (indicative)</figcaption>
+    <div class="warning drawing-basis"><strong>Drawing basis note.</strong> This diagram was
+drawn for the original 11 kV / 415 V / 50 Hz reference design and has not been re-rendered.
+For this Saudi (SEC) Rev 3 edition read 11 kV as 13.8 kV, 415 V as 400 V and 50 Hz as 60 Hz.
+Topology, tags and protection philosophy are unchanged.</div>
   </figure>
 
   <h3 id="p-dcs-layers">The Four Layers</h3>
@@ -653,8 +677,11 @@
     volatile voltage and frequency. An industrial plant connected to such a grid will experience
     <strong>more frequent and more severe disturbances at its point of connection</strong> — dips,
     swells, fast rate-of-change-of-frequency (ROCOF) events, harmonics, and flicker — even when
-    no fault occurs within the plant. On these 21 plants in the Central and Eastern sector, utility
-    grid mix and renewable penetration should be confirmed per plant, as exposure varies.
+    no fault occurs within the plant. On these 21 plants in the SEC Central and Eastern Operating
+    Areas, utility grid mix and renewable penetration should be confirmed per plant, as exposure
+    varies — Saudi Arabia's National Renewable Energy Program is adding multi-GW solar PV and wind
+    blocks to the 60 Hz interconnected grid, so the disturbance environment will evolve over the
+    life of the plant.
   </p>
 
   <h3 id="p-grid-effects">How Grid Instability Hurts the Plant</h3>
@@ -706,7 +733,8 @@
   <ul>
     <li><strong>Under-voltage ride-through (UVRT) — time-delayed UV trips:</strong> set the
     UV trip relay time delay so the plant rides through dips that conform to the applicable
-    grid-code LVRT curve (e.g. a 500 ms dip to 50 % Vn should not trip the plant). Coordinate
+    Saudi Grid Code / SEC Distribution Code LVRT curve (e.g. a 500 ms dip to 50 % Vn should not
+    trip the plant — indicative; confirm the curve in force at the point of connection). Coordinate
     with the upstream utility protection so genuine faults in the plant still clear within the
     required time.</li>
     <li><strong>Contactor ride-through:</strong> DC-held coils or time-delay undervoltage relays
@@ -869,7 +897,7 @@
         <td>Add or resize detuned PFC capacitor bank</td>
         <td>Type — power factor penalty / harmonic resonance (not a SPOF but a reliability and quality risk)</td>
         <td><code>PFC</code>, <code>LV-MSB</code></td>
-        <td>Install or replace a 7 % detuned capacitor bank (filter reactor + capacitor steps) at the LV-MSB to correct power factor to ≥ 0.95 lagging at full load. The 7 % detuning ratio prevents resonance with the 5th harmonic and above. Automatic power factor controller (APFC) switches stages in response to reactive demand. Size based on load-flow reactive demand — indicatively 400–600 kVAr for a 2 MW plant, confirmed by a reactive power survey.</td>
+        <td>Install or replace a 7 % detuned capacitor bank (filter reactor + capacitor steps) at the LV-MSB to correct power factor to ≥ 0.95 lagging at full load. The 7 % detuning ratio prevents resonance with the 5th harmonic and above. Automatic power factor controller (APFC) switches stages in response to reactive demand. Size based on load-flow reactive demand — indicatively ≈ 580 kvar for this 2 MW plant (0.85 → 0.95 lagging), confirmed by a reactive power survey. Correction to ≥ 0.95 also clears the SEC power-factor clause (≥ 0.9 typical, with penalty/charge exposure below it — see <a href="#p-saudigrid-code">Saudi Grid Code</a>).</td>
         <td>Reactive power survey and load-flow study; capacitor bank rating and harmonic audit; APFC relay; installation space in MSB; updated protection and harmonic study.</td>
         <td><strong>M</strong></td>
       </tr>
@@ -958,7 +986,7 @@
 
   <!-- Q2 -->
   <details>
-    <summary><strong>Q2 — Load shedding trigger.</strong> A plant loses one of its two transformers. The surviving transformer is rated 1600 kVA. Before the fault, the total plant load was 2600 kVA (split equally, 1300 kVA per transformer). What happens if there is no load-shedding scheme? What should the scheme shed first?</summary>
+    <summary><strong>Q2 — Load shedding trigger.</strong> A plant loses one of its two transformers. The surviving transformer is rated 1600 kVA. Before the fault, the total plant load was 2600 kVA (generic example — larger than this manual's 2353 kVA reference plant), split equally at 1300 kVA per transformer. What happens if there is no load-shedding scheme? What should the scheme shed first?</summary>
     <div class="worked">
       <p><strong>Answer.</strong> Without a load-shedding scheme, the surviving transformer is immediately loaded to 2600 kVA — 162 % of its rated capacity. The transformer will trip on thermal overload protection within seconds (if it has a Buchholz / winding temperature relay) or will sustain damage and trip within minutes. This produces a total plant blackout — a worse outcome than the original single transformer loss.</p>
       <p>The load-shedding scheme must shed enough non-essential load to bring the surviving transformer below its rated capacity, with a margin. If the essential load is ~1100 kVA and the transformer is rated 1600 kVA, the scheme needs to shed at least 1000 kVA (2600 − 1600 = 1000 kVA minimum, preferably more for stability margin). It should shed Priority 3 loads first (site lighting, workshops, offices), then Priority 2 (HVAC, secondary utilities), keeping the core process alive. The essential loads (DCS, fire pump, critical process drives) must never be in the shed list.</p>
@@ -978,7 +1006,7 @@
   <details>
     <summary><strong>Q4 — IEC 61850 GOOSE vs Modbus.</strong> A PMS designer proposes using Modbus TCP polling (250 ms cycle time) for the fast load-shedding trip signal to MCC feeder breakers. What is the risk, and what should be specified instead?</summary>
     <div class="worked">
-      <p><strong>Answer.</strong> The risk is that on a generation shortfall event, the load-shedding command takes up to 250 ms to reach the feeder breakers plus the breaker trip time. On a DG set, frequency may decay at 2–5 Hz/s on a severe overload: in 250 ms the frequency could drop 0.5–1.25 Hz, potentially causing the DG governor to fail to recover or triggering spurious under-frequency trips on other loads before the shed command arrives. A 250 ms Modbus latency is too slow for a fast load-shedding scheme where the target response time is &lt; 100 ms.</p>
+      <p><strong>Answer.</strong> The risk is that on a generation shortfall event, the load-shedding command takes up to 250 ms to reach the feeder breakers plus the breaker trip time. On a DG set, frequency may decay at 2–5 Hz/s on a severe overload: in 250 ms the frequency could drop 0.5–1.25 Hz below the 60 Hz base (i.e. through the indicative 59.3 / 59.0 Hz shed stages), potentially causing the DG governor to fail to recover or triggering spurious under-frequency trips on other loads before the shed command arrives. A 250 ms Modbus latency is too slow for a fast load-shedding scheme where the target response time is &lt; 100 ms.</p>
       <p>The specification should require IEC 61850 GOOSE messaging from the PMS (or directly IED-to-IED) to the feeder breaker trip coils. GOOSE latency on a local Ethernet network is &lt; 4 ms, and the signal is self-supervised (heartbeat — the receiver knows if the publisher has failed). This achieves the required response time. Alternatively, hardwired trip outputs from a dedicated fast load-shedding relay provide a fully deterministic path if GOOSE is not available on the existing IEDs.</p>
     </div>
   </details>
@@ -1020,4 +1048,537 @@
     <strong>Next: <a href="#t-jubail">Part 5 — Field Tasks</a>.</strong>
   </div>
 
+</section>
+
+<!-- ============================================================ -->
+
+<section id="p-saudi-grid" data-title="Saudi Grid Code &amp; On-Site Generation" data-part="Part 4 — Philosophies, Modifications &amp; Control">
+  <h2>Saudi Grid Code &amp; On-Site Generation</h2>
+
+  <p><em>Where you are in the workflow: a reference section. Use it whenever a plant already has —
+  or the Recommendations Register proposes — on-site generation: a diesel generator that might
+  parallel the SEC supply, rooftop solar PV, or a battery energy storage system (BESS). It tells
+  you what the Saudi codes require, what is allowed by default, and what needs SEC consent.</em></p>
+
+  <p>
+    A 13.8 kV industrial customer in Saudi Arabia sits under two related rule books. The
+    <strong>Saudi Grid Code</strong> governs the transmission system and large generators; the
+    <strong>SEC Distribution Code</strong> translates those obligations down to
+    distribution-connected customers like this plant. In practice the engineer needs both: the
+    Distribution Code for connection conditions, metering, power factor and protection at the
+    point of connection (POC), and the Grid Code for frequency/voltage operating bands and the
+    behaviour expected of any generation that runs in parallel with the network. National
+    installation requirements come from <strong>SBC 401</strong> (the Saudi Building Code
+    electrical chapter, based on the NEC model adapted to KSA) together with
+    <strong>SASO-adopted IEC</strong> product standards. See
+    <a href="#orientation-saudi">Part 0 — Working in Saudi Arabia</a> for the regulatory map.
+  </p>
+
+  <div class="note">
+    <strong>Note — indicative figures:</strong> The numerical limits quoted in this section
+    (frequency bands, voltage tolerances, power-factor thresholds, protection settings) are
+    <em>indicative training values</em>, summarised at concept level. The codes are revised
+    periodically; always confirm the clause in force with SEC / the Water &amp; Electricity
+    Regulatory Authority before settings are issued for a real connection.
+  </div>
+
+  <h3 id="p-saudigrid-code">What the Codes Ask of an Industrial Customer</h3>
+
+  <p>
+    Five clusters of requirements matter most to an MV/LV process plant of this size. Each is
+    summarised below with the field-engineering consequence — i.e. what you should check or
+    specify on site.
+  </p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Requirement cluster</th>
+        <th>Indicative content</th>
+        <th>What it means for this plant</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Frequency operating band</strong></td>
+        <td>Nominal <strong>60 Hz</strong>. Continuous operation expected over a band of roughly
+        <strong>59.5–60.5 Hz</strong>, with time-limited operation in wider bands (down to
+        ~58.0 Hz and up to ~61.5 Hz for seconds-to-minutes durations — indicative).</td>
+        <td>Plant equipment (motors, VFDs, UPS input windows) must tolerate the band without
+        nuisance tripping. Plant under-frequency load shedding (see
+        <a href="#p4-load-shedding">P-4</a>) must sit <em>inside</em> the band so it acts only on
+        genuine islanded/DG events, e.g. staged at <strong>59.3 / 59.0 / 58.7 Hz</strong>
+        (indicative).</td>
+      </tr>
+      <tr>
+        <td><strong>Voltage tolerance at 13.8 kV</strong></td>
+        <td>Steady-state supply voltage within about <strong>±5 %</strong> of nominal under
+        normal conditions, up to about <strong>±10 %</strong> under disturbed/contingency
+        conditions (indicative).</td>
+        <td>Transformer off-circuit tap selection (typically ±2 × 2.5 % taps on
+        <code>TX-1/TX-2</code>) must centre the 400 V bus within limits across the SEC voltage
+        range and plant load range. Record actual 13.8 kV bus voltage during the site visit.</td>
+      </tr>
+      <tr>
+        <td><strong>Power factor</strong></td>
+        <td>Customers are required to maintain power factor at or above a threshold —
+        <strong>≥ 0.9 lagging</strong> is the typical clause — with a reactive-energy penalty or
+        charge mechanism below it.</td>
+        <td>The <code>PFC</code> bank (≈ 580 kvar detuned, target 0.95) is therefore not just an
+        economy measure but a compliance measure. An out-of-service PFC bank is a finding.</td>
+      </tr>
+      <tr>
+        <td><strong>Fault ride-through (FRT) for parallel generation</strong></td>
+        <td>Generation operating in parallel with the network must not disconnect for voltage
+        dips above the code's LVRT envelope, so that a transmission fault does not cascade into
+        loss of distributed generation across the system.</td>
+        <td>Relevant only while the <code>DG</code> (or future PV/BESS) is actually paralleled.
+        Note the tension: FRT says "stay connected through a dip", anti-islanding says
+        "disconnect when the grid is lost" — the interface protection settings must reconcile
+        both, which is why SEC reviews them (see
+        <a href="#p-saudigrid-parallel">below</a>).</td>
+      </tr>
+      <tr>
+        <td><strong>Protection &amp; intertrip at the POC</strong></td>
+        <td>Customer protection must grade with the SEC feeder protection; settings at the
+        incomer are subject to SEC approval. Where embedded generation can feed the network,
+        SEC may require an <strong>intertrip</strong> (direct transfer trip) from their upstream
+        breaker to the customer's generation breaker, plus dedicated interface protection.</td>
+        <td>The <code>MV-SWGR</code> incomer relay settings file should carry an SEC approval
+        record. Any modification touching incomer protection (e.g. MOD-02) reopens that
+        approval.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="worked">
+    <h4>Worked example — does the plant meet the SEC power-factor clause?</h4>
+    <p>Plant demand 2.0 MW at natural power factor 0.85 lagging (indicative):</p>
+    <code class="formula">Q_natural = P × tan(acos 0.85) = 2000 kW × 0.620 = 1240 kvar</code>
+    <p>To reach the PFC design target of 0.95 lagging:</p>
+    <code class="formula">Q_at_0.95 = 2000 kW × tan(acos 0.95) = 2000 × 0.329 = 658 kvar</code>
+    <code class="formula">Q_PFC = 1240 − 658 ≈ 580 kvar (matches the installed PFC rating)</code>
+    <p>Check against the code threshold of 0.9: with the PFC bank in service at 0.95 the plant
+    is comfortably compliant; with the bank <em>out of service</em> the plant sits at 0.85 —
+    below the ≥ 0.9 clause — and accrues reactive-energy charges every hour the bank is down.
+    <strong>Sanity check:</strong> 580 kvar ≈ 29 % of plant kW — a typical correction block for
+    a motor-dominated industrial load.</p>
+  </div>
+
+  <div class="tip">
+    <strong>Tip — read the bill.</strong> The fastest field check of power-factor compliance is
+    the SEC invoice: a recurring reactive-energy or low-power-factor line item is hard evidence
+    that the <code>PFC</code> bank is under-sized, mis-controlled, or out of service — even
+    before you open the panel.
+  </div>
+
+  <h4>Frequency anchors on the 60 Hz system</h4>
+
+  <p>
+    Because every frequency-based setting in the plant hangs off the 60 Hz base, it pays to
+    keep the anchor values in one place. All figures indicative:
+  </p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Anchor</th>
+        <th>Indicative value</th>
+        <th>Owned by</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Nominal system frequency</td>
+        <td><strong>60.00 Hz</strong></td>
+        <td>SEC / Saudi Grid Code</td>
+      </tr>
+      <tr>
+        <td>Normal continuous operating band</td>
+        <td>≈ 59.5 – 60.5 Hz</td>
+        <td>Saudi Grid Code</td>
+      </tr>
+      <tr>
+        <td>Plant UF load-shed stage 1 (Priority 3 loads)</td>
+        <td>≈ 59.3 Hz, 0.2–0.5 s delay</td>
+        <td>Plant PMS / UF relay (<a href="#p4-load-shedding">P-4</a>)</td>
+      </tr>
+      <tr>
+        <td>Plant UF load-shed stage 2 (Priority 2 loads)</td>
+        <td>≈ 59.0 Hz, 0.2–0.5 s delay</td>
+        <td>Plant PMS / UF relay</td>
+      </tr>
+      <tr>
+        <td>Plant UF load-shed stage 3 (deepest — Priority 1)</td>
+        <td>≈ 58.7 Hz, 0.1–0.3 s delay</td>
+        <td>Plant PMS / UF relay</td>
+      </tr>
+      <tr>
+        <td>DG governor steady-state band (islanded, isochronous)</td>
+        <td>60 ± 0.25 Hz</td>
+        <td>Generator controller (<a href="#c-genset">Part 2 — Generator</a>)</td>
+      </tr>
+      <tr>
+        <td>Interface 81U / 81O (only if paralleled with SEC)</td>
+        <td>≈ 59.2–59.5 Hz / 60.5–61.0 Hz, 0.5–2 s</td>
+        <td>Interface protection, settings agreed with SEC</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    <strong>Note — when do the shed stages actually operate?</strong> On the interconnected SEC
+    grid, frequency excursions below 59.5 Hz are rare system emergencies; the plant UF stages
+    will realistically only operate while the plant is <em>islanded on the DG</em> (where a
+    1250 kVA machine's frequency moves fast on any overload) or during a major grid event. That
+    is precisely why they are staged just below the normal band: deep enough to ignore ordinary
+    grid wobble, shallow enough to save the DG before its own under-frequency trip
+    (~57–58 Hz, machine-protective) ends the island entirely.
+  </div>
+
+  <h3 id="p-saudigrid-parallel">Paralleling the DG (or Future PV/BESS) with SEC</h3>
+
+  <p>
+    The single most important question for any on-site source is: <strong>does it ever run
+    connected to the SEC network at the same time as the utility supply?</strong> The answer
+    determines the entire protection and consent regime.
+  </p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Operating mode</th>
+        <th>What happens</th>
+        <th>Consent / protection consequence</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Open transition (break-before-make)</strong> — the default</td>
+        <td>The <code>ATS</code> disconnects the utility <em>before</em> connecting the
+        <code>DG</code>, and vice versa on retransfer. The DG and the SEC network are never
+        electrically connected together — separation is guaranteed by the transfer-switch
+        mechanism or a mechanical/electrical interlock.</td>
+        <td>No parallel operation → normally <strong>no generation-connection consent</strong>
+        needed beyond declaring the standby set. This is how the reference plant is configured
+        (see <a href="#c-ats">Part 2 — ATS</a> and <a href="#c-genset">Part 2 — Generator</a>).</td>
+      </tr>
+      <tr>
+        <td><strong>Closed transition (make-before-break)</strong></td>
+        <td>On retransfer the DG is synchronised to the restored utility and both are connected
+        for a short overlap (typically &lt; 100 ms) so the load never sees a break.</td>
+        <td>Even a 100 ms overlap is parallel operation: it requires <strong>SEC consent</strong>,
+        a synchroniser, and interface protection. Many utilities accept short closed transition
+        with a fail-safe overlap timer that trips the DG breaker if the overlap exceeds the
+        agreed window.</td>
+      </tr>
+      <tr>
+        <td><strong>Extended parallel / export</strong> (peak lopping, PV, BESS)</td>
+        <td>The on-site source runs continuously in parallel with SEC, sharing or exporting
+        power.</td>
+        <td>Full embedded-generation connection agreement: SEC studies, approved interface
+        protection at the POC, possible <strong>intertrip</strong>, FRT compliance, and
+        SEC-witnessed commissioning.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Interface protection — the watchdog at the point of connection</h4>
+
+  <p>
+    Whenever parallel operation is allowed, a dedicated <strong>interface protection</strong>
+    relay watches the point of connection and disconnects the on-site source if the utility
+    side misbehaves. The functions are simple and worth knowing by their ANSI numbers:
+  </p>
+
+  <ul>
+    <li><strong>27 / 59 — under/over-voltage:</strong> trips the interface if the SEC voltage
+      leaves its permitted band (the source must not prop up, or be damaged by, an abnormal
+      network).</li>
+    <li><strong>81U / 81O — under/over-frequency:</strong> trips if frequency leaves the
+      operating band around 60 Hz (indicative settings cluster around 59.3 / 60.5 Hz with
+      time delays — confirm against the current SEC requirements).</li>
+    <li><strong>Vector shift and ROCOF (rate of change of frequency):</strong>
+      loss-of-mains detection. If the SEC feeder opens upstream, the small on-site source is
+      left "islanded" with the plant load; voltage angle and frequency lurch, and these
+      elements detect the lurch and trip within a few cycles. An undetected island is
+      dangerous — it back-energizes a network SEC believes is dead, and reclosing onto it
+      out of phase can wreck the generator.</li>
+  </ul>
+
+  <p>
+    A plain-language picture of the two loss-of-mains elements: think of the on-site generator
+    as a cyclist being towed by a truck (the SEC grid). While the rope is attached, the truck
+    dictates the speed — the cyclist's pedalling barely matters. The instant the rope is cut,
+    the cyclist's speed is suddenly set by their own legs against the hill: the cadence
+    <em>jumps</em> (that step change in voltage phase angle is what the <strong>vector-shift</strong>
+    element sees, typically a 6–12° jump) and then the speed starts <em>drifting</em> quickly up
+    or down (that drift rate is what <strong>ROCOF</strong> measures, typically set at
+    0.5–1.0 Hz/s sustained over a few cycles). A big interconnected grid never changes speed
+    that fast; a small island always does.
+  </p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>ANSI / element</th>
+        <th>Watches</th>
+        <th>Indicative setting (60 Hz / 13.8 kV base)</th>
+        <th>Watch-out</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>27</strong> under-voltage</td>
+        <td>POC voltage too low</td>
+        <td>≈ 0.8 × Vn, 1–2 s</td>
+        <td>Must sit <em>outside</em> the FRT/LVRT envelope, or the interface trips on dips the
+        code requires it to ride through.</td>
+      </tr>
+      <tr>
+        <td><strong>59</strong> over-voltage</td>
+        <td>POC voltage too high</td>
+        <td>≈ 1.10 × Vn, 0.5–1 s; ≈ 1.15 × Vn fast</td>
+        <td>A lightly loaded island fed by the generator sees voltage rise within cycles.</td>
+      </tr>
+      <tr>
+        <td><strong>81U / 81O</strong> under/over-frequency</td>
+        <td>Frequency off the 60 Hz base</td>
+        <td>≈ 59.2–59.5 Hz / 60.5–61.0 Hz, 0.5–2 s</td>
+        <td>Coordinate with the plant UF load-shed stages (59.3 / 59.0 / 58.7 Hz) so shedding
+        gets a chance to save a legitimate island before the interface ends it.</td>
+      </tr>
+      <tr>
+        <td><strong>Vector shift</strong></td>
+        <td>Step jump in voltage phase angle</td>
+        <td>≈ 6–12°</td>
+        <td>Fast but can false-trip on severe external faults; many schemes pair it with ROCOF.</td>
+      </tr>
+      <tr>
+        <td><strong>ROCOF</strong> (df/dt)</td>
+        <td>Rate of change of frequency</td>
+        <td>≈ 0.5–1.0 Hz/s over 2–5 cycles</td>
+        <td>Too sensitive → trips on ordinary grid events as renewable penetration grows
+        (see <a href="#p-grid-ridethrough">ride-through</a>); too slow → an island persists.</td>
+      </tr>
+      <tr>
+        <td><strong>32</strong> reverse power</td>
+        <td>Power export toward SEC</td>
+        <td>≈ 2–5 % of source rating, 2–5 s</td>
+        <td>Required where parallel operation is consented but <em>export is not</em> — enforces
+        the "parallel, never export" agreement.</td>
+      </tr>
+      <tr>
+        <td><strong>Intertrip</strong> (direct transfer trip)</td>
+        <td>SEC upstream breaker position</td>
+        <td>Hardwired / pilot / telecoms path, end-to-end tested</td>
+        <td>The only <em>certain</em> loss-of-mains detection; SEC may mandate it where passive
+        methods are judged insufficient. The communications path becomes plant-critical.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="warning">
+    Anti-islanding is non-negotiable. If the plant ever adds parallel-capable generation —
+    even "just for a 100 ms closed transition" — the loss-of-mains protection, its settings
+    and its testing regime become part of the SEC connection agreement, and SEC may require
+    a witnessed proof test before energization.
+  </div>
+
+  <h3 id="p-saudigrid-solar">Solar PV and BESS at 60 Hz — what would change</h3>
+
+  <p>
+    Industrial rooftop and carport PV is increasingly attractive in the Kingdom: high
+    irradiance, large flat roofs, and daytime-peaking process loads are a natural match. For
+    this plant a future PV + battery (BESS) addition would be a Part 4 modification with the
+    following electrical consequences (all indicative):
+  </p>
+
+  <ul>
+    <li><strong>Interface at the LV-MSB.</strong> A PV array of a few hundred kWp would
+      connect through string inverters to a dedicated outgoing way on each LV bus section.
+      Inverters are certified to SASO-adopted standards (anti-islanding per IEC&nbsp;62116)
+      and configured with the 60 Hz Saudi grid profile — frequency band, voltage band, and
+      frequency-watt response.</li>
+    <li><strong>Fault contribution is small.</strong> Inverters limit fault current to
+      roughly 1.0–1.2 × their rated current, so the plant's 38.5 kA LV fault level barely
+      moves — the protection study is checked, not redone. Reverse-power flow through feeder
+      protection, however, must be reviewed.</li>
+    <li><strong>Dust soiling is the dominant derating.</strong> In Saudi conditions an
+      uncleaned array can lose on the order of 15–25 % of yield per month to soiling
+      (indicative — site-specific). A cleaning regime (and its water supply or dry-brush
+      robots) belongs in the feasibility study, not as an afterthought.</li>
+    <li><strong>BESS roles must be chosen, not assumed.</strong> Peak-shaving and PV
+      time-shifting are energy applications tolerant of seconds-long response; replacing the
+      UPS or riding through an SEC dip are power applications with strict response and
+      certification demands. A BESS specified for one rarely does the other well — see the
+      continuity templates at the start of this part.</li>
+    <li><strong>Consent regime.</strong> Any PV/BESS that operates connected to the network
+      is extended parallel operation: full SEC embedded-generation process, interface
+      protection at the POC, and Saudi Grid Code compliance (including fault ride-through
+      for larger plants).</li>
+  </ul>
+
+  <div class="worked">
+    <h4>Worked example — how much rooftop PV could this plant host?</h4>
+    <p>Assume 5000 m² of usable, unshaded roof and a practical layout density of
+    ~0.14 kWp/m² (walkways, plant rooms and tilt spacing included):</p>
+    <code class="formula">P_PV = 5000 m² × 0.14 kWp/m² ≈ 700 kWp (indicative)</code>
+    <p>Daily energy at a Saudi-typical 5.8 peak-sun-hours and a performance ratio of 0.80
+    (temperature losses dominate at 50 °C ambient — cell temperatures can exceed 75 °C):</p>
+    <code class="formula">E_day = 700 kWp × 5.8 h × 0.80 ≈ 3.2 MWh/day (clean array)</code>
+    <p>Compare with plant consumption at 2 MW demand and ~0.7 average load factor:</p>
+    <code class="formula">E_plant = 2000 kW × 0.7 × 24 h ≈ 33.6 MWh/day → PV ≈ 10 % of plant energy</code>
+    <p><strong>Sanity check:</strong> 700 kWp on a 2 MW plant means PV can never exceed plant
+    load during operation (no export hours), which simplifies the SEC agreement — a
+    "parallel, never export" connection enforced by reverse-power protection is usually
+    sufficient. All figures indicative; a feasibility study with measured irradiance and a
+    structural roof survey governs.</p>
+  </div>
+
+  <div class="worked">
+    <h4>Worked example — what dust soiling costs without cleaning</h4>
+    <p>Take an indicative Saudi soiling rate of 20 % yield loss per month uncleaned
+    (published site values span roughly 15–25 %/month and spike after shamal dust storms):</p>
+    <code class="formula">Loss after 1 month ≈ 0.20 × 3.2 MWh/day ≈ 0.64 MWh/day</code>
+    <code class="formula">Average loss with fortnightly cleaning ≈ ½ × (0.20 × 0.5) ≈ 5 % ≈ 0.16 MWh/day</code>
+    <p>So a simple fortnightly cleaning cycle recovers roughly 0.5 MWh/day versus a
+    month-uncleaned array — the cleaning contract (or dry-brush robot) typically pays for
+    itself within the first year. <strong>Sanity check:</strong> this is why every credible
+    KSA PV proposal carries a soiling-and-cleaning line item; treat its absence in a vendor
+    offer as a red flag.</p>
+  </div>
+
+  <h4>Indicative 60 Hz inverter grid-profile settings</h4>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Parameter</th>
+        <th>Indicative setting</th>
+        <th>Why</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Nominal frequency / voltage</td>
+        <td>60 Hz / 400-230 V (LV interface)</td>
+        <td>Saudi network base — never the factory-default 50 Hz export profile.</td>
+      </tr>
+      <tr>
+        <td>Continuous operating band</td>
+        <td>≈ 59.5 – 60.5 Hz</td>
+        <td>Mirrors the Grid Code band; inverter stays connected through normal grid wobble.</td>
+      </tr>
+      <tr>
+        <td>Under/over-frequency trip</td>
+        <td>≈ 59.3 Hz and ≈ 60.5 Hz with ~2 s delay; fast trip ≈ 57.0 / 61.5 Hz</td>
+        <td>Delayed stages coordinate with plant load shedding; fast stages protect equipment.</td>
+      </tr>
+      <tr>
+        <td>Frequency-watt response</td>
+        <td>Linear power reduction above ≈ 60.2 Hz</td>
+        <td>Inverter backs off output to help arrest a high-frequency event instead of tripping.</td>
+      </tr>
+      <tr>
+        <td>Voltage trip / ride-through</td>
+        <td>≈ 0.88 / 1.10 × Vn with LVRT envelope per code</td>
+        <td>Rides through dips the code requires; disconnects from genuinely abnormal voltage.</td>
+      </tr>
+      <tr>
+        <td>Anti-islanding</td>
+        <td>Active method, type-tested per SASO-adopted <strong>IEC 62116</strong>, trip ≤ 2 s</td>
+        <td>Guarantees the PV cannot sustain an undetected island on a dead SEC feeder.</td>
+      </tr>
+      <tr>
+        <td>Reconnection</td>
+        <td>Only after voltage and frequency stable in-band for ≈ 60–300 s, ramped return</td>
+        <td>Prevents all inverters slamming back simultaneously after a disturbance.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>BESS: peak-shaving battery vs UPS-grade battery — not the same machine</h4>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Attribute</th>
+        <th>Peak-shaving / PV-shifting BESS</th>
+        <th>UPS-grade / ride-through BESS</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Job</td>
+        <td>Cut the demand peak SEC bills for; absorb midday PV and release it later</td>
+        <td>Hold the essential bus up through dips and the DG start gap (≤ 10 s)</td>
+      </tr>
+      <tr>
+        <td>Response time</td>
+        <td>Seconds — scheduled or tariff-triggered</td>
+        <td>Milliseconds — grid-forming or in-line, seamless to the load</td>
+      </tr>
+      <tr>
+        <td>Energy vs power</td>
+        <td>Energy-heavy: 1–4 h at moderate power</td>
+        <td>Power-heavy: minutes of storage at high power</td>
+      </tr>
+      <tr>
+        <td>Duty cycle</td>
+        <td>Deep cycle daily — cycle life dominates sizing</td>
+        <td>Rarely discharged — calendar life and availability dominate</td>
+      </tr>
+      <tr>
+        <td>Interface</td>
+        <td>Grid-following inverter on <code>LV-MSB</code>; full parallel-operation consent</td>
+        <td>Grid-forming / transfer-switched on the essential bus; coordinates with
+        <code>UPS</code> and <code>ATS</code></td>
+      </tr>
+      <tr>
+        <td>Relation to existing kit</td>
+        <td>Supplements the tariff case for the <code>PFC</code>/metering review</td>
+        <td>Supplements — never silently replaces — the 100 kVA / 30 min <code>UPS</code>
+        and the <code>DG</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="worked">
+    <h4>Worked example — does 700 kWp of PV change the fault level at LV-MSB?</h4>
+    <p>Inverter rated current at 400 V:</p>
+    <code class="formula">I_rated = 700 kW / (√3 × 400 V) = 700 000 / 693 ≈ 1010 A</code>
+    <p>Inverter fault contribution ≈ 1.2 × rated (current-limited electronics, no rotating mass):</p>
+    <code class="formula">I_fault,PV ≈ 1.2 × 1010 A ≈ 1.2 kA — vs bus fault level 38.5 kA → ≈ 3 %</code>
+    <p><strong>Sanity check:</strong> the switchgear short-circuit ratings are untouched; the
+    real protection work is checking <em>direction</em> (reverse flow through incomer and
+    feeder relays) and confirming the small PV infeed cannot hold up voltage enough to confuse
+    UV-based transfer schemes. All figures indicative.</p>
+  </div>
+
+  <div class="note">
+    At 60 Hz nothing about PV physics changes — panels are DC. The frequency matters only to
+    the inverters' grid profile and the anti-islanding settings, which must be ordered and
+    commissioned for the Saudi 60 Hz network, not a generic 50 Hz export profile.
+  </div>
+
+  <h3 id="p-saudigrid-checklist">Embedded-generation modification checklist</h3>
+
+  <ul class="checklist">
+    <li>Operating mode decided and documented: open transition / closed transition / extended parallel.</li>
+    <li>SEC consulted and consent obtained for any mode that ever parallels the network.</li>
+    <li>Interface protection specified (27/59, 81U/81O, vector shift or ROCOF) with settings agreed with SEC.</li>
+    <li>Fail-safe overlap timer specified for closed transition (trips DG breaker if overlap exceeds the agreed window).</li>
+    <li>Fault-level and protection-coordination study reviewed for the new source's contribution and reverse flows.</li>
+    <li>Inverters certified to SASO-adopted standards with the Saudi 60 Hz grid profile (anti-islanding per IEC 62116).</li>
+    <li>Soiling-cleaning regime and 50 °C derating included in the PV/BESS yield and sizing calculations.</li>
+    <li>SEC-witnessed commissioning and proof tests scheduled where required by the connection agreement.</li>
+  </ul>
+
+  <div class="key">
+    Key takeaway: the moment any on-site source can be connected to the SEC network at the
+    same time as the utility — even for 100 milliseconds — you have left "standby plant" and
+    entered the Grid Code. Decide the operating mode first; the consent, protection and
+    study obligations all follow from that single choice.
+  </div>
 </section>

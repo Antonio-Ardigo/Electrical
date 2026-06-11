@@ -1,0 +1,114 @@
+<article class="concept" id="concept-selectivity">
+  <h2>5. Time–Current Selectivity</h2>
+  <p class="backlink">Manual deep-dive: <a href="manual-rev3.html#c-protection">open the full section</a></p>
+
+  <h3>The Problem</h3>
+  <p>A fault on one motor feeder in MCC-1 puts fault current through <em>every</em> device between the fault and the grid: the feeder MCCB, the MCC incomer, the LV-MSB ACB, the transformer's MV breaker, even the SEC supply relay. Each of them sees the same abnormal current at the same instant, and each is perfectly entitled to trip. If they all do, a single welder's damaged cable blacks out the entire plant — the 2 MW process, the control room, everything — and the operators spend an hour discovering which of five open breakers marks the actual fault.</p>
+  <p>The naive fixes both fail. Make everything trip fast, and any small fault cascades into a total shutdown; spurious trips of the MV incomer become routine and SEC starts asking questions. Make upstream devices insensitive so they "never" trip, and a fault the downstream device fails to clear burns unattended. What the plant actually needs is a <strong>hierarchy of patience</strong>: the device nearest the fault trips first and fast; each device upstream waits just long enough to give its downstream colleague a fair chance — and no longer, because every extra tenth of a second is paid in I²t damage and arc-flash energy (Ch. 6).</p>
+  <p>This discipline — <strong>selectivity</strong> (also called discrimination or coordination) — is what turns a pile of individually excellent breakers into a protection <em>system</em>. It is bought almost entirely with one currency: time.</p>
+  <h3>Core Principles</h3>
+  <h4>Principle 1: Trip the smallest possible slice of the network</h4>
+  <p><strong>Statement:</strong> for any fault, exactly one device should operate — the nearest one upstream of the fault. Everything above it holds. The measure of a good scheme is not how fast it trips but how <em>little</em> it trips.</p>
+  <p><strong>Example:</strong> motor cable fault → feeder MCCB only; MCC-1 keeps running its other motors; LV-MSB never notices beyond a voltage dip.</p>
+
+  <h4>Principle 2: Every device is a curve, not a number</h4>
+  <p><strong>Statement:</strong> protection devices are characterised on a <em>time–current curve</em> (TCC): operating time versus current, both on log scales. MCCBs have a thermal (long-time) region, sometimes a short-time delay region, and an instantaneous region. Relays have settable curves. Selectivity is a geometric statement: <strong>the downstream curve must lie entirely below and to the left of the upstream curve</strong>, with a margin, over the whole range of currents both can see.</p>
+
+  <h4>Principle 3: Grading margin — the honest minimum gap between curves</h4>
+  <p><strong>Statement:</strong> the time gap between successive curves is not arbitrary. It must cover, in series: the downstream <em>breaker's</em> clearing time (the upstream relay keeps measuring fault current until the arc actually dies, Ch. 4); upstream relay overshoot (a relay almost at its trip point coasts a little after current stops); timing errors of both devices (IEC accuracy classes); and a safety remainder. Summed honestly this gives the classical <strong>0.3–0.4 s</strong> between IDMT relay stages, and ~0.2 s between modern numerical devices with breaker times known.</p>
+
+  <h4>Principle 4: IDMT — patience proportional to provocation</h4>
+  <p><strong>Statement:</strong> an IDMT (Inverse Definite Minimum Time) relay trips faster the larger the current. The IEC standard-inverse curve is <code>t = TMS × 0.14 / (M^0.02 − 1)</code>, where <code>M</code> = fault current ÷ pickup setting, and <code>TMS</code> (time-multiplier setting) scales the whole curve up or down. Inverseness mirrors physics: big currents do I²t damage faster, so they deserve less patience — and it lets successive relays grade naturally across a range of fault positions.</p>
+
+  <h3>Key Innovations</h3>
+  <h4>The time-graded ladder (induction-disc relays, early 1900s → numerical relays today)</h4>
+  <p><strong>What:</strong> assigning each level of the radial network a deliberate operating time, stepped by the grading margin: in our plant, indicatively — feeder MCCB instantaneous (&lt;0.05 s) → LV-MSB incomer ACB short-time delay <strong>0.3 s</strong> → MV transformer-feeder relay <strong>≈0.6 s</strong> → SEC upstream above that.</p>
+  <p><strong>Why it mattered:</strong> radial selectivity became a paper (now software) exercise: stack the TCCs, check the daylight between curves. The cost is explicit too — the highest-energy bus (LV-MSB, 38.5 kA) gets the <em>slowest</em> protection, which is the central tension Ch. 6 inherits.</p>
+  <h4>Zone selective interlocking and energy-based tricks (modern trip units)</h4>
+  <p><strong>What:</strong> breakers that talk: a downstream device seeing the fault sends a blocking signal upstream; an upstream device that receives no block knows the fault is in its own zone and trips with minimal delay instead of waiting out its grading time. Related: current-limiting cascade at the network edges, and maintenance switches that temporarily collapse the ladder to fast settings while a person works on the board.</p>
+  <p><strong>Why it mattered:</strong> it breaks the cruel trade "selectivity = slow main breakers". With ZSI, a genuine LV-MSB bus fault is cleared in ~0.1 s while feeder faults still grade normally — directly cutting the arc-flash numbers worked in Ch. 6.</p>
+  <h3>Worked Example</h3>
+  <p><strong>Scenario:</strong> build the grading margin from first principles, then set the MV IDMT relay above the LV-MSB incomer ACB for an LV bus fault. <strong>Given:</strong> LV bus fault 38.5 kA (Ch. 2); ACB short-time setting 0.3 s; MV relay IEC standard-inverse, CT-side pickup 80 A primary (≈1.2 × MV FLC 66.9 A); transformer ratio 13.8/0.4 kV. Indicative values.</p>
+  <div class="worked">
+    <p><strong>Step 1 — Assemble the margin budget (why "0.3–0.4 s" is not folklore).</strong></p>
+    <code class="formula">Downstream breaker clearing:        ~0.07 s  (3–4 cycles at 60 Hz, Ch. 4)</code>
+    <code class="formula">Upstream relay overshoot:           ~0.05 s</code>
+    <code class="formula">Timing tolerances, both devices:    ~0.13 s  (IEC accuracy + CT errors)</code>
+    <code class="formula">Safety remainder:                   ~0.10 s</code>
+    <code class="formula">Total grading margin ≈ 0.07+0.05+0.13+0.10 = 0.35 s</code>
+    <p><em>Why:</em> each line is a real, physical delay or uncertainty. Skipping any of them produces a scheme that grades on paper and races in reality.</p>
+    <p><strong>Step 2 — Refer the LV fault to the MV side.</strong> The MV relay sees the LV bus fault through the transformer:</p>
+    <code class="formula">I_MV = 38 500 A × (400 / 13 800) = 38 500 × 0.029 = 1 116 A</code>
+    <p><strong>Step 3 — Multiple of pickup.</strong></p>
+    <code class="formula">M = I_MV / I_pickup = 1 116 / 80 = 13.95</code>
+    <p><strong>Step 4 — Relay time at TMS = 1 (IEC standard inverse).</strong></p>
+    <code class="formula">M^0.02 = 13.95^0.02 ≈ 1.054   →   M^0.02 − 1 = 0.054</code>
+    <code class="formula">t(TMS=1) = 0.14 / 0.054 ≈ 2.59 s</code>
+    <p><em>Why:</em> the exponent 0.02 makes the curve very flat at high multiples — the relay's "patience" barely changes between 10× and 20× pickup, which is exactly what makes grading at high fault currents predictable.</p>
+    <p><strong>Step 5 — Choose TMS to sit one margin above the ACB.</strong> Target time = ACB 0.3 s + margin 0.35 s = 0.65 s:</p>
+    <code class="formula">TMS = t_target / t(TMS=1) = 0.65 / 2.59 ≈ 0.251   →  set TMS = 0.25</code>
+    <code class="formula">Actual relay time: t = 0.25 × 2.59 ≈ 0.65 s</code>
+    <p><strong>Step 6 — Verify the ladder, bottom to top, at the LV bus fault.</strong></p>
+    <code class="formula">Feeder MCCB:   instantaneous &lt; 0.05 s   (its own zone faults)</code>
+    <code class="formula">LV-MSB ACB:    0.30 s                    (gap to MCCB ≈ 0.25 s ✓ with ZSI/known breaker times)</code>
+    <code class="formula">MV relay:      0.65 s                    (gap to ACB = 0.35 s ✓)</code>
+    <p><strong>Sanity check:</strong> 1 116 A on the MV side ÷ 66.9 A FLC ≈ 16.7 — the same per-unit multiple as the LV side (Ch. 1), confirming the referral. The MV relay also stays below the transformer through-fault damage curve at 0.65 s — the upper boundary every grading study must respect.</p>
+  </div>
+  <div class="key">
+    <p><strong>The trade made explicit:</strong> the plant bought "lose one feeder, not the plant" at the price of a main bus protected at 0.3 s and an MV stage at 0.65 s. That price is paid in arc-flash energy at the LV-MSB — which is Ch. 6's opening line.</p>
+  </div>
+
+  <h3>Intuitive Formalization</h3>
+  <p>Symbols: <code>M</code> = fault current as a multiple of pickup; <code>TMS</code> = time multiplier; <code>Δt</code> = grading margin; <code>t_n</code> = operating time of level n (counting up from the fault).</p>
+  <div class="worked">
+    <code class="formula">IEC SI curve:  t = TMS × 0.14 / (M^0.02 − 1)</code>
+    <code class="formula">Ladder rule:   t_(n+1) ≥ t_n + Δt,   with Δt ≈ 0.3–0.4 s (electromech.) or ≈0.2 s (numerical)</code>
+    <code class="formula">Margin truth:  Δt = t_breaker + t_overshoot + Σerrors + safety</code>
+  </div>
+  <p>Physical meaning: M is "how sure are we this is a real fault" — the curve gives big, unambiguous faults less patience. TMS slides the whole curve vertically: it is the knob that places a relay on its rung of the ladder. The ladder rule is just queueing etiquette with a stopwatch; the margin truth is the reminder that the stopwatch must include the <em>breaker's</em> physical arc-killing time (Ch. 4), not merely the relay's decision time.</p>
+
+  <h3>CTQ Mapping</h3>
+  <table class="tbl">
+    <thead><tr><th>Critical-to-quality requirement</th><th>How the concept delivers it</th><th>What to check in the field</th></tr></thead>
+    <tbody>
+      <tr><td>A feeder fault never blacks out the plant</td><td>Curve-below-curve geometry guarantees only the nearest device trips</td><td>After any trip: exactly one device open, and it is the nearest one; multiple-device trips trigger a coordination review</td></tr>
+      <tr><td>Grading margins are real, not nominal</td><td>Margin built from breaker time + overshoot + tolerances + safety (≈0.35 s)</td><td>Settings as per the latest coordination study; secondary-injection test times within tolerance; breaker timing tests current</td></tr>
+      <tr><td>Upstream relay never beats downstream device</td><td>IDMT flatness at high M keeps the gap stable across fault positions</td><td>TCC overlay (study printout) shows daylight at 38.5 kA, at minimum fault, and at the tie-open/closed configurations studied</td></tr>
+      <tr><td>Transformer protected against through-faults</td><td>MV stage (0.65 s at 16.7 pu) sits below the IEC through-fault damage curve</td><td>Damage curve plotted on the same TCC as the MV relay; clearance confirmed at the 38.5 kA referred point</td></tr>
+      <tr><td>Arc-flash exposure not silently inflated</td><td>ZSI / maintenance settings collapse the ladder when people are at the board</td><td>Maintenance switch procedure used before live work; ZSI wiring functionally tested, not just configured</td></tr>
+    </tbody>
+  </table>
+  <h3>Conceptual Map</h3>
+  <pre>
+                 TIME–CURRENT SELECTIVITY (core)
+                "lose the feeder, keep the plant"
+                              |
+        +---------------------+---------------------+
+        | rests on            | rests on            | rests on
+        v                     v                     v
+  [Smallest-slice       [Devices are TCC      [Margin = breaker time
+   tripping rule]        curves; downstream    + overshoot + errors
+        |                below upstream]       + safety ≈ 0.35 s]
+        | requires            |                     ^
+        v                     | led to              | requires
+  [Radial topology:           v                     |
+   one path to fault]   [IDMT curves:         [Ch.4 real clearing
+                         t = TMS·0.14/         times at 60 Hz]
+                         (M^0.02 − 1)]
+                              |
+                              | enables
+                              v
+              THE LADDER (LV bus fault, 38.5 kA / 1 116 A MV)
+              MCCB inst &lt;0.05 s → ACB 0.30 s → MV IDMT 0.65 s
+                              |
+              +---------------+----------------+
+              | costs                          | mitigated by
+              v                                v
+       [Slow protection at the          [ZSI, maintenance switch,
+        highest-energy bus →             current-limiting edges]
+        Ch.6 Arc Flash]
+  </pre>
+  <div class="note">
+    <p>Settings shown are <strong>indicative</strong> on the Rev 3 basis (SEC 13.8 kV, 60 Hz); the project protection coordination study — including SEC interface requirements at the intake — governs all final settings.</p>
+  </div>
+</article>

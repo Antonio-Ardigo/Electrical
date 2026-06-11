@@ -1,0 +1,862 @@
+<!-- ============================================================
+     Part 2 — Calculations — §C-ARCFLASH (flagship tutorial)
+     Field manual fragment: 34-part2-arcflash.html  (Rev 3, Saudi/SEC edition)
+     Author contract: data-part="Part 2 — Calculations"
+     All values INDICATIVE / TENTATIVE — a certified IEEE 1584-2018 study governs.
+============================================================ -->
+<section id="c-arcflash" data-title="Arc-Flash Incident Energy and the Clearing-Time Lever" data-part="Part 2 — Calculations">
+
+  <h2>11 — Arc-Flash / Incident Energy (IEEE 1584) &amp; the Clearing-Time Lever <span style="font-size:0.65em; font-weight:normal; background:#f5f0e8; border:1px solid #c8b88a; border-radius:3px; padding:1px 5px; color:#6b5a1e;">Reference</span></h2>
+
+  <p><strong>Goal:</strong> understand what an arcing fault physically is, estimate the
+  incident thermal energy a worker would receive at the <code>LV-MSB</code>, map that
+  energy to arc-rated PPE and an arc-flash boundary — and demonstrate, with arithmetic
+  you can redo on a phone, why <em>clearing time</em> is the single most powerful lever
+  for reducing the hazard.</p>
+
+  <div class="warning">
+    Arc-flash is a <strong>life-safety calculation</strong>. Every number in this section
+    is <strong>indicative</strong> and exists to teach the method and the physics. Actual
+    PPE selection, equipment labelling, energised-work permits, and arc-mitigation design
+    <strong>must</strong> be based on a full, certified IEEE 1584-2018 study using
+    site-specific as-built data, performed in recognised power-system software and
+    reviewed by a competent engineer. Never use the figures below for a live-work
+    decision.
+  </div>
+
+  <figure class="fig">
+    <div class="svg-embed" data-src="diagrams/svg/sld-master-2MW.svg"></div>
+    <figcaption>Fig 2-11 — Master SLD of the indicative ~2 MW plant. The worked example in
+    this section places the arcing fault on the <code>LV-MSB</code> bus, fed by one
+    1600 kVA transformer with the bus-tie open (normal operating mode). All ratings
+    indicative.</figcaption>
+  </figure>
+  <div class="warning drawing-basis"><strong>Drawing basis note.</strong> This diagram was
+  drawn for the original 11 kV / 415 V / 50 Hz reference design and has not been re-rendered.
+  For this Saudi (SEC) Rev 3 edition read 11 kV as 13.8 kV, 415 V as 400 V and 50 Hz as 60 Hz.
+  Topology, tags and protection philosophy are unchanged.</div>
+
+
+  <!-- ========================================================
+       1. WHY THIS EXISTS
+  ========================================================= -->
+  <h3 id="c-arcflash-why">The hazard nobody can see on the SLD</h3>
+
+  <h4>Why this exists</h4>
+
+  <p>Most electrical safety training is built around <strong>shock</strong>: current
+  passing <em>through</em> the body because the body became part of the circuit. Shock is
+  a contact hazard — if you do not touch the conductor (directly, or through a tool),
+  you are safe. Arc flash is fundamentally different. <strong>Arc flash is a radiant and
+  blast hazard: it injures people who never touch anything.</strong> A worker standing
+  half a metre from a switchboard, hands at their sides, doing everything "right" by
+  shock-protection logic, can receive third-degree burns over their face, chest and arms
+  in a third of a second. The two hazards have different physics, different protective
+  measures, and different calculations — and confusing them is one of the most common
+  and most dangerous gaps in industrial electrical safety.</p>
+
+  <p>What actually happens in an arcing fault? Air is normally an excellent insulator.
+  But if a conductive bridge forms between phases or phase and earth — a dropped spanner,
+  a misaligned racking cluster, a sagging busbar support, a forgotten test lead, even a
+  rodent — current begins to flow through that bridge, vaporises it, and strikes an
+  <strong>electric arc</strong>: a column of <strong>plasma</strong>, the fourth state of
+  matter, in which the air itself has been torn into free electrons and ions and become a
+  conductor. Once struck, the arc no longer needs the original bridge. It sustains itself
+  as long as the source keeps feeding it current.</p>
+
+  <p>The numbers involved are not "industrial" — they are astrophysical:</p>
+
+  <ul>
+    <li><strong>Temperature.</strong> The arc core reaches roughly
+    <strong>20&thinsp;000 &deg;C</strong> — about <strong>four times the surface
+    temperature of the sun</strong> (&asymp; 5&thinsp;500 &deg;C). No material on earth
+    withstands this; everything in the arc path melts or vaporises.</li>
+    <li><strong>Copper expansion.</strong> When solid copper busbar flashes to vapour it
+    expands roughly <strong>67&thinsp;000 times</strong> in volume — almost instantly.
+    A few cubic centimetres of busbar become several cubic metres of superheated copper
+    vapour inside a closed steel box. That is, functionally, an explosion.</li>
+    <li><strong>Pressure wave.</strong> The expanding plasma and metal vapour produce a
+    blast front that blows open panel doors, throws workers across the room, and can
+    rupture eardrums. Pressure on a worker's chest at close range can reach thousands of
+    kilograms-force.</li>
+    <li><strong>Shrapnel and droplets.</strong> Molten copper and steel droplets are
+    sprayed outward at high velocity, together with fragments of the enclosure
+    itself.</li>
+    <li><strong>Incident thermal energy.</strong> A large fraction of the arc's power is
+    radiated as intense thermal energy onto everything facing it — including the worker.
+    This radiant dose, measured in <strong>cal/cm&sup2;</strong> on the skin, is the
+    quantity this section teaches you to estimate.</li>
+  </ul>
+
+  <p>And this is why a <strong>calculation</strong> — not merely a PPE habit — is both
+  physically and legally necessary. Physically: the hazard varies by more than an order
+  of magnitude from one panel to the next, depending on fault current, protective-device
+  clearing time, enclosure geometry and working distance. A glove-and-visor habit that is
+  adequate at a small distribution board can be lethally inadequate two panels away at
+  the main switchboard, fed by the same transformer. You cannot see the difference; only
+  arithmetic reveals it. Legally: NFPA 70E (used in Saudi industrial practice alongside
+  SASO-adopted IEC standards and the SEC/owner safety rules) requires an
+  <strong>arc-flash risk assessment</strong> with documented incident energy or PPE
+  category for each piece of equipment before energised work, and warning labels on the
+  gear. "We always wear the heavy suit" is not a risk assessment — it is a guess, and on
+  a 50 &deg;C Saudi site it is a guess that creates its own heat-stress hazard (see
+  <a href="#c-arcflash-sizing">Sizing method</a>).</p>
+
+  <div class="key">
+    Shock protection asks: <em>"could current pass through the body?"</em> Arc-flash
+    protection asks: <em>"how much thermal energy would land on the body, at working
+    distance, before the upstream device clears the fault?"</em> The second question has
+    a numeric answer, in cal/cm&sup2;, and every energised-work decision hangs on it.
+  </div>
+
+
+  <!-- ========================================================
+       2. WHAT GOES WRONG WITHOUT IT
+  ========================================================= -->
+  <h3 id="c-arcflash-without">A morning at the LV-MSB</h3>
+
+  <h4>What goes wrong without it</h4>
+
+  <p>The following narrative is fictional but assembled from the common features of real
+  incident reports. Every step of it is ordinary — that is the point.</p>
+
+  <p>A technician is asked to return a 400 A feeder air-circuit-breaker to service on the
+  <code>LV-MSB</code> — a 400 V main switchboard fed by a 1600 kVA transformer
+  (indicative bolted fault level &asymp; 38.5 kA, see
+  §<a href="#c-shortcircuit">c-shortcircuit</a>). Production is running; nobody wants to
+  ask for a shutdown to rack in one breaker, and the site has no arc-flash study and no
+  labels, so the job is treated as routine: ordinary coveralls, leather gloves, safety
+  glasses. He opens the cubicle door and begins <strong>racking the breaker in on the
+  energised bus</strong> — pushing the moving contacts toward bars carrying the full
+  prospective fault current of the transformer.</p>
+
+  <p>His torque tool slips and falls across the cluster contacts just as they approach
+  the bus. The metal bridges two phases. What happens next is faster than any human
+  reflex:</p>
+
+  <ul>
+    <li><strong>t = 0 ms.</strong> The tool vaporises; an arc strikes between phases.
+    Arcing current is about <strong>22 kA</strong> — less than the 38.5 kA bolted value,
+    because the arc itself has impedance (we calculate this properly in the
+    <a href="#c-arcflash-worked">worked calculation</a>). Arc power is several megawatts.
+    The flash is brighter than staring at the sun; his pupils have no time to close.</li>
+    <li><strong>t &asymp; 5–10 ms.</strong> Copper vapour and plasma blast out of the open
+    cubicle. The pressure wave hits his chest and throws him backwards; the sound — well
+    over 140 dB — injures both eardrums.</li>
+    <li><strong>t = 0 to 300 ms.</strong> Here is the quiet villain: the upstream incomer
+    breaker's short-time delay is set at <strong>0.3 s</strong> — set high years ago, to
+    make sure feeder breakers always trip first (selectivity, see
+    §<a href="#c-protection">c-protection</a>). Its instantaneous element was set above
+    the arcing current. So for <strong>18 cycles at 60 Hz</strong>, the arc burns,
+    pumping radiant energy onto the technician from less than half a metre.</li>
+    <li><strong>t = 300 ms.</strong> The incomer finally trips. The board is destroyed.
+    The technician is alive — most arc-flash victims are — but his injuries were decided
+    in those 18 cycles.</li>
+  </ul>
+
+  <p>Now the injury physics. The medical threshold used in arc-flash engineering is the
+  onset of a <strong>second-degree (just-curable) burn: 1.2 cal/cm&sup2;</strong> —
+  about the heat your fingertip receives if you hold it over a cigarette-lighter flame
+  for one second. As the worked calculation below shows, an arc like this one delivers
+  on the order of <strong>20+ cal/cm&sup2;</strong> at his working distance — roughly
+  <strong>twenty times</strong> the second-degree threshold. At that dose, exposed skin
+  receives deep partial- and full-thickness burns; worse, his untreated cotton-polyester
+  coverall <strong>ignites and continues burning after the arc is gone</strong>, often
+  the dominant cause of fatal burn area in real events. Survival probability for burn
+  victims falls steeply with burned body-surface area and age; weeks of intensive care
+  and skin grafts follow even in the "lucky" cases.</p>
+
+  <p>Trace the causes backwards and notice that none of them is exotic:</p>
+
+  <ul>
+    <li><strong>No study</strong> → nobody knew this panel was a &asymp; 20 cal/cm&sup2;
+    location; it looked like every other grey box.</li>
+    <li><strong>No label</strong> → no trigger for a permit, PPE, or de-energisation
+    decision at the point of work.</li>
+    <li><strong>Settings chosen for selectivity only</strong> → 0.3 s of arc burn-through
+    time, because no one had ever asked the protection engineer the <em>other</em>
+    question: "and what does that delay do to incident energy?"</li>
+    <li><strong>No maintenance switch / ZSI / arc relay</strong> → no fast mode available
+    even for planned energised work.</li>
+  </ul>
+
+  <div class="warning">
+    The single most dangerous routine task in LV/MV operations is <strong>racking
+    breakers on an energised bus</strong>. It puts a person at minimum distance, with the
+    panel open, performing a mechanical action that can itself initiate the fault. The
+    hierarchy is: de-energise first; if not feasible, rack remotely or with the door
+    closed; energised manual racking is the last resort and only ever inside the limits
+    of a current arc-flash study and permit.
+  </div>
+
+
+  <!-- ========================================================
+       3. FEEL FOR THE NUMBERS
+  ========================================================= -->
+  <h3 id="c-arcflash-feel">How big is an arc, really?</h3>
+
+  <h4>Feel for the numbers</h4>
+
+  <p>Before any standard or empirical model, get an honest physical feel with arithmetic
+  a field engineer can do on a phone. An arc dissipates power like any resistive element:
+  power = voltage across it &times; current through it. In a 400 V board, the arc voltage
+  (the sum of the anode and cathode drops plus the plasma column) is typically a few
+  hundred volts — take <strong>V<sub>arc</sub> &asymp; 300 V</strong> as a round
+  indicative figure. The arcing current from the worked example below is
+  <strong>I<sub>a</sub> &asymp; 22 kA</strong>.</p>
+
+  <div class="worked">
+    <p><strong>Back-of-envelope — arc power and energy at the LV-MSB</strong></p>
+    <code class="formula">P_arc = V_arc x I_a = 300 V x 22 000 A = 6 600 000 W = 6.6 MW</code>
+    <p>Six point six <strong>megawatts</strong> — more than three times the entire
+    2.0 MW demand of the plant — dissipated inside one cubicle, in a plasma ball a few
+    centimetres across. Now multiply by the clearing time of 0.3 s:</p>
+    <code class="formula">W = P_arc x t = 6.6 MW x 0.3 s = 1.98 MJ ~ 2.0 MJ</code>
+    <p>Convert to TNT equivalent (TNT releases &asymp; 4.6 MJ/kg):</p>
+    <code class="formula">m_TNT = 2.0 MJ / 4.6 MJ/kg ~ 0.43 kg of TNT</code>
+    <p><strong>Sanity check on the comparison:</strong> the energy is comparable to
+    nearly half a kilogram of TNT, though an arc releases it as heat, light and a slower
+    pressure rise rather than a true detonation — devastating in an enclosure, but not
+    identical blast physics. The comparison is for scale, and the scale is right.</p>
+  </div>
+
+  <p>Put 2 MJ next to everyday quantities:</p>
+
+  <ul>
+    <li><strong>Kettles:</strong> a 2 kW kettle would take <strong>1&thinsp;000 seconds
+    — about 17 minutes</strong> — to deliver 2 MJ. The arc delivers it in 0.3 s, i.e. at
+    3&thinsp;300 kettles' worth of power.</li>
+    <li><strong>Car crash:</strong> a 1.5-tonne car at 100 km/h (27.8 m/s) carries kinetic
+    energy &frac12; &times; 1500 &times; 27.8&sup2; &asymp; 0.58 MJ. The arc event releases
+    the energy of <strong>three to four such crashes</strong>, a hand-span from the
+    worker's chest.</li>
+    <li><strong>Dynamite:</strong> a standard &asymp; 200 g stick of dynamite carries
+    roughly 1 MJ — the arc is <strong>about two sticks</strong>.</li>
+  </ul>
+
+  <p>One more honest estimate, because it previews the formal result. Suppose (crudely)
+  the 2 MJ radiated uniformly in all directions from a point. At the LV working distance
+  of 455 mm, the energy is spread over a sphere of area:</p>
+
+  <div class="worked">
+    <p><strong>Back-of-envelope — energy density at working distance</strong></p>
+    <code class="formula">A = 4 x pi x r^2 = 4 x 3.1416 x 0.455^2 = 2.6 m^2 = 26 000 cm^2</code>
+    <code class="formula">E = 2 000 000 J / 26 000 cm^2 ~ 77 J/cm^2 ~ 18 cal/cm^2   (1 cal = 4.184 J)</code>
+    <p><strong>Sanity check:</strong> in reality only part of the arc energy is radiant
+    (much goes into melting metal, heating gas, sound and blast), which pushes the dose
+    <em>down</em>; but a switchboard enclosure focuses the energy out of the open front
+    toward the worker rather than spherically, which pushes it back <em>up</em>. The two
+    effects roughly trade off, and indeed the formal IEEE 1584-style result below lands
+    at &asymp; 23 cal/cm&sup2; — same order of magnitude. When a ten-line phone estimate
+    and an empirical standard agree within a factor of ~1.3, you can trust you understand
+    the physics.</p>
+  </div>
+
+  <p>Finally — and this is the central lesson of the whole section — look at which levers
+  you actually control:</p>
+
+  <ul>
+    <li><strong>Current?</strong> Barely. I<sub>a</sub> is fixed by the transformer
+    impedance and the source (§<a href="#c-shortcircuit">c-shortcircuit</a>). You cannot
+    set it; you can only know it.</li>
+    <li><strong>Distance?</strong> Helps (energy falls off roughly with distance to the
+    power ~1.5–2 in an enclosure), but a human with a tool in a cubicle is at
+    &asymp; 455 mm and physically cannot be much further.</li>
+    <li><strong>Time?</strong> <strong>Energy is directly proportional to time
+    (E &prop; t)</strong> — and time is a <em>setting on a device</em>. Cut the clearing
+    time from 0.3 s to 0.1 s and the 2 MJ becomes 0.66 MJ. Same fault, same board,
+    one-third of the dose. No other variable in the problem is this cheap to change.</li>
+  </ul>
+
+  <div class="key">
+    Arc energy = (megawatts you cannot choose) &times; (seconds you <em>can</em> choose).
+    The protection engineer's time settings are, quite literally, a dial that sets how
+    badly a worker gets burned. That is why this calculation lives in Part 2 next to
+    protection coordination, not in a safety appendix.
+  </div>
+
+
+  <!-- ========================================================
+       4. WORKED CALCULATION
+  ========================================================= -->
+  <h3 id="c-af-inputs">Inputs for the LV-MSB</h3>
+
+  <p>The worked example evaluates the <code>LV-MSB</code> in its normal operating mode:
+  one 1600 kVA transformer in service, bus-tie open. All inputs are indicative Rev 3
+  basis values:</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Input parameter</th><th>Indicative value</th><th>Source / note</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>System voltage</td><td>400 V, 3-ph, 60 Hz</td><td>Rev 3 basis (SEC supply via TX-1/TX-2)</td></tr>
+      <tr><td>Bolted fault current I<sub>bf</sub></td><td>38.5 kA</td>
+        <td>One TX, tie open — §<a href="#c-shortcircuit">c-shortcircuit</a>. (Tie closed
+        &asymp; 77 kA: a different, worse case the full study must also run.)</td></tr>
+      <tr><td>Electrode / enclosure configuration</td><td>Vertical conductors in a metal box
+        (switchboard / MCC-type)</td><td>IEEE 1584-2018 "VCB"-style configuration</td></tr>
+      <tr><td>Busbar gap G</td><td>32 mm</td><td>Typical LV switchboard phase spacing</td></tr>
+      <tr><td>Working distance D</td><td><strong>455 mm</strong> (LV)</td>
+        <td>IEEE 1584 typical for LV boards; MV switchgear uses <strong>914 mm</strong></td></tr>
+      <tr><td>Clearing time t (as-found)</td><td><strong>0.3 s</strong></td>
+        <td>Read from the upstream incomer's time–current curve <em>at I<sub>a</sub></em> —
+        §<a href="#c-protection">c-protection</a></td></tr>
+      <tr><td>Clearing time t (maintenance mode)</td><td><strong>0.1 s</strong></td>
+        <td>Arc-flash reduction maintenance switch active — see
+        <a href="#c-af-lever">Equipment settings</a></td></tr>
+      <tr><td>Burn threshold E<sub>B</sub></td><td>1.2 cal/cm&sup2;</td>
+        <td>Onset of second-degree burn (NFPA 70E / IEEE 1584 convention)</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    <strong>Honesty box — what is simplified here.</strong> The real IEEE 1584-2018 model
+    is a set of empirical polynomial equations in six-plus parameters (voltage, I<sub>bf</sub>,
+    gap, electrode configuration, enclosure dimensions, distance), with interpolation
+    between test voltages and a mandatory second pass at a <em>reduced</em> arcing current.
+    It is software work, not hand work. What follows is a <strong>training rendition</strong>
+    built on the older IEEE 1584-2002 "normalised energy" form, with rounded constants,
+    because it is arithmetically transparent and lands in the right range for a 400 V
+    board. It teaches the method; <strong>it does not produce labels</strong>. A certified
+    IEEE 1584-2018 study governs.
+  </div>
+
+  <h3 id="c-arcflash-worked">Incident energy at the LV-MSB, step by step</h3>
+
+  <h4>Worked calculation</h4>
+
+  <div class="worked">
+    <p><strong>Step 1 — Arcing current I<sub>a</sub> from bolted current I<sub>bf</sub>.</strong></p>
+    <p>The 38.5 kA from §<a href="#c-shortcircuit">c-shortcircuit</a> is the
+    <em>bolted</em> value: a zero-impedance metallic short. A real arc is not a bolted
+    short — the plasma column has substantial resistance and a ~300 V drop, which at
+    400 V is a large fraction of the driving voltage. So the arcing current is markedly
+    lower than the bolted current. At LV the reduction factor is roughly
+    <strong>0.6</strong> (IEEE 1584 empirical; at MV the arc voltage is a small fraction
+    of system voltage, so I<sub>a</sub> &asymp; I<sub>bf</sub> there):</p>
+    <code class="formula">I_a ~ 0.6 x I_bf = 0.6 x 38.5 kA = 23.1 kA  -->  use ~22 kA (model value)</code>
+    <p>The 2018 standard does not use a flat 0.6 — it computes I<sub>a</sub> from a
+    polynomial in lg I<sub>bf</sub>, voltage, gap and electrode configuration, precisely
+    because this number matters twice: it sets the arc power <em>and</em> it is the
+    current at which you must read the upstream device's trip time. We carry
+    <strong>I<sub>a</sub> &asymp; 22 kA</strong>.</p>
+    <p><strong>Sanity check:</strong> 22 kA is 57 % of 38.5 kA — within the 50–70 % band
+    expected for 400 V arcs. If your software ever reports LV arcing current
+    <em>equal</em> to bolted current, something is wrong.</p>
+
+    <p><strong>Step 2 — Clearing time at the arcing current.</strong></p>
+    <p>From the upstream incomer ACB's time–current curve
+    (§<a href="#c-protection">c-protection</a>) read the total clearing time
+    <em>at 22 kA, not at 38.5 kA</em>. The instantaneous pickup is set above 22 kA (for
+    selectivity), so the <strong>short-time element</strong> governs:</p>
+    <code class="formula">t = t_relay + t_breaker = 0.26 s + 0.04 s ~ 0.3 s   (18 cycles at 60 Hz)</code>
+    <p>This trap is worth repeating: a fault current <em>lower</em> than bolted can be
+    <em>more dangerous</em>, because it may drop below an instantaneous pickup and be
+    cleared on a delayed element instead. Less current, more time, more energy.</p>
+
+    <p><strong>Step 3 — Normalised incident energy E<sub>n</sub></strong> (2002-form,
+    normalised to t = 0.2 s and D = 610 mm; constants for a grounded system in a metal
+    box, gap G = 32 mm):</p>
+    <code class="formula">lg E_n = K1 + K2 + 1.081 x lg(I_a) + 0.0011 x G</code>
+    <code class="formula">lg E_n = (-0.555) + (-0.113) + 1.081 x lg(22) + 0.0011 x 32</code>
+    <code class="formula">lg(22) = 1.342  -->  1.081 x 1.342 = 1.451 ;  0.0011 x 32 = 0.035</code>
+    <code class="formula">lg E_n = -0.555 - 0.113 + 1.451 + 0.035 = 0.818</code>
+    <code class="formula">E_n = 10^0.818 ~ 6.6 cal/cm^2   (at 0.2 s and 610 mm)</code>
+
+    <p><strong>Step 4 — Scale to the real time and distance.</strong> Energy scales
+    linearly with time, and with distance via an empirical exponent x &asymp; 1.5 for
+    LV switchgear enclosures (between 1/D for a focused beam and 1/D&sup2; for a point
+    source); C<sub>f</sub> = 1.5 is the LV correction factor:</p>
+    <code class="formula">E = C_f x E_n x (t / 0.2) x (610 / D)^1.5</code>
+    <code class="formula">E = 1.5 x 6.6 x (0.3 / 0.2) x (610 / 455)^1.5</code>
+    <code class="formula">(610/455) = 1.34 ;  1.34^1.5 = 1.34 x sqrt(1.34) = 1.34 x 1.158 = 1.55</code>
+    <code class="formula">E = 1.5 x 6.6 x 1.5 x 1.55 = 9.9 x 1.5 x 1.55 ~ 23 cal/cm^2</code>
+    <p><strong>Result (as-found): E &asymp; 23 cal/cm&sup2; at 455 mm.</strong></p>
+    <p><strong>Sanity checks:</strong> (a) the back-of-envelope radiant estimate in
+    <a href="#c-arcflash-feel">Feel for the numbers</a> gave &asymp; 18 cal/cm&sup2; —
+    same order, good. (b) 23 cal/cm&sup2; is ~19 times the 1.2 cal/cm&sup2; second-degree
+    threshold — consistent with the severe-burn narrative. (c) Typical published values
+    for 400–480 V boards with delayed clearing run 8–40 cal/cm&sup2;; we are inside the
+    band.</p>
+
+    <p><strong>Step 5 — Arc-flash boundary AFB</strong> (the distance at which E falls to
+    E<sub>B</sub> = 1.2 cal/cm&sup2;; an unprotected person must stay outside it).
+    Inverting the same distance law:</p>
+    <code class="formula">AFB = D x (E / E_B)^(1/1.5) = 0.455 x (23 / 1.2)^(2/3)</code>
+    <code class="formula">23 / 1.2 = 19.2 ;  19.2^(1/3) = 2.68 ;  2.68^2 = 7.2</code>
+    <code class="formula">AFB = 0.455 x 7.2 ~ 3.3 m</code>
+    <p>(A naive inverse-square assumption would give 0.455 &times; &radic;19.2 &asymp;
+    2.0 m — note how the gentler enclosure exponent makes the true boundary
+    <em>larger</em>. When approximating boundaries, err large.)</p>
+
+    <p><strong>Step 6 — Recompute with the maintenance switch ON (t = 0.1 s).</strong>
+    Only the time term changes — everything else is identical:</p>
+    <code class="formula">E = 1.5 x 6.6 x (0.1 / 0.2) x 1.55 = 9.9 x 0.5 x 1.55 ~ 7.7 cal/cm^2</code>
+    <code class="formula">AFB = 0.455 x (7.7 / 1.2)^(2/3) = 0.455 x 6.4^(2/3) = 0.455 x 3.45 ~ 1.6 m</code>
+    <p><strong>Result (maintenance mode): E &asymp; 7.7 cal/cm&sup2;, AFB &asymp; 1.6 m.</strong></p>
+    <p><strong>Sanity check:</strong> 23 / 7.7 = 3.0 — exactly the 0.3/0.1 time ratio,
+    as it must be since E &prop; t. One switch position cut the dose to a third.</p>
+
+    <p><strong>Step 7 — Map to PPE and decisions.</strong> Against the NFPA 70E arc-rated
+    PPE categories (CAT 1: 4 / CAT 2: 8 / CAT 3: 25 / CAT 4: 40 cal/cm&sup2; — full table
+    in <a href="#c-af-assess">the assessment section</a>):</p>
+    <code class="formula">As-found:    E ~ 23 cal/cm^2  >  8   -->  CAT 3 suit territory (25 cal/cm^2 rated)</code>
+    <code class="formula">Maintenance: E ~ 7.7 cal/cm^2 <= 8   -->  CAT 2 daily-wear arc-rated clothing</code>
+    <p>The practical meaning: as found, any energised work at this board demands a full
+    25 cal/cm&sup2; arc-flash suit with hood — brutal at 50 &deg;C ambient — and a 3.3 m
+    clear zone. With a 0.1 s maintenance mode, the same task is a CAT 2 job in arc-rated
+    daily workwear with a balaclava and face shield, boundary 1.6 m. Nothing about the
+    board changed; only the <em>time setting</em> did.</p>
+  </div>
+
+  <div class="worked">
+    <p><strong>Side calculation — and what about the MV switchgear?</strong></p>
+    <p>The same logic applies at the 13.8 kV <code>MV-SWGR</code>, with three changes of
+    character. First, at MV the ~300 V arc-column drop is a small fraction of the system
+    voltage, so the arcing current is nearly the full bolted value
+    (I<sub>a</sub> &asymp; I<sub>bf</sub>; with the SEC source assumed 25 kA design,
+    I<sub>a</sub> &asymp; 24–25 kA — no comfortable 0.6 reduction). Second, the arc
+    power is far higher, because the same kA now burns across a much larger voltage.
+    A crude scale check, taking an MV arc voltage of a few kV across the larger
+    (~150 mm) gaps:</p>
+    <code class="formula">P_arc(MV) ~ 3 000 V x 25 000 A = 75 MW   (vs 6.6 MW at the LV-MSB)</code>
+    <p>Third, the standard working distance is larger — <strong>914 mm</strong> instead
+    of 455 mm — which claws back roughly a factor of (914/455)^1.5 &asymp; 2.8 in
+    incident energy. The net result at typical MV relay times (0.3–0.5 s of graded
+    overcurrent) is still routinely severe, which is why MV practice leans on fast bus
+    differential protection, arc-resistant construction and closed-door operation rather
+    than PPE (see <a href="#c-arcflash-technology">Equipment technology</a>).
+    <strong>Sanity check:</strong> 75 MW &times; 0.4 s = 30 MJ — fifteen times the LV
+    event of Step 2. Nobody "suits up" for that; the controls must be engineering
+    controls.</p>
+  </div>
+
+  <div class="warning">
+    <strong>These are training simplifications.</strong> The flat 0.6 arcing-current
+    factor, the rounded 2002-form constants, the single x = 1.5 exponent, and the single
+    operating mode are all simplifications, stated openly. A real study must also run:
+    tie-closed (&asymp; 77 kA), DG-only and reduced-source modes; the IEEE 1584-2018
+    <em>reduced arcing current</em> case (a lower I<sub>a</sub> with its own — usually
+    longer — clearing time, taking the worst result); and the actual electrode
+    configurations. The certified study governs labels, PPE and permits.
+  </div>
+
+
+  <!-- ========================================================
+       5. EQUIPMENT SETTINGS
+  ========================================================= -->
+  <h3 id="c-af-lever">The clearing-time lever</h3>
+
+  <h4>Equipment settings</h4>
+
+  <p>Everything in this sub-section follows from one identity:</p>
+
+  <code class="formula">t_clear = t_device (relay or trip-unit decision time, incl. intentional delay) + t_breaker (mechanical opening + arc extinction)</code>
+
+  <p>The breaker mechanical time is fixed by hardware: an LV ACB opens in roughly
+  40–60 ms (&asymp; 2.5–3.5 cycles at 60 Hz); an MV vacuum breaker in 3–5 cycles
+  (50–83 ms). Everything else is <strong>settings</strong> — and settings are where
+  incident energy is won or lost. On a modern LV electronic trip unit
+  (LSIG — Long-time, Short-time, Instantaneous, Ground-fault; see
+  §<a href="#c-breaker">c-breaker</a>) the relevant knobs are:</p>
+
+  <ul>
+    <li><strong>Instantaneous (I) pickup.</strong> If I is set <em>below</em> the arcing
+    current (e.g. pickup 15 kA with I<sub>a</sub> = 22 kA), the fault clears with no
+    intentional delay — t &asymp; 50–80 ms total and incident energy collapses. If I is
+    set <em>above</em> I<sub>a</sub> (or switched off, as is common on incomers for
+    selectivity), the fault falls through to the S-band and burns for the full short-time
+    delay. <strong>Always check where I<sub>a</sub> — not I<sub>bf</sub> — lands on the
+    TCC.</strong></li>
+    <li><strong>Short-time (S) delay.</strong> Each step of intentional S-delay
+    (0.1 → 0.2 → 0.3 → 0.4 s) buys selectivity with downstream breakers and pays for it
+    linearly in cal/cm&sup2;. Our worked example's 23 cal/cm&sup2; is mostly purchased
+    S-delay. Settings reviews should treat every 0.1 s of S-delay as
+    "+&asymp; 7.7 cal/cm&sup2; on this bus" (at our example's current and distance) and
+    demand justification.</li>
+    <li><strong>Arc-flash reduction maintenance switch (ERMS).</strong> A dedicated mode
+    — selector switch, padlockable, usually with a blue pilot lamp — that temporarily
+    enables a low, no-delay instantaneous element (e.g. pickup 2.5–4 kA, t &asymp; 0 +
+    breaker time) while a person is at the gear. Selectivity is deliberately sacrificed
+    <em>for the duration of the task only</em>. This is the "0.1 s" of Step 6: the
+    cheapest 3&times; energy reduction in the industry.</li>
+    <li><strong>Zone-selective interlocking (ZSI).</strong> Downstream breakers that see
+    the fault send a restraint signal upstream; an upstream breaker that sees fault
+    current but <em>no restraint</em> knows the fault is on its own bus and trips at its
+    minimum time instead of waiting out its S-delay. ZSI gives near-instantaneous bus-fault
+    clearing <em>without losing selectivity</em> for through-faults — permanently, not
+    just in maintenance mode. (Bus differential protection achieves the same at MV.)</li>
+  </ul>
+
+  <p><strong>The trade-off, stated plainly:</strong> selectivity (§<a href="#c-protection">c-protection</a>)
+  wants upstream devices slow, so the smallest downstream device always clears first and
+  the plant stays up. Arc-flash safety wants upstream devices fast, because the upstream
+  device is what protects the person standing at the bus. These two legitimate goals pull
+  the same setting in opposite directions. The resolution hierarchy is:</p>
+
+  <ol>
+    <li><strong>ZSI or bus differential</strong> — fast on in-zone faults, selective on
+    through-faults; the engineering "have both" answer.</li>
+    <li><strong>ERMS</strong> — selective normally, fast while humans are exposed; the
+    operational compromise.</li>
+    <li><strong>Permanently faster settings</strong> — accept some selectivity loss where
+    the energy numbers are unacceptable and neither of the above is available.</li>
+  </ol>
+
+  <p>Indicative effect of the available mechanisms at our LV-MSB (I<sub>a</sub> &asymp;
+  22 kA, D = 455 mm, scaling the worked result linearly with time):</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Clearing mechanism</th><th>Indicative t (s)</th><th>Indicative E (cal/cm&sup2;)</th><th>PPE implication</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Incomer S-delay as found</td><td>0.30</td><td>&asymp; 23</td><td>CAT 3 suit, AFB &asymp; 3.3 m</td></tr>
+      <tr><td>ERMS active</td><td>0.10</td><td>&asymp; 7.7</td><td>CAT 2, AFB &asymp; 1.6 m</td></tr>
+      <tr><td>ZSI (bus fault, relay min time)</td><td>&asymp; 0.08</td><td>&asymp; 6</td><td>CAT 2</td></tr>
+      <tr><td>Optical arc relay + breaker</td><td>&asymp; 0.05</td><td>&asymp; 4</td><td>CAT 1, AFB &lt; 1 m</td></tr>
+    </tbody>
+  </table>
+
+  <p><strong>How to read the clearing time off a TCC — the exact procedure.</strong>
+  Field engineers get this wrong more often than any other step, so spell it out:</p>
+
+  <ol>
+    <li>Plot (or pull up) the time–current curve of the <strong>upstream</strong> device
+    — the one that must clear a fault <em>on</em> the bus where the person works. For a
+    fault on the LV-MSB bus that is the incomer ACB (or, if the incomer itself is the
+    damaged item, the transformer's MV-side protection — check both).</li>
+    <li>Enter the horizontal axis at the <strong>arcing current I<sub>a</sub> = 22 kA</strong>
+    — never at the bolted 38.5 kA. The curve is read where the fault actually sits.</li>
+    <li>Read up to the curve's <strong>total clearing band</strong> (top of the band, not
+    the nominal line): that includes relay/trip-unit tolerance.</li>
+    <li>Add the <strong>breaker operating time</strong> if the plotted curve is a relay
+    curve rather than a total-clearing curve (separate relays at MV: add 3–5 cycles;
+    integrated LV trip units usually plot total clearing — check the legend).</li>
+    <li>Repeat at the IEEE 1584-2018 <strong>reduced arcing current</strong>: a smaller
+    current sits further left on an inverse curve, i.e. <em>higher</em> on the time axis.
+    Keep whichever (I<sub>a</sub>, t) pair yields the higher energy.</li>
+  </ol>
+
+  <div class="tip">
+    During any protection settings review, put a column for "incident energy at each main
+    bus" next to the selectivity check. A grading study that has never been cross-checked
+    against an arc-flash study is only half a study — and re-issuing labels after a
+    settings change is mandatory, not optional (see <a href="#c-arcflash-control">Control</a>).
+  </div>
+
+
+  <!-- ========================================================
+       6. EQUIPMENT TECHNOLOGY
+  ========================================================= -->
+  <h3 id="c-arcflash-technology">Hardware that fights the arc</h3>
+
+  <h4>Equipment technology</h4>
+
+  <p>Settings reduce the arc's <em>duration</em>. A second family of measures attacks the
+  arc with hardware — containing it, detecting it faster than any current-based relay
+  can, extinguishing it, or moving the human out of range altogether.</p>
+
+  <p><strong>Arc-resistant ("internal arc classified") switchgear.</strong> MV switchgear
+  can be type-tested to withstand an internal arc per IEC 62271-200 (the
+  <strong>IAC</strong> classification). A rating such as <em>IAC AFLR 31.5 kA 1 s</em>
+  reads: tested for personnel Accessibility on the Front, Lateral and Rear sides, at
+  31.5 kA arc current, for 1 second — matching, for our plant, the indicative 17.5 kV-class
+  MV gear with 31.5 kA / 3 s bus withstand (see §<a href="#cat-mv-swgr">cat-mv-swgr</a>).
+  Construction features: reinforced doors and hinges, pressure-relief flaps on top of each
+  compartment, and exhaust <strong>plenums / ducts</strong> that channel the plasma and
+  hot gases up and out of the room (or to a safe outdoor discharge) instead of out of the
+  front of the panel into the operator's face. Cotton indicators placed around the gear
+  during the type test must not ignite. Two cautions: the rating holds only with
+  <strong>doors closed and latched</strong> — it protects nobody during open-door work —
+  and it limits external consequences; the gear internals are still destroyed.</p>
+
+  <p><strong>Optical arc-detection relays.</strong> An arc announces itself with an
+  immense flash of light long before a current element can time out. Arc-flash relays
+  (see §<a href="#cat-relays">cat-relays</a>) use point light sensors or a bare fibre-optic
+  loop run through the busbar, cable and breaker compartments, and trip in
+  <strong>&lt; 2.5 ms</strong> from light detection. To avoid spurious trips from camera
+  flashes or door-light reflections, the trip is normally <strong>supervised by a
+  simultaneous overcurrent check</strong> (light AND current). Total clearing then
+  becomes essentially the breaker time alone: &asymp; 2.5 ms + ~50 ms = 50–80 ms — the
+  &asymp; 4 cal/cm&sup2; row in the table above. Retrofittable into existing gear, and one
+  of the highest safety returns per riyal in brownfield plants.</p>
+
+  <p><strong>Arc quenching / arc elimination devices.</strong> The fastest class of
+  mitigation: triggered by an optical relay, a quenching device creates a deliberate,
+  contained three-phase bolted short (or transfers the arc into a containment chamber)
+  within &asymp; 4 ms. Because a bolted metallic path has far lower impedance — and far
+  lower voltage drop — than the plasma column, the arc collapses into the device and the
+  energy release at the original fault location essentially stops; the upstream breaker
+  then clears the bolted current normally. Incident energy at the worker can fall below
+  1.2 cal/cm&sup2;. Cost and complexity reserve these for high-value or high-exposure
+  boards.</p>
+
+  <p><strong>Remote racking and remote switching.</strong> The most elegant fix for the
+  racking scenario of <a href="#c-arcflash-without">our failure narrative</a>: a
+  motorised racking drive operated from a pendant or pedestal <strong>outside the
+  arc-flash boundary</strong> (recall: 3.3 m as-found), or switching done from the PMS/
+  control room. The energy at the equipment is unchanged — but no body is inside the
+  boundary to receive it. Risk = hazard &times; exposure; remote operation zeroes the
+  exposure term.</p>
+
+  <p><strong>IR inspection windows.</strong> Crystal or polymer windows rated for the
+  panel, through which thermographic surveys of joints and terminations are done with
+  <strong>covers closed</strong>. They remove one of the most common routine reasons for
+  opening energised panels — and a loose, heating joint found early is an arc that never
+  happens. In Saudi dust and 50 &deg;C ambients, periodic IR scanning of LV and MV
+  terminations is standard practice; windows make it a zero-exposure task.</p>
+
+  <div class="note">
+    Hierarchy of controls, arc-flash edition: <strong>eliminate</strong> (de-energise,
+    remote racking) &gt; <strong>engineering controls</strong> (fast settings, ZSI, arc
+    relays, quenchers, arc-resistant gear, IR windows) &gt;
+    <strong>administrative</strong> (permits, boundaries, labels) &gt;
+    <strong>PPE</strong> — the last line, which assumes the arc happens and merely
+    argues with it about burn depth.
+  </div>
+
+
+  <!-- ========================================================
+       7. CONTROL
+  ========================================================= -->
+  <h3 id="c-arcflash-control">Control, monitoring and keeping the study alive</h3>
+
+  <h4>Control</h4>
+
+  <p><strong>Where arc-flash devices sit in the protection scheme.</strong> An optical
+  arc-flash relay is wired as an <em>independent, parallel</em> tripping path — it does
+  not replace the overcurrent scheme of §<a href="#c-protection">c-protection</a>, it
+  bypasses its time grading when light is detected. Typical architecture at our plant:
+  light sensors in each <code>LV-MSB</code> and <code>MV-SWGR</code> compartment →
+  arc relay (current-supervised from the incomer CTs) → direct trip of the incomer (and,
+  for an MV bus event, transfer-trip of the upstream feeder breaker so the bus is cleared
+  even if the local breaker is the damaged item). The trip path is hard-wired; the PMS
+  is informed, never relied upon, for tripping.</p>
+
+  <p><strong>PMS / SCADA integration.</strong> The power-management system should carry,
+  as a minimum: arc-relay trip and sensor-failure alarms (the relays self-monitor fibre
+  continuity); <strong>ERMS position</strong> as a status point — with an alarm if the
+  maintenance switch is left ON after the work permit closes, since a plant left
+  permanently in maintenance mode silently loses its selectivity; breaker trip events
+  time-stamped for post-incident reconstruction; and trip-unit setting read-back where
+  supported, so an unauthorised settings change is detectable. Event records (waveforms,
+  sequence-of-events) are the evidence base for any post-arc investigation.</p>
+
+  <p><strong>Label data management.</strong> Each arc-flash label (anatomy in
+  <a href="#c-af-assess">the assessment section</a>) is the visible tip of a dataset:
+  bus name, operating mode, I<sub>bf</sub>, I<sub>a</sub>, clearing device and time,
+  working distance, E, AFB, PPE requirement, study revision and date. Keep the dataset
+  as a controlled register (the study software's database, exported to the maintenance
+  system), with label IDs tied to equipment tags. A label whose pedigree cannot be traced
+  to a study revision is a decoration, not a control.</p>
+
+  <p><strong>Re-study triggers.</strong> The study is a snapshot of the network <em>and
+  its settings</em> on the study date. It must be revalidated when — not if — any of the
+  following occurs:</p>
+
+  <ul>
+    <li><strong>Any protective setting change</strong> (relay, trip unit, fuse size) —
+    the worked example showed 0.1 s of S-delay is worth &asymp; 7.7 cal/cm&sup2; at the
+    LV-MSB;</li>
+    <li><strong>Any source change</strong> — SEC fault-level advice moving within the
+    25–40 kA range, transformer replacement or impedance change, adding/re-rating the
+    1250 kVA DG, UPS bypass arrangements;</li>
+    <li><strong>Topology or mode changes</strong> — operating with the bus-tie closed
+    (&asymp; 77 kA instead of 38.5 kA), new feeders, new MCCs;</li>
+    <li><strong>Equipment changes</strong> — different breaker (different clearing time),
+    retrofit of ZSI / arc relays / ERMS (the labels should then show the improved
+    maintenance-mode energy);</li>
+    <li><strong>Calendar</strong> — NFPA 70E practice: review at intervals not exceeding
+    <strong>5 years</strong> even if "nothing changed", because something always has.</li>
+  </ul>
+
+  <div class="key">
+    An arc-flash study is not a document, it is a <strong>configuration item</strong>:
+    it is valid only while the network, sources and settings it modelled remain frozen.
+    Management-of-change procedures must list "re-validate arc-flash study and labels"
+    as a mandatory step for every protection or source modification.
+  </div>
+
+
+  <!-- ========================================================
+       8. SIZING METHOD
+  ========================================================= -->
+  <h3 id="c-arcflash-sizing">The arc-flash study, start to finish</h3>
+
+  <h4>Sizing method</h4>
+
+  <p>"Sizing" here means sizing the <em>hazard</em> — and from it the PPE, boundaries and
+  mitigation. The study procedure, in the order the work is actually done:</p>
+
+  <ol>
+    <li><strong>Data collection.</strong> As-built one-line diagrams; transformer
+    nameplates (kVA, Z%, vector group — for us 2 &times; 1600 kVA, Dyn11, Z = 6 %);
+    SEC source fault level in writing (assume 25 kA design, state the 25–40 kA range);
+    cable types, sizes and <em>lengths</em>; every protective device with its model and
+    <em>as-left settings</em>; enclosure types, bus gaps and working distances per panel;
+    DG and UPS data. Data quality decides study quality — this step is 60 % of the
+    effort.</li>
+    <li><strong>Short-circuit study.</strong> Compute three-phase bolted fault current at
+    every bus (§<a href="#c-shortcircuit">c-shortcircuit</a>) for every credible operating
+    mode: tie open / tie closed / DG / minimum source. Crucially, arc-flash needs the
+    <strong>minimum</strong> credible fault current as well as the maximum — lower current
+    can mean slower clearing and <em>higher</em> energy.</li>
+    <li><strong>Arcing currents.</strong> For each bus and mode, compute I<sub>a</sub>
+    (and the IEEE 1584-2018 reduced I<sub>a,min</sub>) from I<sub>bf</sub>, voltage, gap
+    and electrode configuration.</li>
+    <li><strong>Clearing times.</strong> On each TCC (§<a href="#c-protection">c-protection</a>),
+    read the upstream device's total clearing time <em>at I<sub>a</sub></em> (and at
+    I<sub>a,min</sub>), adding breaker mechanical time. Cap exposure duration where
+    justified (a worker exposed &gt; 2 s is assumed to have escaped or been blasted clear
+    — apply such caps with documented engineering judgement only).</li>
+    <li><strong>Incident energy and boundaries.</strong> Compute E at the standard working
+    distance and the arc-flash boundary for every bus, every mode; report the
+    <strong>worst case per bus</strong>.</li>
+    <li><strong>Mitigation pass.</strong> Wherever E exceeds the site target (commonly
+    "get every routinely-operated panel to &le; 8 cal/cm&sup2;, i.e. CAT 2"), iterate:
+    settings changes, ERMS, ZSI, arc relays, remote racking — re-running steps 4–5 each
+    time. This loop is where the engineering value lives.</li>
+    <li><strong>Labels, PPE table, boundaries.</strong> Issue labels per panel (worst
+    mode), the site PPE category table, and boundary distances; mark boundaries
+    physically where practical for fixed high-energy locations.</li>
+    <li><strong>Handover and training.</strong> Brief operations and maintenance crews;
+    align the permit-to-work forms; file the study as a controlled document with its
+    re-study triggers (<a href="#c-arcflash-control">Control</a>).</li>
+  </ol>
+
+  <p><strong>Saudi practice notes (Rev 3).</strong></p>
+
+  <ul>
+    <li><strong>Heat stress is a co-equal hazard.</strong> At a 50 &deg;C design ambient,
+    a CAT 3/CAT 4 arc-flash suit is itself dangerous: core temperature rises fast, and
+    heat exhaustion inside a sealed hood degrades exactly the fine judgement the task
+    needs. Saudi practice therefore leans hard on the engineering side: drive energy down
+    to CAT 2 (&le; 8 cal/cm&sup2;) so daily-wear arc-rated clothing suffices; schedule
+    energised diagnostics for early morning; impose suit-time limits with hydration
+    breaks; prefer remote racking and IR windows over suited open-panel work. A study
+    that "solves" a 35 cal/cm&sup2; bus with a 40 cal suit has traded a burn hazard for
+    a heat-stroke hazard — drive the energy down instead.</li>
+    <li><strong>Permit culture.</strong> SEC- and Aramco-influenced sites run a strict
+    permit-to-work regime: energised electrical work requires a dedicated permit with the
+    incident energy / PPE category stated on the permit face, a documented justification
+    for not de-energising, isolation certificates, and a standby person. The arc-flash
+    label is what the permit issuer reads — another reason labels must be current.</li>
+    <li><strong>Standards stack.</strong> There is no single Saudi arc-flash code;
+    practice combines <strong>NFPA 70E / IEEE 1584-2018</strong> (risk assessment method
+    and calculation) with <strong>SASO-adopted IEC</strong> standards — IEC 62271-200 IAC
+    for switchgear, IEC 61482 for arc-rated clothing — under <strong>SBC 401</strong> and
+    the SEC Distribution Code / Saudi Grid Code for the installation itself. State all
+    of them in the study basis.</li>
+  </ul>
+
+
+  <!-- ========================================================
+       ASSESSMENT, LABELS, PPE
+  ========================================================= -->
+  <h3 id="c-af-assess">Assessment: PPE categories, label anatomy, self-check</h3>
+
+  <p>NFPA 70E arc-rated PPE categories (indicative summary — the garment's marked arc
+  rating must meet or exceed the bus incident energy):</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>PPE category</th><th>Minimum arc rating</th><th>Typical ensemble</th><th>Our LV-MSB example</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>CAT 1</strong></td><td>4 cal/cm&sup2;</td>
+        <td>Arc-rated (AR) shirt + trousers or coverall, face shield, hard hat, AR gloves</td>
+        <td>Achievable with optical arc relay (E &asymp; 4)</td></tr>
+      <tr><td><strong>CAT 2</strong></td><td>8 cal/cm&sup2;</td>
+        <td>AR daily-wear coverall, balaclava + face shield, hard hat, AR gloves, hearing protection</td>
+        <td>Maintenance mode, t = 0.1 s → E &asymp; 7.7 ✔</td></tr>
+      <tr><td><strong>CAT 3</strong></td><td>25 cal/cm&sup2;</td>
+        <td>AR flash suit with hood over AR layers, suit gloves, hearing protection</td>
+        <td>As-found, t = 0.3 s → E &asymp; 23 (heavy at 50 &deg;C)</td></tr>
+      <tr><td><strong>CAT 4</strong></td><td>40 cal/cm&sup2;</td>
+        <td>Multi-layer AR flash suit system with hood; severe heat-stress management needed</td>
+        <td>Would apply if tie-closed mode (&asymp; 77 kA) were worked energised — avoid by procedure</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    Above 40 cal/cm&sup2; no category exists: the blast (pressure, shrapnel) — which PPE
+    does not stop — dominates. The only acceptable controls there are de-energisation or
+    re-engineering the clearing time. Note also that arc-rated PPE addresses the thermal
+    dose only; hearing, eyes and lungs need their own protection inside any boundary.
+  </div>
+
+  <p><strong>Boundaries — keep the two families separate in your head.</strong> The
+  <strong>arc-flash boundary</strong> (3.3 m as-found at our LV-MSB; 1.6 m with ERMS) is
+  the energy line: cross it during energised work and you need arc-rated PPE matched to
+  the bus energy, because beyond it an unprotected person would receive less than
+  1.2 cal/cm&sup2;. The <strong>shock approach boundaries</strong> (limited and
+  restricted, set by voltage from the site shock-protection tables) are the contact
+  line: they control who may come how close to <em>exposed live conductors</em>, with
+  what qualification and insulation. The two are computed from different physics and
+  one can be larger than the other — at high-energy LV boards the arc-flash boundary is
+  usually the outer one. The label states both; the permit enforces both; the standby
+  person polices both.</p>
+
+  <p><strong>Field reality check.</strong> When you walk the plant with this section in
+  hand, the assessment is not "is there PPE in the cabinet?" but a chain of evidence:
+  study → settings as-left match the study → labels match the study revision → PPE on
+  site matches the labels → permits quote the labels → ERMS/ZSI/arc relays actually
+  work when secondary-injection tested. Any broken link breaks the whole chain, and the
+  most commonly broken link is the second one: someone changed a setting after the
+  study.</p>
+
+  <p>Anatomy of an arc-flash label — the values our worked calculation would put on the
+  <code>LV-MSB</code> (as-found mode governs the label; maintenance-mode value shown
+  where the gear has ERMS):</p>
+
+  <table class="form">
+    <tr><td>Equipment</td><td><code>LV-MSB</code> — 400 V, 60 Hz main switchboard</td></tr>
+    <tr><td>Nominal voltage</td><td>400 V AC, 3-phase, TN-S</td></tr>
+    <tr><td>Incident energy (worst mode)</td><td>&asymp; 23 cal/cm&sup2; at 455 mm working distance <em>(indicative)</em></td></tr>
+    <tr><td>Arc-flash boundary</td><td>&asymp; 3.3 m</td></tr>
+    <tr><td>With maintenance switch ON</td><td>&asymp; 7.7 cal/cm&sup2; / AFB &asymp; 1.6 m</td></tr>
+    <tr><td>Minimum PPE</td><td>CAT 3 (CAT 2 with ERMS active and verified)</td></tr>
+    <tr><td>Shock hazard / limited approach</td><td>400 V — per site shock-protection table</td></tr>
+    <tr><td>Study reference / revision</td><td>AF-STUDY-____ Rev ____</td></tr>
+    <tr><td>Study date / review due</td><td>____________ / ____________ (&le; 5 years)</td></tr>
+  </table>
+
+  <p>Self-check — work these without looking back, then verify:</p>
+
+  <ul class="checklist">
+    <li>Explain to a non-engineer why a worker who never touches a conductor can still be
+    fatally injured at a switchboard — and why the hazard differs panel to panel.</li>
+    <li>Why is the LV arcing current (&asymp; 22 kA) lower than the bolted current
+    (38.5 kA), and why must clearing time be read from the TCC at the <em>arcing</em>
+    current? What is the "less current, more energy" trap?</li>
+    <li>Recompute the worked example for t = 0.2 s and confirm E &asymp; 15 cal/cm&sup2;
+    (linear scaling from 23 at 0.3 s). Which PPE category does that demand?</li>
+    <li>State the approximate energy released by a 6.6 MW arc burning for 0.3 s, in MJ
+    and in kg of TNT, and name two everyday comparisons.</li>
+    <li>List the four PPE categories with their cal/cm&sup2; thresholds, and explain why
+    "&gt; 40" has no category.</li>
+    <li>Describe how ZSI clears a bus fault quickly without losing feeder selectivity,
+    and contrast it with the ERMS approach.</li>
+    <li>Name at least four events that invalidate an existing arc-flash study and its
+    labels.</li>
+    <li>Explain the Saudi-specific tension between arc rating and heat stress at
+    50 &deg;C, and the engineering strategy that resolves it.</li>
+    <li>Verify on site: study exists and is &le; 5 years old; labels posted on
+    <code>LV-MSB</code>, MCCs and <code>MV-SWGR</code>; PPE on site matches label
+    categories; ERMS functional and procedure documented; ZSI / bus differential / arc
+    relays tested.</li>
+  </ul>
+
+  <div class="key">
+    Incident energy = arc power &times; clearing time, spread over distance. You cannot
+    choose the megawatts and you can barely choose the distance — but the seconds are a
+    setting. At the LV-MSB, the same fault delivers &asymp; 23 cal/cm&sup2; at 0.3 s and
+    &asymp; 7.7 cal/cm&sup2; at 0.1 s: one maintenance-switch position is the difference
+    between a CAT 3 flash suit and CAT 2 workwear. Calculate, label, and make the time
+    short — and remember every figure here is indicative; the certified IEEE 1584-2018
+    study governs.
+  </div>
+
+</section>

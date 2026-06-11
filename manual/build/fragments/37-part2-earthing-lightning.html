@@ -1,0 +1,1141 @@
+<!-- ============================================================
+     §C-EARTHING + §C-LIGHTNING
+     Rev 3 (Saudi/SEC edition) — 13.8 kV / 400-230 V / 60 Hz / 50 °C
+     Deep-dive tutorial. Replaces the short seed section 12; keeps the
+     section id (c-earthing) and the seed h3 ids that still map
+     (c-earth-ner, c-earth-lv, c-earth-conductor, c-earth-grid,
+     c-earth-assess). Adds a new top-level section (c-lightning).
+     All numbers indicative — detailed studies govern.
+============================================================ -->
+<section id="c-earthing" data-title="Earthing and Earth-Grid Design" data-part="Part 2 — Calculations">
+
+  <h2>12 — Earthing &amp; Earth-Grid Design <span style="font-size:0.65em; font-weight:normal; background:#e8f4fd; border:1px solid #aad4f5; border-radius:3px; padding:1px 5px; color:#1a6fa0;">Core</span></h2>
+
+  <p><strong>Goal:</strong> understand the three distinct jobs an earthing system does and
+  why mixing them up causes designs that look safe but are not; verify the MV neutral
+  earthing resistor (<code>MV-NER</code>, 7.97&nbsp;kV, 400&nbsp;A&nbsp;/&nbsp;10&nbsp;s
+  &rarr; 19.9&nbsp;&Omega;) from first principles; estimate the resistance of earth rods
+  and grids in Saudi soil conditions; understand touch and step voltage per IEEE&nbsp;80
+  at concept level; and follow the full sizing method from soil-resistivity survey to
+  test certificate on the Rev&nbsp;3 plant basis (SEC 13.8&nbsp;kV, 60&nbsp;Hz,
+  400/230&nbsp;V TN-S, 50&nbsp;&deg;C design ambient, dry sandy soil).</p>
+
+  <p>Earthing connects to almost every other calculation in this manual: the earth-fault
+  current it permits is set against the relay pickups in
+  <a href="#c-protection">§10 — Protection Coordination</a>; the fault magnitudes and
+  durations come from <a href="#c-shortcircuit">§4 — Short-Circuit Current</a>; the
+  earth-conductor cross-sections use the same adiabatic equation as
+  <a href="#c-cables">§6 — Cable Sizing</a>; and the transformer winding connections in
+  <a href="#c-transformer">§2 — Transformer Sizing</a> decide what kind of neutral exists
+  to be earthed at all. Typical NER hardware is surveyed in the
+  <a href="#cat-aux-ner">NER &amp; auxiliaries catalogue</a>.</p>
+
+  <div class="note">
+    <strong>Indicative data.</strong> Every numeric value in this section — resistances,
+    soil resistivities, currents, durations, thresholds — is indicative and chosen for
+    teaching on the Rev&nbsp;3 plant basis. The plant's formal earthing study (soil survey,
+    IEEE&nbsp;80 grid model, protection coordination study) governs. Standards cited are
+    the SASO-adopted editions of IEC&nbsp;60364 (esp. parts 4-41 and 5-54), IEC&nbsp;60479
+    (effects of current on the body) and IEEE&nbsp;80 (substation grounding), applied
+    together with SBC&nbsp;401 and the SEC Distribution Code.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       1. WHY THIS EXISTS
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-earthing-concept">One Word, Three Jobs: What Earthing Actually Does</h3>
+
+  <h4>Why this exists</h4>
+
+  <p>"Earthing" is the most overloaded word in electrical engineering. Engineers, drawings
+  and even standards use the same word for <strong>three different jobs</strong> that share
+  hardware but have different physics, different design rules and different failure
+  consequences. Most earthing mistakes in real plants start as a confusion between them.
+  Keep them separate in your head from the first day:</p>
+
+  <p><strong>Job 1 — Safety (touch-voltage control).</strong> Every conductive thing a
+  person can touch — motor frames, switchboard doors, cable trays, handrails near
+  electrical rooms — must stay at (very nearly) the same electrical potential as the
+  ground the person is standing on, <em>even while a fault is flowing</em>. This is
+  <em>protective earthing and equipotential bonding</em>. Its job is not to "send
+  electricity into the ground"; its job is to make sure that when something goes wrong,
+  the voltage between a person's hand and their feet stays below the level that drives a
+  dangerous current through their body. The design quantity is <strong>voltage across a
+  human</strong>, not ohms to remote earth.</p>
+
+  <p><strong>Job 2 — Fault-current return path (so protection can work).</strong> When
+  insulation fails and a live conductor touches a frame, a current must flow back to the
+  source neutral — large enough, and through a predictable enough path, that a relay or
+  breaker recognises it and clears it fast. On the LV side this path is the dedicated PE
+  conductor of the TN-S system; on the MV side it is the earth grid and the neutral
+  earthing resistor. Here the design quantities are <strong>impedance of the loop</strong>
+  and <strong>current magnitude versus relay pickup</strong> (see
+  <a href="#c-protection">§10</a>). A safety earth that cannot carry enough current to
+  trip the protection is a decoration.</p>
+
+  <p><strong>Job 3 — Reference / functional earth.</strong> Electronics, instrumentation,
+  surge protective devices, screened cables and the lightning-protection system all need a
+  stable zero-volt reference and a low-impedance sink for high-frequency and impulse
+  currents. This job cares about things Jobs 1 and 2 barely notice: conductor inductance,
+  loop area, single-point versus mesh bonding. It is why the lightning section
+  (<a href="#c-lightning">§16</a>) keeps insisting on <em>one</em> integrated earth
+  system rather than separate "clean" and "dirty" electrodes.</p>
+
+  <div class="warning">
+    <strong>The classic conflation.</strong> "We measured 0.8 &Omega; to earth, so the
+    plant is safe." No. A low electrode resistance helps Job 3 and parts of Job 2, but a
+    person can still be electrocuted beside a 0.5 &Omega; grid if bonding is missing
+    (Job 1 failure), and a relay can still fail to see a fault on a perfectly bonded plant
+    if the NER is open-circuit (Job 2 failure). Each job must be verified on its own
+    terms: bonding continuity for Job 1, loop impedance and relay reach for Job 2,
+    electrode resistance and bonding topology for Job 3.
+  </div>
+
+  <p>On the Rev&nbsp;3 plant the three jobs are implemented like this. The 400/230&nbsp;V
+  system is <strong>TN-S</strong>: the transformer LV neutral is solidly earthed at one
+  point, and a separate PE conductor runs with every circuit, so an LV earth fault is
+  effectively a phase-to-neutral short — big, fast, easily detected. The 13.8&nbsp;kV
+  system is <strong>resistance-earthed</strong> through the NER, deliberately limiting an
+  MV earth fault to about 400&nbsp;A — small enough to limit damage and touch voltage,
+  large enough for relays to see reliably. Both neutrals, all equipment frames, the cable
+  armours, the lightning-protection down-conductors and the instrument earths all land on
+  <strong>one buried earth grid</strong> under and around the substation. Why each of
+  those choices was made is the rest of this section.</p>
+
+  <div class="key">
+    Earthing is three jobs wearing one name: keep touch voltages survivable (bonding),
+    give fault current a path big and predictable enough to trip protection (return
+    path), and give electronics and surges a stable reference (functional earth). Verify
+    each job separately — a good number for one proves nothing about the others.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       2. WHAT GOES WRONG WITHOUT IT
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-earthing-failure">A Failure Story: the Broken Green-and-Yellow Wire</h3>
+
+  <h4>What goes wrong without it</h4>
+
+  <p>The following narrative is fictional but assembled from real incident reports; this
+  exact sequence has killed people in plants on every continent. Read it once for the
+  story, then again following the physics.</p>
+
+  <p>A 30&nbsp;kW cooling-water pump sits on a concrete plinth at the edge of the process
+  area. Years of vibration, one careless forklift and a corroded gland plate have done
+  their work: the PE conductor in the supply cable is broken inside the gland, and the
+  bonding strap from the motor frame to the local earth bar was removed during a bearing
+  change and never refitted. Nothing trips, nothing alarms — <strong>a broken earth is
+  invisible in normal operation</strong>, because the earth conductor carries no current
+  until the day it is needed. The pump runs perfectly for months.</p>
+
+  <p>Then the winding insulation, cooked by years of 50&nbsp;&deg;C ambient plus load
+  heating, finally cracks where a phase conductor leaves the slot. The phase touches the
+  frame. In a healthy installation this is a non-event: the TN-S earth-fault loop returns
+  the current to the transformer neutral, thousands of amps flow, and the feeder breaker
+  clears it in a tenth of a second (<a href="#c-shortcircuit">§4</a>,
+  <a href="#c-protection">§10</a>). But this frame has no return path. Almost no current
+  flows — and so <strong>no protection operates</strong>. The motor keeps running. The
+  frame, the pump casing, the discharge pipework and the steel baseplate quietly rise to
+  nearly full phase voltage: <strong>230&nbsp;V above the ground</strong> a person stands
+  on. The plant has manufactured an electrified object and left it in a walkway.</p>
+
+  <p>A technician arrives to log the discharge pressure. He puts one hand on the pump
+  casing to steady himself. Now do the arithmetic his body does involuntarily. Hand to
+  feet, through the chest: the body presents very roughly <strong>1&nbsp;k&Omega;</strong>
+  (IEC&nbsp;60479 gives 1000–1500&nbsp;&Omega; for most people at 230&nbsp;V, hand to
+  feet, dry; less if sweating — and in a Saudi summer everyone is sweating).</p>
+
+  <div class="worked">
+    <h4>The current through the technician</h4>
+    <code class="formula">I_body = U_touch / R_body = 230 V / 1000 &Omega; = 0.23 A = 230 mA</code>
+    <p>Compare against the IEC&nbsp;60479 physiological landmarks, in plain words:</p>
+    <p>&bull; <strong>~1 mA</strong> — perception; a tingle.<br>
+    &bull; <strong>~10 mA</strong> — muscles clamp; many people cannot let go of a
+    gripped conductor.<br>
+    &bull; <strong>~30 mA</strong> — breathing muscles affected; this is the conventional
+    safety threshold and the rating of an RCD protecting people.<br>
+    &bull; <strong>~50 mA and above</strong> (for more than a heartbeat or two) —
+    ventricular fibrillation territory: the heart's pacing signals are scrambled, it
+    quivers instead of pumping, and without defibrillation death follows in minutes.</p>
+    <p>230 mA is <strong>four to five times the fibrillation threshold</strong>. The grip
+    reflex means he cannot release the casing. Duration does the rest: IEC&nbsp;60479's
+    curves show that what a heart survives for 50&nbsp;ms can kill at 1&nbsp;s. There is
+    no breaker in this story — nothing is measuring the current through a man.</p>
+  </div>
+
+  <p>Now rewind and fix only the earthing. With the PE conductor intact, the instant the
+  insulation failed, roughly 3–6&nbsp;kA of earth-fault current would have returned
+  through the PE to the neutral; the feeder MCCB would have cleared in well under
+  0.1&nbsp;s; the frame would have risen above true earth only briefly, and the bonding
+  would have held the frame and the surrounding steel at nearly the same potential
+  anyway — small touch voltage, short duration, both inside the tolerable envelope. The
+  technician would have found a tripped breaker and written a work order. <strong>That is
+  the entire difference earthing makes: a fatality becomes a maintenance item.</strong></p>
+
+  <p>The same story has an MV variant. If the NER connection corrodes open and an MV
+  cable fault occurs, the 13.8&nbsp;kV system becomes unearthed: the earth-fault relays
+  see (almost) nothing, the fault arcs and restrikes, healthy-phase voltages rise toward
+  line-to-line values stressing every metre of cable insulation in the plant, and the
+  fault burns until it becomes a phase-to-phase short. That is why
+  <a href="#c-earthing-control">NER continuity monitoring</a> exists.</p>
+
+  <div class="warning">
+    <strong>The cruel asymmetry of earthing faults.</strong> Every other protection defect
+    announces itself eventually through nuisance trips or alarms. A broken earth
+    announces itself only at the exact moment it is needed, through the body of whoever is
+    touching the equipment. This is why earthing is verified by <em>test and inspection on
+    a schedule</em>, never by "it has been fine so far".
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       3. FEEL FOR THE NUMBERS
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-earthing-feel">Feel for the Numbers: 50 V, 32 MJ, and Saudi Sand</h3>
+
+  <h4>Feel for the numbers</h4>
+
+  <p><strong>Why 50 V is the magic touch-voltage number.</strong> Take the two
+  physiological numbers from the failure story — body resistance roughly
+  1&nbsp;k&Omega;, dangerous current starting around 50&nbsp;mA — and multiply:</p>
+
+  <div class="worked">
+    <h4>The origin of the 50 V limit</h4>
+    <code class="formula">U_limit &asymp; R_body &times; I_threshold = 1000 &Omega; &times; 0.05 A = 50 V</code>
+    <p>That is the entire derivation. The conventional touch-voltage limit of
+    <strong>50 V AC</strong> (IEC&nbsp;60364-4-41) is simply the voltage that drives
+    roughly the fibrillation-threshold current through a typical body. It is reduced to
+    <strong>25 V</strong> for wet or conductive locations because wet skin halves the
+    resistance, and it can be relaxed upward when the exposure is guaranteed brief —
+    which is why IEEE&nbsp;80 tolerable touch voltages depend on fault clearing time
+    (<a href="#c-earth-ner">worked calculation (c)</a> below). 50 V indefinitely, more
+    only if it is gone quickly: that one sentence summarises both standards.</p>
+  </div>
+
+  <p><strong>How much energy the NER swallows.</strong> The NER's job is to stand between
+  7.97&nbsp;kV and earth and dissipate the full limited fault current for the rated
+  10&nbsp;s without melting. Feel the size of that duty:</p>
+
+  <div class="worked">
+    <h4>NER thermal duty — honest comparison</h4>
+    <code class="formula">E = I&sup2; &times; R &times; t = 400&sup2; &times; 19.9 &times; 10 &asymp; 31.8 MJ &asymp; 32 MJ</code>
+    <p>32 MJ is about <strong>7 kg of TNT equivalent</strong> (TNT releases
+    &asymp;4.6&nbsp;MJ/kg) — but be honest about the comparison: TNT releases its energy
+    in microseconds as a blast wave, while the NER releases the same energy in 10&nbsp;s
+    as heat in a steel-grid resistor stack roughly the size of a wardrobe. Nothing
+    explodes — instead about three tonnes of resistor elements rise several hundred
+    kelvin. The same energy would take a 3 kW domestic kettle nearly three hours to
+    deliver; the NER absorbs it in ten seconds. That is why an NER is a serious piece of
+    plant with mass and ventilation, not a component in a box — and why its
+    <strong>time rating</strong> (10 s) matters as much as its ohms: the protection must
+    clear the fault well inside that window
+    (<a href="#c-protection">§10</a>).</p>
+  </div>
+
+  <p><strong>Saudi sand: the core local problem.</strong> Earth electrodes work by
+  pushing current into the surrounding soil, so soil resistivity &rho; sets everything.
+  Feel the range:</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Soil (indicative)</th><th>Resistivity &rho;</th><th>Relative difficulty</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Wet loam / clay (N. Europe)</td><td>~100 &Omega;&middot;m</td><td>1&times; (easy)</td></tr>
+      <tr><td>Moist sandy soil</td><td>~300 &Omega;&middot;m</td><td>3&times;</td></tr>
+      <tr><td>Dry desert sand / gravel (typical KSA site)</td><td>1 000 &Omega;&middot;m and up</td><td>10&times; and worse</td></tr>
+      <tr><td>Rock / dry wadi gravel</td><td>3 000+ &Omega;&middot;m</td><td>30&times;+</td></tr>
+    </tbody>
+  </table>
+
+  <p>Electrode resistance scales almost linearly with &rho;, so the same rod that gives
+  6.5&nbsp;&Omega; in Dutch clay gives 65&nbsp;&Omega; in moist Saudi sand and several
+  hundred ohms in dry dune sand. Worse, the top metre of desert soil is bone dry and its
+  resistivity swings wildly between a rare rainy week and August. <strong>This is the
+  central fact of earthing design in the Kingdom:</strong> you cannot buy your way to a
+  low-resistance earth with one heroic rod. You get there with area (a buried grid),
+  depth (rods or drilled earth wells reaching the permanently damp strata, often
+  10–30&nbsp;m down), and chemistry (bentonite or conductive backfill around each
+  electrode). The worked calculation below shows why with numbers.</p>
+
+  <p><strong>One more intuition: ohms are not the goal.</strong> A common spec says
+  "earth grid &le;&nbsp;1&nbsp;&Omega;" — useful as a benchmark, but remember what
+  actually protects people is <em>touch voltage versus clearing time</em>. A 5&nbsp;&Omega;
+  grid on a 400 A resistance-earthed system produces a 2&nbsp;kV ground-potential rise;
+  whether that is dangerous depends entirely on how the grid spreads that potential under
+  people's feet and how fast the relays clear. Chasing ohms while ignoring grid geometry
+  is Job-3 thinking applied to a Job-1 problem.</p>
+
+  <div class="key">
+    Three numbers to carry: <strong>50 V</strong> (≈1 k&Omega; body &times; 50 mA — the
+    conventional touch limit), <strong>32 MJ</strong> (the NER's 10 s thermal duty —
+    7 kg-of-TNT heat released slowly in a wardrobe-sized resistor), and
+    <strong>1 000 &Omega;&middot;m</strong> (dry Saudi sand, ten times worse than the wet
+    loam most textbooks quietly assume).
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       4. WORKED CALCULATION
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-earth-ner">Worked Calculation: NER, Earth Rod &amp; Grid, Touch Voltage</h3>
+
+  <h4>Worked calculation</h4>
+
+  <p>Three linked calculations, in the order a designer meets them: (a) size the neutral
+  earthing resistor, (b) estimate electrode resistance and discover why one rod is never
+  enough, (c) check the result against people, IEEE&nbsp;80 style.</p>
+
+  <div class="worked">
+    <h4>Worked example (a) — Sizing the MV neutral earthing resistor</h4>
+    <p><strong>Step 1 — the voltage the NER sees.</strong> During a solid earth fault on
+    one phase, the transformer neutral is driven to (nearly) full phase-to-neutral
+    voltage with respect to earth, and that voltage appears across the NER:</p>
+    <code class="formula">V_ln = V_LL / &radic;3 = 13 800 / 1.732 = 7 967 V &asymp; 7.97 kV</code>
+    <p><strong>Step 2 — choose the limited current.</strong> The Rev 3 design limits MV
+    earth-fault current to <strong>400 A</strong> (a common choice for industrial
+    13.8 kV systems; SEC practice and the plant earthing study govern). Why limit at all,
+    and why not lower?</p>
+    <p>&bull; <em>Damage:</em> burn damage at the fault point scales with I&sup2;t — cutting
+    a prospective several-kA earth fault to 400 A cuts core-burning damage in a motor or
+    cable by orders of magnitude.<br>
+    &bull; <em>Touch voltage:</em> ground-potential rise = I_f &times; R_grid, so less
+    current means proportionally less voltage under people's feet (worked example (c)).<br>
+    &bull; <em>But not too low:</em> the earth-fault relays need a signal that towers
+    over CT errors, cable charging current and harmonics. With pickups of
+    40–80 A (10–20 % of the limit — see <a href="#c-protection">§10</a>), 400 A gives a
+    5–10&times; margin between pickup and available current, so even a high-resistance
+    fault at the far end of a feeder is seen.</p>
+    <p><strong>Step 3 — the resistance.</strong></p>
+    <code class="formula">R_NER = V_ln / I_ef = 7 967 / 400 = 19.9 &Omega;</code>
+    <p><strong>Step 4 — the thermal (time) rating.</strong> The NER must survive full
+    current for longer than the slowest earth-fault clearing stage. With MV earth-fault
+    grading clearing in &le;1–2 s and a margin for breaker failure scenarios, the
+    standard short-time rating is <strong>10 s</strong>:</p>
+    <code class="formula">E = I&sup2; R t = 400&sup2; &times; 19.9 &times; 10 = 3.18&times;10&sup7; J &asymp; 32 MJ</code>
+    <code class="formula">P_10s = I&sup2; R = 400&sup2; &times; 19.9 = 3.18 MW (for 10 s)</code>
+    <p><strong>Result — NER specification: 7.97 kV, 400 A, 10 s, 19.9 &Omega;</strong>
+    (continuous current rating typically ~8 % of rated, i.e. ~32 A, for standing
+    unbalance).</p>
+    <p><strong>Sanity check:</strong> 7 967 &times; 400 / 1 000 = 3 187 kW &asymp; 3.2 MW
+    — consistent with the energy figure (3.2 MW &times; 10 s = 32 MJ). And 19.9 &Omega; is
+    the same order as the seed design's 21 &Omega; at 11 kV / 300 A — resistance-earthed
+    MV systems worldwide land in the tens of ohms. Values are indicative; the protection
+    coordination study fixes the final figure.</p>
+  </div>
+
+  <div class="note">
+    <strong>Why the LV side gets no NER.</strong> The 400 V TN-S system is
+    <em>solidly</em> earthed: an LV earth fault must look like a phase-to-neutral short
+    (tens of kA) so that ordinary MCCBs clear it within their tripping curves — there are
+    no dedicated sensitive earth-fault relays on every final circuit. At 230 V to earth,
+    arc energy and touch-voltage rise are inherently bounded, so the MV trade-off
+    (limit current to limit damage) is not worth losing the fast, simple overcurrent
+    clearing. Different voltage, different trade-off, opposite answer — details under
+    <a href="#c-earth-lv">Equipment settings</a>.
+  </div>
+
+  <div class="worked">
+    <h4>Worked example (b) — One earth rod in Saudi soil, and why it is never enough</h4>
+    <p>The classical estimate for a single driven rod (length L, radius a, soil
+    resistivity &rho;) is:</p>
+    <code class="formula">R_rod &asymp; ( &rho; / (2 &pi; L) ) &times; ( ln(4L / a) − 1 )</code>
+    <p>Take a standard 3 m &times; 19 mm copper-bonded rod (a = 0.0095 m) in
+    <em>moist</em> sandy soil, &rho; = 200 &Omega;&middot;m — an optimistic Saudi case:</p>
+    <code class="formula">4L / a = (4 &times; 3) / 0.0095 = 1 263&nbsp;&nbsp;&nbsp;&nbsp;ln(1 263) = 7.14</code>
+    <code class="formula">R_rod = ( 200 / (2 &times; 3.1416 &times; 3) ) &times; (7.14 − 1) = (200 / 18.85) &times; 6.14 = 10.6 &times; 6.14 &asymp; 65 &Omega;</code>
+    <p><strong>One rod: ~65 &Omega;.</strong> In dry sand at 1 000 &Omega;&middot;m the
+    same rod gives ~330 &Omega;. Against a target of a few ohms, a single rod is off by
+    one to two orders of magnitude — <strong>one rod is never enough</strong>.</p>
+    <p><strong>Sanity check:</strong> the formula says resistance is dominated by
+    &rho;/(2&pi;L) — the soil within the first metre or two around the rod. Doubling rod
+    length does not halve resistance (the log term grows too); and ten rods do not give
+    one tenth, because closely spaced rods share the same hemisphere of soil (mutual
+    resistance — effective only when spaced &gt;1 rod-length apart).</p>
+    <p><strong>How a real grid gets there (indicative):</strong></p>
+    <p>&bull; A buried <strong>mesh grid</strong> (e.g. 70/120 mm&sup2; bare copper at
+    0.5–0.8 m depth, 3–7 m mesh) under the substation: for a grid of area A, the driving
+    term becomes R &asymp; &rho;/4 &times; &radic;(&pi;/A) — area, not length, does the
+    work. A 30 m &times; 20 m grid (A = 600 m&sup2;) in 200 &Omega;&middot;m soil gives
+    R &asymp; (200/4)&times;&radic;(3.1416/600) = 50 &times; 0.072 &asymp;
+    <strong>3.6 &Omega;</strong> before rods are even counted.<br>
+    &bull; <strong>Deep rods or drilled earth wells</strong> (10–30 m) reaching
+    permanently damp strata — in desert sites these often contribute more than the whole
+    surface grid, and they make the result stable across seasons.<br>
+    &bull; <strong>Soil treatment</strong> — bentonite or carbon-based conductive
+    backfill in each rod hole and trench, dropping local contact resistance several-fold
+    and buffering moisture.</p>
+    <p>Grid + wells + treatment in parallel plausibly reaches 1–3 &Omega; on a sandy
+    site — confirmed only by measurement after installation.</p>
+  </div>
+
+  <div class="worked">
+    <h4>Worked example (c) — Touch and step voltage, IEEE 80 at concept level</h4>
+    <p><strong>Step 1 — ground-potential rise (GPR).</strong> When the limited MV earth
+    fault flows back through the grid, the whole grid rises above remote earth:</p>
+    <code class="formula">GPR = I_f &times; R_grid = 400 A &times; 2.5 &Omega; = 1 000 V</code>
+    <p>(using an achieved grid resistance of 2.5 &Omega;). One kilovolt under the plant —
+    but GPR is <em>not</em> what a person experiences. A person bridges only the
+    <em>difference</em> between two points: hand-to-feet (<strong>touch voltage</strong>,
+    a fraction of GPR set by how fine the mesh is and whether the touched object is
+    bonded) or foot-to-foot (<strong>step voltage</strong>, the gradient across a 1 m
+    stride). A well-designed mesh keeps touch voltage to roughly 10–30 % of GPR —
+    say <strong>~200–300 V</strong> here.</p>
+    <p><strong>Step 2 — what a person can tolerate (IEEE 80 body model).</strong> For a
+    50 kg person, tolerable touch voltage with fault duration t_s and a crushed-rock
+    surface layer (resistivity &rho;_s, derating factor C_s) is:</p>
+    <code class="formula">E_touch50 = ( 1000 + 1.5 &times; C_s &times; &rho;_s ) &times; 0.116 / &radic;t_s</code>
+    <p>With 100 mm of 3 000 &Omega;&middot;m crushed rock (C_s &asymp; 0.7) and an MV
+    earth-fault clearing time t_s = 0.5 s:</p>
+    <code class="formula">E_touch50 = (1000 + 1.5 &times; 0.7 &times; 3000) &times; 0.116 / &radic;0.5 = 4 150 &times; 0.164 &asymp; 680 V</code>
+    <p><strong>Step 3 — compare.</strong> Expected touch voltage ~200–300 V &lt;
+    tolerable ~680 V → <strong>pass, with margin</strong>. Note the three levers visible
+    in the formula: less fault current (the NER), faster clearing (the relays,
+    <a href="#c-protection">§10</a>), and the humble gravel layer — the 3 150 V&middot;A
+    term from crushed rock more than quadruples what a person can tolerate, which is why
+    substations are floored with gravel, not for drainage.</p>
+    <p><strong>Sanity check:</strong> with no rock layer and a 1 s clearing time,
+    E_touch50 = 1000 &times; 0.116 / 1 = 116 V — the same order as the 50 V conventional
+    limit (stricter because indefinite exposure). The formula degrades gracefully toward
+    the number we already trust. Real designs model the actual mesh (IEEE 80 full
+    method, usually in software); this concept-level check tells you whether the answer
+    is plausible.</p>
+  </div>
+
+  <h3 id="c-earth-conductor">Earth-Conductor Sizing (Adiabatic) — Carried Over from the Seed Assessment</h3>
+
+  <p>The conductors that carry the fault current must survive it. The same adiabatic
+  equation used for cable screens in <a href="#c-cables">§6</a> applies
+  (IEC&nbsp;60364-5-54):</p>
+
+  <div class="worked">
+    <h4>Worked example — Minimum LV earth-conductor cross-section</h4>
+    <code class="formula">A = I &times; &radic;t / k</code>
+    <p>I = 38 500 A (LV fault from <a href="#c-shortcircuit">§4</a>); t = 0.3 s (LV
+    incomer short-time delay, <a href="#c-breaker-lsig">§14</a>); k = 143 (copper,
+    XLPE/PVC per IEC 60364):</p>
+    <code class="formula">A = 38 500 &times; &radic;0.3 / 143 = 38 500 &times; 0.548 / 143 &asymp; 147 mm&sup2; Cu</code>
+    <p>Main earthing conductors at the <code>LV-MSB</code> must therefore be
+    &ge; <strong>150 mm&sup2; Cu</strong> (next standard size; or aluminium equivalent).
+    On the MV side the duty is far gentler — 400 A for &le;10 s needs only
+    A = 400 &times; &radic;10 / 143 &asymp; 9 mm&sup2; — but mechanical robustness and
+    corrosion, not heat, govern: buried grid conductor is typically 70–120 mm&sup2;
+    regardless. <strong>Sanity check:</strong> the LV case is current-driven (huge I,
+    short t), the MV case is longevity-driven; both land in the same 120–150 mm&sup2;
+    band for opposite reasons.</p>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       5. EQUIPMENT SETTINGS
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-earth-lv">Equipment Settings: Earth-Fault Pickups, NER Monitoring, and the TN-S Link</h3>
+
+  <h4>Equipment settings</h4>
+
+  <p>The earthing system has no settings of its own — it is copper and soil. What gets
+  set is the protection that <em>uses</em> it, and the settings only make sense as
+  fractions of the current the NER allows.</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Relay / device (indicative)</th><th>Setting</th><th>Rationale vs NER 400 A</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>MV feeder earth-fault (51N/51G, core-balance CT)</td><td>Pickup 40 A (10 %), t &asymp; 0.2–0.4 s</td><td>Well below 400 A so resistive/far faults are seen; above CT error and cable charging current.</td></tr>
+      <tr><td>Incomer / transformer standby earth fault (51G in NER circuit)</td><td>Pickup 60–80 A (15–20 %), graded slower</td><td>Backs up every feeder; must clear well inside the NER 10 s rating.</td></tr>
+      <tr><td>NER thermal protection</td><td>Alarm/trip per NER 10 s curve</td><td>If grading fails, the NER must not be the fuse.</td></tr>
+      <tr><td>LV feeder/incomer earth fault (MCCB/ACB ground-fault element)</td><td>Per LV coordination study</td><td>TN-S solid earthing: faults are kA-scale; ordinary overcurrent elements clear them — see <a href="#c-protection">§10</a>.</td></tr>
+    </tbody>
+  </table>
+
+  <p>Two grading rules follow directly from the NER rating. First, every earth-fault
+  stage, including breaker-failure backup, must clear in a fraction of <strong>10 s</strong>
+  — the resistor's survival is part of the coordination study. Second, the
+  <strong>sum of pickup plus margin must stay far below 400 A</strong>: if a designer
+  "improves security" by raising pickups to 200 A, a 2 000 &Omega; high-resistance fault
+  (7 967 / (2 000 + 19.9) &asymp; 3.9 A) was always invisible, but now even a 30 &Omega;
+  fault path (≈160 A) hides too. Sensitivity is the whole point of resistance earthing.</p>
+
+  <p><strong>NER monitoring is a setting that saves the scheme.</strong> Everything above
+  assumes the NER is actually connected. An open-circuit NER (corroded bolted joint,
+  cracked element, stolen copper tail — all real) silently converts the plant to an
+  unearthed system: relays blind, healthy phases riding at line-to-line voltage during
+  any fault. Fit and commission a <strong>neutral-circuit continuity monitor</strong>
+  (typically a small injection device across the NER) with its alarm mapped to a
+  permanently watched DCS/PMS point — details under <a href="#c-earthing-control">Control</a>
+  and the <a href="#cat-aux-ner">NER catalogue</a>.</p>
+
+  <div class="note">
+    <strong>Why MV is resistance-earthed but LV is solidly earthed — the same logic from
+    both sides.</strong> At 13.8 kV, uncontrolled earth-fault current would be huge and
+    destructive, touch voltages scale with it, and dedicated sensitive relays are
+    affordable per feeder → limit the current, detect it with low-set relays. At 400 V,
+    the priority reverses: hundreds of final circuits cannot each carry a sensitive
+    earth-fault relay, so faults must be big enough for ordinary breakers to clear within
+    the IEC 60364 disconnection times (0.4 s for 230 V final circuits) → solid earthing,
+    TN-S, with the PE separated from N so protective and functional earths stay clean.
+    One philosophy — "make the fault current match the protection you can afford" — two
+    opposite implementations.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       6. EQUIPMENT TECHNOLOGY
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-earthing-technology">Equipment Technology: What the Hardware Actually Is</h3>
+
+  <h4>Equipment technology</h4>
+
+  <p><strong>The NER itself.</strong> A modern NER is a stack of punched
+  <strong>stainless-steel grid elements</strong> (AISI 304/316 — chosen because its
+  resistivity is high, stable with temperature, and corrosion-proof) bolted into open
+  frames inside a <strong>ventilated outdoor enclosure</strong> (typically IP23 — it must
+  breathe to shed 3.2 MW for 10 s; sand screens, not sealed doors). Mounted next to the
+  transformer or as a free-standing unit, with: an MV bushing from the transformer
+  neutral, a single-core neutral CT for the standby earth-fault relay, a bolted link for
+  testing, and — strongly recommended — the continuity monitor. Old designs used
+  liquid (brine) earthing resistors; they are obsolete precisely because evaporation in
+  hot climates silently changed the resistance. Indicative product families in the
+  <a href="#cat-aux-ner">NER &amp; auxiliaries catalogue</a>.</p>
+
+  <p><strong>Electrodes: rods, strips, wells.</strong> The buried grid is bare stranded
+  copper strip/cable; vertical electrodes are <strong>copper-bonded steel rods</strong>
+  (steel core for driving strength, ≥250 &mu;m molecularly bonded copper for corrosion
+  life). Plain <strong>galvanized steel</strong> rods are cheaper but in aggressive
+  soil — saline sabkha ground near the coasts, chemically treated backfill, chloride-rich
+  desert soils — the zinc sacrifices itself in a few years and the rod follows;
+  copper-bonded (or solid copper in the worst soils) is the default here. Never mix
+  bare copper and galvanized steel in the same wet soil volume without thought: they form
+  a galvanic couple and the steel becomes the anode.</p>
+
+  <p><strong>Joints: exothermic welds vs clamps.</strong> Buried joints are made by
+  <strong>exothermic welding</strong> (graphite mould, copper-oxide/aluminium charge — a
+  molecular weld with the conductivity of the parent copper, zero contact resistance to
+  drift, maintenance-free for the life of the plant). Bolted <strong>clamps</strong> are
+  acceptable only where a joint must be openable — test links, equipment tails — and
+  every buried clamp is a future corrosion failure waiting for its inspection pit.
+  Rule of thumb: <em>below grade, weld; above grade, bolt — and make it inspectable.</em></p>
+
+  <p><strong>Equipotential bonding network.</strong> Main earthing terminal (MET) in the
+  substation; main bonding conductors to switchgear frames, transformer tanks, the NER,
+  cable trays, building steel and incoming metallic services; the LV PE bar bonded to the
+  MET; instrument/functional earth bars bonded to the same MET (single system —
+  see <a href="#c-lightning">§16</a> for why separate "clean earths" are a myth that
+  lightning punishes). Flexible braids across gasketed joints, hinged doors and pipe
+  flanges complete the mesh.</p>
+
+  <p><strong>Test pits.</strong> Concrete inspection pits over selected rod tops and grid
+  corners, each with a disconnectable test link, so the buried system can be measured and
+  inspected for the next forty years without excavation. They cost almost nothing on day
+  one and are nearly impossible to retrofit honestly.</p>
+
+  <!-- ────────────────────────────────────────────────────────────
+       7. CONTROL
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-earthing-control">Control: Monitoring a System That Does Nothing All Day</h3>
+
+  <h4>Control</h4>
+
+  <p>An earthing system is passive — there is nothing to operate. Control therefore means
+  <strong>surveillance</strong>: proving, continuously or on a schedule, that the system
+  is still there.</p>
+
+  <p><strong>Continuous (to DCS/PMS):</strong> NER <strong>open-circuit / continuity
+  monitor</strong> alarm (the single most important point — an open NER is a blind
+  protection system); NER over-temperature alarm where fitted; standby earth-fault relay
+  pickup alarm (a standing alarm at a few amps means a developing insulation problem or
+  standing unbalance — investigate, don't normalise); SPD and arrester status contacts
+  (shared with <a href="#c-lightning">§16</a>).</p>
+
+  <p><strong>Periodic testing (indicative intervals; site procedures govern):</strong></p>
+  <table class="tbl">
+    <thead>
+      <tr><th>Test</th><th>Method</th><th>Interval</th><th>Acceptance (indicative)</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Earth-grid resistance</td><td>Fall-of-potential (61.8 % rule) via test pits, injection electrode well outside the grid's influence</td><td>3–5 yr, and after any major excavation</td><td>Within design value; trend, don't just pass/fail</td></tr>
+      <tr><td>Bonding continuity</td><td>Micro-ohmmeter, MET to each frame/tray</td><td>1–3 yr, sampled</td><td>&le; tens of m&Omega; per bond</td></tr>
+      <tr><td>NER resistance</td><td>Low-current ohmmeter at the test link</td><td>2–4 yr / after operation</td><td>19.9 &Omega; &plusmn;10 %</td></tr>
+      <tr><td>Joint condition</td><td>Visual + <strong>thermography</strong> of neutral connections and main bonds under load/unbalance</td><td>Annual (with the switchgear IR survey)</td><td>No hot spots vs reference</td></tr>
+      <tr><td>Soil moisture sanity</td><td>Re-measure one well in peak summer</td><td>Opportunistic</td><td>Seasonal swing understood</td></tr>
+    </tbody>
+  </table>
+
+  <p><strong>Records are part of the system.</strong> Every measurement goes in the earth
+  register with date, instrument, weather and electrode configuration. A grid reading
+  drifting 0.8 → 1.4 → 2.1 &Omega; over a decade is a corroding joint announcing itself
+  years before it kills the protection scheme — but only if someone keeps and reads the
+  trend.</p>
+
+  <!-- ────────────────────────────────────────────────────────────
+       8. SIZING METHOD
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-earth-grid">Sizing Method: From Soil Survey to Test Certificate</h3>
+
+  <h4>Sizing method</h4>
+
+  <p>The full procedure, in the order the data dependencies force. Each step feeds the
+  next; skipping step 1 invalidates everything after it.</p>
+
+  <p><strong>Step 1 — Soil resistivity survey (Wenner four-pin method).</strong> Four
+  equally spaced pins, spacing <em>a</em>; inject current through the outer pair, measure
+  voltage across the inner pair; then <code>&rho; = 2&pi;aR</code>. Repeat at several
+  spacings (a &asymp; depth probed: 1, 2, 4, 8, 16 m) and along two perpendicular
+  traverses to reveal layering — desert sites typically show a very resistive dry top
+  layer over a damper, kinder stratum, which is exactly what decides between "more grid"
+  and "deep wells". Survey in the <em>dry</em> season; record the date and recent
+  rainfall.</p>
+
+  <p><strong>Step 2 — Fault current and duration.</strong> From
+  <a href="#c-shortcircuit">§4</a> and <a href="#c-protection">§10</a>: MV earth-fault
+  current (the NER limit, 400 A, plus any SEC-side contribution per the utility study)
+  and the slowest realistic clearing time (use the backup stage, not the optimistic
+  primary one).</p>
+
+  <p><strong>Step 3 — Tolerable touch/step limits.</strong> IEEE 80 body model with the
+  clearing time from step 2 and the surface layer you intend to install (worked
+  example (c)).</p>
+
+  <p><strong>Step 4 — Lay out the grid, rods and wells.</strong> Mesh under the
+  substation and around equipment (denser mesh at the perimeter where gradients peak),
+  rods at corners, deep wells per the layering found in step 1, conductor sized per the
+  adiabatic check (<a href="#c-earth-conductor">above</a>) and corrosion allowance.</p>
+
+  <p><strong>Step 5 — Compute R_grid, GPR, mesh and step voltages.</strong> Concept
+  formulas for feasibility (as in worked example (b)); IEEE 80 full method or software
+  for the record copy. Iterate the layout until touch/step pass with margin in the
+  worst-season &rho;.</p>
+
+  <p><strong>Step 6 — Specify the NER:</strong> voltage 7.97 kV, current 400 A, time
+  10 s, resistance 19.9 &Omega;, continuous current, enclosure IP, CT and monitor —
+  worked example (a).</p>
+
+  <p><strong>Step 7 — Verify relay coordination:</strong> pickups 10–20 % of the NER
+  limit, every stage clearing inside the NER time rating, sensitivity to a defined
+  high-resistance fault — close the loop with <a href="#c-protection">§10</a>.</p>
+
+  <p><strong>Step 8 — Test after installation, retest periodically.</strong>
+  Fall-of-potential measurement of the completed grid before energisation (the design
+  is a prediction; the certificate is the fact), bonding continuity sample, results
+  into the earth register — then the periodic schedule under
+  <a href="#c-earthing-control">Control</a> forever after.</p>
+
+  <h3 id="c-earth-assess">Self-Check</h3>
+
+  <p>Work these from memory before moving on; every answer is in this section.</p>
+
+  <ul class="checklist">
+    <li>State earthing's three distinct jobs and give one failure example for each that
+    the other two jobs would not have prevented.</li>
+    <li>Derive the 50 V conventional touch-voltage limit from body resistance and the
+    fibrillation threshold, and say when 25 V applies instead.</li>
+    <li>Compute the NER resistance for 13.8 kV limited to 400 A
+    (V_ln = 13 800/&radic;3 = 7 967 V → 19.9 &Omega;) and its 10 s energy duty
+    (&asymp;32 MJ); explain why the current is limited and why not further.</li>
+    <li>Estimate a single 3 m rod's resistance in 200 &Omega;&middot;m soil (~65 &Omega;)
+    and explain the three measures (grid area, deep wells, soil treatment) that get a
+    Saudi site to a few ohms.</li>
+    <li>Explain GPR vs touch voltage vs step voltage, and why a crushed-rock layer raises
+    the tolerable touch voltage.</li>
+    <li>State typical MV earth-fault relay pickups as a fraction of the NER rating
+    (10–20 % → 40–80 A) and why an open-circuit NER must be monitored continuously.</li>
+    <li>Explain why the LV neutral is solidly earthed (TN-S) while the MV neutral is
+    resistance-earthed.</li>
+    <li>List the eight sizing-method steps in order, starting from the Wenner survey and
+    ending with periodic retest.</li>
+  </ul>
+
+  <div class="key">
+    The earthing system is sized backwards from people and relays: tolerable touch
+    voltage and relay sensitivity fix the allowable fault current (the NER's
+    19.9 &Omega;), the soil survey fixes how much copper and depth it takes to spread
+    that current safely, and the test certificate — renewed on schedule — is the only
+    proof the buried system still exists. Verify with measurements, not drawings.
+  </div>
+
+</section>
+
+<!-- ============================================================
+     §C-LIGHTNING  Lightning & surge protection (new in Rev 3)
+============================================================ -->
+<section id="c-lightning" data-title="Lightning &amp; Surge Protection" data-part="Part 2 — Calculations">
+
+  <h2>16 — Lightning &amp; Surge Protection <span style="font-size:0.65em; font-weight:normal; background:#e8f4fd; border:1px solid #aad4f5; border-radius:3px; padding:1px 5px; color:#1a6fa0;">Core</span></h2>
+
+  <p><strong>Goal:</strong> understand why microsecond-scale overvoltages — lightning and
+  switching surges — are a different enemy from everything else in Part 2; run the
+  IEC&nbsp;62305 risk method at concept level to decide whether the plant needs an
+  external lightning-protection system; select and check a coordinated SPD cascade
+  (Type&nbsp;1/2/3) against equipment withstand; and decode surge-arrester ratings at the
+  13.8&nbsp;kV intake — all on the Rev&nbsp;3 plant basis (SEC 13.8&nbsp;kV, 60&nbsp;Hz,
+  17.5&nbsp;kV-class switchgear, 400/230&nbsp;V TN-S, desert environment).</p>
+
+  <p>This section leans on its neighbours: the insulation withstand it defends is the
+  switchgear class data in <a href="#c-shortcircuit">§4</a>; the earth grid every surge
+  current ultimately returns through is designed in <a href="#c-earthing">§12</a>; and
+  protection devices appear in the <a href="#cat-relays">relay catalogue</a> and
+  <a href="#cat-aux-ner">NER &amp; auxiliaries catalogue</a>.</p>
+
+  <div class="note">
+    <strong>Indicative data.</strong> All numbers — flash densities, stroke parameters,
+    withstand levels, SPD ratings — are indicative teaching values. The plant's
+    IEC&nbsp;62305-2 risk assessment and insulation-coordination study govern. Standards
+    cited are the SASO-adopted editions of IEC&nbsp;62305 (lightning protection),
+    IEC&nbsp;60099-4/-5 (surge arresters), IEC&nbsp;61643 (SPDs) and IEC&nbsp;60071 /
+    IEC&nbsp;62271 (insulation coordination), with SBC&nbsp;401 and SEC requirements.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       1. WHY THIS EXISTS
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-lightning-concept">A Different Enemy: Microseconds Against Insulation</h3>
+
+  <h4>Why this exists</h4>
+
+  <p>Everything else in Part 2 defends the plant against too much <em>current</em> at
+  normal voltage. This section defends it against too much <em>voltage</em> for
+  almost no time. Insulation — cable XLPE, switchgear clearances, motor winding enamel,
+  the micrometres of oxide inside every electronic device — is a dam built for a known
+  water level. A surge is a wave that overtops the dam for a few microseconds. The dam
+  does not care how brief the wave was: once insulation punctures, the 60&nbsp;Hz system
+  voltage follows the carbonised track through the hole, and a microsecond event becomes
+  a power-frequency fault with all the consequences of <a href="#c-shortcircuit">§4</a>.</p>
+
+  <p>The overvoltages come from two directions. <strong>From the sky:</strong> a
+  lightning flash to the plant, to the incoming SEC overhead line, or merely to ground
+  nearby — the last injecting surges by induction into any loop of conductor, no direct
+  hit required. <strong>From inside:</strong> switching surges — every vacuum breaker
+  chop, capacitor-bank energisation or transformer de-energisation launches a transient
+  of up to a few times system voltage. Switching surges are smaller but happen daily;
+  lightning is rarer but can exceed the withstand of everything in the plant at once.</p>
+
+  <p><strong>The Saudi reality deserves honesty.</strong> The Kingdom's isokeraunic level
+  is low to moderate — many central-desert areas see only a handful of thunderstorm days
+  a year, and ground-flash densities are a fraction of the tropics'. But "rare" is not
+  "never": the south-west highlands (Asir) and Gulf-coast convection produce genuinely
+  severe storms, and a plant designed for forty years <em>will</em> meet its storm. Two
+  local additions: violent <strong>dust and sand storms generate static charge</strong> —
+  blowing sand tribocharges pipework, tank roofs and antenna masts to tens of kilovolts,
+  producing sparks and damaging electronics through the same coupling paths as lightning
+  (and demanding the same bonding discipline); and the desert's dry, high-resistivity
+  soil (<a href="#c-earthing">§12</a>) makes every lightning earth termination work
+  harder. So the design answer here is rarely "maximum protection everywhere"; it is a
+  <em>risk calculation</em> — which is exactly what IEC&nbsp;62305-2 provides, worked
+  below.</p>
+
+  <div class="key">
+    Surge protection exists because insulation has a voltage ceiling and the world —
+    sky, switchgear, even blowing sand — occasionally throws voltages over it for
+    microseconds. The defence is layered: catch the flash (air terminals), carry it to
+    soil (down-conductors + the §12 earth grid), and clamp what leaks inside (arresters
+    and a coordinated SPD cascade), with the protection level chosen by calculated risk,
+    not folklore.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       2. WHAT GOES WRONG WITHOUT IT
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-lightning-failure">A Failure Story: the Strike That Never Touched the Plant</h3>
+
+  <h4>What goes wrong without it</h4>
+
+  <p>Fictional, assembled from real loss reports. An unprotected sister plant — same
+  equipment, no LPS, no SPDs, "it never storms here" — on a spring afternoon when a
+  convective cell drifts off the escarpment.</p>
+
+  <p>The flash does not hit the plant. It hits the ground <strong>about 200 m away</strong>,
+  near the incoming SEC 13.8 kV overhead line. Three things happen in the first
+  100 microseconds. First, a slice of the stroke current couples onto the line —
+  resistively through the soil and inductively into the line loop — and a travelling
+  wave of several tens of kilovolts runs both ways along the conductors. Second, the
+  ground-potential wave radiates outward through the soil and arrives under the plant
+  earth grid. Third, every long metallic loop in the plant — power cables, instrument
+  multicores, the loop formed by a cable tray and the earth conductor below it — has a
+  voltage induced in it proportional to the loop area and the current's rate of rise
+  (~30 kA in a few microseconds → kilovolts per square metre of loop).</p>
+
+  <p>The travelling wave reaches the plant's MV intake. There is no surge arrester. The
+  wave meets the transformer — a near-open-circuit at surge frequencies — and
+  <strong>nearly doubles on reflection</strong>: the 17.5 kV-class switchgear and cable
+  terminations, with a lightning impulse withstand (BIL) of 95 kV, see a front in the
+  same neighbourhood. Insulation that has spent fifteen summers at 50 &deg;C does not
+  enjoy its margins anymore. A cable termination in the MV switchgear punctures —
+  silently, a pinhole in the stress cone. The 60 Hz voltage finds the track. Two cycles
+  later it is a phase-to-earth arc, then phase-to-phase; the upstream protection clears
+  it, but the switchgear panel is burned and the plant is dark.</p>
+
+  <p>Meanwhile, downstream, the induced surges that rode the LV and signal cables have
+  done quieter work. The UPS rectifier front-end, the DCS analogue input cards fed by
+  long field multicores, two VFDs and the plant's telephone exchange all absorbed
+  transients of a few kilovolts — some died instantly, others were merely wounded
+  (punched-through junctions that will fail over the next months as infant mortality in
+  reverse). The insurance report later lists the switchgear repair as the headline, but
+  the longer outage driver was <strong>recommissioning the control system</strong>.</p>
+
+  <p>Now replay it with the defences in place. Arresters at the MV intake clamp the
+  incoming wave to ~45 kV residual — half the 95 kV BIL, switchgear unhurt. The bonded
+  earth grid keeps the whole plant's steel rising and falling <em>together</em> as the
+  ground wave passes — no potential differences, no flashovers between systems. Type 1
+  SPDs at the LV intake dump the through-coupled energy; Type 2 at the MCC and Type 3 at
+  the electronics shave what is left to below 1.5 kV; screened, properly-bonded
+  instrument cables keep induction out of the DCS. Total cost of the event: a few SPD
+  status flags and one arrester counter increment. <strong>The flash never needs to touch
+  the plant to destroy it — and the defence never needs drama to work.</strong></p>
+
+  <div class="warning">
+    <strong>The most common real-world failure is half-done protection:</strong> an LPS
+    on the building but no SPDs (the strike is caught, then re-enters through the
+    cables), or SPDs installed on a poor earth with long leads (the surge bypasses the
+    protector because the lead inductance adds kilovolts). Lightning protection is a
+    <em>system</em> — interception, conduction, earthing, bonding, clamping — and is only
+    as good as its least-considered element.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       3. FEEL FOR THE NUMBERS
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-lightning-feel">Feel for the Numbers: Enormous Power, Tiny Energy</h3>
+
+  <h4>Feel for the numbers</h4>
+
+  <p>A median negative lightning stroke delivers roughly <strong>30 kA</strong>, rising
+  in 1–10 &mu;s, decaying within some hundreds of microseconds; severe positive flashes
+  reach 100–200 kA. The channel briefly carries gigawatt-scale power — hotter than the
+  sun's surface, hence thunder. The whole flash transfers some tens of coulombs and on
+  the order of <strong>hundreds of megajoules to a few gigajoules</strong> in total —
+  comparable to the NER's 32 MJ duty (<a href="#c-earthing">§12</a>) only it arrives a
+  million times faster.</p>
+
+  <p><strong>So why does a fist-sized SPD survive what melts a tree?</strong> Because
+  energy is power &times; <em>time</em>, and the time is microseconds — and because the
+  SPD never takes the full event. Feel it with one rough sum:</p>
+
+  <div class="worked">
+    <h4>Energy actually deposited in an SPD (order of magnitude)</h4>
+    <p>Suppose a Type 1 SPD diverts a 25 kA (10/350 &mu;s) partial stroke current while
+    clamping at roughly 2 kV. Effective duration of a 10/350 wave &asymp; 350 &mu;s:</p>
+    <code class="formula">E &asymp; U_clamp &times; I &times; t = 2 000 V &times; 25 000 A &times; 0.000 350 s &asymp; 17 500 J &asymp; 18 kJ</code>
+    <p>18 kJ is the energy in a quarter of a cup of hot coffee — easily absorbed by a
+    few hundred grams of metal-oxide varistor. The trick is the SPD's low clamping
+    voltage: it takes huge <em>current</em> at small <em>voltage</em>, so the power and
+    energy land in the soil and the source impedance, not in the device. A tree, by
+    contrast, presents kilohms: the same current at megavolt drop deposits the
+    megajoules in the wood, which explodes as steam. <strong>Sanity check:</strong>
+    energy scales with time — this is also why a device rated for microsecond surges is
+    instantly destroyed by sustained 60 Hz overvoltage (TOV), the failure mode behind
+    most real SPD deaths.</p>
+  </div>
+
+  <p><strong>The withstand side of the duel.</strong> Insulation ratings to remember
+  (IEC 60071 / IEC 62271, indicative): the plant's 17.5 kV-class MV switchgear and
+  cables have a lightning impulse withstand (<strong>BIL</strong>) of
+  <strong>95 kV</strong> (1.2/50 &mu;s wave) and 38 kV power-frequency withstand. LV
+  equipment per IEC 60664 impulse categories at 230/400 V: distribution boards
+  <strong>4 kV</strong> (category III), ordinary appliances <strong>2.5 kV</strong>
+  (category II), sensitive electronics <strong>1.5 kV</strong> (category I). These
+  numbers are the targets every arrester and SPD must clamp below — they are the entire
+  design in five figures.</p>
+
+  <p><strong>And the odds.</strong> Ground-flash density N_g in much of central Saudi
+  Arabia is roughly 0.5–2 flashes/km&sup2;&middot;year (versus 10+ in the tropics). A
+  plant-sized footprint therefore collects a direct flash perhaps once a century — the
+  worked risk calculation below makes this precise. The point of the calculation is to
+  replace both kinds of folklore ("never storms here" and "must have LPL I everywhere")
+  with an expected-events number you can defend.</p>
+
+  <div class="key">
+    Lightning is gigawatts for microseconds: total energy comparable to quantities the
+    plant already handles, but compressed a million-fold in time. Protection works by
+    voltage division, not absorption — clamp at kilovolts so the megajoules dissipate in
+    the soil — and the pass/fail line is simply clamping voltage versus withstand:
+    95 kV BIL at MV, 4 / 2.5 / 1.5 kV categories at LV.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       4. WORKED CALCULATION
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-lightning-worked">Worked Calculation: Strike Frequency and the SPD Cascade</h3>
+
+  <h4>Worked calculation</h4>
+
+  <p>Two calculations carry this whole topic: (a) how often will lightning find the
+  plant (IEC 62305-2 risk method, concept level), and (b) does the SPD cascade clamp
+  below what the equipment withstands.</p>
+
+  <div class="worked">
+    <h4>Worked example (a) — Expected direct flashes, N_d (IEC 62305-2 concept level)</h4>
+    <p><strong>Step 1 — Collection area A_d.</strong> A structure attracts flashes that
+    would otherwise strike the ground within roughly three times its height. For a block
+    L &times; W &times; H, IEC 62305 uses:</p>
+    <code class="formula">A_d = L&middot;W + 2&middot;(3H)&middot;(L + W) + &pi;&middot;(3H)&sup2;</code>
+    <p>Take the plant's main building: L = 60 m, W = 30 m, H = 8 m → 3H = 24 m:</p>
+    <code class="formula">A_d = 60&times;30 + 2&times;24&times;(60+30) + 3.1416&times;24&sup2; = 1 800 + 4 320 + 1 810 = 7 930 m&sup2;</code>
+    <p><strong>Step 2 — Ground flash density N_g.</strong> For this inland site take
+    N_g = 1.0 flash/km&sup2;&middot;year (indicative; use mapped/SEC data — Asir or
+    coastal sites can be several times higher).</p>
+    <p><strong>Step 3 — Expected direct strikes per year:</strong></p>
+    <code class="formula">N_d = N_g &times; A_d &times; 10&#8315;&#8310; = 1.0 &times; 7 930 &times; 10&#8315;&#8310; = 7.9&times;10&#8315;&sup3; per year</code>
+    <p>That is one direct flash about every <strong>126 years</strong>. <strong>Sanity
+    check:</strong> 7 930 m&sup2; is ~0.008 km&sup2;, and at 1 flash/km&sup2;/yr you would
+    indeed wait ~125 years — the formula is just "your share of the ground".</p>
+    <p><strong>Step 4 — Decide.</strong> IEC 62305-2 compares the risk of each loss type
+    against tolerable values (e.g. R_T = 10&#8315;&#8309;/yr for loss of human life) by
+    multiplying N_d (plus the much larger nearby-strike and line-borne event counts) by
+    probability-of-damage and loss factors. Concept-level reading of our numbers: with
+    ~0.008 direct events/yr, ordinary occupancy, no flammable storage and a metal-clad
+    structure, the human-life risk is typically tolerable <em>without</em> a Class I
+    external LPS, and a <strong>Class III/IV LPS plus a full SPD scheme</strong> emerges
+    as the proportionate answer — whereas the same arithmetic for a site with flammable
+    inventory (loss factor up ~100&times;) or an Asir hilltop (N_g and position factor
+    up) pushes firmly to LPL I/II. The full multi-factor calculation belongs in the
+    formal study; the value of doing this estimate by hand is that you can smell a wrong
+    answer in someone else's software.</p>
+  </div>
+
+  <div class="worked">
+    <h4>Worked example (b) — SPD cascade selection and the Up-vs-withstand check</h4>
+    <p><strong>Step 1 — assign the cascade</strong> (IEC 61643 / IEC 62305-4 zones):</p>
+    <p>&bull; <strong>Type 1</strong> at the LV intake (LV-MSB), rated for partial
+    lightning current I_imp = 25 kA (10/350 &mu;s) per pole, U_p &le; 2.5 kV — meets the
+    direct-flash share that enters on the bonded services.<br>
+    &bull; <strong>Type 2</strong> at the MCC / distribution boards, I_n = 20 kA
+    (8/20 &mu;s), U_p &le; 1.5 kV.<br>
+    &bull; <strong>Type 3</strong> at sensitive loads (UPS input, DCS cabinets),
+    U_p &le; 1.2 kV, installed within a few metres of the protected device.</p>
+    <p><strong>Step 2 — check each stage against the local withstand</strong>
+    (IEC 60664 categories from <a href="#c-lightning-feel">Feel for the numbers</a>):</p>
+    <code class="formula">Intake: U_p 2.5 kV &le; switchboard withstand 4 kV → OK (margin 1.5 kV)</code>
+    <code class="formula">Boards: U_p 1.5 kV &lt; appliance withstand 2.5 kV → OK (margin 1.0 kV, 40 %)</code>
+    <code class="formula">Electronics: U_p 1.2 kV &lt; 1.5 kV category I → OK (tight — keep leads short)</code>
+    <p><strong>Step 3 — the lead-length correction that kills naive designs.</strong> The
+    voltage the equipment sees is U_p <em>plus</em> the inductive drop along the SPD's
+    connection leads (&asymp;1 kV per metre at lightning rates of rise, taking
+    L&prime; &asymp; 1 &mu;H/m and di/dt &asymp; 1 kA/&mu;s):</p>
+    <code class="formula">U_eq &asymp; U_p + L&prime;&middot;&#x2113;&middot;di/dt = 1 500 + (1&times;10&#8315;&#8310; &times; 0.5 &times; 10&#8313;) = 1 500 + 500 = 2 000 V</code>
+    <p>0.5 m of total lead turns a 1.5 kV protector into a 2 kV one — still under
+    2.5 kV, but a sloppy 1.5 m loop (≈3 kV total) silently voids the design. Hence the
+    universal rule: <strong>total SPD connection length &le; 0.5 m</strong>, or use the
+    V-(Kelvin-)wiring pattern.</p>
+    <p><strong>Step 4 — coordination between stages:</strong> enough cable inductance
+    (&ge;10 m, or a decoupling inductor) between Type 1 and Type 2 so the Type 1 takes
+    the bulk energy before the Type 2 reaches its limit — per manufacturer coordination
+    tables. <strong>Sanity check:</strong> each stage clamps lower than the one upstream
+    and lower than its local withstand; energy capability decreases downstream as
+    let-through decreases. A cascade where a Type 3 sits unprotected by upstream stages
+    fails on energy, not voltage.</p>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       5. EQUIPMENT SETTINGS
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-lightning-settings">Equipment Settings: Decoding the Nameplates</h3>
+
+  <h4>Equipment settings</h4>
+
+  <p>Surge devices have no adjustable settings — their "settings" are the ratings chosen
+  at purchase. Choosing them <em>is</em> the setting exercise, so learn to read the four
+  numbers on every LV SPD nameplate (IEC 61643-11):</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Rating</th><th>Meaning</th><th>How to choose (230/400 V TN-S, indicative)</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>U_c</strong> — max continuous operating voltage</td><td>The 60 Hz voltage the SPD tolerates forever without conducting</td><td>&ge; 1.1 &times; U_0 → &ge; 253 V; common choice 275 V (covers regulation + TOV per IEC 60364-5-53)</td></tr>
+      <tr><td><strong>I_imp</strong> — impulse current (10/350 &mu;s)</td><td>Direct-flash partial current a Type 1 diverts without failing</td><td>12.5–25 kA/pole at the intake, from the LPL and the number of service conductors</td></tr>
+      <tr><td><strong>I_n</strong> — nominal discharge current (8/20 &mu;s)</td><td>Induced-surge current a Type 2 handles repeatedly (&ge;15 times)</td><td>10–20 kA typical for industrial boards</td></tr>
+      <tr><td><strong>U_p</strong> — voltage protection level</td><td>What the protected side actually sees at rated current — <em>the</em> number</td><td>&lt; local withstand with margin: &le;2.5 kV intake, &le;1.5 kV boards, &le;1.2 kV electronics (worked example (b))</td></tr>
+    </tbody>
+  </table>
+
+  <p><strong>MV surge arresters at the 13.8 kV intake</strong> (IEC 60099-4, metal-oxide,
+  gapless). Two voltage ratings matter and are routinely confused:</p>
+
+  <p>&bull; <strong>MCOV / U_c</strong> — the continuous 60 Hz voltage the arrester
+  blocks indefinitely. It must exceed the highest <em>continuous</em> phase-to-earth
+  voltage. Here is the trap on our plant: because the 13.8 kV system is
+  <strong>resistance-earthed</strong> (<a href="#c-earthing">§12</a>), during an earth
+  fault the two healthy phases rise toward full line-to-line voltage (13.8 kV) above
+  earth, and they stay there until the fault clears. The arrester must ride through
+  that.<br>
+  &bull; <strong>Rated voltage U_r</strong> — the 10 s temporary-overvoltage capability,
+  typically U_r &asymp; 1.25 &times; MCOV.</p>
+
+  <div class="worked">
+    <h4>Arrester selection at 13.8 kV, resistance-earthed (indicative)</h4>
+    <code class="formula">Continuous: U_c &ge; 1.05 &times; 13.8 / &radic;3 = 8.4 kV (normal)</code>
+    <code class="formula">Earth-fault TOV: healthy phases &rarr; &asymp; 13.8 kV to earth, duration up to relay clearing (&le; a few s)</code>
+    <code class="formula">Choose: rated U_r = 18 kV, MCOV &asymp; 15.3 kV &rarr; 15.3 kV &gt; 13.8 kV &rarr; rides through &check;</code>
+    <p>A solidly-earthed system could use a ~12 kV-rated arrester that protects more
+    deeply; the resistance earthing buys fault-energy limitation at the cost of a
+    higher arrester rating. Typical residual voltage at 10 kA for an 18 kV-class
+    arrester is ~45–55 kV — against the 95 kV BIL that is a &ge;40 % margin
+    (IEC 60099-5 recommends &ge;20–25 %). <strong>Sanity check:</strong> margin exists at
+    the arrester terminals; keep the arrester within a few metres of what it protects, or
+    travelling-wave doubling eats the margin back.</p>
+  </div>
+
+  <p>One genuine "setting" remains: <strong>where</strong> devices sit. Arresters at the
+  MV cable termination / transformer primary; Type 1 SPDs at the LV intake ahead of the
+  main breaker per SEC/SBC practice; SPDs on the DC system (110 V DCDB) and on
+  instrument/telecom lines entering from the field (IEC 61643-21); and every SPD's earth
+  tail to the nearest bonding bar by the shortest possible route.</p>
+
+  <!-- ────────────────────────────────────────────────────────────
+       6. EQUIPMENT TECHNOLOGY
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-lightning-technology">Equipment Technology: From Air Terminal to Varistor</h3>
+
+  <h4>Equipment technology</h4>
+
+  <p><strong>Interception — rolling sphere and air terminals.</strong> The design tool
+  for placing air terminals is the <strong>rolling-sphere method</strong> (IEC 62305-3):
+  imagine a sphere of radius r (20 m for LPL I up to 60 m for LPL IV) rolled over the
+  plant in every direction; anywhere the sphere can touch, lightning can attach, so
+  every touchable point must be a terminal or be shielded by one. Physically the
+  terminals are plain rods or a roof mesh (e.g. 10–20 m grid for LPL III/IV) — passive
+  Franklin hardware. So-called "early streamer emission" terminals claiming enlarged
+  protection radii are not recognised by IEC 62305; specify conventional geometry.</p>
+
+  <p><strong>Conduction — down-conductors.</strong> Multiple parallel paths (spacing
+  10–25 m by LPL class) of 50 mm&sup2;-class copper or aluminium, or — better and free —
+  the building's structural steel columns used as "natural" down-conductors where
+  continuity is verified. Multiple paths divide the current and lower the inductive
+  voltage rise; each path gets a test joint above grade and lands on the
+  <a href="#c-earthing">§12 earth grid</a>.</p>
+
+  <p><strong>Earthing and bonding — one system, always.</strong> IEC 62305 type B ring
+  earth or the substation grid itself; <strong>never a separate "lightning earth"
+  electrode isolated from the power earth</strong>. Two separate earths at different
+  surge potentials simply flash over through whatever path is handy — usually a cable
+  screen or an instrument card. Single integrated grid, with bonding (direct or via SPD)
+  for every metallic service at each zone boundary, is the entire IEC 62305-4 philosophy
+  in one sentence.</p>
+
+  <p><strong>Clamping devices — MOV vs spark gap.</strong> The <strong>metal-oxide
+  varistor</strong> (MOV) is a ceramic of zinc-oxide grains; each grain boundary is a
+  ~3 V junction, so a disc's thickness sets its voltage. Conduction is smooth and fast
+  (nanoseconds), clamping is continuous — but MOVs age: each absorbed surge nudges
+  leakage current upward, ending in thermal runaway (hence the thermal disconnector and
+  status flag on every MOV SPD). The <strong>spark gap</strong> (triggered, in Type 1
+  service) is binary: it withstands until it fires, then drops to a near-short arc —
+  huge I_imp capability, no ageing, but it must extinguish the 60 Hz follow current it
+  invites. MV arresters are gapless MOV stacks in polymer housings (silicone sheds —
+  good pollution performance in dust, no porcelain shrapnel mode). Hybrid Type 1 SPDs
+  combine a gap in series/parallel with MOVs to get both virtues; product families in
+  the <a href="#cat-aux-ner">catalogue</a>.</p>
+
+  <!-- ────────────────────────────────────────────────────────────
+       7. CONTROL
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-lightning-control">Control: Knowing the Shield Is Still Up</h3>
+
+  <h4>Control</h4>
+
+  <p>Surge protection shares earthing's cruel property: it does nothing for years, then
+  must work perfectly for a millisecond — and several of its components are
+  <em>sacrificial</em>. Control therefore means status surveillance plus disciplined
+  post-event checks.</p>
+
+  <p><strong>Continuous status (to DCS/PMS):</strong> every Type 1/2 SPD specified
+  <strong>with a remote signalling contact</strong> wired to a monitored alarm — the
+  window flag alone is invisible inside a closed board, and a failed-disconnected SPD
+  protects nothing while looking installed. UPS and DCS incomer SPDs are the highest
+  priority points. MV arresters get <strong>surge counters with leakage-current
+  indication</strong> in the earth tail where specified — the leakage trend is the MOV
+  ageing signal; a step change after a storm season means the arrester absorbed
+  something serious.</p>
+
+  <p><strong>After every significant storm (or plant-wide surge event such as a
+  capacitor-switching incident):</strong> walk down SPD status flags and remote alarms;
+  read and log arrester counters; thermography of arrester housings under service
+  voltage (a warming arrester is a dying arrester); check for tripped SPD backup
+  fuses/MCBs and replace failed modules promptly — most SPD families have pluggable
+  cartridges precisely so this is a five-minute job.</p>
+
+  <p><strong>Periodic (indicative):</strong> annual visual inspection of air terminals,
+  roof mesh and down-conductors (corrosion, mechanical damage from sandstorms, loose or
+  missing clamps, paint over bonding joints); continuity from selected air terminals to
+  the earth grid via the test joints; full LPS inspection per IEC 62305-3 maintenance
+  tables (every 1–2 years visual, 2–4 years complete, after any strike); earth-grid
+  measurements shared with the <a href="#c-earthing-control">§12 schedule</a>. Keep an
+  LPS/SPD register exactly like the earth register — model, location, install date,
+  status history, storm log.</p>
+
+  <!-- ────────────────────────────────────────────────────────────
+       8. SIZING METHOD
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-lightning-sizing">Sizing Method: From Risk Class to Maintenance Plan</h3>
+
+  <h4>Sizing method</h4>
+
+  <p><strong>Step 1 — Risk assessment → LPS class.</strong> IEC 62305-2: gather N_g,
+  structure dimensions and surroundings, service lines, occupancy, contents
+  (flammable?), consequence factors; compute the risks (worked example (a) is the
+  kernel); compare with tolerable values; the outcome is "no LPS needed" or a required
+  <strong>LPL I–IV</strong>, which fixes every later parameter (rolling-sphere radius,
+  mesh size, down-conductor spacing, I_imp shares).</p>
+
+  <p><strong>Step 2 — External LPS layout.</strong> Roll the sphere (radius per LPL)
+  over the 3-D plant model; place air terminals/mesh so nothing unprotected is
+  touchable; route down-conductors at the class spacing using structural steel where
+  continuity is certified; terminate on the ring/grid earth. Check separation distances
+  to internal metalwork per IEC 62305-3 (or bond where separation cannot be met).</p>
+
+  <p><strong>Step 3 — Bonding at zone boundaries.</strong> Define lightning protection
+  zones (LPZ 0 outside → LPZ 1 inside the structure → LPZ 2 inside cabinets); at every
+  boundary, bond every metallic service directly (pipes, trays, armours) or through an
+  SPD (live conductors). One earth system throughout — see
+  <a href="#c-lightning-technology">Technology</a>.</p>
+
+  <p><strong>Step 4 — SPD cascade per zone.</strong> Type 1 at LPZ 0/1 boundaries
+  (I_imp from the LPL and conductor count), Type 2 at LPZ 1/2, Type 3 at sensitive
+  equipment; include DC, instrument and telecom lines; select U_c for the system
+  earthing and TOV, I_n/I_imp for the exposure — worked example (b) and the
+  <a href="#c-lightning-settings">settings table</a>.</p>
+
+  <p><strong>Step 5 — Verify U_p margins.</strong> For each protected withstand level:
+  U_p + lead-length inductive adder &lt; withstand, with &ge;20 % margin; check
+  stage-to-stage energy coordination per manufacturer data; check MV arrester residual
+  vs 95 kV BIL and arrester distance to the protected terminals.</p>
+
+  <p><strong>Step 6 — Maintenance plan.</strong> Status contacts mapped and alarmed,
+  counters logged, post-storm walkdown procedure issued, IEC 62305-3 inspection
+  intervals in the CMMS, spare SPD cartridges in stores. A surge protection scheme
+  without a maintenance plan decays invisibly toward the unprotected case.</p>
+
+  <h3 id="c-lightning-assess">Self-Check</h3>
+
+  <p>Work these from memory; every answer is in this section.</p>
+
+  <ul class="checklist">
+    <li>Explain why a microsecond surge destroys equipment that easily withstands its
+    rated 60 Hz voltage, and name the two sources of surges (atmospheric, switching).</li>
+    <li>State typical stroke parameters (~30 kA, microseconds, total energy of order
+    hundreds of MJ) and explain why a small SPD survives — energy scales with time and
+    the SPD clamps at low voltage.</li>
+    <li>Compute a collection area A_d for a 60 &times; 30 &times; 8 m building
+    (&asymp;7 930 m&sup2;) and N_d for N_g = 1.0 (&asymp;7.9&times;10&#8315;&sup3;/yr
+    &asymp; one flash in ~126 years), and explain how the protect/not-protect decision
+    follows.</li>
+    <li>Decode U_c, I_n, I_imp and U_p, and run the cascade check: U_p 1.5 kV against a
+    2.5 kV category II withstand, including the ~1 kV/m lead-length adder.</li>
+    <li>Explain why the resistance-earthed 13.8 kV system forces an arrester MCOV above
+    13.8 kV (healthy-phase rise during earth faults) and check an 18 kV / MCOV 15.3 kV
+    selection against the 95 kV BIL.</li>
+    <li>Describe the rolling-sphere method and why "early streamer" claims are not
+    accepted by IEC 62305.</li>
+    <li>Explain why a separate, isolated "lightning earth" or "clean earth" electrode is
+    dangerous, and what is done instead.</li>
+    <li>List the post-storm checklist: SPD flags/remote alarms, arrester counters and
+    leakage trend, thermography, failed-module replacement.</li>
+    <li>Recite the six sizing-method steps from risk class to maintenance plan.</li>
+  </ul>
+
+  <div class="key">
+    Lightning and surge protection is a layered voltage-division system designed by
+    calculated risk: intercept (rolling sphere, LPL class), conduct (multiple
+    down-conductors), absorb in soil (the §12 earth grid — one system, never two),
+    clamp what leaks (arresters under the 95 kV BIL at MV; Type 1/2/3 cascade under
+    4 / 2.5 / 1.5 kV at LV), and monitor it forever — because every clamping element is
+    sacrificial, and a dead SPD looks exactly like a live one from across the room.
+  </div>
+
+</section>

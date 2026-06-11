@@ -2,7 +2,8 @@
      Part 1 — Foundations
      Sections: f-overview | f-read-sld | f-pcc-mcc |
                f-equipment-table | f-powerflow |
-               f-schedule-standards | f-selfcheck
+               f-schedule-standards | f-selfcheck |
+               f-60hz | f-sec-network | f-derating
      ============================================================ -->
 
 <section id="f-overview" data-title="The MV/LV Plant at a Glance" data-part="Part 1 — Foundations">
@@ -50,23 +51,33 @@
       </tr>
       <tr>
         <td>Utility incoming voltage (MV)</td>
-        <td>11 kV, 3-phase, 50 Hz</td>
-        <td>Actual utility voltage confirmed per plant; could differ.</td>
+        <td>13.8 kV, 3-phase, 60 Hz (SEC)</td>
+        <td>SEC standard distribution voltage; confirm per the connection agreement.</td>
       </tr>
       <tr>
         <td>Distribution / utilisation voltage (LV)</td>
-        <td>400 / 415 V, 3-phase, 50 Hz</td>
-        <td>IEC standard; confirm per plant.</td>
+        <td>400 / 230 V, 3-phase, 60 Hz</td>
+        <td>SASO-adopted IEC / SEC standard utilisation voltage; confirm per plant.</td>
       </tr>
       <tr>
         <td>MV system earthing</td>
-        <td>Resistance-earthed via NER</td>
-        <td>Limits earth-fault current to ~300–400 A (indicative).</td>
+        <td>Resistance-earthed via NER (7.97 kV, 400 A / 10 s → 19.9 Ω)</td>
+        <td>Limits earth-fault current to ~400 A (indicative).</td>
       </tr>
       <tr>
         <td>LV system earthing</td>
         <td>TN-S (solid)</td>
         <td>Confirm per plant.</td>
+      </tr>
+      <tr>
+        <td>Design ambient temperature</td>
+        <td>50 °C, dust/sand exposure</td>
+        <td>Saudi inland design basis; drives the deratings in <a href="#f-derating">Derating: the 50 °C Tax</a>.</td>
+      </tr>
+      <tr>
+        <td>Governing standards framework</td>
+        <td>SASO-adopted IEC; SEC Distribution Code / Saudi Grid Code; SBC 401</td>
+        <td>Cited together throughout; project specification governs the applicable revisions.</td>
       </tr>
       <tr>
         <td>Redundancy philosophy</td>
@@ -84,7 +95,7 @@
     <code class="formula">S_design = 2353 × 1.25 ≈ 2941 kVA</code>
     <p>Split across two transformers (N-1 split-bus), select next standard size:</p>
     <code class="formula">S_each = 2941 / 2 ≈ 1471 kVA → select 2 × 1600 kVA</code>
-    <p><strong>Result:</strong> 2 × 1600 kVA, Dyn11, 11 kV / 0.4 kV (tags <code>TX-1</code> and <code>TX-2</code>). Values are indicative.</p>
+    <p><strong>Result:</strong> 2 × 1600 kVA, Dyn11, 13.8 kV / 0.4 kV (tags <code>TX-1</code> and <code>TX-2</code>). Values are indicative.</p>
   </div>
 
   <h3 id="f-overview-architecture">Power architecture — the master SLD</h3>
@@ -97,14 +108,18 @@
   <figure class="fig">
     <div class="svg-embed" data-src="diagrams/svg/sld-master-2MW.svg"></div>
     <figcaption>Fig 1-1 — Master SLD, indicative ~2 MW MV/LV process plant (IEC 60617 symbols; all ratings indicative)</figcaption>
+    <div class="warning drawing-basis"><strong>Drawing basis note.</strong> This diagram was
+drawn for the original 11 kV / 415 V / 50 Hz reference design and has not been re-rendered.
+For this Saudi (SEC) Rev 3 edition read 11 kV as 13.8 kV, 415 V as 400 V and 50 Hz as 60 Hz.
+Topology, tags and protection philosophy are unchanged.</div>
   </figure>
 
   <p>
     The architecture has three tiers:
   </p>
   <ol>
-    <li><strong>MV (11 kV) tier:</strong> Utility feed → metering (<code>MV-MET</code>) → MV switchgear (<code>MV-SWGR</code>) with protection IEDs (<code>MV-PROT</code>) and neutral earthing resistor (<code>MV-NER</code>).</li>
-    <li><strong>Transformation tier:</strong> Two independent transformer feeders supply <code>TX-1</code> and <code>TX-2</code>, each stepping 11 kV down to 400 V.</li>
+    <li><strong>MV (13.8 kV) tier:</strong> Utility feed → metering (<code>MV-MET</code>) → MV switchgear (<code>MV-SWGR</code>) with protection IEDs (<code>MV-PROT</code>) and neutral earthing resistor (<code>MV-NER</code>).</li>
+    <li><strong>Transformation tier:</strong> Two independent transformer feeders supply <code>TX-1</code> and <code>TX-2</code>, each stepping 13.8 kV down to 400 V.</li>
     <li><strong>LV (400 V) tier:</strong> Main switchboard (<code>LV-MSB</code>) with a split bus (A and B) joined by a normally-open bus-tie (<code>BT</code>); Motor Control Centres (<code>MCC-1</code>, <code>MCC-2</code>), PFC bank, distribution boards, essential board (<code>EDB</code>), diesel generator (<code>DG</code>), ATS, UPS and DC battery system (<code>DCDB</code>).</li>
   </ol>
 
@@ -127,7 +142,7 @@
   </p>
 
   <ul>
-    <li><strong>MV zone (upper band):</strong> 11 kV — from the utility intake down to and including the transformer primaries. MV busbars are drawn in <strong>firebrick red</strong> on colour drawings.</li>
+    <li><strong>MV zone (upper band):</strong> 13.8 kV — from the utility intake down to and including the transformer primaries. MV busbars are drawn in <strong>firebrick red</strong> on colour drawings.</li>
     <li><strong>LV zone (lower band):</strong> 400 V — from the transformer secondaries to all distribution equipment and loads. LV busbars are drawn in <strong>navy blue</strong>.</li>
   </ul>
 
@@ -159,7 +174,7 @@
       <tr>
         <td>Heavy horizontal line (<code>═══</code>)</td>
         <td>Busbar — the common copper to which feeders and incomers connect.</td>
-        <td>11 kV bus in MV-SWGR; LV Bus A and Bus B in LV-MSB.</td>
+        <td>13.8 kV bus in MV-SWGR; LV Bus A and Bus B in LV-MSB.</td>
       </tr>
       <tr>
         <td>Solid square on conductor</td>
@@ -194,7 +209,7 @@
       <tr>
         <td>Resistor symbol to earth at neutral point (<code>[N]</code>)</td>
         <td>Neutral Earthing Resistor — MV neutral earthed through a resistor.</td>
-        <td>MV-NER at the 11 kV neutral.</td>
+        <td>MV-NER at the 13.8 kV neutral.</td>
       </tr>
       <tr>
         <td>Three diminishing bars to earth</td>
@@ -373,50 +388,50 @@
       <tr>
         <td><code>MV-MET</code></td>
         <td>Utility revenue metering cubicle</td>
-        <td>Measures energy and maximum demand at the 11 kV intake via utility-grade CTs and VTs feeding a tariff kWh/kVAh meter. The commercial boundary between utility and plant — the utility reads this meter for billing.</td>
+        <td>Measures energy and maximum demand at the 13.8 kV intake via utility-grade CTs and VTs feeding a tariff kWh/kVAh meter. The commercial boundary between utility and plant — SEC reads this meter for billing (time-of-use tariff and power-factor clause; see <a href="#f-sec-tariff">metering and tariff basics</a>).</td>
         <td>Utility CT/VT and tariff meter; class 0.2S or better.</td>
-        <td>MV section, first item on the 11 kV supply side (top of drawing).</td>
+        <td>MV section, first item on the 13.8 kV supply side (top of drawing).</td>
       </tr>
       <tr>
         <td><code>MV-SWGR</code></td>
-        <td>11 kV metal-clad switchgear</td>
-        <td>Receives and distributes the 11 kV supply. Houses the MV incomer breaker [52-I], bus-section breaker [52-BS], and two transformer-feeder breakers [52-T1] / [52-T2], so that MV circuits can be switched and fault current cleared quickly. The 11 kV busbar inside this board is the MV power hub.</td>
-        <td>11 kV, 630–1250 A bus, 25 kA / 1 s; vacuum CBs; IEC 62271-200.</td>
+        <td>13.8 kV metal-clad switchgear</td>
+        <td>Receives and distributes the 13.8 kV supply. Houses the MV incomer breaker [52-I], bus-section breaker [52-BS], and two transformer-feeder breakers [52-T1] / [52-T2], so that MV circuits can be switched and fault current cleared quickly. The 13.8 kV busbar inside this board is the MV power hub. Typical product families in the <a href="#cat-mv-swgr">MV switchgear catalogue</a>.</td>
+        <td>13.8 kV system (17.5 kV class), 630–1250 A bus, 31.5 kA / 3 s withstand (≥ 25 kA SEC design fault level); vacuum CBs; SASO-adopted IEC 62271-200.</td>
         <td>MV section, central board below metering.</td>
       </tr>
       <tr>
         <td><code>MV-PROT</code></td>
         <td>MV protection and control IEDs</td>
-        <td>Detects MV faults and trips the correct breaker to isolate them quickly, minimising damage and restoring supply elsewhere. Functions: overcurrent (50/51), earth-fault (50N/51N), transformer differential (87T), under/over-voltage (27/59). Relays are supplied from the DCDB so they remain operative even on AC failure.</td>
-        <td>Numerical IEDs; one per breaker or combined; IEC 60255 series.</td>
+        <td>Detects MV faults and trips the correct breaker to isolate them quickly, minimising damage and restoring supply elsewhere. Functions: overcurrent (50/51), earth-fault (50N/51N), transformer differential (87T), under/over-voltage (27/59). Relays are supplied from the DCDB so they remain operative even on AC failure. Typical relay families in the <a href="#cat-relays">protection relay catalogue</a>.</td>
+        <td>Numerical IEDs; one per breaker or combined; SASO-adopted IEC 60255 series.</td>
         <td>MV section, relay panels associated with MV-SWGR breakers.</td>
       </tr>
       <tr>
         <td><code>MV-NER</code></td>
         <td>Neutral Earthing Resistor</td>
-        <td>Earths the 11 kV transformer star neutral through a resistor that limits the earth-fault current to a safe, detectable level (~300–400 A indicative). Without it, an undetected earth fault could cause equipment damage and personnel hazard. A neutral CT allows the protection relay to detect and measure the fault current.</td>
-        <td>Resistance sized for ~300–400 A earth-fault level (indicative); with neutral CT.</td>
-        <td>MV section, at the [N] neutral point — connected to the neutral of the 11 kV supply transformer or to the MV bus neutral where provided.</td>
+        <td>Earths the 13.8 kV transformer star neutral through a resistor that limits the earth-fault current to a safe, detectable level (~400 A indicative). Without it, an undetected earth fault could cause equipment damage and personnel hazard. A neutral CT allows the protection relay to detect and measure the fault current.</td>
+        <td>7.97 kV (13.8 kV/√3), 400 A / 10 s → 19.9 Ω (indicative); with neutral CT.</td>
+        <td>MV section, at the [N] neutral point — connected to the neutral of the 13.8 kV supply transformer or to the MV bus neutral where provided.</td>
       </tr>
       <tr>
         <td><code>TX-1</code></td>
         <td>MV/LV power transformer No. 1</td>
-        <td>Steps 11 kV down to 400 V to supply Bus A of the LV-MSB. One of the two parallel sources that give the plant its partial N-1 resilience. If TX-2 is lost, the bus-tie closes so TX-1 can carry both buses.</td>
-        <td>1600 kVA, 11 kV / 0.4 kV, Dyn11, Z ≈ 6 %, IEC 60076; cast-resin or oil-immersed.</td>
+        <td>Steps 13.8 kV down to 400 V to supply Bus A of the LV-MSB. One of the two parallel sources that give the plant its partial N-1 resilience. If TX-2 is lost, the bus-tie closes so TX-1 can carry both buses. Typical units in the <a href="#cat-transformers">transformer catalogue</a>.</td>
+        <td>1600 kVA, 13.8 / 0.4 kV, Dyn11, Z = 6 %; MV FLC 66.9 A, LV FLC 2309 A; SASO-adopted IEC 60076; cast-resin or oil-immersed.</td>
         <td>Between MV feeder [52-T1] and LV incomer [ACB-A] on Bus A.</td>
       </tr>
       <tr>
         <td><code>TX-2</code></td>
         <td>MV/LV power transformer No. 2</td>
-        <td>Steps 11 kV down to 400 V to supply Bus B of the LV-MSB. Mirrors TX-1 on the Bus B side. If TX-1 is lost, the bus-tie closes so TX-2 can carry both buses.</td>
-        <td>1600 kVA, 11 kV / 0.4 kV, Dyn11, Z ≈ 6 %, IEC 60076.</td>
+        <td>Steps 13.8 kV down to 400 V to supply Bus B of the LV-MSB. Mirrors TX-1 on the Bus B side. If TX-1 is lost, the bus-tie closes so TX-2 can carry both buses.</td>
+        <td>1600 kVA, 13.8 / 0.4 kV, Dyn11, Z = 6 %; MV FLC 66.9 A, LV FLC 2309 A; SASO-adopted IEC 60076.</td>
         <td>Between MV feeder [52-T2] and LV incomer [ACB-B] on Bus B.</td>
       </tr>
       <tr>
         <td><code>LV-MSB</code></td>
         <td>Main LV switchboard / PCC (Power Control Centre)</td>
-        <td>The 400 V power hub: receives the two transformer outputs on a split bus (A and B) and distributes bulk LV power via MCCB feeders to the MCCs, PFC bank, distribution boards and large individual feeders. ACB incomers from both transformers; motorised normally-open bus-tie (BT) between the two bus sections.</td>
-        <td>400 V, split bus A/B, ~2500–3200 A bus, 50–65 kA; ACB incomers + motorised bus-tie; Form 4b; IEC 61439-1/-2.</td>
+        <td>The 400 V power hub: receives the two transformer outputs on a split bus (A and B) and distributes bulk LV power via MCCB feeders to the MCCs, PFC bank, distribution boards and large individual feeders. ACB incomers from both transformers; motorised normally-open bus-tie (BT) between the two bus sections. Typical ACB/MCCB families in the <a href="#cat-lv-breakers">LV breaker catalogue</a>.</td>
+        <td>400/230 V, 60 Hz, split bus A/B, ~2500–3200 A bus, 50–65 kA rated (Isc ≈ 38.5 kA one transformer; ≈ 77 kA prospective if tie closed with both incomers — see Part 2); ACB incomers + motorised bus-tie; Form 4b; SASO-adopted IEC 61439-1/-2.</td>
         <td>LV section — the main board spanning both Bus A and Bus B, directly below the transformers.</td>
       </tr>
       <tr>
@@ -429,8 +444,8 @@
       <tr>
         <td><code>MCC-1</code></td>
         <td>Motor Control Centre No. 1 (Bus A)</td>
-        <td>Houses the motor starters (DOL, star-delta, soft-starter and/or VFD buckets) that control and protect the Bus-A process motors. Each bucket contains: MCCB or fuse-contactor, contactor(s), thermal/electronic overload relay or motor protection relay, local/remote control switch, run/trip indication and ammeter.</td>
-        <td>400 V; bus rating matched to group motor demand; IEC 61439-1/-2; Form 3b/4b.</td>
+        <td>Houses the motor starters (DOL, star-delta, soft-starter and/or VFD buckets) that control and protect the Bus-A process motors. Each bucket contains: MCCB or fuse-contactor, contactor(s), thermal/electronic overload relay or motor protection relay, local/remote control switch, run/trip indication and ammeter. Typical assemblies in the <a href="#cat-mcc">MCC catalogue</a>.</td>
+        <td>400 V, 60 Hz; bus rating matched to group motor demand; SASO-adopted IEC 61439-1/-2; Form 3b/4b.</td>
         <td>LV-MSB Bus A, on an outgoing MCCB feeder.</td>
       </tr>
       <tr>
@@ -443,15 +458,15 @@
       <tr>
         <td><code>VFD</code></td>
         <td>Variable Frequency Drive(s)</td>
-        <td>Provides continuously variable speed control of pumps, fans, compressors and mixers by varying output voltage and frequency. Reduces energy consumption and mechanical starting stress compared with DOL starting. May be installed as individual MCC buckets or as standalone panels. Input chokes and EMC filters required to limit harmonic injection into the LV bus.</td>
-        <td>Rated per driven motor; input choke and EMC filter; IEC 61800 series.</td>
+        <td>Provides continuously variable speed control of pumps, fans, compressors and mixers by varying output voltage and frequency. Reduces energy consumption and mechanical starting stress compared with DOL starting. May be installed as individual MCC buckets or as standalone panels. Input chokes and EMC filters required to limit harmonic injection into the LV bus. Typical drive families in the <a href="#cat-vfd">VFD catalogue</a>.</td>
+        <td>Rated per driven motor (note 50 °C ambient derating, ~1–1.5 %/°C above 40 °C); input choke and EMC filter; SASO-adopted IEC 61800 series.</td>
         <td>Within MCC-1 / MCC-2 buckets, or as standalone panels; feeding speed-controlled motors.</td>
       </tr>
       <tr>
         <td><code>PFC</code></td>
         <td>Power factor correction (detuned capacitor bank)</td>
         <td>Supplies reactive power locally to correct the plant power factor from ~0.85 to 0.95+ lagging, reducing demand charges and freeing transformer and cable capacity. Automatic switching (contactor-controlled steps) matches reactive output to load variation. Detuned (7 % tuning reactor in series) to prevent resonance with VFD-generated harmonics.</td>
-        <td>Automatic; detuned (7 % reactor); sized to correct ~0.85 → 0.95+; IEC 60831.</td>
+        <td>≈580 kvar automatic (indicative); detuned 7 % (tuning ≈ 227 Hz at 60 Hz); corrects ~0.85 → 0.95; SASO-adopted IEC 60831.</td>
         <td>LV-MSB Bus A, on a dedicated MCCB feeder.</td>
       </tr>
       <tr>
@@ -471,22 +486,22 @@
       <tr>
         <td><code>DG</code></td>
         <td>Diesel generator set</td>
-        <td>Standby generation sized to carry the essential load on utility failure — not necessarily the full 2 MW plant demand. Starts automatically (auto-start logic) on detection of utility loss; the ATS transfers the essential bus once the generator has reached rated voltage and frequency. Equipped with AVR, fuel day-tank, acoustic canopy and exhaust system.</td>
-        <td>~800–1250 kVA indicative (size confirmed by essential-load list); 400 V, 50 Hz, AVR.</td>
+        <td>Standby generation sized to carry the essential load on utility failure — not necessarily the full 2 MW plant demand. Starts automatically (auto-start logic) on detection of utility loss; the ATS transfers the essential bus once the generator has reached rated voltage and frequency. Equipped with AVR, fuel day-tank, acoustic canopy and exhaust system. Typical sets in the <a href="#cat-gensets">genset catalogue</a>.</td>
+        <td>1250 kVA ESP at 50 °C ambient, indicative (confirmed by essential-load list); 400 V, 60 Hz, 1800 rpm, AVR.</td>
         <td>Standby power path (lower band of drawing).</td>
       </tr>
       <tr>
         <td><code>ATS</code></td>
         <td>Automatic Transfer Switch</td>
-        <td>Automatically transfers the essential bus between the utility feed (normal source) and the generator (standby source) on utility loss, and retransfers when utility supply is restored and stable. Mechanically interlocked to prevent both sources feeding the bus simultaneously — an important safety feature. Changeover time is the key performance parameter (typically 10–30 s for diesel start + transfer).</td>
-        <td>Rated for essential bus load; mechanically interlocked; IEC 60947-6-1.</td>
+        <td>Automatically transfers the essential bus between the utility feed (normal source) and the generator (standby source) on utility loss, and retransfers when utility supply is restored and stable. Mechanically interlocked to prevent both sources feeding the bus simultaneously — an important safety feature. Changeover time is the key performance parameter (open-transition, ≤ 10 s total for diesel start + transfer, indicative). Typical switches in the <a href="#cat-ats">ATS catalogue</a>.</td>
+        <td>Rated for essential bus load; open-transition, ≤ 10 s; mechanically interlocked; SASO-adopted IEC 60947-6-1.</td>
         <td>Standby path — between DG output and EDB incoming supply.</td>
       </tr>
       <tr>
         <td><code>UPS</code></td>
         <td>Uninterruptible Power Supply</td>
-        <td>Provides clean, uninterrupted AC power to the DCS, PLC, SCADA, instrumentation and critical communications with no break — not even the ~20 s it takes the diesel generator to start and stabilise. Operates from internal batteries during the outage bridge; static bypass allows maintenance without interrupting the load. Battery autonomy is typically 15–30 min (confirm per spec).</td>
-        <td>Rated per DCS/instrument load; static bypass; battery 15–30 min (indicative); IEC 62040.</td>
+        <td>Provides clean, uninterrupted AC power to the DCS, PLC, SCADA, instrumentation and critical communications with no break — not even the ~10 s (indicative) it takes the diesel generator to start and the ATS to transfer. Operates from internal batteries during the outage bridge; static bypass allows maintenance without interrupting the load. Battery autonomy 30 min (indicative; confirm per spec — and see the <a href="#f-derating-batteries">battery-temperature note</a>). Typical units in the <a href="#cat-ups">UPS catalogue</a>.</td>
+        <td>100 kVA / 30 min (indicative); static bypass; SASO-adopted IEC 62040.</td>
         <td>LV-MSB Bus B feeder, dedicated UPS output to DCS/control system.</td>
       </tr>
       <tr>
@@ -526,18 +541,18 @@
 
   <ol>
     <li>
-      <strong>Utility 11 kV feed</strong> arrives at the site and passes through the revenue
+      <strong>Utility 13.8 kV feed</strong> arrives at the site and passes through the revenue
       metering cubicle (<code>MV-MET</code>) where energy is metered for tariff billing.
     </li>
     <li>
       The supply enters the <strong>MV switchgear</strong> (<code>MV-SWGR</code>) via incomer
       breaker [52-I]. The protection IEDs (<code>MV-PROT</code>) watch this incomer and the
-      transformer feeders for faults. The 11 kV neutral is earthed through the resistor
+      transformer feeders for faults. The 13.8 kV neutral is earthed through the resistor
       (<code>MV-NER</code>).
     </li>
     <li>
       Two transformer feeder breakers [52-T1] and [52-T2] supply the two transformers
-      (<code>TX-1</code> and <code>TX-2</code>), which step 11 kV down to 400 V.
+      (<code>TX-1</code> and <code>TX-2</code>), which step 13.8 kV down to 400 V.
     </li>
     <li>
       Each transformer secondary feeds its LV incomer ACB: TX-1 → ACB-A → <strong>Bus A</strong>,
@@ -577,8 +592,9 @@
   </ol>
 
   <div class="note">
-    <strong>Note — ATS changeover time:</strong> A diesel generator takes typically 10–30 s to
-    start, synchronise and accept load (indicative). During this window, only the UPS-backed
+    <strong>Note — ATS changeover time:</strong> The reference plant assumes an open-transition
+    ATS with a total changeover (diesel start + transfer) of ≤ 10 s (indicative); older or
+    poorly maintained sets may take 10–30 s. During this window, only the UPS-backed
     loads remain energised. The EDB is de-energised for this interval unless the ATS uses a
     static (electronic) transfer or the EDB has its own small UPS. Verify the actual changeover
     time on site and confirm it is acceptable for the essential loads.
@@ -653,25 +669,25 @@
       <tr>
         <td><code>MV-MET</code></td>
         <td>Utility metering cubicle</td>
-        <td>11 kV; tariff-grade CTs/VTs (class 0.2S); kWh + kVAh meter; per utility specification.</td>
-        <td>IEC 62053; utility specification.</td>
+        <td>13.8 kV; tariff-grade CTs/VTs (class 0.2S); kWh + kVAh meter; per SEC specification.</td>
+        <td>SASO-adopted IEC 62053; SEC metering specification.</td>
       </tr>
       <tr>
         <td><code>MV-SWGR</code></td>
         <td>MV metal-clad switchgear</td>
-        <td>11 kV; 630–1250 A bus (indicative); 25 kA / 1 s fault withstand; vacuum CBs; 4 panels (incomer, bus-section, 2 × transformer feeder).</td>
+        <td>13.8 kV (17.5 kV class); 630–1250 A bus (indicative); 31.5 kA / 3 s fault withstand — covers the 25 kA SEC design fault level (declared range 25–40 kA); vacuum CBs; 4 panels (incomer, bus-section, 2 × transformer feeder).</td>
         <td>IEC 62271-200; IEC 62271-100.</td>
       </tr>
       <tr>
         <td><code>MV-NER</code></td>
         <td>Neutral Earthing Resistor</td>
-        <td>Resistance to limit earth-fault current to ~300–400 A (indicative); with neutral CT; outdoor or indoor housing.</td>
+        <td>7.97 kV (13.8 kV/√3), 400 A / 10 s → 19.9 Ω (indicative); with neutral CT; outdoor or indoor housing.</td>
         <td>IEC 60099-6 (guidance); manufacturer's specification.</td>
       </tr>
       <tr>
         <td><code>TX-1</code> / <code>TX-2</code></td>
         <td>MV/LV power transformers</td>
-        <td>2 × 1600 kVA (indicative); 11 kV / 0.4 kV; Dyn11; Z ≈ 6 %; cast-resin (dry-type) or oil-immersed (ONAN); off-load taps ±2 × 2.5 %.</td>
+        <td>2 × 1600 kVA (indicative); 13.8 / 0.4 kV; Dyn11; Z = 6 %; MV FLC 66.9 A / LV FLC 2309 A; cast-resin (dry-type) or oil-immersed (ONAN); off-load taps ±2 × 2.5 %; check 50 °C ambient rating (see <a href="#f-derating-transformers">transformer derating</a>).</td>
         <td>IEC 60076 series.</td>
       </tr>
       <tr>
@@ -713,7 +729,7 @@
       <tr>
         <td><code>DG</code></td>
         <td>Diesel generator set</td>
-        <td>~800–1250 kVA (indicative — sized by essential load list); 400 V, 3-phase, 50 Hz; AVR; fuel day-tank; acoustic canopy; auto-start panel.</td>
+        <td>~800–1250 kVA (indicative — sized by essential load list); 400 V, 3-phase, 60 Hz; AVR; fuel day-tank; acoustic canopy; auto-start panel.</td>
         <td>IEC 60034 (generator); ISO 8528 (genset performance).</td>
       </tr>
       <tr>
@@ -790,16 +806,16 @@
 
   <h3 id="f-selfcheck-q1">Question 1</h3>
   <p>
-    <strong>Which two tags mark the boundary between the 11 kV and the 400 V parts of the
+    <strong>Which two tags mark the boundary between the 13.8 kV and the 400 V parts of the
     plant? State what each one does.</strong>
   </p>
   <details>
     <summary>Show answer</summary>
     <p>
       <code>TX-1</code> and <code>TX-2</code> — the two MV/LV power transformers (1600 kVA each,
-      indicative; 11 kV / 0.4 kV, Dyn11). They step the 11 kV utility supply down to 400 V for
+      indicative; 13.8 kV / 0.4 kV, Dyn11). They step the 13.8 kV utility supply down to 400 V for
       the LV distribution system. TX-1 feeds Bus A and TX-2 feeds Bus B of the LV-MSB. Everything
-      above them is MV (11 kV); everything below them is LV (400 V).
+      above them is MV (13.8 kV); everything below them is LV (400 V).
     </p>
   </details>
 
@@ -902,7 +918,7 @@
   <details>
     <summary>Show answer</summary>
     <p>
-      <code>MV-NER</code> (the Neutral Earthing Resistor) earths the 11 kV system neutral
+      <code>MV-NER</code> (the Neutral Earthing Resistor) earths the 13.8 kV system neutral
       through a resistor to <strong>limit earth-fault current</strong> to approximately
       300–400 A (indicative). This value is high enough for earth-fault protection relays to
       detect the fault reliably, but low enough to limit damage to equipment and reduce the
@@ -928,4 +944,829 @@
   </details>
 
   <div class="key">Key takeaway: If you answered all six correctly without hesitation, you are ready for Part 2 — Calculations. If any question exposed a gap, go back to the relevant section of Part 1 now. The calculations in Part 2 assume you know what every tag does and how the three power paths connect.</div>
+</section>
+
+<!-- ============================================================ -->
+
+<section id="f-60hz" data-title="Why 60 Hz Changes Things" data-part="Part 1 — Foundations">
+  <h2>Why 60 Hz Changes Things</h2>
+
+  <p><em>Where you are in the workflow: this Saudi (SEC) edition of the manual is written for a 60 Hz grid. If your previous experience is on 50 Hz plants — Europe, most of Asia and Africa, the rest of the GCC — this section tells you exactly which of your instincts still hold and which must be recalibrated before you touch a calculation or a nameplate.</em></p>
+
+  <h3 id="f-60hz-what">What frequency physically means</h3>
+
+  <p>
+    System frequency is the number of complete alternating-current cycles per second, in hertz.
+    On the SEC grid the voltage on every conductor swings from positive peak, through zero, to
+    negative peak and back <strong>60 times every second</strong> — a full cycle takes
+    1/60 s ≈ <strong>16.7 ms</strong> (compared with 20 ms on a 50 Hz grid).
+  </p>
+
+  <p>
+    Frequency is the <strong>heartbeat of the grid</strong>. It is set by the rotational speed of
+    the synchronous generators feeding the network, and — unlike voltage, which differs from
+    busbar to busbar — frequency is the <em>same everywhere</em> on an interconnected AC system at
+    any instant. Every generator in the Kingdom spins in lock-step; every transformer core
+    magnetises and demagnetises 60 times a second; every induction motor chases a magnetic field
+    rotating at a speed fixed by that same 60 Hz. When load exceeds generation the whole grid
+    slows together (frequency droops); when generation exceeds load it speeds up. That is why
+    frequency is the universal balance indicator used by the grid operator — and why
+    nothing inside your plant can choose its own frequency (except behind a VFD or a UPS
+    inverter, which synthesise their own).
+  </p>
+
+  <div class="note">
+    <strong>Note — voltage is local, frequency is global.</strong> A voltage problem (sag, drop,
+    unbalance) can exist on one feeder of your plant only. A frequency excursion is a
+    <em>system-wide</em> event affecting the entire SEC grid — if you see 58 Hz on a plant meter,
+    either the grid is in serious trouble or (far more likely) you are looking at the output of an
+    islanded generator or a drive. This distinction matters when diagnosing power-quality
+    complaints on site.
+  </div>
+
+  <p>
+    Because frequency enters directly into the physics of rotating machines, magnetic cores and
+    reactive components, moving a design from 50 Hz to 60 Hz changes real numbers — speeds, fluxes,
+    reactances, kvar. The changes are systematic and predictable. The table in the next
+    sub-section is the master list; the sub-sections after it explain the three consequences that
+    cause real trouble in the field: motor shaft power, transformer flux, and capacitor-bank
+    tuning.
+  </p>
+
+  <h3 id="f-60hz-consequences">50 Hz vs 60 Hz — the consequences table</h3>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Quantity</th>
+        <th>At 50 Hz</th>
+        <th>At 60 Hz</th>
+        <th>Change</th>
+        <th>Practical consequence</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Synchronous speed, 4-pole motor (n = 120·f/p)</td>
+        <td>1500 rpm</td>
+        <td>1800 rpm</td>
+        <td>+20 %</td>
+        <td>Every direct-on-line motor runs ~20 % faster. All speed-stamped data (pump curves, fan curves, gearbox ratios) must be re-read for 60 Hz.</td>
+      </tr>
+      <tr>
+        <td>Shaft power of a centrifugal pump/fan at fixed impeller (affinity laws, P ∝ n³)</td>
+        <td>100 % (design)</td>
+        <td>up to ~173 %</td>
+        <td>up to +73 %</td>
+        <td>A 50 Hz-selected pump motor moved to 60 Hz without impeller change can be overloaded by up to 73 % — see <a href="#f-60hz-motors">the motor sub-section</a>. The single most expensive 50/60 Hz mistake.</td>
+      </tr>
+      <tr>
+        <td>Transformer core flux at same applied voltage (Φ ∝ V/f)</td>
+        <td>100 % (design)</td>
+        <td>~83 %</td>
+        <td>−17 %</td>
+        <td>A 50 Hz-designed transformer at 60 Hz runs at <em>lower</em> flux — magnetically safe. The reverse direction is dangerous: a 60 Hz-designed unit at 50 Hz saturates — see <a href="#f-60hz-transformers">below</a>.</td>
+      </tr>
+      <tr>
+        <td>Inductive reactance X = 2πfL (cables, reactors, transformer leakage in ohms)</td>
+        <td>100 %</td>
+        <td>120 %</td>
+        <td>+20 %</td>
+        <td>Reactive volt-drop on long feeders slightly higher; per-unit (%) impedances of transformers are unchanged because they are restated on the 60 Hz base.</td>
+      </tr>
+      <tr>
+        <td>Capacitor reactive output Q = 2πfCV² at same voltage</td>
+        <td>100 % (rated)</td>
+        <td>120 %</td>
+        <td>+20 %</td>
+        <td>A capacitor can carries +20 % kvar and +20 % current at 60 Hz — its series reactor, contactors and fuses may be overloaded. PFC banks must be <em>ordered for</em> 60 Hz, not adapted.</td>
+      </tr>
+      <tr>
+        <td>Detuned PFC filter resonant point, 7 % reactor (f_res = f/√0.07)</td>
+        <td>≈189 Hz</td>
+        <td>≈227 Hz</td>
+        <td>+20 %</td>
+        <td>Tuning stays safely below the 5th harmonic (250 Hz at 50 Hz; 300 Hz at 60 Hz) <em>only if</em> reactor and capacitor are matched as a 60 Hz set.</td>
+      </tr>
+      <tr>
+        <td>Harmonic frequencies (5th, 7th…)</td>
+        <td>250, 350 Hz…</td>
+        <td>300, 420 Hz…</td>
+        <td>+20 %</td>
+        <td>Harmonic studies, filter designs and power-quality meter settings must use the 60 Hz harmonic ladder.</td>
+      </tr>
+      <tr>
+        <td>Transformer/motor iron losses at design flux</td>
+        <td>basis</td>
+        <td>slightly higher per cycle count, lower flux</td>
+        <td>≈ neutral</td>
+        <td>Properly 60 Hz-designed equipment has the same efficiency class; only cross-frequency misapplication causes loss problems.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="warning">
+    <strong>Warning — nameplates decide, not assumptions.</strong> Much imported equipment is
+    dual-rated "50/60 Hz", but <em>not all of it</em>, and dual-rated machines often carry two
+    different output figures, one per frequency. On site, read the frequency line of every
+    nameplate. Equipment carrying only "50 Hz" on a 60 Hz SEC plant (or vice versa) is an
+    immediate red-line finding.
+  </div>
+
+  <h3 id="f-60hz-motors">Motors: +20 % speed can mean +73 % power</h3>
+
+  <p>
+    An induction motor's speed is locked to frequency by the synchronous-speed formula
+    <code>n = 120 × f / p</code> (p = number of poles). A 4-pole machine therefore runs at
+    1500 rpm synchronous on a 50 Hz grid and <strong>1800 rpm on the 60 Hz SEC grid</strong>
+    (actual shaft speed is 2–3 % lower because of slip — typically ~1470 rpm vs ~1775 rpm).
+    The motor itself does not mind: a 60 Hz-wound motor is designed for that speed.
+  </p>
+
+  <p>
+    The trap is the <strong>driven machine</strong>. Centrifugal pumps and fans obey the
+    <strong>affinity laws</strong> at fixed impeller/blade geometry:
+  </p>
+
+  <ul>
+    <li><strong>Flow ∝ speed</strong> — at +20 % speed the pump moves +20 % flow;</li>
+    <li><strong>Head (pressure) ∝ speed²</strong> — (1.2)² = 1.44, i.e. +44 % head;</li>
+    <li><strong>Shaft power ∝ speed³</strong> — (1.2)³ = 1.728, i.e. <strong>up to +73 % power</strong>.</li>
+  </ul>
+
+  <p>
+    Read that last line again, because it surprises everyone the first time: a "modest" 20 %
+    speed increase nearly <em>doubles</em> the power a centrifugal load demands. (The exact
+    increase depends on where the new operating point lands on the system curve — the cube law is
+    the worst case at fixed system resistance — but +50 to +73 % is realistic.) This is why a
+    pump set engineered for a 50 Hz country can never simply be shipped to a 60 Hz site: either
+    the impeller is trimmed for the higher speed, a different (larger) motor is fitted, or a
+    <a href="#cat-vfd">VFD</a> is installed to run the pump back down to its design speed.
+  </p>
+
+  <div class="worked">
+    <h4>Worked comparison — the same pump at 50 Hz and 60 Hz</h4>
+    <p>A centrifugal pump absorbs 70 kW at 1470 rpm on a 50 Hz grid, driven by a 75 kW 4-pole motor. The skid is relocated to a 60 Hz plant without modification. Estimate the new shaft power.</p>
+    <code class="formula">New speed: n₂ ≈ n₁ × (60/50) = 1470 × 1.2 ≈ 1764 rpm</code>
+    <code class="formula">Affinity (power): P₂ = P₁ × (n₂/n₁)³ = 70 × (1.2)³ = 70 × 1.728 ≈ 121 kW</code>
+    <p>The 75 kW motor is now asked for ≈121 kW — an overload of about 61 %:</p>
+    <code class="formula">Loading = 121 / 75 ≈ 161 % of motor rating</code>
+    <p><strong>Result:</strong> the thermal overload relay trips within minutes — or, if someone has "solved" the nuisance tripping by raising the overload setting, the winding insulation cooks instead. <em>Sanity check:</em> flow is +20 % and head +44 %, so the process side also receives far more than design duty — the hydraulic numbers confirm the electrical ones. All values indicative.</p>
+  </div>
+
+  <div class="tip">
+    <strong>Tip — what to look for on site:</strong> on any pump or fan skid, compare the motor
+    nameplate frequency and speed (e.g. "60 Hz / 1775 rpm") against the driven-machine data plate.
+    A 50 Hz pump curve pinned in the file with a 60 Hz motor on the skid is a finding even if
+    nothing has tripped yet — it usually means the margins have been silently consumed.
+  </div>
+
+  <h3 id="f-60hz-transformers">Transformers: flux, and the one-way compatibility rule</h3>
+
+  <p>
+    A transformer core's peak magnetic flux is set by the voltage-per-cycle it must absorb:
+    <code>Φ_max = V / (4.44 × f × N)</code> (N = turns). Voltage in the numerator, frequency in
+    the denominator. Hold the voltage constant and <em>raise</em> the frequency, and the flux
+    <em>falls</em>; lower the frequency and the flux <em>rises</em>. This gives a simple,
+    asymmetric compatibility rule:
+  </p>
+
+  <ul>
+    <li>
+      <strong>50 Hz-designed unit operated at 60 Hz, same voltage:</strong> flux drops to
+      50/60 ≈ 83 % of design — the core runs <em>further from</em> saturation. Magnetically safe
+      (verify accessories: fans, tap-changer motors, instrumentation rated for 60 Hz).
+    </li>
+    <li>
+      <strong>60 Hz-designed unit operated at 50 Hz, same voltage:</strong> flux rises to
+      60/50 = 120 % of design. Transformer cores are deliberately designed close to the knee of
+      the magnetising curve to save iron, so +20 % flux drives the core into
+      <strong>saturation</strong>: the magnetising current jumps from ~1 % to tens of percent,
+      it becomes sharply distorted, the core overheats and hums loudly, and the unit can fail in
+      hours. <strong>A 60 Hz-designed transformer must never be used on a 50 Hz system at the
+      same voltage.</strong>
+    </li>
+  </ul>
+
+  <div class="warning">
+    <strong>Warning — second-hand and relocated equipment.</strong> The dangerous direction
+    (60 Hz design → 50 Hz grid) is exactly the direction equipment travels when a Saudi plant is
+    decommissioned and its transformers are resold into 50 Hz markets — or when a "spare" sourced
+    from a 60 Hz fleet is fitted in a 50 Hz sister plant. Within the Kingdom you are safe; across
+    borders, the nameplate frequency is a hard constraint. For our plant, <code>TX-1</code> /
+    <code>TX-2</code> are specified as 60 Hz units (13.8/0.4 kV, Dyn11, Z = 6 %) per the
+    <a href="#cat-transformers">transformer catalogue</a>.
+  </div>
+
+  <h3 id="f-60hz-reactance">Reactance, capacitors and the detuned PFC bank</h3>
+
+  <p>
+    Inductive reactance is directly proportional to frequency — <code>X = 2πfL</code> — so every
+    reactance expressed in ohms is <strong>20 % higher at 60 Hz</strong> for the same physical
+    inductance: cable reactance, current-limiting reactors, transformer leakage reactance in ohms.
+    (Percent impedances quoted on nameplates, like the Z = 6 % of TX-1/TX-2, are already stated on
+    the equipment's own rated-frequency base and carry through unchanged into per-unit fault
+    calculations.) Capacitors mirror this: reactive output <code>Q = 2πfCV²</code> is
+    <strong>+20 % at 60 Hz</strong> for the same capacitance and voltage, and so is the capacitor
+    current.
+  </p>
+
+  <p>
+    Where both effects meet is the <strong>detuned power-factor-correction bank</strong>
+    (<code>PFC</code>, ≈580 kvar indicative). Each capacitor step has a series reactor sized at
+    7 % of the capacitor reactance, creating a series-resonant circuit tuned <em>below</em> the
+    lowest characteristic harmonic so the bank cannot resonate with VFD harmonics:
+  </p>
+
+  <code class="formula">f_res = f_supply / √0.07 → 50 Hz system: 189 Hz | 60 Hz system: 227 Hz</code>
+
+  <p>
+    On the 60 Hz SEC grid the tuning point is ≈227 Hz — comfortably below the 5th harmonic at
+    300 Hz, exactly as 189 Hz sits below 250 Hz on a 50 Hz grid. But this only works when the
+    reactor and capacitors are engineered <em>as a 60 Hz set</em>: pairing a 50 Hz reactor with
+    60 Hz capacitors (or vice versa) shifts the tuning point unpredictably and can park it near a
+    real harmonic, turning the protection device into an amplifier. Order PFC equipment explicitly
+    for 13.8 kV-network/400 V, 60 Hz service and check the step nameplates on site.
+  </p>
+
+  <h3 id="f-60hz-ksa">Why Saudi Arabia is a 60 Hz country</h3>
+
+  <p>
+    The Kingdom's 60 Hz standard is a legacy of <em>who built the first big power systems</em>.
+    Electrification at scale began in the Eastern Province with the oil industry from the late
+    1930s onward, engineered to North American practice — 60 Hz. As regional utilities grew and
+    were later consolidated into SEC, the Kingdom standardised nationally on
+    <strong>60 Hz with 230/400 V utilisation</strong> (the voltage was unified by royal decision
+    in the 1990s, with conversion of older 127/220 V areas phased over many years). This makes
+    Saudi Arabia — together with North America, parts of Japan and a few other states — one of
+    the minority of 60 Hz countries, and notably <em>different from the rest of the GCC</em>,
+    which is 50 Hz. That is why the GCC Interconnection grid ties into the Saudi system through
+    <strong>back-to-back HVDC converters</strong> (at Al Fadhili): direct AC interconnection
+    between a 50 Hz and a 60 Hz system is impossible. All historical details indicative —
+    interesting context, not assessment input.
+  </p>
+
+  <h3 id="f-60hz-checklist">Frequency checks for the site visit</h3>
+
+  <ul class="checklist">
+    <li>Confirm the plant supply frequency on the intake metering display reads 60 Hz (SEC nominal).</li>
+    <li>Check the frequency line on every motor nameplate: 60 Hz, or dual 50/60 Hz with a separate 60 Hz rating column.</li>
+    <li>For each pump/fan skid, verify motor speed (≈1800 rpm 4-pole) matches the driven-machine data plate and curve.</li>
+    <li>Verify transformer nameplates (TX-1, TX-2) state 60 Hz; flag any 50 Hz-only or relocated unit.</li>
+    <li>Confirm the PFC bank steps and detuning reactors are nameplated for 400 V / 60 Hz (tuning ≈227 Hz, 7 %).</li>
+    <li>Check VFD, UPS and protection-relay settings files use the 60 Hz base and 60 Hz harmonic ladder (300/420 Hz…).</li>
+    <li>Flag any imported spare (motor, transformer, capacitor can) carrying only a 50 Hz rating as a red-line finding.</li>
+  </ul>
+
+  <div class="key">Key takeaway: 60 Hz changes four numbers by exactly +20 % — motor speed, inductive reactance, capacitor kvar, and the harmonic ladder — and one number by up to +73 %: centrifugal shaft power, via the cube law. Transformer flux moves the <em>other</em> way (safe at 60 Hz for a 50 Hz design; dangerous in reverse). Check the frequency line on every nameplate; on a SEC plant it must say 60 Hz or 50/60 Hz with a 60 Hz rating column.</div>
+</section>
+
+<!-- ============================================================ -->
+
+<section id="f-sec-network" data-title="The SEC Network Upstream" data-part="Part 1 — Foundations">
+  <h2>The SEC Network Upstream</h2>
+
+  <p><em>Where you are in the workflow: your assessment boundary starts at the 13.8 kV intake, but the design numbers at that boundary — voltage, fault level, tariff, reliability — are all dictated by what the Saudi Electricity Company (SEC) operates upstream. This section explains where the power comes from, so the numbers in the connection agreement make sense.</em></p>
+
+  <h3 id="f-sec-generation">Where the energy comes from — generation mix</h3>
+
+  <p>
+    The Saudi grid is supplied predominantly by <strong>thermal generation burning natural gas
+    and liquid fuels</strong> — gas turbines, combined-cycle blocks and steam plant, much of it
+    co-located with desalination on the coasts — with a <strong>rapidly growing fleet of
+    utility-scale solar PV</strong> and the first large wind farms. National programmes target a
+    far higher renewable share (an indicative aspiration of ~50 % of generation) by 2030, with
+    gas covering most of the remainder as liquid fuels are displaced. All figures indicative —
+    the mix changes year on year and does not alter how you assess the plant.
+  </p>
+
+  <p>
+    What the mix <em>does</em> change is grid behaviour at the connection point. Synchronous
+    thermal machines provide the rotating inertia that holds 60 Hz steady and the fault current
+    your protection relies on; inverter-based solar provides neither in the same way. As the mix
+    shifts, utilities tighten grid codes — ride-through requirements, power-factor windows,
+    harmonic limits — which is why this manual cites the <strong>Saudi Grid Code and SEC
+    Distribution Code</strong> alongside SASO-adopted IEC standards, and why any on-site
+    generation or large drive installation needs checking against the current code revision.
+  </p>
+
+  <h3 id="f-sec-ladder">The voltage ladder — from 380 kV to your motor terminals</h3>
+
+  <p>
+    Energy reaches the plant by stepping down a <strong>voltage ladder</strong>. Each rung exists
+    for one reason: moving the same power at higher voltage means lower current, and losses fall
+    with the square of current — so bulk energy travels far at very high voltage and is only
+    reduced close to the consumer. The indicative Saudi ladder:
+  </p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Level (indicative)</th>
+        <th>Role</th>
+        <th>Typical equipment</th>
+        <th>What our plant sees</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>380 kV</td>
+        <td>EHV national transmission backbone — bulk transfer between generation centres, regions and the GCC interconnection</td>
+        <td>Overhead lines, EHV substations, series/shunt compensation, HVDC converter stations (GCC tie)</td>
+        <td>Nothing directly — but a 380 kV event can ripple down as a region-wide voltage dip</td>
+      </tr>
+      <tr>
+        <td>132 kV / 115 kV (110 kV in some areas)</td>
+        <td>HV sub-transmission — feeds bulk supply points around cities and industrial areas (115 kV is the Eastern-Province heritage level; 132 kV elsewhere)</td>
+        <td>HV substations, 132(115)/33 kV or 132(115)/13.8 kV power transformers, GIS in urban areas</td>
+        <td>Our primary substation hangs from this layer; an outage here takes out multiple feeders at once</td>
+      </tr>
+      <tr>
+        <td>33 kV</td>
+        <td>Primary distribution in some networks; direct intake voltage for very large industrial customers (above roughly 10–20 MVA demand)</td>
+        <td>33 kV switchgear, 33/13.8 kV transformers</td>
+        <td>Not used at our ~2 MW size — but you will meet 33 kV intakes on larger plants you assess</td>
+      </tr>
+      <tr>
+        <td><strong>13.8 kV</strong></td>
+        <td>MV distribution — the standard SEC feeder voltage for industrial and commercial customers in our demand class</td>
+        <td>Distribution feeders (cable or overhead), ring main units, the customer intake: <code>MV-MET</code>, <code>MV-SWGR</code></td>
+        <td><strong>This is our connection point</strong> — the top of the master SLD</td>
+      </tr>
+      <tr>
+        <td>400 / 230 V, 60 Hz</td>
+        <td>LV utilisation — three-phase 400 V between phases, 230 V phase-to-neutral</td>
+        <td><code>TX-1</code>/<code>TX-2</code> secondaries, <code>LV-MSB</code>, MCCs, boards, loads</td>
+        <td>Everything below the transformers — created and owned by the plant itself</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    <strong>Note — whose equipment is whose.</strong> SEC owns and operates everything down to
+    (typically) the revenue metering point <code>MV-MET</code>; the plant owns everything from
+    the MV switchgear inward. The exact ownership/maintenance boundary is defined in the
+    <strong>connection agreement</strong> — locate it during the desk study, because it decides
+    which equipment you may assess hands-on and which you may only observe.
+  </div>
+
+  <h3 id="f-sec-feeder">The 13.8 kV feeder(s) to our plant</h3>
+
+  <p>
+    From the primary substation, the plant is served by one or more <strong>13.8 kV
+    feeders</strong> — usually XLPE underground cable in industrial cities, sometimes overhead
+    line in remote areas. Three arrangements matter for your reliability assessment:
+  </p>
+
+  <ul>
+    <li>
+      <strong>Single radial feeder:</strong> one cable, one path. Cheapest, and a plain
+      single point of failure at the utility level — any feeder fault is a full plant outage
+      for the duration of the repair or switching time.
+    </li>
+    <li>
+      <strong>Ring / loop connection (RMU):</strong> the plant tees into a ring that can be fed
+      from either direction. A cable fault is isolated by switching and supply is restored in
+      minutes-to-an-hour rather than repair time. Common in SEC industrial-city networks.
+    </li>
+    <li>
+      <strong>Dual dedicated feeders:</strong> two independent feeders onto the two sections of
+      <code>MV-SWGR</code> with the bus-section breaker [52-BS] — the premium arrangement,
+      giving genuine utility-side N-1. Reserved for larger or more critical plants.
+    </li>
+  </ul>
+
+  <p>
+    The reference plant assumes a single utility intake (with the [52-BS] giving internal
+    sectionalising only) — which is precisely why the standby path (<code>DG</code> →
+    <code>ATS</code> → <code>EDB</code>) exists. On site, establish which arrangement you
+    actually have: it is the first row of the utility-side SPOF table in Part 3.
+  </p>
+
+  <h3 id="f-sec-fault">The declared fault level: 25–40 kA, design for 25 kA minimum</h3>
+
+  <p>
+    When SEC connects a customer at 13.8 kV it <strong>declares a design fault level</strong> at
+    the point of connection — the prospective short-circuit current the customer's equipment must
+    withstand and interrupt. For SEC 13.8 kV networks this declaration falls in the range
+    <strong>25–40 kA</strong> (indicative; the connection agreement states the binding figure).
+    Two things about this number routinely confuse newcomers:
+  </p>
+
+  <ul>
+    <li>
+      <strong>It is a planning ceiling, not today's measurement.</strong> The actual fault current
+      available today might be 12 or 15 kA. But the utility will add transformers, parallel
+      feeders and generation over the equipment's 30-year life, and every addition raises the
+      fault level. The declared value is the level the network is <em>allowed to grow to</em>
+      without the customer having to replace switchgear.
+    </li>
+    <li>
+      <strong>The customer must design to at least the declared minimum — 25 kA</strong> — even
+      if local measurements suggest less. Under-rated switchgear that "has always been fine" is a
+      latent bomb: the first fault after a network reinforcement can exceed its interrupting
+      capacity, and a breaker that fails to clear a 13.8 kV fault fails catastrophically.
+    </li>
+  </ul>
+
+  <p>
+    This is why the reference <code>MV-SWGR</code> is specified at <strong>31.5 kA / 3 s</strong>
+    (17.5 kV class): it covers the 25 kA SEC design fault level with margin inside the declared
+    range, at the standard IEC rating step above it. See the
+    <a href="#cat-mv-swgr">MV switchgear catalogue</a> for typical product families, and Part 2
+    for how the MV fault level cascades into the LV figures (38.5 kA at one transformer,
+    ≈77 kA prospective tie-closed — all indicative).
+  </p>
+
+  <div class="warning">
+    <strong>Warning — never infer the fault level from old single-line diagrams.</strong> SLDs
+    show what was declared at design time, decades ago. Always obtain the <em>current</em>
+    declared fault level in writing from SEC (or from the latest connection-agreement revision)
+    before judging switchgear adequacy. A plant connected in 1995 against 20 kA may now sit on a
+    31.5 kA network.
+  </div>
+
+  <h3 id="f-sec-tariff">Metering and tariff basics — why MV-MET matters commercially</h3>
+
+  <p>
+    The revenue meter in <code>MV-MET</code> is the commercial boundary: everything the plant
+    consumes — including the losses inside <code>TX-1</code>/<code>TX-2</code>, since metering is
+    at MV — is billed by SEC against it. The elements of an industrial bill, indicatively:
+  </p>
+
+  <ul>
+    <li>
+      <strong>Energy charge (SAR/kWh):</strong> the bulk of the bill, at the industrial tariff
+      category rate. For larger customers SEC applies <strong>time-of-use (TOU)</strong>
+      structures — higher rates in the summer afternoon system peak (air-conditioning driven),
+      lower off-peak. Indicative: shifting deferrable load (pumping to storage, batch processes)
+      out of the peak window is often the cheapest energy saving available.
+    </li>
+    <li>
+      <strong>Demand-related charges:</strong> linked to the contracted/recorded maximum demand
+      (kVA or kW). Exceeding contracted capacity triggers penalties and may require a formal
+      connection upgrade.
+    </li>
+    <li>
+      <strong>Power-factor clause:</strong> SEC requires industrial customers to maintain power
+      factor above a threshold (indicatively <strong>0.9 lagging</strong> at the metering point),
+      with a surcharge proportional to the shortfall below it. This clause is the commercial
+      justification for the <code>PFC</code> bank: correcting from 0.85 to a target of 0.95 keeps
+      the plant clear of the penalty band with margin, and simultaneously frees transformer and
+      cable capacity (≈580 kvar, indicative — sizing worked through in Part 2).
+    </li>
+  </ul>
+
+  <div class="tip">
+    <strong>Tip — read twelve months of bills.</strong> During the desk study, request a year of
+    SEC invoices. They reveal, at zero site effort: the real maximum demand vs the 2353 kVA
+    design figure, the load's seasonality, whether power-factor surcharges are being paid (a
+    failed or undersized PFC bank shows up in money before it shows up in measurements), and any
+    demand-limit exceedances. Bills are the cheapest condition-monitoring data you will ever get.
+  </div>
+
+  <h3 id="f-sec-outage">Outage escalation — what failure upstream looks like</h3>
+
+  <p>
+    Utility-side disturbances arrive in escalating sizes, and the plant's defence ladder
+    (Part 1, <a href="#f-powerflow">power-flow walk-through</a>) is built to match:
+  </p>
+
+  <ul>
+    <li>
+      <strong>Voltage dips and momentary interruptions (cycles to ~1 s):</strong> remote faults
+      cleared by utility protection, auto-reclosing on overhead sections. The plant rides through
+      on drive DC-bus inertia and the <code>UPS</code>; the classic casualty is contactor
+      drop-out in the MCCs tripping motors that the process then needs restarted in sequence.
+    </li>
+    <li>
+      <strong>Sustained feeder outage (minutes to hours):</strong> cable fault, feeder breaker
+      lockout. The <code>ATS</code> starts the <code>DG</code> and transfers the essential bus
+      (≤ 10 s, indicative); non-essential load is shed by design. Ring-connected plants may be
+      back-fed within the hour by SEC switching.
+    </li>
+    <li>
+      <strong>Primary substation / sub-transmission outage (hours):</strong> multiple feeders
+      lost simultaneously; no back-feed available. The plant runs on the DG for the duration —
+      which is why DG fuel autonomy (day-tank plus bulk storage) belongs in the assessment.
+    </li>
+    <li>
+      <strong>Regional / system event (rare, potentially long):</strong> grid-scale disturbance.
+      The DG, the <code>UPS</code> (30 min, indicative) and the <code>DCDB</code> battery are the
+      plant's entire world; orderly process shutdown is the success criterion.
+    </li>
+  </ul>
+
+  <p>
+    Operationally, every plant should hold a current <strong>SEC escalation contact list</strong>
+    (emergency/outage number, account manager for the connection agreement) and an outage log.
+    The log matters technically as well as commercially: a pattern of dips clustered at certain
+    hours often identifies a network cause SEC can fix — and it tells you which power-quality
+    mitigations (ride-through relays, delayed-dropout contactors) would actually pay back.
+  </p>
+
+  <div class="key">Key takeaway: the plant hangs from a ladder — 380 kV backbone, 132/115 kV sub-transmission, 13.8 kV feeder — and the connection agreement compresses that whole upstream world into a few binding numbers: 13.8 kV, 60 Hz, a declared fault level of 25–40 kA (design to 25 kA minimum — our switchgear is 31.5 kA), a contracted demand, and a power-factor clause. Find the connection agreement and twelve months of bills in the desk study; they anchor half of your assessment. All values indicative.</div>
+</section>
+
+<!-- ============================================================ -->
+
+<section id="f-derating" data-title="Derating: the 50 °C Tax" data-part="Part 1 — Foundations">
+  <h2>Derating: the 50 °C Tax</h2>
+
+  <p><em>Where you are in the workflow: every rating you will read on a nameplate or in a catalogue was promised at a reference temperature — usually 30 or 40 °C. Our design ambient is 50 °C. The gap between those two numbers is a tax levied on the capacity of nearly every item in the plant, and this section teaches you to compute it before Part 2 asks you to.</em></p>
+
+  <h3 id="f-derating-concept">One physical idea behind every derating factor</h3>
+
+  <p>
+    All electrical equipment is ultimately limited by <strong>insulation temperature</strong>.
+    A cable, a winding, a breaker contact or a capacitor can carry current only until its hottest
+    point reaches the temperature its insulation system can survive for its design life — 90 °C
+    for XLPE cable, 155 °C (class F) for typical motor and dry-type transformer insulation, and
+    so on. The operating temperature is always the same sum:
+  </p>
+
+  <code class="formula">hot-spot temperature = ambient temperature + temperature rise caused by load</code>
+
+  <p>
+    The insulation limit is fixed by chemistry. So when the <strong>ambient</strong> term grows —
+    from the 30–40 °C assumed by international standards to the <strong>50 °C Saudi design
+    ambient</strong> (see <a href="#orientation-environment">the environment section in Part 0</a>)
+    — the allowable <strong>rise</strong>, and therefore the allowable load, must shrink. That is
+    the whole theory of derating. Each equipment class merely converts the lost rise into a
+    capacity factor in its own way, which is why the factors below differ in size but never in
+    direction. Two general rules before the specifics:
+  </p>
+
+  <ul>
+    <li>
+      <strong>Derating compounds.</strong> A cable that loses 18 % to ambient and 20 % to
+      grouping keeps 0.82 × 0.80 ≈ 66 % of its table rating — the factors multiply, they do not
+      add.
+    </li>
+    <li>
+      <strong>The reference temperature is part of the rating.</strong> "400 A" means nothing
+      until you know "400 A <em>at what ambient</em>". Two data sheets quoting the same current at
+      different reference temperatures are quoting different cables.
+    </li>
+  </ul>
+
+  <div class="note">
+    <strong>Note — heat also arrives from outside.</strong> At 50 °C air temperature, direct
+    solar gain on outdoor enclosures and cable trays adds further heating on top of ambient
+    (sun-exposed steel surfaces can far exceed air temperature). Shading, ventilation and
+    light-coloured enclosures are not cosmetic — they are part of the thermal design, alongside
+    the dust/IP54 requirements of the same environment.
+  </div>
+
+  <h3 id="f-derating-cables">Cables: the ≈0.82 factor</h3>
+
+  <p>
+    IEC current-carrying-capacity tables (IEC 60364-5-52 / IEC 60287 basis) for cables in air are
+    referenced to a <strong>30 °C ambient</strong>. The correction factor for another ambient
+    follows directly from the insulation-temperature logic above:
+  </p>
+
+  <code class="formula">k = √( (θ_conductor − θ_ambient) / (θ_conductor − θ_reference) )</code>
+
+  <p>
+    For 90 °C XLPE insulation in 50 °C air instead of 30 °C:
+  </p>
+
+  <code class="formula">k = √( (90 − 50) / (90 − 30) ) = √(40/60) = √0.667 ≈ 0.82</code>
+
+  <p>
+    So every XLPE cable in this plant delivers, as a rule of thumb, <strong>about 82 % of its
+    table rating</strong> before any other factor is applied. PVC-insulated cable (70 °C
+    conductor) fares worse — k ≈ √(20/40) ≈ 0.71 — one reason XLPE dominates in the Kingdom.
+    Buried cables use a different reference (soil temperature, indicatively 25–35 °C here) and
+    are further punished by <strong>dry desert sand</strong>, whose thermal resistivity can be
+    several times the standard 2.5 K·m/W assumption; specify thermally stabilised backfill or
+    derate hard. The full sizing procedure, with grouping and voltage-drop checks, is worked in
+    <a href="#c-cables">Part 2 — cable sizing</a>.
+  </p>
+
+  <div class="worked">
+    <h4>Worked example — the "400 A" cable that is really a 328 A cable</h4>
+    <p>A single-core XLPE copper cable is tabulated at 400 A in free air (30 °C reference). It is installed on a cable ladder at the 50 °C design ambient. What may it actually carry?</p>
+    <code class="formula">I_z = I_table × k_ambient = 400 A × 0.82 = 328 A</code>
+    <p>If it also runs bunched with two other loaded circuits on the same ladder (grouping factor ≈ 0.80, indicative):</p>
+    <code class="formula">I_z = 400 × 0.82 × 0.80 ≈ 262 A</code>
+    <p><strong>Result:</strong> the "400 A" cable is a <strong>~328 A cable</strong> at 50 °C — and only a ~262 A cable when grouped. <em>Sanity check:</em> the protective device and the design current must both sit at or below the <em>derated</em> capacity (I_b ≤ I_n ≤ I_z = 328 A), not the table figure; a 400 A breaker on this cable at 50 °C would be a finding. All values indicative.</p>
+  </div>
+
+  <h3 id="f-derating-transformers">Transformers: insulation-class margin and the fan (AF) boost</h3>
+
+  <p>
+    IEC 60076 rates a transformer for an ambient of <strong>40 °C maximum</strong> (30 °C monthly
+    average, 20 °C yearly average). At a 50 °C site, the same logic as cables applies to the oil
+    or winding temperature rise: roughly, each kelvin of ambient above the standard basis costs
+    about <strong>1 % of continuous loading capability</strong> (indicative), so a standard-design
+    1600 kVA unit would only be good for ~1440–1480 kVA here. Three standard remedies, usually
+    combined at specification stage rather than bolted on later:
+  </p>
+
+  <ul>
+    <li>
+      <strong>Specify the 50 °C ambient on the order</strong> — the manufacturer designs the unit
+      with reduced guaranteed temperature rises so the nameplate kVA is honest <em>at site
+      conditions</em>. This is the approach assumed for <code>TX-1</code>/<code>TX-2</code>
+      (1600 kVA each at 50 °C, indicative).
+    </li>
+    <li>
+      <strong>Insulation-class margin (dry-type):</strong> build with class F or H insulation
+      (155 / 180 °C capability) but limit the design rise to a lower class's values — the unused
+      thermal headroom absorbs the extra 10 K of ambient instead of being spent on load.
+    </li>
+    <li>
+      <strong>Forced-air (AF/ONAF) boost:</strong> fans on a cast-resin AN unit or radiator fans
+      on an ONAN oil unit typically add <strong>+25–40 % capacity</strong> (indicative). Useful as
+      contingency margin (e.g. for the bus-tie-closed, one-transformer-carries-all condition) —
+      but note the fans, their supply and their controller become reliability items in their own
+      right for the FMECA.
+    </li>
+  </ul>
+
+  <div class="tip">
+    <strong>Tip — read the rise, not just the kVA.</strong> On the transformer nameplate, check
+    the guaranteed temperature-rise figures and the stated design ambient. A unit stamped
+    "1600 kVA, 40 °C ambient" installed at a 50 °C site is <em>not</em> a 1600 kVA unit here —
+    that single line on the nameplate is a desk-study finding before you ever measure anything.
+    Typical product families in the <a href="#cat-transformers">transformer catalogue</a>.
+  </div>
+
+  <h3 id="f-derating-breakers">LV breakers in boards: 0.8–0.9</h3>
+
+  <p>
+    An ACB or MCCB is rated (IEC 60947-2) at a reference air temperature — typically
+    40 °C around the device. Installed inside a Form 4b switchboard in a 50 °C switchroom, the
+    air <em>around the breaker</em> is the room's 50 °C <em>plus</em> the board's internal rise
+    (heat from busbars, other devices and the breaker itself), easily reaching 55–65 °C at the
+    device. Manufacturers publish derating tables for exactly this; the working rule is that a
+    breaker inside a board at our ambient delivers <strong>80–90 % of its frame/trip rating</strong>
+    (indicative). Consequences for the reference plant:
+  </p>
+
+  <ul>
+    <li>
+      The LV-MSB incomer ACBs must carry the transformer LV FLC of <strong>2309 A</strong>
+      continuously. A 2500 A frame at a 0.85 in-board factor is only ~2125 A — <em>not enough</em>;
+      the specification therefore moves to a 3200 A frame (3200 × 0.85 ≈ 2720 A ≥ 2309 A,
+      indicative) or relies on the manufacturer's certified temperature-derating curve for the
+      actual board. This is why the schedule shows a ~2500–3200 A bus.
+    </li>
+    <li>
+      Electronic trip units are set to the <em>derated</em> continuous current, and the board's
+      ventilation (or air conditioning of the room) is part of the breaker's rating — a failed
+      switchroom HVAC silently converts adequate breakers into overloaded ones.
+    </li>
+  </ul>
+
+  <p>
+    Typical ACB/MCCB families and their published derating data are referenced in the
+    <a href="#cat-lv-breakers">LV breaker catalogue</a>.
+  </p>
+
+  <h3 id="f-derating-electronics">VFDs and UPS: 1–1.5 %/°C above 40 °C</h3>
+
+  <p>
+    Power-electronic equipment derates fastest, because its limiting components — IGBTs, DC-bus
+    electrolytic capacitors — are the most temperature-sensitive items in the plant. Typical
+    manufacturer rule for <a href="#cat-vfd">VFDs</a>: full rating up to 40 °C, then
+    <strong>1–1.5 % output current per °C</strong> above, i.e. <strong>10–15 % lost at 50 °C</strong>
+    (indicative); many vendors simply cap operation at 50 °C entirely. UPS units behave
+    similarly, and their batteries are a separate, harsher story (below). Practical responses:
+    select drives one frame size up, and treat the <strong>switchroom air-conditioning as
+    process-critical equipment</strong> — for drive rooms, the HVAC <em>is</em> the derating
+    mitigation, and its failure mode belongs in the SPOF analysis of Part 3.
+  </p>
+
+  <h3 id="f-derating-gensets">Diesel generators: 0.5–1 %/°C above 40 °C</h3>
+
+  <p>
+    Genset site rating (ISO 8528) falls with intake-air temperature — hot, thin air means less
+    oxygen per stroke and weaker alternator cooling — by an indicative
+    <strong>0.5–1 % per °C above 40 °C</strong>, plus altitude derating where applicable.
+    A set quoted "1250 kVA" at ISO standard conditions delivers perhaps 1130–1190 kVA at a 50 °C
+    site. The reference <code>DG</code> avoids this trap by being specified as
+    <strong>1250 kVA ESP <em>at 50 °C ambient</em></strong> — the derating is already inside the
+    number. On site, always determine whether a genset nameplate states standard-condition or
+    site-condition output, and check radiator sizing (a "tropical" high-ambient radiator is a
+    distinct option). Typical sets in the <a href="#cat-gensets">genset catalogue</a>.
+  </p>
+
+  <h3 id="f-derating-batteries">Batteries: life halves every 8–10 °C</h3>
+
+  <p>
+    Batteries are the exception that proves the rule: heat barely reduces their <em>capacity</em>
+    (it slightly increases it) — instead it destroys their <em>life</em>. Internal corrosion and
+    grid degradation are chemical reactions that follow Arrhenius behaviour: reaction rate, and
+    therefore ageing, roughly <strong>doubles for every 8–10 °C</strong> above the reference
+    temperature (20–25 °C for VRLA). Indicatively, a "10-year design life" VRLA block achieves:
+  </p>
+
+  <ul>
+    <li>~10 years at 20–25 °C (air-conditioned battery room),</li>
+    <li>~5 years at ~30–33 °C,</li>
+    <li>~2–3 years at ~40 °C,</li>
+    <li>little more than a year in an unconditioned 50 °C enclosure.</li>
+  </ul>
+
+  <p>
+    This applies equally to the <code>UPS</code> battery (the 30 min autonomy bridging the DG
+    start — see the <a href="#f-powerflow">power-flow walk-through</a>) and the <code>DCDB</code>
+    battery (the last line of MV protection operability). A dead battery room air-conditioner is
+    therefore a <strong>hidden plant-level SPOF</strong>: nothing trips, nothing alarms, the
+    batteries simply age out years early and fail on the first real outage. On site: check the
+    battery room temperature log, the A/C condition, and the date and result of the last
+    discharge test. Typical UPS systems in the <a href="#cat-ups">UPS catalogue</a>.
+  </p>
+
+  <h3 id="f-derating-summary">The 50 °C tax — summary table</h3>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Equipment</th>
+        <th>Rating reference</th>
+        <th>Indicative factor / penalty at 50 °C</th>
+        <th>Standard basis</th>
+        <th>Field check</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>XLPE cables in air</td>
+        <td>30 °C air</td>
+        <td>× ≈0.82 (PVC ≈0.71); grouping factors multiply on top</td>
+        <td>IEC 60364-5-52 / IEC 60287</td>
+        <td>Cable schedule uses 50 °C column; breaker rating ≤ derated I_z</td>
+      </tr>
+      <tr>
+        <td>Buried cables</td>
+        <td>Soil 20–25 °C, ρ = 2.5 K·m/W</td>
+        <td>Soil temp + dry-sand resistivity penalties; site-specific</td>
+        <td>IEC 60287</td>
+        <td>Backfill specification; thermal resistivity assumption in calcs</td>
+      </tr>
+      <tr>
+        <td>Transformers (TX-1/TX-2)</td>
+        <td>40 °C max ambient</td>
+        <td>≈ −1 %/K above basis if standard design; zero if ordered for 50 °C; AF fans recover +25–40 %</td>
+        <td>IEC 60076</td>
+        <td>Nameplate design ambient and rise figures; fan operation</td>
+      </tr>
+      <tr>
+        <td>LV breakers in boards (ACB/MCCB)</td>
+        <td>40 °C around device, free air</td>
+        <td>× 0.8–0.9 installed in board at 50 °C room</td>
+        <td>IEC 60947-2 + manufacturer tables</td>
+        <td>Frame size vs continuous load (incomers ≥ 2309 A duty); room HVAC</td>
+      </tr>
+      <tr>
+        <td>VFDs / UPS electronics</td>
+        <td>40 °C</td>
+        <td>−1 to −1.5 %/°C above 40 °C → −10–15 % at 50 °C</td>
+        <td>IEC 61800 / IEC 62040 + manufacturer</td>
+        <td>Drive frame margin; drive-room A/C status and alarms</td>
+      </tr>
+      <tr>
+        <td>Diesel generator (DG)</td>
+        <td>ISO standard conditions (≈25–40 °C basis)</td>
+        <td>−0.5 to −1 %/°C above 40 °C unless site-rated (ours: 1250 kVA ESP at 50 °C)</td>
+        <td>ISO 8528</td>
+        <td>Nameplate: standard vs site rating; tropical radiator fitted</td>
+      </tr>
+      <tr>
+        <td>Batteries (UPS, DCDB)</td>
+        <td>20–25 °C</td>
+        <td>Service life halves per 8–10 °C above reference (capacity barely affected)</td>
+        <td>IEC 60896 / IEC 62485</td>
+        <td>Battery room temperature, A/C condition, last discharge-test record</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="warning">
+    <strong>Warning — the meta-SPOF of a hot-climate plant is the HVAC.</strong> Almost every
+    factor in this table silently assumes a working air-conditioning or ventilation system:
+    switchroom, drive room, battery room. At 50 °C ambient, cooling-plant failure does not
+    announce itself as an electrical fault — it quietly removes the margins that every rating
+    in the plant depends on. Treat switchroom and battery-room HVAC as electrical-reliability
+    equipment in the Part 3 SPOF analysis, not as a building service.
+  </div>
+
+  <h3 id="f-derating-checklist">50 °C field checklist</h3>
+
+  <ul class="checklist">
+    <li>Record switchroom, drive-room and battery-room temperatures; compare against the design assumptions.</li>
+    <li>Verify the cable schedule states its ambient basis and that 50 °C correction (≈0.82) plus grouping factors were applied.</li>
+    <li>Check transformer nameplates for the stated design ambient and guaranteed temperature rises; confirm AF fans (if fitted) run on demand.</li>
+    <li>Compare LV-MSB incomer ACB frame/trip settings against the 2309 A continuous duty with the in-board derating (0.8–0.9) applied.</li>
+    <li>Confirm VFD and UPS room A/C is duty/standby or alarmed; note any drive already running above 40 °C cabinet inlet.</li>
+    <li>Check whether the DG nameplate output is ISO standard-condition or 50 °C site-rated, and whether a high-ambient radiator is fitted.</li>
+    <li>Obtain the battery-room temperature log and the date/result of the last UPS and DCDB battery discharge tests.</li>
+    <li>Inspect outdoor enclosures and cable trays for direct solar exposure; note missing sunshades on sun-facing equipment.</li>
+  </ul>
+
+  <div class="key">Key takeaway: every rating is a promise made at a reference temperature, and at the 50 °C Saudi design ambient (see <a href="#orientation-environment">Part 0 — environment</a>) that promise is taxed: cables × 0.82, breakers-in-boards × 0.8–0.9, drives and UPS −10–15 %, gensets −5–10 %, transformers fixed only if ordered for 50 °C, and battery life halved per 8–10 °C. The factors multiply, the deratings are invisible on the SLD, and the air-conditioning that holds them all together is itself a single point of failure. All values indicative; manufacturer data and detailed studies govern.</div>
 </section>

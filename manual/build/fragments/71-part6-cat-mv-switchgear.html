@@ -1,0 +1,593 @@
+<!-- ============================================================
+     §CAT-MV-SWGR  MV Switchgear Catalogue (tag MV-SWGR)
+     Rev 3 (Saudi/SEC edition) — 13.8 kV / 400-230 V / 60 Hz / 50 °C
+     Part 6 — Equipment Catalogues. How to read, compare and select
+     17.5 kV class metal-clad switchgear for the SEC intake.
+     All data indicative; SASO-adopted IEC 62271-1/-100/-200 and the
+     manufacturer's certified data sheets govern.
+============================================================ -->
+<section id="cat-mv-swgr" data-title="MV Switchgear Catalogue" data-part="Part 6 — Equipment Catalogues">
+
+  <h2>MV Switchgear Catalogue</h2>
+
+  <div class="warning"><strong>Indicative catalogue data.</strong> Product families and typical
+parameters are listed for training and familiarisation only, are approximate, and change with
+manufacturer revisions. No part numbers are given; always obtain current certified data sheets
+and SASO/SEC acceptance status from the manufacturer.</div>
+
+  <p><strong>Goal:</strong> learn how to read a medium-voltage switchgear catalogue the way a
+  specifying engineer reads it — starting from what the plant actually needs (tag
+  <code>MV-SWGR</code>, the 13.8 kV intake board), mapping each plant requirement to the
+  catalogue parameter that answers it, and finishing with the specification card you would
+  attach to a request for quotation. The vendor families named here (ABB UniGear,
+  Siemens NXAIR, Schneider PIX and their relatives) are the ones you will most often meet
+  on Saudi industrial sites, so the comparison doubles as field familiarisation. For the
+  reasoning behind the ratings themselves, this section leans on
+  <a href="#c-shortcircuit">the short-circuit study</a> and
+  <a href="#c-breaker">the circuit-breaker tutorial</a>; for how Part 6 catalogue sections
+  are meant to be used, see <a href="#cat-intro">the catalogue introduction</a>.</p>
+
+  <!-- ────────────────────────────────────────────────────────────
+       1. WHAT THE PLANT NEEDS
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-mv-overview">What the Plant Needs — the Demand Side of the Catalogue</h3>
+
+  <p>Before opening any catalogue, write down what you are shopping for. A catalogue is a
+  menu of answers; if you do not arrive with the questions, the glossy photographs will
+  choose for you. For this plant the questions are fixed by the Rev 3 plant basis and by
+  the short-circuit study, and they define one piece of equipment: tag
+  <code>MV-SWGR</code>, the medium-voltage switchboard that takes the SEC 13.8 kV supply
+  and distributes it to the two transformer feeders (<code>TX-1</code> and
+  <code>TX-2</code> — see <a href="#cat-transformers">the transformer catalogue
+  section</a>).</p>
+
+  <p>The shopping list, with the reason behind each line:</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Requirement (indicative)</th><th>Why this value</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Rated voltage class <strong>17.5&nbsp;kV</strong></td>
+          <td>The system runs at 13.8&nbsp;kV. IEC switchgear is built in standard voltage
+          classes (7.2 / 12 / 17.5 / 24 / 36&nbsp;kV); the class must be the next standard
+          step at or above the highest system voltage, so a 13.8&nbsp;kV system lands in the
+          17.5&nbsp;kV class. The 12&nbsp;kV class — the most common class worldwide, built
+          for 11&nbsp;kV systems — is <em>not acceptable here</em>; this is the single most
+          common ordering error when a design is transplanted from an 11&nbsp;kV country to
+          a 13.8&nbsp;kV SEC network.</td></tr>
+      <tr><td>Rated frequency <strong>60&nbsp;Hz</strong></td>
+          <td>The SEC grid is 60&nbsp;Hz. Most catalogue type tests cover 50/60&nbsp;Hz, but
+          the rating must be declared at 60&nbsp;Hz — it changes the peak withstand factor
+          (2.6 instead of 2.5) and some instrument-transformer accuracy figures.</td></tr>
+      <tr><td>Busbar rating <strong>630&ndash;1250&nbsp;A</strong></td>
+          <td>The plant draws roughly 2 &times; 66.9&nbsp;A at MV — trivially small. The bus
+          rating is set by the smallest frames the product family offers (typically
+          630&nbsp;A) and by any future-load margin, not by load current.</td></tr>
+      <tr><td>Short-time withstand <strong>31.5&nbsp;kA / 3&nbsp;s</strong></td>
+          <td>The design utility fault level is 25&nbsp;kA, but SEC states a network range of
+          25&ndash;40&nbsp;kA. 31.5&nbsp;kA is the next standard rating above the design
+          duty; if SEC confirms a connection-point level above 31.5&nbsp;kA in writing, the
+          board class must rise to 40&nbsp;kA. See
+          <a href="#c-shortcircuit">the short-circuit section</a> for the full reasoning.</td></tr>
+      <tr><td>Metal-clad, <strong>withdrawable vacuum breakers</strong></td>
+          <td>Earthed metal partitions between busbar, breaker and cable compartments limit
+          fault spread and allow safe access; withdrawable trucks give visible isolation and
+          fast breaker exchange. Vacuum is the dominant MV interruption technology
+          (<a href="#c-breaker">breaker tutorial</a>).</td></tr>
+      <tr><td>Internal arc classification <strong>IAC AFLR 31.5&nbsp;kA 1&nbsp;s</strong></td>
+          <td>If an arc ever ignites inside the board, the enclosure must contain it for
+          long enough for protection to clear, without burning or blowing panels into the
+          operator aisle. Directly linked to the arc-flash study
+          (<a href="#c-arcflash">§ arc-flash</a>).</td></tr>
+      <tr><td>Service conditions <strong>50&nbsp;&deg;C design ambient, dust</strong></td>
+          <td>Catalogue continuous ratings are referenced to 40&nbsp;&deg;C; Saudi rooms must
+          either be cooled or the gear derated — covered in
+          <a href="#cat-mv-saudi">the Saudi-specific notes</a> below.</td></tr>
+    </tbody>
+  </table>
+
+  <p>Notice what is <em>not</em> on the list: load current barely features. A 2&nbsp;MW
+  plant on a 13.8&nbsp;kV intake is a fault-level-driven purchase, not a load-driven one.
+  The board you buy will spend its life carrying a few tens of amps and must nevertheless
+  survive 31.5&nbsp;kA for three seconds, because the withstand duty is set by the SEC
+  network behind it, not by anything inside the fence. This inversion — tiny normal duty,
+  enormous abnormal duty — is normal at the boundary between a utility and a small plant,
+  and it is why the catalogue comparison below concentrates on withstand, arc
+  classification and compartmentalization rather than ampacity.</p>
+
+  <div class="key">Key takeaway: arrive at the catalogue with the demand side written
+  down — 17.5&nbsp;kV class, 60&nbsp;Hz, 630&ndash;1250&nbsp;A bus, 31.5&nbsp;kA/3&nbsp;s,
+  metal-clad withdrawable vacuum, IAC AFLR — and treat every product page as a yes/no
+  answer to that list. All values indicative; the formal studies and SEC's written
+  fault-level confirmation govern.</div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       2. VENDOR FAMILIES
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-mv-families">The Vendor Families You Will Meet</h3>
+
+  <p>Three air-insulated metal-clad families dominate the primary-distribution market in
+  the Gulf, one from each of the big three manufacturers. They are functionally
+  equivalent — all are withdrawable vacuum-breaker boards type-tested to IEC
+  62271-200 — and a specification written around the standard, not around a brand, will
+  receive compliant offers from all three. Typical indicative class ranges:</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Family</th><th>Vendor</th><th>Construction</th><th>Voltage classes (typ.)</th>
+          <th>Bus current (typ.)</th><th>Short-time (typ.)</th><th>Notes for this plant</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>UniGear ZS1</strong></td><td>ABB</td>
+          <td>Air-insulated metal-clad, withdrawable VCB</td>
+          <td>up to 17.5&nbsp;kV (related variants to 24&nbsp;kV)</td>
+          <td>up to ~4000&nbsp;A</td><td>up to ~50&nbsp;kA</td>
+          <td>Very widely installed in Saudi industry; 17.5&nbsp;kV / 31.5&nbsp;kA /
+          630&ndash;1250&nbsp;A sits comfortably in the low-middle of the range.</td></tr>
+      <tr><td><strong>NXAIR</strong></td><td>Siemens</td>
+          <td>Air-insulated metal-clad, withdrawable VCB</td>
+          <td>up to 17.5&nbsp;kV (24&nbsp;kV variant exists)</td>
+          <td>up to ~4000&nbsp;A</td><td>up to ~50&nbsp;kA</td>
+          <td>Common on SEC-adjacent projects; strong 60&nbsp;Hz type-test coverage.</td></tr>
+      <tr><td><strong>PIX</strong></td><td>Schneider Electric</td>
+          <td>Air-insulated metal-clad, withdrawable VCB</td>
+          <td>up to 17.5&nbsp;kV (PIX-24 to 24&nbsp;kV)</td>
+          <td>up to ~4000&nbsp;A</td><td>up to ~50&nbsp;kA</td>
+          <td>Often paired with Schneider relays and LV boards for single-vendor
+          packages.</td></tr>
+    </tbody>
+  </table>
+
+  <p>Read the table the right way round: the plant needs 31.5&nbsp;kA and
+  630&ndash;1250&nbsp;A, and every family comfortably exceeds that. The comparison
+  between brands is therefore <em>not</em> won on headline ratings. It is won on
+  delivery time, local service and spares presence in the Kingdom, SEC acceptance
+  history, relay-integration preference (<a href="#cat-relays">relay catalogue</a>), and
+  the 50&nbsp;&deg;C derating answer discussed in
+  <a href="#cat-mv-saudi">the Saudi notes</a>.</p>
+
+  <h4>Where ring main units fit — and why not here</h4>
+
+  <p>Catalogues also offer a cheaper, smaller class of MV gear: the <strong>ring main
+  unit</strong> (RMU) and its modular cousins — <strong>Schneider SM6</strong> (modular,
+  air- or gas-insulated functional units) and <strong>ABB SafeRing / SafePlus</strong>
+  (sealed gas-insulated ring main blocks). These are <em>secondary distribution</em>
+  switchgear: fixed-pattern (no withdrawable truck), mostly switch-fuse or small-breaker
+  functions, designed to loop a distribution ring in and out and tee off one or two
+  transformers. They are superb at that job — compact, sealed against dust,
+  near-maintenance-free — and you will see thousands of them in Saudi utility kiosks.</p>
+
+  <p>They are the wrong product for <code>MV-SWGR</code>, for three reasons. First,
+  withstand: typical RMU short-time ratings sit around 20&ndash;25&nbsp;kA, below the
+  31.5&nbsp;kA this intake demands. Second, protection: a utility-intake board needs
+  full-function IED protection on withdrawable breakers with proper CTs and VTs
+  (<a href="#c-protection">protection coordination</a>), not fuse-switch combinations.
+  Third, service continuity: a fixed-pattern sealed block cannot have a breaker racked
+  out and exchanged in an hour. Know the RMU class so you can recognise when a vendor is
+  quoting you one to win on price — and decline.</p>
+
+  <h4>Gas-insulated primary gear and the SF<sub>6</sub>-free trend</h4>
+
+  <p>For completeness, the same vendors offer <strong>gas-insulated primary
+  switchgear</strong> — Siemens NXPLUS&nbsp;C (and the 8DJH family at secondary level),
+  ABB ZX-series — where the busbars and breakers live in sealed, gas-filled stainless
+  enclosures. The attraction is footprint (roughly half the width of air-insulated gear)
+  and immunity to dust and humidity, which is genuinely tempting in the Saudi
+  environment. The costs are price, less straightforward extension, and historically the
+  gas itself: SF<sub>6</sub> is the most potent greenhouse gas known and is being
+  regulated out of new installations worldwide.</p>
+
+  <p>The industry's answer is the <strong>SF<sub>6</sub>-free generation</strong>: vacuum
+  interrupters for breaking, with clean/dry air or proprietary low-GWP mixtures (ABB's
+  AirPlus, Siemens' "Blue" portfolio, Schneider's air-insulated AirSeT take on SM6/RM)
+  for insulation. Typical ratings already cover the 17.5&nbsp;kV / 31.5&nbsp;kA point
+  this plant needs. For a new Saudi plant the practical guidance is: air-insulated
+  metal-clad remains the default for a primary intake board in a conditioned room; if a
+  gas-insulated board is chosen for footprint or environment, prefer the SF<sub>6</sub>-free
+  variant and ask the vendor for its SASO/SEC acceptance status explicitly. Typical
+  ranges only — no part numbers, no prices; tender data sheets govern.</p>
+
+  <h4>Comparing offers — the classic traps</h4>
+
+  <p>When three compliant-looking bids land on your desk, the differences hide in the
+  fine print, and they recur so reliably they deserve a list:</p>
+
+  <ul>
+    <li><strong>The 12&nbsp;kV substitution.</strong> A bid built on the vendor's
+    high-volume 12&nbsp;kV variant "suitable for 13.8&nbsp;kV operation". Reject:
+    operating a 12&nbsp;kV-class board (28&nbsp;kV/75&nbsp;kV insulation ladder) at
+    13.8&nbsp;kV erodes the insulation margin the type test promised. Demand the
+    17.5&nbsp;kV type-test certificates by number.</li>
+    <li><strong>IAC at a smaller current or shorter time.</strong> "Internal arc
+    classified" with 25&nbsp;kA/0.5&nbsp;s in a footnote. The IAC figures must match
+    the short-time rating and exceed the realistic clearing time.</li>
+    <li><strong>IAC AFL, not AFLR.</strong> Cheaper, but commits the installation to a
+    rear wall forever and complicates rear cable work.</li>
+    <li><strong>"Metal-enclosed" sold as "metal-clad".</strong> Metal-enclosed is the
+    umbrella term; only LSC2B-PM with earthed metal partitions is metal-clad in the
+    sense this plant specifies. Check the LSC/partition codes, not the brochure
+    adjective.</li>
+    <li><strong>Ratings quoted at 40&nbsp;&deg;C only.</strong> Silent on 50&nbsp;&deg;C
+    performance — see <a href="#cat-mv-saudi">the Saudi notes</a>; make the
+    50&nbsp;&deg;C statement a mandatory bid deliverable.</li>
+    <li><strong>50&nbsp;Hz-only type tests.</strong> Rare from the big three, common
+    from re-badgers. The 60&nbsp;Hz declaration affects the peak factor and instrument
+    transformer accuracy; ask for it explicitly.</li>
+  </ul>
+
+  <div class="tip">A clean way to force comparability: send the
+  <a href="#cat-mv-selection">specification card</a> as a fill-in table and require each
+  bidder to return it line by line with certificate references. A bidder who will not
+  fill in a row is telling you something.</div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       3. ANATOMY OF A CATALOGUE PAGE
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-mv-anatomy">Anatomy of an MV Switchgear Catalogue Page</h3>
+
+  <p>An MV switchgear catalogue is organised in two layers. The front pages describe the
+  <em>system</em> — construction, compartments, arc classification, type tests. The back
+  pages are the <em>configurator</em> — panel types, rating combinations, dimensions and
+  weights per panel. Engineers who only read the back pages buy boards that meet the
+  ratings but disappoint in service; the front pages are where the safety and
+  maintainability are decided.</p>
+
+  <h4>Panel types — the vocabulary of a line-up</h4>
+
+  <p>A switchboard is ordered as a row of standard panels ("functional units"). The
+  catalogue's panel-type table is the menu, and for this plant the line-up is short:</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Panel type</th><th>Function</th><th>This plant (indicative)</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Incomer</td><td>Receives the utility cable; withdrawable breaker, full
+          protection IEDs, metering CTs/VTs.</td><td>1 &times; incomer from the SEC
+          13.8&nbsp;kV connection, 630&nbsp;A frame.</td></tr>
+      <tr><td>Feeder</td><td>Withdrawable breaker feeding a downstream load — here, a
+          transformer.</td><td>2 &times; transformer feeders (TX-1, TX-2), 630&nbsp;A
+          frames carrying ~66.9&nbsp;A each.</td></tr>
+      <tr><td>Bus-tie / bus coupler</td><td>Splits or joins bus sections.</td>
+          <td>Not required on a single-incomer board; appears if a second SEC intake or a
+          future MV generator is added.</td></tr>
+      <tr><td>Bus riser</td><td>Carries the bus up/over to the adjacent section; partners a
+          bus-tie or houses VTs.</td><td>As above — only with a sectionalised bus.</td></tr>
+      <tr><td>Metering / VT panel</td><td>Busbar voltage transformers, sometimes the
+          utility tariff metering.</td><td>1 &times; if SEC requires a dedicated metering
+          panel at the intake (confirm with SEC early — it changes the line-up
+          length).</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Compartments and loss-of-service-continuity</h4>
+
+  <p>"Metal-clad" means the panel interior is divided by earthed metal partitions into
+  (at least) four compartments: <strong>busbar</strong>, <strong>circuit-breaker</strong>,
+  <strong>cable</strong> (with CTs and the earthing switch), and the
+  <strong>low-voltage box</strong> on top holding relays, meters and wiring. The point of
+  the partitions is brutally practical: a fault, a tool, or a hand in one compartment is
+  kept out of the others. IEC 62271-200 codifies this in two ratings you should read off
+  every catalogue page:</p>
+
+  <p><strong>Partition class</strong> — <code>PM</code> (partitions of metal, earthed)
+  versus <code>PI</code> (insulating partitions). Specify PM for a primary board.
+  <strong>Loss of service continuity class</strong> — what must be de-energised to open a
+  compartment. <code>LSC2B</code>, the metal-clad benchmark, means you can open the
+  breaker or cable compartment of one panel while the busbar <em>and the other panels'
+  cables</em> stay live. On a single-incomer plant board this is what lets you work on a
+  transformer feeder breaker while the other transformer keeps the plant alive.
+  Lesser classes (LSC1, LSC2A) belong to secondary gear and RMUs.</p>
+
+  <h4>Withdrawable versus fixed</h4>
+
+  <p>In a withdrawable (draw-out) design the breaker sits on a truck; racking it from
+  <em>service</em> to <em>test</em> to <em>removed</em> position physically separates the
+  primary contacts behind automatic metal shutters. You gain visible-break isolation, a
+  built-in test position for secondary injection, and breaker exchange measured in
+  minutes. Fixed-pattern boards weld the breaker into the circuit and rely on a separate
+  disconnector — cheaper and more compact, and the normal choice only at secondary level
+  or in sealed gas-insulated designs where the interrupter is maintenance-free for life.
+  For <code>MV-SWGR</code>, specify withdrawable.</p>
+
+  <h4>Internal arc classification — decoding IAC AFLR 31.5 kA 1 s</h4>
+
+  <p>The internal arc rating is a type test in which a real arc is deliberately struck
+  inside each compartment and the enclosure must protect indicator cloths standing in for
+  people. Decode the string: <strong>IAC</strong> = internal arc classified;
+  <strong>A</strong> = authorised-personnel access only;
+  <strong>F&nbsp;L&nbsp;R</strong> = the tested sides — Front, Lateral, Rear (an
+  installation against a wall may only need AFL — but specify AFLR so the board can stand
+  free); <strong>31.5&nbsp;kA&nbsp;1&nbsp;s</strong> = the arc current and duration
+  survived. The arc current should equal the short-time rating; the duration must exceed
+  the slowest realistic clearing time at the bus (check against
+  <a href="#c-protection">the grading study</a> and
+  <a href="#c-arcflash">the arc-flash calculation</a>). Note the asymmetry: short-time
+  withstand is 3&nbsp;s (a through-fault duty), internal arc is 1&nbsp;s (an in-board
+  arc, which protection must kill far faster).</p>
+
+  <h4>IP ratings and the ratings ladder</h4>
+
+  <p>Catalogue enclosure protection is typically IP3X or IP4X overall with IP2X between
+  compartments — designed for a clean indoor room, not a dust storm. The implications
+  for a Saudi switchroom are handled in <a href="#cat-mv-saudi">the Saudi notes</a>.
+  Finally, every catalogue states the IEC 62271-1 insulation ladder for the voltage
+  class; for 17.5&nbsp;kV expect a 1-minute power-frequency withstand of
+  <strong>38&nbsp;kV&nbsp;rms</strong> and a lightning impulse withstand of
+  <strong>95&nbsp;kV peak</strong> (indicative standard values). If a data sheet shows
+  the 12&nbsp;kV-class ladder (28&nbsp;kV / 75&nbsp;kV), the wrong class is being
+  offered — stop and query it.</p>
+
+  <!-- ────────────────────────────────────────────────────────────
+       4. PROTECTION AND CONTROL FIT
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-mv-protection-fit">Protection, Instrument Transformers and Interlocks</h3>
+
+  <p>A switchgear panel is only as good as the measurement and intelligence built into
+  it. The catalogue chapters on instrument transformers, low-voltage compartments and
+  interlocking are where you verify that the board can host the protection scheme
+  designed in <a href="#c-protection">the protection coordination section</a> — and they
+  are the chapters most often skipped at tender stage, which is why CT ratio changes and
+  interlock disputes are the classic switchgear variation orders.</p>
+
+  <h4>Relays and the LV compartment</h4>
+
+  <p>Each panel's LV box hosts the protection IED (numerical relay), the trip/close
+  control switches, indication lamps and terminal rows. Catalogues state which relay
+  families are pre-engineered for the panel — typically the vendor's own
+  (ABB Relion, Siemens SIPROTEC, Schneider Easergy/MiCOM; see
+  <a href="#cat-relays">the relay catalogue section</a>) — but any IEC-compliant IED can
+  be accommodated if you say so at tender. Specify, do not assume: relay family and
+  model class, <strong>110&nbsp;V&nbsp;DC</strong> auxiliary supply from the plant DCDB,
+  trip-circuit supervision, and at least one spare programmable contact per function.
+  For the incomer, ask for the SEC-side requirements (intertrip, metering accuracy) to
+  be confirmed in writing before the LV box drawings are approved.</p>
+
+  <h4>CT and VT options</h4>
+
+  <p>The cable compartment carries the current transformers; the catalogue offers block
+  (resin) or ring-core types, single- or multi-ratio. Order the cores by duty:
+  protection cores typically class <strong>5P20</strong>, metering cores class
+  <strong>0.5</strong> with an instrument security factor, ratios sized to the
+  feeder duty (a 100/1 or 100/5 class on a 66.9&nbsp;A transformer feeder is a typical
+  indicative starting point — the protection study fixes the final ratio and burden).
+  Voltage transformers come fixed or withdrawable; specify <strong>withdrawable, fused
+  VTs</strong> so a failed VT or blown fuse can be exchanged without de-energising the
+  bus. All accuracy figures must be declared at 60&nbsp;Hz.</p>
+
+  <h4>Voltage indication and earthing</h4>
+
+  <p>Every panel should carry a <strong>capacitive voltage detecting system</strong>
+  (VDS/VPIS to IEC 62271-206): bushing-mounted capacitive dividers feeding front-plate
+  indicators that show, per phase, whether the cable side is live. This is the first
+  thing a field engineer checks before racking or earthing, and the catalogue option
+  costs almost nothing at order time and a panel rebuild afterwards. Pair it with the
+  <strong>cable earthing switch</strong> — fault-making rated (it must survive being
+  closed onto a live cable by mistake), operated from the front, with a clear mechanical
+  position indicator.</p>
+
+  <h4>Interlocks — the safety logic in steel</h4>
+
+  <p>Catalogues list the standard interlock set; verify all of these are included and
+  add project-specific keys:</p>
+
+  <ul>
+    <li>Breaker can only be racked between service and test positions when
+    <strong>open</strong>; the truck mechanically blocks closing mid-travel.</li>
+    <li>Earthing switch can only close when the breaker truck is in test/removed
+    position; the truck cannot rack to service while the earthing switch is closed.</li>
+    <li>Automatic metal shutters cover the live spouts whenever the truck is
+    withdrawn — padlockable per compartment.</li>
+    <li>LV plug interlock: the truck cannot rack to service with the secondary
+    (control) plug disconnected.</li>
+    <li>Key interlocks with the upstream SEC point of connection and (if fitted) any
+    bus-tie scheme, per the operating philosophy; key schedules are a deliverable to
+    review at drawing approval, not at site.</li>
+  </ul>
+
+  <div class="tip">At factory acceptance, physically attempt every forbidden operation —
+  racking with the breaker closed, closing the earthing switch in service position. A
+  correct interlock refuses smoothly; a misbuilt one lets you start the movement and
+  jams. The FAT checklist in <a href="#cat-mv-saudi">the Saudi notes</a> includes
+  this.</div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       5. SELECTION FOR THIS PLANT
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-mv-selection">Selection for This Plant — Requirement to Catalogue Parameter</h3>
+
+  <p>This is the worked mapping: each line of the plant's demand (Rev 3 Plant Data Card
+  plus <a href="#c-shortcircuit">the short-circuit study</a>) translated into the exact
+  catalogue parameter to demand, and the typical family fit. Work down the table in
+  order — voltage class first, withstand second, everything else after — because a
+  failure on the first two lines disqualifies a product no matter how good the rest
+  is.</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Plant requirement</th><th>Catalogue parameter to demand</th>
+          <th>Value to write (indicative)</th><th>Typical fit</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>SEC 13.8&nbsp;kV system</td>
+          <td>Rated voltage U<sub>r</sub>; insulation levels U<sub>d</sub>/U<sub>p</sub>
+          (IEC 62271-1)</td>
+          <td>17.5&nbsp;kV class; 38&nbsp;kV rms 1&nbsp;min; 95&nbsp;kV peak BIL</td>
+          <td>All three metal-clad families offer a 17.5&nbsp;kV version — confirm it is
+          the 17.5&nbsp;kV type test, not a 12&nbsp;kV unit "used at 13.8".</td></tr>
+      <tr><td>60&nbsp;Hz grid</td>
+          <td>Rated frequency f<sub>r</sub>, declared on the type-test certificates</td>
+          <td>60&nbsp;Hz</td>
+          <td>Standard for all families; check CT/VT accuracy declared at 60&nbsp;Hz.</td></tr>
+      <tr><td>Utility fault duty 25&nbsp;kA design (SEC range 25&ndash;40&nbsp;kA)</td>
+          <td>Short-time withstand I<sub>k</sub>/t<sub>k</sub>; peak withstand
+          I<sub>p</sub>; breaker I<sub>sc</sub> (IEC 62271-100)</td>
+          <td>31.5&nbsp;kA / 3&nbsp;s; peak 2.6&nbsp;&times;&nbsp;31.5 &asymp;
+          <strong>82&nbsp;kA</strong> at 60&nbsp;Hz; breaking 31.5&nbsp;kA</td>
+          <td>Comfortably inside every family's range; escalate the whole line to
+          40&nbsp;kA if SEC confirms a higher connection-point level.</td></tr>
+      <tr><td>Plant load ~2&nbsp;MW (2&nbsp;&times;&nbsp;66.9&nbsp;A MV feeders)</td>
+          <td>Rated continuous current I<sub>r</sub>, bus and per panel</td>
+          <td>Bus 630&ndash;1250&nbsp;A; incomer and feeders 630&nbsp;A frames</td>
+          <td>Smallest frames in every family; choose 1250&nbsp;A bus only if a
+          future-load case justifies it.</td></tr>
+      <tr><td>Operator safety, arc event</td>
+          <td>Internal arc classification (IEC 62271-200 annex)</td>
+          <td>IAC AFLR 31.5&nbsp;kA 1&nbsp;s</td>
+          <td>Standard or low-cost option on all families; confirm exhaust/plenum
+          arrangement fits the room height.</td></tr>
+      <tr><td>Maintainability, service continuity</td>
+          <td>LSC and partition classes; breaker mounting</td>
+          <td>LSC2B-PM, withdrawable vacuum breakers, motor-charged spring
+          mechanisms</td>
+          <td>The defining feature of UniGear ZS1 / NXAIR / PIX — this line is what
+          excludes RMUs.</td></tr>
+      <tr><td>Protection scheme (<a href="#c-protection">Part 2</a>)</td>
+          <td>IED family, CT/VT cores and classes, 110&nbsp;V&nbsp;DC aux, VDS,
+          interlocks</td>
+          <td>Per <a href="#cat-mv-protection-fit">previous sub-section</a></td>
+          <td>All families integrate their own and third-party IEDs.</td></tr>
+      <tr><td>50&nbsp;&deg;C ambient, dusty site</td>
+          <td>Service-conditions chapter; derated continuous ratings; enclosure IP</td>
+          <td>Vendor-certified continuous ratings at 50&nbsp;&deg;C, or HVAC-conditioned
+          room declared; IP4X minimum indoor</td>
+          <td>See <a href="#cat-mv-saudi">Saudi notes</a> — this is the question vendors
+          answer worst by default.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="worked">
+    <h4>Worked check — margin between SEC duty and board rating</h4>
+    <p>Confirm the 31.5&nbsp;kA class actually covers the design duty with sensible
+    margin. Design utility fault level (Plant Data Card): 25&nbsp;kA at 13.8&nbsp;kV.</p>
+    <code class="formula">Withstand margin = 31.5 kA / 25 kA = 1.26 → 26 % above design duty</code>
+    <p>Peak (first-loop asymmetric) duty at the bus, using the standard 60&nbsp;Hz factor
+    of 2.6 (see <a href="#c-shortcircuit">short-circuit section</a> for where 2.6 comes
+    from):</p>
+    <code class="formula">i_p,duty = 2.6 × 25 kA = 65 kA  vs  I_p,rated = 2.6 × 31.5 kA ≈ 82 kA ✓</code>
+    <p>Thermal withstand: the board is tested for 31.5&nbsp;kA for 3&nbsp;s, an
+    I&sup2;t capability of:</p>
+    <code class="formula">(31.5 kA)² × 3 s ≈ 2977 kA²·s  vs  duty (25 kA)² × 1 s = 625 kA²·s ✓ (≈ 4.8× margin)</code>
+    <p>where 1&nbsp;s is a conservative upper bound on backup clearing time from
+    <a href="#c-protection">the grading study</a>. <strong>Sanity check:</strong> all
+    three margins are comfortable at the 25&nbsp;kA design level — but if SEC's written
+    confirmation comes back at, say, 35&nbsp;kA (inside their stated 25&ndash;40&nbsp;kA
+    range), the withstand margin becomes 31.5/35&nbsp;=&nbsp;0.9 — <em>under-rated,
+    not allowed</em> — and the whole board moves to the 40&nbsp;kA class. This is why
+    the fault-level letter is the first document on the critical path, before the RFQ
+    goes out. All figures indicative; the formal study governs.</p>
+  </div>
+
+  <h4>The specification card</h4>
+
+  <p>Condensed into the data sheet you would attach to the RFQ for tag
+  <code>MV-SWGR</code> — every value indicative, to be confirmed by the formal studies
+  and SEC correspondence:</p>
+
+  <table class="form">
+    <tr><td>Tag / service</td><td>MV-SWGR — main 13.8&nbsp;kV intake and distribution board, SEC supply</td></tr>
+    <tr><td>Standard</td><td>SASO-adopted IEC 62271-1 / -100 / -200; SEC Distribution Code; SBC 401</td></tr>
+    <tr><td>Type</td><td>Metal-clad, air-insulated, indoor, single busbar, LSC2B-PM</td></tr>
+    <tr><td>Rated voltage / insulation</td><td>17.5&nbsp;kV class (system 13.8&nbsp;kV); 38&nbsp;kV rms / 95&nbsp;kV BIL</td></tr>
+    <tr><td>Rated frequency</td><td>60&nbsp;Hz</td></tr>
+    <tr><td>Busbar current</td><td>630&nbsp;A (option 1250&nbsp;A), certified at 50&nbsp;&deg;C ambient or room HVAC stated</td></tr>
+    <tr><td>Short-time / peak withstand</td><td>31.5&nbsp;kA / 3&nbsp;s; 82&nbsp;kA peak (60&nbsp;Hz)</td></tr>
+    <tr><td>Internal arc</td><td>IAC AFLR 31.5&nbsp;kA 1&nbsp;s</td></tr>
+    <tr><td>Circuit breakers</td><td>Vacuum, withdrawable, 630&nbsp;A, 31.5&nbsp;kA, motor-spring, 110&nbsp;V&nbsp;DC shunt trip/close, E2/M2 endurance class</td></tr>
+    <tr><td>Line-up (indicative)</td><td>1 &times; incomer, 2 &times; transformer feeders (TX-1/TX-2), metering VT panel if required by SEC; 1 spare/space panel</td></tr>
+    <tr><td>Protection / metering</td><td>Numerical IEDs per protection study; CTs 5P20 + cl. 0.5 cores; withdrawable fused VTs; VDS on all panels</td></tr>
+    <tr><td>Earthing</td><td>Fault-making cable earthing switches; earth bar full length; NER interface per plant earthing design</td></tr>
+    <tr><td>Enclosure / environment</td><td>IP4X indoor; 50&nbsp;&deg;C design ambient; dust per site data; space heaters with thermostat</td></tr>
+    <tr><td>Documents with bid</td><td>Type-test certificates (incl. internal arc and 60&nbsp;Hz), SASO/SABER status, SEC acceptance references, derating curves to 50&nbsp;&deg;C</td></tr>
+  </table>
+
+  <div class="key">Key takeaway: the specification is written in IEC 62271 parameter
+  language, not brand language. Any of UniGear ZS1, NXAIR or PIX can satisfy this card;
+  the card is what makes their offers comparable.</div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       6. SAUDI-SPECIFIC PRACTICE
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-mv-saudi">Saudi-Specific Practice — Heat, Dust, SEC and SASO</h3>
+
+  <h4>The 50 &deg;C question</h4>
+
+  <p>Every continuous current rating in an IEC switchgear catalogue is referenced to the
+  IEC 62271-1 "normal service conditions": maximum ambient <strong>40&nbsp;&deg;C</strong>
+  (24-hour average 35&nbsp;&deg;C). The plant's design ambient is
+  <strong>50&nbsp;&deg;C</strong>. A board run at its catalogue current in a
+  50&nbsp;&deg;C room exceeds its tested temperature-rise limits at the contacts and
+  joints — silently, year after year, until a spout or bus joint anneals and fails. The
+  fix is administrative, not heroic: <strong>ask the vendor, in the RFQ, for certified
+  continuous ratings at 50&nbsp;&deg;C</strong>. Because this board is thermally loafing
+  (66.9&nbsp;A on 630&nbsp;A frames — about 11&nbsp;% utilisation), the derated figure
+  will still clear the duty by a wide margin; the point is to have it in writing rather
+  than discovered in service. The rule of thumb vendors apply is a few percent of
+  current per kelvin of excess ambient — a 630&nbsp;A panel typically certifies
+  somewhere around 540&ndash;580&nbsp;A at 50&nbsp;&deg;C (indicative; the vendor's
+  thermal calculation governs). The same question must be asked of the relay/IED
+  operating range and the space-heater sizing.</p>
+
+  <p>In practice most Saudi switchrooms are <strong>HVAC-conditioned to hold
+  &le;40&nbsp;&deg;C</strong>, which restores the catalogue ratings — but then the HVAC
+  becomes electrical infrastructure: specify room over-temperature alarms to the control
+  system, and check what the board is rated for during an HVAC failure on a 50&nbsp;&deg;C
+  day, because that is exactly when the plant will refuse to shed load.</p>
+
+  <h4>Dust and the room</h4>
+
+  <p>Air-insulated switchgear breathes the room's air. Desert dust is conductive when
+  combined with morning humidity, and a dust film across insulation is the classic
+  precursor to the internal arc the IAC rating exists for. Practice: positively
+  pressurised switchroom with filtered HVAC intake, door-closer discipline, IP4X
+  enclosures as a backstop (not a substitute), space heaters running whenever panels are
+  de-energised, and insulation inspection/cleaning in the maintenance plan. If the room
+  cannot be kept clean — remote yard locations, temporary power — that is the legitimate
+  use-case for sealed gas-insulated (preferably SF<sub>6</sub>-free) gear from
+  <a href="#cat-mv-families">the families section</a>.</p>
+
+  <h4>SEC acceptance and SASO/SABER paperwork</h4>
+
+  <p>Two regulatory tracks run in parallel and neither is optional. First,
+  <strong>SEC</strong>: the intake board sits at the utility boundary, so SEC reviews
+  and accepts the design — fault level confirmation in writing, metering and protection
+  requirements at the point of connection, intertrip and earthing interface, and in many
+  cases a preference list of previously-accepted switchgear types. Engage SEC at
+  specification stage, not at energisation. Second, <strong>SASO conformity</strong>:
+  imported electrical equipment enters the Kingdom through the SABER platform with
+  certificates of conformity against the SASO-adopted IEC standards. Make the vendor
+  responsible in the purchase order for supplying type-test certificates
+  (IEC 62271-1/-100/-200, including the internal-arc and 60&nbsp;Hz evidence),
+  SABER/SASO certification, and country-of-origin documents — missing paperwork strands
+  switchgear in port for months far more often than technical faults do.</p>
+
+  <h4>Factory acceptance test — scope checklist</h4>
+
+  <p>The FAT is your last cheap chance to find problems. Witness it in person for an
+  intake board. Indicative scope:</p>
+
+  <ul class="checklist">
+    <li>Verify ratings plates: 17.5&nbsp;kV class, 60&nbsp;Hz, 31.5&nbsp;kA/3&nbsp;s, IAC AFLR 31.5&nbsp;kA 1&nbsp;s, against approved data sheets.</li>
+    <li>Review type-test certificates and routine-test reports; confirm SASO/SABER and SEC acceptance documents are in the dossier.</li>
+    <li>Power-frequency withstand (routine) on main and auxiliary circuits witnessed and recorded.</li>
+    <li>Measure main-circuit resistance (ductor) across each breaker and bus joint; compare to vendor limits.</li>
+    <li>Rack every breaker through service&ndash;test&ndash;removed; check shutter operation and padlocking.</li>
+    <li>Attempt every forbidden interlock operation (rack with breaker closed, earth switch in service position, close with LV plug off) — all must be mechanically refused.</li>
+    <li>Operate each earthing switch; verify position indication and key-interlock scheme against the approved key schedule.</li>
+    <li>Secondary injection of every IED: pickups, curves and trip mapping per the approved settings file (<a href="#c-protection">protection study</a>).</li>
+    <li>Primary injection of CT cores for ratio and polarity; VT ratio and fuse supervision; VDS indication per phase.</li>
+    <li>Function-test anti-pumping, trip-circuit supervision, and all alarms to terminal level at 110&nbsp;V&nbsp;DC.</li>
+    <li>Check space heaters, thermostats and panel lighting; verify IP sealing, gland plates and cable-box sizing against approved cable schedules.</li>
+    <li>Confirm 50&nbsp;&deg;C derating statement, spares list, lifting/transport drawings and O&amp;M manuals are delivered before shipment release.</li>
+  </ul>
+
+  <div class="note"><strong>Closing the loop.</strong> Everything in this catalogue
+  section is indicative training data. The binding chain for the real purchase is:
+  SEC written fault level &rarr; formal short-circuit study
+  (<a href="#c-shortcircuit">Part 2</a>) &rarr; approved data sheet (the
+  <a href="#cat-mv-selection">spec card</a>) &rarr; vendor certified drawings and
+  type tests &rarr; FAT &rarr; SEC energisation approval. The catalogue's job is only to
+  make you fluent for that conversation.</div>
+
+</section>

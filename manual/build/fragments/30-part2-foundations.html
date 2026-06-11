@@ -1,0 +1,1137 @@
+<!-- ============================================================
+     Part 2 — Calculations — FOUNDATIONS (Rev 3, Saudi/SEC edition)
+     Fragment: 30-part2-foundations.html
+     Basis: 13.8 kV / 400-230 V / 60 Hz / 50 °C (Rev 3 Plant Data Card)
+     Sections: c-why, c-load, c-flc, c-loadflow, c-perunit
+     All values INDICATIVE / TENTATIVE — detailed studies govern.
+============================================================ -->
+
+<!-- ============================================================
+     §C-WHY  Why calculations matter (Saudi / SEC assessment context)
+============================================================ -->
+<section id="c-why" data-title="Why Calculations Matter" data-part="Part 2 — Calculations">
+
+  <h2>Part 2 — Calculations</h2>
+
+  <p><em>Where you are in the workflow: you have identified the equipment and read the SLD
+  (Part 1); now you run the numbers that tell you whether the existing equipment is
+  correctly rated before you write a single recommendation.</em></p>
+
+  <div class="key">
+    Assessment calculations are <strong>verification</strong>, not green-field design.
+    Your job in the field is to ask: <em>"Is this transformer / breaker / cable / genset
+    still adequate for what the plant is actually doing today, in this climate, on this
+    grid?"</em> — and to back the answer with arithmetic, not opinion.
+  </div>
+
+  <h3 id="c-why-why">Why Calculations Matter in an Assessment</h3>
+
+  <p>Every rating you see on the SLD — a transformer kVA, a breaker breaking capacity, a
+  busbar bracing figure, a cable cross-section, a capacitor bank, a genset — is the
+  output of a calculation somebody performed years ago. That calculation is the
+  <strong>audit trail</strong> that justifies the rating. In an assessment you work in
+  the opposite direction: you start from the nameplate, reverse-engineer the assumption
+  that was made, and check whether reality still matches it.</p>
+
+  <p>Calculations are not a one-time design activity. They appear at four distinct
+  moments in the life of a plant, and a field engineer must recognise which moment they
+  are standing in:</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Moment in plant life</th><th>Question the calculation answers</th><th>Typical trigger</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>1. Design</strong></td>
+        <td>"What rating do we buy?" — sizing from a load list that does not yet exist
+        as physical equipment.</td>
+        <td>New plant, major expansion. Owned by the design consultant; produces the
+        original studies.</td>
+      </tr>
+      <tr>
+        <td><strong>2. Verification (this manual's focus)</strong></td>
+        <td>"Is what was bought still adequate for what the plant actually does?" —
+        the same arithmetic run backwards against nameplates and meter readings.</td>
+        <td>Condition assessment, due diligence, insurance survey, SPOF/FMECA study.</td>
+      </tr>
+      <tr>
+        <td><strong>3. Modification</strong></td>
+        <td>"Can we add this 250 kW compressor without re-equipping the substation?" —
+        delta calculations layered on the as-found base case.</td>
+        <td>Debottlenecking, new packages, PFC retrofit, DG addition. Requires the
+        management-of-change file to carry the revised studies.</td>
+      </tr>
+      <tr>
+        <td><strong>4. Incident investigation</strong></td>
+        <td>"Why did the breaker explode / the cable burn / the relay not trip?" —
+        forensic re-calculation of fault duty, loading and settings as they were at the
+        moment of failure.</td>
+        <td>After a trip, fire, arc-flash event or unexplained outage. The most
+        unforgiving audience your arithmetic will ever have.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>The two as-found failure modes you are hunting in moment 2:</p>
+
+  <ul>
+    <li><strong>Under-rating</strong> — cables and busbars that overheat (fire risk),
+    switchgear that cannot interrupt a fault (catastrophic failure — see
+    <a href="#c-shortcircuit">short-circuit withstand</a>), protection that
+    mis-coordinates or nuisance-trips (<a href="#c-protection">coordination</a>),
+    motors that stall, process voltage too low to run.</li>
+    <li><strong>Over-rating</strong> — capital tied up in oversized transformers,
+    switchgear frames, cables and gensets the plant will never use; this matters most
+    when the client is deciding whether to add load or replace equipment.</li>
+  </ul>
+
+  <h3 id="c-why-saudi">The Saudi (SEC) Basis — What Changes and Why It Matters</h3>
+
+  <p>This Rev 3 edition localises every calculation to a plant connected to the
+  <strong>Saudi Electricity Company (SEC)</strong> distribution network. Three things
+  change relative to the generic IEC textbook case, and each one flows through the
+  arithmetic of every later section:</p>
+
+  <ul>
+    <li><strong>Voltage levels: 13.8 kV MV, 400/230 V LV.</strong> SEC's standard
+    distribution voltage is 13.8 kV (a North-American-heritage level adopted across the
+    Kingdom), not the 11 kV common in 50 Hz countries. The LV utilisation voltage is
+    400/230 V three-phase TN-S. Both levels appear inside every √3 × V denominator in
+    Part 2 — get the voltage wrong and every current is wrong by 20–25 %.</li>
+    <li><strong>Frequency: 60 Hz.</strong> The Saudi grid runs at 60 Hz. Consequences:
+    a 4-pole motor runs at 1800 rpm (not 1500), reactances are 20 % higher for the same
+    inductance (X = 2πfL), and imported 50 Hz equipment must be explicitly verified for
+    60 Hz duty. Frequency does not appear in the FLC formula — but it silently sits
+    inside every impedance, every motor speed and every capacitor rating.</li>
+    <li><strong>Climate: 50 °C design ambient, dust and sand.</strong> The "derating
+    culture" is the defining habit of good Saudi electrical engineering. Cable tables,
+    busbar ratings, transformer ONAN ratings and DG outputs are all published at 30–40 °C
+    reference ambients; at a 50 °C design ambient an XLPE cable in air keeps only about
+    0.82 of its tabulated ampacity, and a diesel genset is bought against its ESP rating
+    at 50 °C, not its 25 °C brochure figure. Enclosures outdoors are minimum IP54
+    against dust. <em>Any rating you read off a generic table and do not derate is a
+    finding waiting to happen.</em></li>
+  </ul>
+
+  <div class="note">
+    <strong>Standards basis (cite together):</strong> SASO-adopted IEC standards
+    (Saudi Standards, Metrology and Quality Organization adopts IEC with national
+    deviations), the <strong>SEC Distribution Code</strong> and <strong>Saudi Grid
+    Code</strong> for connection, power factor and fault-level requirements, and
+    <strong>SBC 401</strong> (Saudi Building Code — Electrical) for installation
+    practice. Where this manual cites "IEC 60909" or "IEC 60364", read the
+    SASO-adopted edition.
+  </div>
+
+  <p>The indicative Rev 3 design basis used throughout Part 2:</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Parameter</th><th>Indicative value</th><th>Source / derivation</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Plant maximum demand</td><td>~2.0 MW</td><td>Basis of design (<a href="#c-load">load estimate</a>)</td></tr>
+      <tr><td>Power factor (uncorrected)</td><td>0.85</td><td>Basis of design; PFC target 0.95 (<a href="#c-pfc">PFC sizing</a>)</td></tr>
+      <tr><td>Apparent power</td><td>~2 353 kVA</td><td>2 000 kW / 0.85</td></tr>
+      <tr><td>MV supply</td><td>13.8 kV, 60 Hz, 3-ph (SEC)</td><td>SEC Distribution Code; switchgear 17.5 kV class</td></tr>
+      <tr><td>Utility fault level</td><td>25 kA design (SEC range 25–40 kA)</td><td>Confirm with SEC connection agreement</td></tr>
+      <tr><td>Transformers</td><td>2 × 1600 kVA, 13.8/0.4 kV, Dyn11, Z ≈ 6 %</td><td>Basis of design (<a href="#c-transformer">N-1 check</a>)</td></tr>
+      <tr><td>LV system</td><td>400/230 V, 60 Hz, TN-S</td><td>SBC 401 / SASO-IEC 60364</td></tr>
+      <tr><td>LV FLC per transformer</td><td>≈ 2 309 A</td><td>§<a href="#c-flc">c-flc</a></td></tr>
+      <tr><td>MV FLC per transformer</td><td>≈ 66.9 A</td><td>§<a href="#c-flc">c-flc</a></td></tr>
+      <tr><td>Total LV load current</td><td>≈ 3 396 A at 400 V</td><td>§<a href="#c-flc">c-flc</a></td></tr>
+      <tr><td>LV prospective I<sub>sc</sub> (single tx)</td><td>≈ 38.5 kA (tie closed ≈ 77 kA)</td><td>§<a href="#c-perunit">c-perunit</a> / <a href="#c-shortcircuit">c-shortcircuit</a></td></tr>
+      <tr><td>Design ambient</td><td>50 °C, dust/sand (min IP54 outdoor)</td><td>Site climate basis</td></tr>
+    </tbody>
+  </table>
+
+  <p>The master SLD is embedded here so every sub-section below can refer back to the
+  equipment being sized:</p>
+
+  <figure class="fig">
+    <div class="svg-embed" data-src="diagrams/svg/sld-master-2MW.svg"></div>
+    <figcaption>Fig 2-0 — Master SLD for the indicative ~2 MW MV/LV process plant
+    (IEC 60617 symbols). All ratings indicative; confirm against as-built drawings and
+    nameplates on site.</figcaption>
+  </figure>
+  <div class="warning drawing-basis"><strong>Drawing basis note.</strong> This diagram was
+drawn for the original 11 kV / 415 V / 50 Hz reference design and has not been re-rendered.
+For this Saudi (SEC) Rev 3 edition read 11 kV as 13.8 kV, 415 V as 400 V and 50 Hz as 60 Hz.
+Topology, tags and protection philosophy are unchanged.</div>
+
+  <div class="note">
+    <strong>Constants used throughout Part 2:</strong>
+    sqrt(3) = 1.732 &nbsp;|&nbsp; LV line voltage V = 400 V &nbsp;|&nbsp;
+    MV line voltage = 13.8 kV &nbsp;|&nbsp; 60 Hz &nbsp;|&nbsp; 50 °C design ambient.
+    Every numeric result is <em>indicative and tentative</em> — it illustrates method
+    and typical practice, not a substitute for project-specific load lists,
+    short-circuit / load-flow studies, and the governing standards (SASO-adopted IEC,
+    SEC Distribution Code / Saudi Grid Code, SBC 401).
+  </div>
+
+  <div class="key">
+    <strong>If you master only four, master these:</strong> on most assessments, four
+    calculations carry the most evidential weight:
+    (1) <strong>Transformer sizing / N-1 check</strong> (<a href="#c-transformer">§2</a>) —
+    confirms the fundamental redundancy claim;
+    (2) <strong>Full-load current (FLC)</strong> (<a href="#c-flc">§3</a>) —
+    the basis for every breaker, cable and relay sizing check;
+    (3) <strong>Short-circuit level</strong> (<a href="#c-shortcircuit">§4</a>, with the
+    per-unit machinery in <a href="#c-perunit">§15</a>) — verifies that switchgear can
+    interrupt faults safely;
+    (4) <strong>Protection coordination</strong> (<a href="#c-protection">§10</a>) —
+    confirms that faults isolate the minimum zone.
+  </div>
+
+  <ul class="checklist">
+    <li>Confirm the SEC connection voltage on the supply agreement: 13.8 kV, 60 Hz
+    (do not assume from drawings drawn on another basis).</li>
+    <li>Obtain the SEC-declared fault level at the point of connection (design value
+    here: 25 kA; SEC range 25–40 kA).</li>
+    <li>Record the site design ambient used in the original studies; flag any rating
+    table referenced at 30–40 °C without a 50 °C correction.</li>
+    <li>Locate the original design calculations / studies; their absence is itself a
+    documentation finding.</li>
+    <li>Identify which "moment" you are in (design / verification / modification /
+    incident) and scope the calculation set accordingly.</li>
+  </ul>
+
+</section>
+
+
+<!-- ============================================================
+     §C-LOAD  Load & demand estimate
+============================================================ -->
+<section id="c-load" data-title="Load and Demand Estimate" data-part="Part 2 — Calculations">
+
+  <h2>1 — Load &amp; Demand Estimate <span style="font-size:0.65em; font-weight:normal; background:#e8f4fd; border:1px solid #aad4f5; border-radius:3px; padding:1px 5px; color:#1a6fa0;">Core</span></h2>
+
+  <p><strong>Goal:</strong> confirm the ~2 MW plant demand and convert it to apparent
+  power (kVA) — the anchor point for every sizing calculation that follows.</p>
+
+  <h3 id="c-load-method">From Load List to Maximum Demand</h3>
+
+  <h4>Why this exists</h4>
+
+  <p>No plant ever draws the sum of its nameplates. Motors are oversized for their pumps,
+  standby drives sit idle, heaters cycle, and not everything runs at once. The load
+  estimate exists to bridge the gap between two very different numbers: the
+  <strong>connected load</strong> (sum of every nameplate — here ≈ 2.7 MW) and the
+  <strong>maximum demand</strong> (the highest simultaneous draw the supply must actually
+  deliver — here ≈ 2.0 MW). The bridge is built from two factors applied per feeder or
+  per group:</p>
+
+  <ul>
+    <li><strong>Demand factor</strong> — the ratio of a group's actual peak draw to its
+    connected nameplate total (captures partial loading and idle standby units).</li>
+    <li><strong>Diversity factor</strong> — recognition that different groups do not
+    peak at the same instant, so the system peak is less than the sum of group peaks.</li>
+  </ul>
+
+  <p>Everything downstream hangs off the result: transformer kVA
+  (<a href="#c-transformer">§2</a>), busbar and breaker frames via FLC
+  (<a href="#c-flc">§3</a>), cable sizes (<a href="#c-cables">§6</a>), the PFC bank
+  (<a href="#c-pfc">§7</a>) and the SEC connection capacity itself. The SEC Distribution
+  Code requires a declared maximum demand at the point of connection — this calculation
+  is where that declaration comes from.</p>
+
+  <h4>What goes wrong without it</h4>
+
+  <p>Two opposite disasters, both common:</p>
+
+  <ul>
+    <li><strong>Sizing on nameplates ("everything on, all the time"):</strong> the plant
+    buys 2 × 2000 kVA transformers, a 3200 A switchboard and an SEC connection it never
+    uses. Capital is wasted, transformers idle at 40 % loading for twenty years burning
+    no-load losses, and the over-stiff system masks creeping load growth until it
+    surprises someone.</li>
+    <li><strong>Sizing on optimism (or never re-checking):</strong> the original 2005
+    load list said 1.6 MW. Fifteen years of "small" additions — a 90 kW air compressor
+    here, a chiller there — and the true peak is now 2.3 MW. Nobody re-ran the estimate.
+    The first symptom is a transformer winding-temperature alarm during the August peak,
+    at 50 °C ambient, when cooling margin is already at its thinnest. The second symptom
+    is an incomer trip during the most profitable production week of the year.</li>
+  </ul>
+
+  <p>In the Saudi climate the second failure mode has a vicious twist: plant demand
+  peaks (HVAC and chilled-water load) at exactly the moment equipment capability is at
+  its lowest (50 °C ambient derating). The load estimate and the derating culture meet
+  head-on in mid-August.</p>
+
+  <h4>Feel for the numbers</h4>
+
+  <p>Anchors for 2.0 MW, computed honestly:</p>
+
+  <ul>
+    <li><strong>≈ 900 household kettles</strong> boiling at once
+    (2 000 kW / 2.2 kW per kettle = 909).</li>
+    <li><strong>≈ 2 700 horsepower</strong> (2 000 kW / 0.746 kW per hp = 2 681 hp) —
+    roughly twenty family cars at full throttle, running continuously.</li>
+    <li><strong>≈ 130 large Saudi villas at summer peak</strong> (taking ≈ 15 kW per
+    villa with every AC unit running: 2 000 / 15 ≈ 133).</li>
+    <li>Energy per day at peak: 2 MW × 24 h = <strong>48 MWh/day</strong> — at an
+    indicative industrial tariff of 0.18 SAR/kWh that is ≈ 8 600 SAR per day, ≈ 3.2
+    million SAR per year. Demand estimation errors are measured in millions of riyals,
+    in both capex and opex directions.</li>
+  </ul>
+
+  <h4>Worked calculation</h4>
+
+  <div class="worked">
+    <h4>Worked example — Load table for the ~2 MW plant (indicative)</h4>
+
+    <p><strong>Step 1 — Build the load table</strong> (group connected loads by feeder,
+    apply a demand factor per group):</p>
+
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>Feeder / group</th>
+          <th>Connected (kW)</th>
+          <th>Demand factor</th>
+          <th>Demand (kW)</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>MCC-A — process motors (train A)</td><td>950</td><td>0.75</td><td>712</td><td>Includes idle standby pumps</td></tr>
+        <tr><td>MCC-B — process motors (train B)</td><td>750</td><td>0.70</td><td>525</td><td>Batch duty, cycling</td></tr>
+        <tr><td>HVAC &amp; chilled water</td><td>450</td><td>0.80</td><td>360</td><td>Peaks in summer — coincident with 50 °C ambient</td></tr>
+        <tr><td>Compressed air</td><td>250</td><td>0.85</td><td>212</td><td>Lead/lag compressors</td></tr>
+        <tr><td>Lighting &amp; small power</td><td>160</td><td>0.70</td><td>112</td><td>230 V single-phase, spread across phases</td></tr>
+        <tr><td>Water / utility pumps</td><td>90</td><td>0.70</td><td>63</td><td>Intermittent</td></tr>
+        <tr><td>UPS, control &amp; comms</td><td>50</td><td>0.80</td><td>40</td><td>Via UPS-100 kVA</td></tr>
+        <tr><td><strong>Totals</strong></td><td><strong>2 700</strong></td><td><strong>0.75 overall</strong></td><td><strong>2 025</strong></td><td>≈ 2.0 MW maximum demand</td></tr>
+      </tbody>
+    </table>
+
+    <p><strong>Step 2 — Active demand:</strong></p>
+    <code class="formula">P_demand = SUM(connected × demand factor) = 2 025 kW ≈ 2.0 MW</code>
+    <p>(Equivalently: 2 700 kW × 0.75 overall = 2 025 kW.)</p>
+
+    <p><strong>Step 3 — Apparent power at pf 0.85 (uncorrected):</strong></p>
+    <code class="formula">S = P / pf = 2 000 kW / 0.85 = 2 353 kVA</code>
+
+    <p><strong>Step 4 — Total LV current at 400 V</strong> (preview of
+    <a href="#c-flc">§3</a>):</p>
+    <code class="formula">I = S / (sqrt(3) × V) = 2 352 941 VA / (1.732 × 400 V) = 3 396 A</code>
+
+    <p><strong>Step 5 — Installed transformer base (margin for growth and N-1):</strong></p>
+    <code class="formula">S_installed = 2 353 kVA × 1.20 to 1.25 ≈ 2 800 – 2 950 kVA</code>
+    <p>This drives the <strong>2 × 1600 kVA</strong> selection (3 200 kVA installed) —
+    verified for normal and N-1 loading in <a href="#c-transformer">§2</a>.</p>
+
+    <p><strong>Sanity check:</strong> overall demand factor 2 025 / 2 700 = 0.75 — within
+    the typical 0.7–0.8 band for a continuous process plant. Each transformer carries
+    2 353 / 2 = 1 176 kVA ≈ 73.5 % of nameplate in normal split operation — comfortable.
+    All values indicative.</p>
+  </div>
+
+  <h4>Equipment settings</h4>
+
+  <p>A load estimate has no relay pickup of its own, but it sets numbers on other
+  people's equipment, and you should verify each one against the table above:</p>
+
+  <ul>
+    <li><strong>Maximum-demand declaration</strong> in the SEC connection agreement
+    (and the tariff's demand charge) — should match the calculated ≈ 2.0 MW / 2 353 kVA
+    within reason.</li>
+    <li><strong>Demand alarm thresholds</strong> in the power-management system (PMS) —
+    typically alarm at 90 % of declared demand.</li>
+    <li><strong>Load-shedding priority table</strong> — the essential / non-essential
+    split used in the N-1 scheme (<a href="#c-transformer">§2</a>) and DG sizing is
+    drawn directly from this load table's rows.</li>
+    <li><strong>Incomer trip-unit long-time setting</strong> (I<sub>r</sub>) — must sit
+    above the per-transformer share of this demand (<a href="#c-breaker">breaker
+    deep-dive</a>).</li>
+  </ul>
+
+  <h4>Equipment technology</h4>
+
+  <p>The data behind a believable load estimate comes from hardware:</p>
+
+  <ul>
+    <li><strong>Tariff metering</strong> at the SEC intake — class 0.2S/0.5S CT-operated
+    meters recording kW, kvar and maximum demand (typically 15- or 30-minute integrating
+    windows). The MD register is the single most trustworthy demand number on site.</li>
+    <li><strong>Multifunction power meters</strong> on the LV-MSB incomers and major
+    feeders — modern digital meters log demand profiles to memory or to the PMS.</li>
+    <li><strong>MCC ammeters and motor protection relays</strong> — per-feeder currents
+    for building a bottom-up profile where no meter exists.</li>
+    <li><strong>Portable power-quality analysers</strong> — a 7-day logging campaign on
+    the incomers is the standard assessment move when historical data is missing.</li>
+  </ul>
+
+  <h4>Control</h4>
+
+  <p>In a well-instrumented plant the PMS/SCADA continuously trends kW, kvar and kVA per
+  incomer and per major feeder, time-stamped, with the demand window aligned to the
+  tariff meter. The assessment question is whether anyone <em>looks</em> at it: ask for
+  the 12-month demand trend and the all-time peak. If the PMS exists but trends are not
+  archived, raise it — demand growth is invisible without a trend, and the
+  load-shedding controller (which acts on these same measurements) cannot be validated
+  either.</p>
+
+  <h4>Sizing method</h4>
+
+  <ol>
+    <li>Obtain (or build) the load list: every feeder with nameplate kW, duty
+    (continuous / intermittent / standby), and pf.</li>
+    <li>Group by MCC / distribution board; apply a demand factor per group from duty
+    knowledge (continuous process 0.7–0.9; intermittent 0.3–0.6; standby 0).</li>
+    <li>Apply diversity between groups if their peaks demonstrably do not coincide
+    (be conservative: in a Saudi summer, HVAC and process peaks usually <em>do</em>
+    coincide).</li>
+    <li>Sum to maximum demand P (kW); divide by pf for S (kVA); add 20–25 % growth
+    margin for the installed transformer base.</li>
+    <li>Cross-check top-down against 12 months of tariff-meter MD readings — the
+    bottom-up table and the meter should agree within ≈ 10 %; investigate any larger
+    gap before using either number.</li>
+  </ol>
+
+  <div class="tip">
+    <strong>Field tip — what to capture:</strong> obtain the latest load list or motor
+    schedule from the client. If none exists, read each MCC ammeter at peak shift and
+    back-calculate kW per feeder as sqrt(3) × V × I × pf. Sum the branch demands to
+    build your own diversity estimate, then compare with the SEC tariff meter's
+    maximum-demand register — the cheapest cross-check on site.
+  </div>
+
+  <h3 id="c-load-assess">Assessment interpretation</h3>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>If as-found…</th><th>Likely meaning</th><th>Action</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Demand &gt; transformer capacity</td>
+        <td>Plant has grown since original design</td>
+        <td>Flag overload risk; recommend load-flow study (<a href="#c-loadflow">§9</a>)</td>
+      </tr>
+      <tr>
+        <td>Demand &lt; 50 % capacity for years</td>
+        <td>Oversized original design or load reduction</td>
+        <td>Check transformer no-load losses; note in report</td>
+      </tr>
+      <tr>
+        <td>No load list available</td>
+        <td>Documentation gap</td>
+        <td>Raise as finding; capture ammeter readings and meter MD register</td>
+      </tr>
+      <tr>
+        <td>Summer MD ≫ winter MD (&gt; 25 % seasonal swing)</td>
+        <td>HVAC-dominated profile — peak coincides with 50 °C derating window</td>
+        <td>Verify all thermal checks at the summer-peak / 50 °C corner, not the annual average</td>
+      </tr>
+      <tr>
+        <td>Tariff MD and bottom-up table disagree &gt; 10 %</td>
+        <td>Stale load list, metering error, or unmetered additions</td>
+        <td>Walk down feeders; reconcile before relying on either number</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <ul class="checklist">
+    <li>Obtain the load list / motor schedule and its revision date.</li>
+    <li>Record 12 months of SEC tariff maximum-demand readings.</li>
+    <li>Read all MCC and incomer ammeters at peak shift; note time and ambient.</li>
+    <li>Compare bottom-up demand table with tariff MD; reconcile gaps &gt; 10 %.</li>
+    <li>Confirm the declared maximum demand in the SEC connection agreement.</li>
+    <li>Confirm PMS demand trends are archived and the all-time peak is known.</li>
+    <li>Note any load added since the last study revision (management-of-change file).</li>
+  </ul>
+
+  <div class="key">
+    The demand estimate sets the size of the entire electrical plant: ≈ 2.0 MW /
+    0.85 pf = <strong>2 353 kVA</strong>, ≈ <strong>3 396 A</strong> at 400 V. Every
+    other calculation in Part 2 is downstream of this number. If the load list is wrong
+    or absent, all downstream ratings are unverifiable. All values indicative.
+  </div>
+
+</section>
+
+
+<!-- ============================================================
+     §C-FLC  Full-load current (LV & MV)
+============================================================ -->
+<section id="c-flc" data-title="Full-Load Currents" data-part="Part 2 — Calculations">
+
+  <h2>3 — Full-Load Current (LV &amp; MV) <span style="font-size:0.65em; font-weight:normal; background:#e8f4fd; border:1px solid #aad4f5; border-radius:3px; padding:1px 5px; color:#1a6fa0;">Core</span></h2>
+
+  <p><strong>Goal:</strong> convert every kVA rating on the SLD into the ampere figure
+  the conductors actually carry — the 400 V full-load current (FLC) of a 1600 kVA
+  transformer, its 13.8 kV primary current, and the total plant LV current — because
+  amperes, not kVA, are what breakers, busbars, cables and CTs are rated in.</p>
+
+  <h3 id="c-flc-method">From kVA to Amperes</h3>
+
+  <h4>Why this exists</h4>
+
+  <p>Power equipment is bought in kVA and MW, but it fails in amperes. Heat in a
+  conductor is I²R; mechanical force between busbars is proportional to I²; a breaker
+  contact welds or survives according to the current through it. The full-load current
+  calculation is the universal translator between the power world of the load estimate
+  (<a href="#c-load">§1</a>) and the current world of every physical conductor on site.
+  It is the single most-used formula in this manual:</p>
+
+  <code class="formula">I = S / (sqrt(3) × V)   [A, with S in VA and V in volts, line-to-line]</code>
+
+  <p>The sqrt(3) appears because in a balanced three-phase system the power is shared
+  across three phases whose line voltage is sqrt(3) times the phase voltage. You do not
+  need to re-derive it in the field; you do need to never forget it — omitting the
+  1.732 makes every answer 73 % too high.</p>
+
+  <p>FLC matters twice over on this plant because the same kVA produces two wildly
+  different currents on the two sides of each transformer: at 13.8 kV a 1600 kVA unit
+  draws a modest <strong>66.9 A</strong>; at 400 V the same power becomes
+  <strong>2 309 A</strong> — a 34.5 : 1 ratio (13 800 / 400), which is exactly the
+  turns ratio. This is why MV switchgear (<a href="#cat-mv-swgr">catalogue</a>) is
+  physically small and LV switchboards are rooms full of copper.</p>
+
+  <h4>What goes wrong without it</h4>
+
+  <p>A real-world composite, seen on more than one assessment: a plant adds load over
+  the years and the LV incomer trip unit starts nuisance-tripping in summer. The
+  electrician's "fix" is to raise the long-time pickup I<sub>r</sub> — first to 100 %
+  of the 2500 A sensor rating, then someone defeats it further. Nobody recalculates FLC. The
+  transformer is now permitted to run above its 2 309 A rating indefinitely; at 50 °C
+  ambient its insulation life halves for roughly every 6–8 K of extra winding
+  temperature. Two summers later the winding-temperature trip operates during the
+  August peak — or worse, the unit fails internally and the plant discovers what an
+  unplanned 12-week transformer lead time costs.</p>
+
+  <p>The mirror-image error sits on the MV side: a CT ratio chosen without an FLC
+  calculation. A 200/1 CT on a feeder that carries 66.9 A runs at 33 % of rated
+  primary current — accuracy and relay sensitivity suffer, and the earth-fault pickup,
+  set as a percentage of CT primary, may be too coarse to detect a high-resistance
+  fault. Wrong FLC → wrong CT → blind protection
+  (<a href="#c-protection">§10</a>).</p>
+
+  <h4>Feel for the numbers</h4>
+
+  <ul>
+    <li><strong>2 309 A</strong> is an enormous current by everyday standards — about
+    175 domestic 13 A socket circuits drawing flat-out simultaneously, flowing in
+    <em>each</em> of three phases. At 400 V it is carried by parallel busbars roughly
+    the cross-section of a hardcover book per phase.</li>
+    <li><strong>66.9 A</strong> on the MV side is, by contrast, less current than a
+    domestic cooker circuit carries — but at 13.8 kV. Same power, 34.5 times the
+    voltage, 1/34.5 of the current. High voltage exists precisely to make current
+    (and therefore copper and I²R loss) small.</li>
+    <li>Heat check: the LV incomer connection has resistance of the order of tens of
+    micro-ohms. Even at 20 µΩ, 2 309 A produces I²R ≈ 2 309² × 20e-6 ≈
+    <strong>107 W in a single bolted joint</strong> — a soldering-iron's worth of heat
+    in one connection, continuously. This is why thermography of LV incomers
+    (one loose bolt → hundreds of watts → discoloured, cooked joint) is a standard
+    assessment activity.</li>
+    <li>Rule of thumb worth memorising for 400 V: <strong>FLC ≈ 1.44 A per kVA</strong>
+    (1000 / (1.732 × 400) = 1.443). For 13.8 kV: <strong>FLC ≈ 0.0418 A per kVA</strong>,
+    or ≈ 42 A per MVA.</li>
+  </ul>
+
+  <h4>Worked calculation</h4>
+
+  <div class="worked">
+    <h4>Worked example — FLC set for the Rev 3 plant (indicative)</h4>
+
+    <p><strong>(a) MV FLC of one 1600 kVA transformer at 13.8 kV:</strong></p>
+    <code class="formula">I_MV = S / (sqrt(3) × V) = 1 600 000 VA / (1.732 × 13 800 V)</code>
+    <code class="formula">I_MV = 1 600 000 / 23 902 = 66.9 A</code>
+    <p>This sizes the MV transformer-feeder breakers [52-T1] / [52-T2] in
+    <code>MV-SWGR</code> (a 630 A panel is bored at 66.9 A — normal and fine for MV)
+    and points to a CT primary of 75–100 A on the feeder protection.</p>
+
+    <p><strong>(b) LV FLC of the same transformer at 400 V:</strong></p>
+    <code class="formula">I_LV = 1 600 000 VA / (1.732 × 400 V) = 1 600 000 / 692.8 = 2 309 A</code>
+    <p>This sets the <code>LV-MSB</code> incomer ACB frame (next standard frame
+    ≥ 2 500 A, often 3 200 A for margin) and the incomer busbar/riser rating.</p>
+
+    <p><strong>(c) Total LV load current at plant maximum demand</strong>
+    (2 000 kW / 0.85 pf = 2 353 kVA, from <a href="#c-load">§1</a>):</p>
+    <code class="formula">I_total = 2 352 941 VA / (1.732 × 400 V) = 2 352 941 / 692.8 = 3 396 A</code>
+    <p>Shared across two incomers with the bus-tie open: ≈ 1 698 A per transformer —
+    that is 1 698 / 2 309 = <strong>73.5 % loading</strong>, matching the
+    <a href="#c-transformer">N-1 check (§2)</a>.</p>
+
+    <p><strong>Sanity checks:</strong></p>
+    <ul>
+      <li>Turns-ratio check: I_LV / I_MV = 2 309 / 66.9 = 34.5 = 13 800 / 400. ✓
+      The two answers are mutually consistent — if your LV and MV FLCs do not divide
+      to the voltage ratio, one of them is wrong.</li>
+      <li>Rule-of-thumb check: 1 600 kVA × 1.44 A/kVA ≈ 2 304 A ≈ 2 309 A. ✓</li>
+      <li>Order of magnitude: total plant current (3 396 A) exceeds one transformer's
+      FLC (2 309 A) — confirming that one transformer alone cannot carry the whole
+      plant without load shedding, which is the entire premise of the N-1 scheme.</li>
+    </ul>
+    <p>All values indicative — confirm nameplate kVA and measured voltage on site.</p>
+  </div>
+
+  <h4>Equipment settings</h4>
+
+  <p>FLC is not itself a setting — it is the reference quantity that almost every
+  setting on the plant is expressed against. On an assessment, walk the chain and
+  verify each one:</p>
+
+  <ul>
+    <li><strong>LV incomer ACB long-time pickup I<sub>r</sub></strong> — a pickup
+    modestly above transformer FLC (up to ≈ 1.05 × FLC) is normal practice: it gives
+    close overload protection while absorbing metering tolerance and load variation
+    without nuisance tripping. The manual's reference setting study
+    (<a href="#c-breaker-lsig">the breakers chapter</a>) sets I<sub>r</sub> = 2 375 A
+    (0.95 × a 2 500 A sensor), i.e. 1.03 × FLC. What the assessor should flag is
+    I<sub>r</sub> above ≈ 1.1 × FLC (≈ 2 540 A) or above the cable/busbar ampacity —
+    that genuinely permits sustained transformer overload (see the
+    <a href="#c-breaker">breaker deep-dive</a>).</li>
+    <li><strong>MV feeder relay overcurrent pickup</strong> — typically 1.1–1.25 ×
+    MV FLC, i.e. ≈ 74–84 A primary on the 66.9 A feeder, graded with the LV incomer
+    (<a href="#c-protection">§10</a>).</li>
+    <li><strong>CT ratios</strong> — MV feeder ≈ 75/1 or 100/1 (FLC at 67–89 % of
+    primary rating: healthy); LV incomer 2 500/5 or 3 200/5.</li>
+    <li><strong>Metering and alarm thresholds</strong> — PMS high-current alarms
+    typically at 90 % of FLC per incomer; demand alarms per <a href="#c-load">§1</a>.</li>
+    <li><strong>Motor feeder settings</strong> are referenced to motor FLC, not
+    transformer FLC — same formula with motor kW, efficiency and pf
+    (<a href="#c-motors">§5</a>).</li>
+  </ul>
+
+  <h4>Equipment technology</h4>
+
+  <p>Where the FLC numbers physically live, and what carries them:</p>
+
+  <ul>
+    <li><strong>Nameplates</strong> — the transformer nameplate
+    (<a href="#cat-transformers">catalogue</a>) states rated kVA per cooling stage and
+    usually prints rated current per winding directly: read it, do not trust drawings.
+    The breaker rating plug, busbar label and cable schedule are the other primary
+    sources.</li>
+    <li><strong>Busbars and risers</strong> — at 2 309 A the LV incomer is hard-drawn
+    copper bar, typically 2–3 laminations per phase, sized for both continuous current
+    (at 50 °C ambient inside an IP-rated board — derate!) and short-circuit bracing
+    (<a href="#c-shortcircuit">§4</a>).</li>
+    <li><strong>Current transformers</strong> — ring or bar-primary CTs scale thousands
+    of amperes down to 1 A or 5 A for relays and meters; separate cores for metering
+    (accuracy class 0.2S/0.5S, saturates early to protect instruments) and protection
+    (class 5P/10P, stays linear into fault current).</li>
+    <li><strong>Trip units and digital relays</strong> — measure current continuously
+    via internal or external CTs; modern units display true-RMS per-phase current,
+    which is your most accessible on-site FLC reading.</li>
+  </ul>
+
+  <h4>Control</h4>
+
+  <p>Current is the most-monitored quantity on the plant. The LV trip units and MV
+  relays stream per-phase amperes to the PMS/SCADA over the substation network; the
+  tariff meter integrates it into demand. Assessment use: pull the 12-month
+  per-incomer current trend and overlay the 2 309 A line — sustained operation above
+  ≈ 0.85 pu (≈ 1 960 A) at 50 °C ambient deserves a finding even before the FLC line
+  is crossed, because the derating culture says published ratings assume kinder
+  ambients. Where no trending exists, a clamp-meter reading at peak shift, divided by
+  2 309 A, gives instant per-unit loading.</p>
+
+  <h4>Sizing method</h4>
+
+  <ol>
+    <li>Take rated S (kVA) from the nameplate — not the drawing.</li>
+    <li>Take actual line voltage V — measure it; SEC LV systems sit at 400 V nominal
+    but the as-found voltage matters for current.</li>
+    <li>Compute I = S × 1000 / (1.732 × V).</li>
+    <li>Select the next standard conductor/frame rating <em>above</em> FLC, then apply
+    the 50 °C / grouping / enclosure derating factors (<a href="#c-cables">§6</a>) and
+    re-check that the derated rating still exceeds FLC.</li>
+    <li>Cross-check: LV FLC / MV FLC must equal the voltage ratio; FLC ≈ 1.44 A/kVA at
+    400 V; measured current / calculated FLC = per-unit loading.</li>
+  </ol>
+
+  <h3 id="c-flc-table">Quick Reference — FLC at Rev 3 Voltages</h3>
+
+  <p>For any three-phase rating S (kVA) at line voltage V:
+  <code>I = S × 1000 / (sqrt(3) × V)</code>. Indicative values:</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Rating (kVA)</th><th>Voltage</th><th>FLC (A) indicative</th><th>Typical use on this plant</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>2 353</td><td>400 V</td><td>3 396</td><td>Total plant demand current (both incomers)</td></tr>
+      <tr><td>1 600</td><td>400 V</td><td>2 309</td><td>TX-1 / TX-2 secondary; LV-MSB incomer</td></tr>
+      <tr><td>1 600</td><td>13.8 kV</td><td>66.9</td><td>TX-1 / TX-2 primary; MV feeder [52-T1]/[52-T2]</td></tr>
+      <tr><td>1 250</td><td>400 V</td><td>1 804</td><td>DG-1250 alternator output (before 50 °C ESP check)</td></tr>
+      <tr><td>1 000</td><td>400 V</td><td>1 443</td><td>—</td></tr>
+      <tr><td>630</td><td>400 V</td><td>909</td><td>Large LV sub-distribution feeder</td></tr>
+      <tr><td>100</td><td>400 V</td><td>144</td><td>UPS-100 input/output frame sizing</td></tr>
+    </tbody>
+  </table>
+
+  <div class="tip">
+    <strong>Quick sanity check on site:</strong> clamp-meter (or trip-unit display) on
+    each LV incomer; divide by 2 309 A for per-unit loading. Consistently above
+    0.85 pu in summer → investigate before the transformer does it for you. With the
+    bus-tie open, the two incomer readings should also sum to roughly the tariff-meter
+    demand converted at 1.44 A/kVA — a free three-way cross-check.
+  </div>
+
+  <div class="note">
+    <strong>On the forms →</strong><br>
+    (a) <em>Document inventory:</em> LV-MSB incomer row — ACB frame (A), rating plug In,
+    trip-unit I<sub>r</sub> setting, measured current at peak; compare with 2 309 A.<br>
+    (b) <em>AS-FOUND site data required:</em> transformer nameplate kVA and rated
+    currents; measured LV line voltage; incomer ACB frame and I<sub>r</sub>; busbar
+    rated current from board label; MV feeder CT ratio and relay pickup.
+  </div>
+
+  <ul class="checklist">
+    <li>Record transformer nameplate kVA and printed rated currents (MV and LV).</li>
+    <li>Verify LV incomer I<sub>r</sub> ≤ 2 309 A (per 1600 kVA unit); flag any
+    raised-pickup "fix".</li>
+    <li>Verify MV feeder CT primary is 75–100 A class, not grossly oversized.</li>
+    <li>Read per-phase incomer currents at peak shift; compute per-unit loading.</li>
+    <li>Thermography of LV incomer joints carrying &gt; 1 500 A (hot-joint hunt).</li>
+    <li>Check the two incomer currents + tariff demand reconcile via 1.44 A/kVA.</li>
+  </ul>
+
+  <div class="key">
+    On the Rev 3 (SEC 13.8 kV) basis: <strong>MV FLC ≈ 66.9 A</strong> and
+    <strong>LV FLC ≈ 2 309 A</strong> per 1600 kVA transformer;
+    <strong>total LV ≈ 3 396 A</strong> at 2 353 kVA. Every conductor, breaker, CT and
+    relay pickup on the plant is referenced to these three numbers. Memorise
+    1.44 A per kVA at 400 V. All values indicative.
+  </div>
+
+</section>
+
+
+<!-- ============================================================
+     §C-LOADFLOW  Load flow & voltage profile
+============================================================ -->
+<section id="c-loadflow" data-title="Load Flow and Voltage Profile" data-part="Part 2 — Calculations">
+
+  <h2>9 — Load Flow &amp; Voltage Profile <span style="font-size:0.65em; font-weight:normal; background:#f5f0e8; border:1px solid #c8b88a; border-radius:3px; padding:1px 5px; color:#6b5a1e;">Reference</span></h2>
+
+  <p><strong>Goal:</strong> understand what a load-flow (power-flow) study is, follow
+  the voltage from the SEC intake down to a motor terminal by hand, know what the
+  software adds beyond hand arithmetic, and recognise when to demand a study.</p>
+
+  <h3 id="c-loadflow-concept">What a Load Flow Actually Is</h3>
+
+  <p>A load flow answers one deceptively simple question: <em>with every load drawing
+  its normal power, what is the voltage at every bus and the current in every branch?</em>
+  It is the "steady-state weather map" of the plant — no faults, no starting transients,
+  just the plant running. Think of the network as a water system: SEC is the reservoir
+  at fixed pressure (13.8 kV), every cable and transformer is a pipe with friction
+  (impedance), and every load is a tap drawing flow. Open all the taps and the pressure
+  at the far end of the system is inevitably lower than at the reservoir. The load flow
+  computes exactly how much lower, everywhere, simultaneously.</p>
+
+  <p>Why it cannot be fully done by hand: each voltage drop depends on the current,
+  but each load's current depends on its voltage (a constant-power motor draws
+  <em>more</em> current as voltage falls). The equations are circular, so the solution
+  is found by iteration — guess voltages, compute currents, recompute voltages, repeat
+  until the numbers stop moving. For a radial two-bus system one iteration by hand is
+  plenty (below); for a real plant model with dozens of buses, motors and the PFC bank,
+  the iteration is what the software is for.</p>
+
+  <p>Three outputs matter to an assessor:</p>
+  <ul>
+    <li><strong>Bus voltages</strong> — every bus within limits (typically ± 5 % at
+    utilisation points, per SASO-IEC 60364 and the SEC Distribution Code at the
+    point of connection)?</li>
+    <li><strong>Branch loadings</strong> — every transformer, cable and busbar below
+    its (derated) continuous rating in both normal and N-1 configurations?</li>
+    <li><strong>Reactive flows and losses</strong> — power factor at the SEC intake
+    ≥ 0.95 with the PFC bank in service (<a href="#c-pfc">§7</a>), and losses not
+    flagging an inefficient operating split?</li>
+  </ul>
+
+  <h3 id="c-loadflow-profile">The Voltage Profile Through This Plant</h3>
+
+  <p>Follow one electron's-eye view from the grid to a pump motor, at summer peak,
+  bus-tie open, ≈ 73 % transformer loading (all values indicative):</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Point in system</th><th>Indicative voltage</th><th>What moved it</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>SEC point of connection</td><td>13.8 kV ± a few %</td><td>Grid-controlled; varies with regional load</td></tr>
+      <tr><td>MV-SWGR bus</td><td>≈ 13.7–13.8 kV</td><td>Short MV intake cable — drop negligible at 66.9 A</td></tr>
+      <tr><td>TX-1 secondary (no-load)</td><td>≈ 410 V with +2.5 % tap</td><td>Off-load tap selection compensates expected drop</td></tr>
+      <tr><td>LV-MSB bus (at 73 % load)</td><td>≈ 400 V (≈ 1.00 pu)</td><td>Transformer regulation ≈ −2.7 % (worked below)</td></tr>
+      <tr><td>MCC bus</td><td>≈ 396–398 V</td><td>Sub-main cable drop ≈ 0.5–1 %</td></tr>
+      <tr><td>Motor terminals (worst feeder)</td><td>≈ 390 V (≈ 0.97 pu)</td><td>Final cable drop ≈ 1.5–2.5 % (<a href="#c-cables">§6</a>)</td></tr>
+    </tbody>
+  </table>
+
+  <p>The pattern to internalise: <strong>voltage only ever falls as you move toward the
+  load</strong> (capacitors and taps are the two deliberate exceptions), and the design
+  game is to spend the ± 5 % budget so that the <em>last</em> motor on the <em>worst</em>
+  feeder at the <em>summer</em> peak still sees ≥ 0.95 pu. The off-load tap changer is
+  the coarse correction (set once, at shutdown); the PFC bank is the dynamic one —
+  reactive current is what drags voltage down through the predominantly reactive
+  transformer impedance, so correcting pf at the bus also props up the voltage.</p>
+
+  <h3 id="c-loadflow-hand">A Two-Bus Load Flow by Hand</h3>
+
+  <p>The simplest possible load flow — source bus, one impedance, load bus — is exactly
+  the SEC-to-LV-MSB path, and it is worth doing by hand because it is the hand check
+  you will run against any software study you are handed.</p>
+
+  <div class="worked">
+    <h4>Worked example — Voltage drop SEC bus → LV-MSB (indicative)</h4>
+
+    <p><strong>System:</strong> stiff 13.8 kV source → TX-1 (1600 kVA, Z = 6 %) →
+    LV-MSB bus. Load: ≈ 73 % of transformer rating (1 176 kVA) at pf 0.90 with the
+    PFC bank in service (cos φ = 0.90, sin φ = 0.436).</p>
+
+    <p><strong>Step 1 — Split the transformer impedance.</strong> Z = 6 % is mostly
+    reactance; take R ≈ 1.2 %, X ≈ 5.9 % (so that sqrt(1.2² + 5.9²) ≈ 6.0 — typical
+    for a 1600 kVA distribution unit; nameplate load loss gives the exact R).</p>
+
+    <p><strong>Step 2 — Apply the regulation formula</strong> (valid for small drops):</p>
+    <code class="formula">dV% ≈ load_pu × (R% × cos φ + X% × sin φ)</code>
+    <code class="formula">dV% ≈ 0.73 × (1.2 × 0.90 + 5.9 × 0.436)</code>
+    <code class="formula">dV% ≈ 0.73 × (1.08 + 2.57) = 0.73 × 3.65 = 2.7 %</code>
+
+    <p><strong>Step 3 — Place the result on the voltage profile.</strong> With the
+    off-load tap at +2.5 % the no-load secondary sits at ≈ 410 V; subtracting the
+    2.7 % drop (≈ 11 V) lands the LV-MSB bus at ≈ 399–400 V at full normal load — on
+    nominal. Adding the worst downstream feeder drop of ≈ 2.4 %
+    (<a href="#c-cables">§6</a>) puts the farthest motor terminal at ≈ 0.97 pu —
+    inside the ± 5 % limit. ✓</p>
+
+    <p><strong>Sanity checks:</strong> (1) at <em>zero</em> load the drop is zero, so
+    the bus would sit at the tapped 410 V — lightly-loaded night-shift voltage visibly
+    higher than day-shift voltage is normal and confirms the model. (2) In N-1
+    (one transformer at ≈ 100 %+ with load shed): dV% ≈ 1.0 × 3.65 ≈ 3.7 % — the
+    surviving bus dips a further ≈ 1 %, still workable. (3) Worsen the pf to 0.85
+    (PFC out of service): sin φ = 0.527, dV% ≈ 0.73 × (1.02 + 3.11) ≈ 3.0 % — the
+    PFC bank is quietly worth ≈ 0.3–0.5 % of bus voltage. All values indicative.</p>
+  </div>
+
+  <p>Loss check, same hand level: copper loss scales with loading². A 1600 kVA unit
+  with ≈ 17 kW full-load copper loss dissipates ≈ 0.73² × 17 ≈ <strong>9 kW</strong>
+  at normal load, plus ≈ 2–3 kW constant iron loss — per transformer, continuously,
+  which is why "two units at 73 %" versus "one unit at 100 % + one energised idle"
+  is a real operating-cost question the load flow can answer.</p>
+
+  <h3 id="c-loadflow-software">What the Software Adds</h3>
+
+  <p>Commercial power-system tools (ETAP, DIgSILENT PowerFactory and similar — named
+  here generically, with no endorsement) do nothing conceptually beyond Step 2 above.
+  What they add is scale and rigour:</p>
+
+  <ul>
+    <li><strong>Simultaneity</strong> — they solve every bus at once by iteration
+    (Newton–Raphson and variants), correctly capturing the circular
+    voltage-depends-on-current-depends-on-voltage coupling that hand methods
+    linearise away.</li>
+    <li><strong>Load models</strong> — constant-power motors, constant-impedance
+    heaters and lighting, and the PFC bank's voltage-squared sensitivity are modelled
+    distinctly; at depressed voltage these behave very differently.</li>
+    <li><strong>Scenario sweeps</strong> — normal / N-1 / tie-closed / DG-island /
+    minimum and maximum grid voltage, each at several tap positions, in minutes.
+    The tap-selection table in a good study report is the direct product.</li>
+    <li><strong>A validated network model</strong> — the same model then feeds the
+    short-circuit (<a href="#c-shortcircuit">§4</a>), motor-starting
+    (<a href="#c-motors">§5</a>), protection-coordination
+    (<a href="#c-protection">§10</a>) and arc-flash studies. The load flow is the
+    foundation study: if its input data are wrong, every downstream study inherits
+    the error.</li>
+  </ul>
+
+  <div class="warning">
+    <strong>Garbage in, garbage out.</strong> A software study is only as good as the
+    cable lengths, transformer test-sheet impedances and load data typed into it.
+    Your hand check above should land within ≈ 1 % of the software's transformer drop;
+    if it does not, question the model's inputs before questioning your arithmetic.
+  </div>
+
+  <h3 id="c-loadflow-when">When to Demand a Study (and How to Read One)</h3>
+
+  <p>Recommend (or require) a fresh load-flow study whenever any of these is true:</p>
+
+  <ul>
+    <li><strong>No study exists, or it predates the as-built plant</strong> — the
+    plant then has no formal basis for its tap settings, cable ratings or transformer
+    loading limits. Absence is itself a finding.</li>
+    <li><strong>Load has grown &gt; ≈ 10 %</strong> since the study revision, or any
+    feeder ≥ ~150 kW has been added (management-of-change trigger).</li>
+    <li><strong>Voltage complaints</strong> — flicker, motors running hot, drives
+    tripping on undervoltage, contactors dropping out on big-motor starts.</li>
+    <li><strong>Configuration changes</strong> — PFC retrofit, DG addition or
+    re-rating, proposal to operate tie-closed, or a new SEC connection agreement.</li>
+    <li><strong>As-found measurements disagree with the study</strong> — measured bus
+    voltage or incomer current more than a few % from the study's normal case.</li>
+  </ul>
+
+  <p>When handed a study report, check it in this order:</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Report output</th><th>What to check</th><th>Acceptable limit (indicative)</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Study basis</td><td>Revision date, SLD revision modelled, source fault level and voltage range used</td><td>Matches as-built plant and current SEC connection data</td></tr>
+      <tr><td>Bus voltage (pu)</td><td>All buses, peak load, normal <em>and</em> N-1 cases</td><td>± 5 % of nominal at utilisation points</td></tr>
+      <tr><td>Transformer loading</td><td>Each unit, both cases</td><td>≤ 100 % continuous; short-time emergency loading only per IEC 60076-7 with the 50 °C ambient correction applied</td></tr>
+      <tr><td>Branch loading</td><td>All cables/busbars vs <em>derated</em> ampacity</td><td>≤ 100 % of 50 °C-derated rating, not the table rating</td></tr>
+      <tr><td>Reactive flow / pf at PCC</td><td>With PFC in and out of service</td><td>≥ 0.95 in service (SEC Distribution Code expectation)</td></tr>
+      <tr><td>Tap positions</td><td>Recommended vs actual on the nameplate tap switch</td><td>Must match what is physically set on site</td></tr>
+      <tr><td>Losses</td><td>Per transformer, Cu + Fe</td><td>Flag if &gt; ≈ 2 % of throughput</td></tr>
+    </tbody>
+  </table>
+
+  <div class="tip">
+    <strong>The one field check that catches most stale studies:</strong> read the
+    actual off-load tap position on each transformer and compare with the study's
+    recommended tap. A mismatch means either the study was never implemented or the
+    plant has been retapped ad hoc since — both findings.
+  </div>
+
+  <ul class="checklist">
+    <li>Locate the latest load-flow study; record date, revision and software basis.</li>
+    <li>Confirm the modelled SLD revision matches the as-built plant.</li>
+    <li>Run the two-bus hand check; compare with the study's transformer drop.</li>
+    <li>Read actual tap positions; compare with study recommendations.</li>
+    <li>Measure LV bus voltage at peak shift; compare with study normal case.</li>
+    <li>Check the N-1 case exists in the study and respects the 50 °C derating.</li>
+    <li>If no study, or load growth &gt; 10 % since its date: raise a finding and
+    recommend a new study.</li>
+  </ul>
+
+  <div class="key">
+    A load flow is the steady-state map of voltages and flows; ± 5 % at the load is
+    the budget, the transformer's reactive drop (≈ 2.7 % at normal load here) is the
+    biggest single spender, and the tap + PFC bank are the two levers. The hand
+    two-bus check validates any software study in five minutes — and the absence of
+    a current study is a finding in its own right. All values indicative.
+  </div>
+
+</section>
+
+
+<!-- ============================================================
+     §C-PERUNIT  Per-unit system & the MVA method  (NEW in Rev 3)
+============================================================ -->
+<section id="c-perunit" data-title="Per-Unit System and MVA Method" data-part="Part 2 — Calculations">
+
+  <h2>15 — Per-Unit System &amp; the MVA Method <span style="font-size:0.65em; font-weight:normal; background:#e8f4fd; border:1px solid #aad4f5; border-radius:3px; padding:1px 5px; color:#1a6fa0;">Core</span></h2>
+
+  <p><strong>Goal:</strong> learn the per-unit (pu) system — the universal bookkeeping
+  trick behind every impedance percentage on every nameplate — and its field-friendly
+  cousin the <strong>MVA method</strong>, then use both to reproduce the plant's
+  headline LV fault level (≈ 38.5 kA) from nothing but the transformer nameplate.</p>
+
+  <h3 id="c-perunit-method">The Per-Unit Idea, From Scratch</h3>
+
+  <h4>Why this exists</h4>
+
+  <p>A power system spans wildly different voltage levels — here 13.8 kV and 400 V,
+  joined by a transformer. Working in ohms across that boundary is miserable: every
+  impedance must be converted by the square of the turns ratio (34.5² ≈ 1 190) each
+  time it crosses the transformer, and one slipped conversion ruins the whole study.</p>
+
+  <p>The per-unit system removes the problem by expressing every quantity as a
+  fraction of a chosen <strong>base</strong>: pick one base power S_base for the whole
+  system and the nominal voltage of each level as V_base, and then voltage, current,
+  power and impedance all become dimensionless ratios. The magic: <em>a transformer's
+  impedance has the same per-unit value seen from either winding</em> — the 34.5²
+  conversion is baked into the bases and disappears from the arithmetic. The network
+  becomes one flat circuit with no voltage levels in it.</p>
+
+  <p>You already use per-unit daily without naming it: the transformer nameplate
+  "Z = 6 %" is a per-unit impedance (0.06 pu on the transformer's own kVA and voltage
+  base); "the motor draws 6 × FLC at start" is per-unit current; "bus voltage 0.97 pu"
+  is per-unit voltage. The system has only four rules:</p>
+
+  <code class="formula">quantity_pu = actual value / base value</code>
+  <code class="formula">I_base = S_base / (sqrt(3) × V_base)   [per voltage level]</code>
+  <code class="formula">Z_base = V_base² / S_base</code>
+  <code class="formula">Z_pu(new base) = Z_pu(old) × (S_base,new / S_base,old)   [same voltage]</code>
+
+  <p>The last rule is the one used constantly in the field: nameplate impedances come
+  on each machine's own rating, and you must move them all to one common base before
+  adding them.</p>
+
+  <h4>What goes wrong without it</h4>
+
+  <p>The classic, expensive error: an engineer estimates the LV fault level for a
+  switchboard extension by adding the transformer impedance in ohms to the upstream
+  grid impedance in ohms — but takes the grid impedance at 13.8 kV without referring
+  it through the transformer. The grid ohms are ≈ 1 190 times too large; the computed
+  fault current collapses; the new board is bought at 25 kA where the true duty is
+  ≈ 38.5 kA single-transformer (and ≈ 77 kA if anyone ever closes the tie). The error
+  sleeps until the first real bolted fault, at which point an underrated breaker may
+  fail to interrupt — the most violent failure mode an LV board has
+  (<a href="#c-shortcircuit">§4</a>).</p>
+
+  <p>The quieter failures: mixing impedances quoted on different kVA bases without
+  the base-change rule (a 6 % on 1600 kVA is <em>not</em> the same animal as 6 % on
+  2000 kVA), or comparing relay settings across voltage levels in amperes instead of
+  per-unit, which makes coordination reviews (<a href="#c-protection">§10</a>)
+  needlessly error-prone. Per-unit is not optional sophistication; it is the error-proofing
+  that makes multi-voltage arithmetic survivable on a clipboard.</p>
+
+  <h4>Feel for the numbers</h4>
+
+  <ul>
+    <li><strong>Z = 6 % means exactly this:</strong> with the LV winding bolted shut,
+    only 6 % of rated primary voltage is needed to push full-load current through the
+    transformer. Flip it round: apply <em>full</em> voltage to that short and you get
+    <strong>1 / 0.06 ≈ 16.7 × full-load current</strong>. The fault level of a
+    transformer-fed bus is hiding in plain sight on the nameplate.</li>
+    <li><strong>1.0 pu is always "rated, nominal, comfortable".</strong> Per-unit
+    turns every quantity into a universal gauge: 0.97 pu voltage = slightly low
+    anywhere from 400 V to 400 kV; 6 pu current = motor starting; 16.7 pu current =
+    bolted fault. Your intuition transfers across the whole industry.</li>
+    <li><strong>The MVA method makes "strength" additive-ish:</strong> every element
+    is described by the short-circuit MVA it can pass (S_sc = S_rating / Z_pu).
+    Sources in parallel: add. Elements in series: combine like parallel resistors
+    (product over sum). The SEC grid here is a ≈ 600 MVA "reservoir"; the 1600 kVA
+    transformer is a ≈ 27 MVA "pipe" — and a 27 MVA pipe fed from a 600 MVA reservoir
+    passes ≈ 26 MVA: the skinniest pipe dominates. That single sentence is most of
+    short-circuit engineering.</li>
+  </ul>
+
+  <h4>Worked calculation</h4>
+
+  <div class="worked">
+    <h4>Worked example — LV fault level by per-unit and by MVA method (indicative)</h4>
+
+    <p><strong>Chosen bases (stated explicitly, always):</strong>
+    S_base = <strong>1600 kVA</strong> (the transformer's own rating — the convenient
+    choice here); V_base = <strong>13.8 kV</strong> on the MV side and
+    <strong>400 V</strong> on the LV side.</p>
+
+    <p><strong>Step 1 — Base currents</strong> (one per voltage level):</p>
+    <code class="formula">I_base,MV = 1 600 000 / (1.732 × 13 800) = 66.9 A</code>
+    <code class="formula">I_base,LV = 1 600 000 / (1.732 × 400) = 2 309 A</code>
+    <p>Note these are exactly the FLCs from <a href="#c-flc">§3</a> — choosing the
+    transformer's own rating as base makes 1.0 pu current = FLC, which is why it is
+    the convenient choice.</p>
+
+    <p><strong>Step 2 — Transformer impedance in per-unit:</strong> nameplate Z = 6 %
+    on its own 1600 kVA base → Z_tx = <strong>0.06 pu</strong>. No base conversion
+    needed (we deliberately chose its base). Had we chosen S_base = 2 MVA instead:
+    Z_tx = 0.06 × (2000 / 1600) = 0.075 pu — different number, same physics, identical
+    final answer.</p>
+
+    <p><strong>Step 3 — LV fault current, infinite-bus assumption</strong> (grid
+    impedance ≈ 0, the standard conservative first pass):</p>
+    <code class="formula">I_fault,pu = V_pu / Z_pu = 1.0 / 0.06 = 16.7 pu</code>
+    <code class="formula">I_sc = 16.7 × I_base,LV = 16.7 × 2 309 A ≈ 38 500 A ≈ 38.5 kA</code>
+
+    <p><strong>Step 4 — Same answer by the MVA method</strong> (no currents until the
+    very end):</p>
+    <code class="formula">S_sc,tx = S_rating / Z_pu = 1 600 kVA / 0.06 = 26 667 kVA ≈ 26.7 MVA</code>
+    <code class="formula">I_sc = S_sc / (sqrt(3) × V) = 26 700 000 / (1.732 × 400) ≈ 38 500 A ≈ 38.5 kA</code>
+
+    <p><strong>Step 5 — How much does the finite grid actually shave off?</strong>
+    SEC design fault level 25 kA at 13.8 kV (SEC range 25–40 kA):</p>
+    <code class="formula">S_sc,grid = sqrt(3) × 13.8 kV × 25 kA ≈ 597 MVA</code>
+    <p>Grid and transformer in series — combine product-over-sum:</p>
+    <code class="formula">S_sc,LV = (597 × 26.7) / (597 + 26.7) ≈ 25.6 MVA  →  I_sc ≈ 36.9 kA</code>
+    <p>The infinite-bus 38.5 kA is ≈ 4 % conservative — which is exactly the right
+    direction to err when checking breaker ratings.</p>
+
+    <p><strong>Sanity checks:</strong> (1) direct method: I_sc = FLC / Z_pu =
+    2 309 / 0.06 = 38.5 kA ✓ — three independent routes, one answer.
+    (2) 16.7 × FLC "feels" right for a 6 % transformer (1/0.06).
+    (3) Two transformers tie-closed: double the source → ≈ 77 kA, the Rev 3
+    tie-normally-open rationale (<a href="#c-shortcircuit">§4</a>). All values
+    indicative; motor contribution adds a further increment in a formal IEC 60909
+    study.</p>
+  </div>
+
+  <h3 id="c-perunit-settings">Where Per-Unit Numbers Live on Real Equipment</h3>
+
+  <h4>Equipment settings</h4>
+
+  <p>Per-unit is not just a paper convention — most of the settings you will dial into
+  real devices are entered <em>in per-unit of something</em>, and knowing the base is
+  half the setting:</p>
+  <ul>
+    <li><strong>Transformer nameplate impedance</strong> is always per-unit (percent)
+    on the transformer's own rating: <code>Z = 6 %</code> means 0.06 pu on 1600 kVA,
+    13.8/0.4 kV. Change the base, and the number changes — the physics does not.</li>
+    <li><strong>Relay pickups</strong> are set in multiples of nominal (a 51 element
+    pickup of "1.1 × In" is a per-unit statement), and CT secondary quantities are
+    effectively per-unit on the CT ratio (<a href="#c-protection">§10</a>).</li>
+    <li><strong>LV trip units</strong> express L/S/I pickups as multiples of the
+    frame or plug rating — "L = 0.95 × In, S = 4 × In" is per-unit language
+    (<a href="#c-breaker">§14</a>).</li>
+    <li><strong>Voltage bands</strong> in the Saudi Grid Code / SEC Distribution Code
+    are stated as ± percent of nominal — per-unit voltage by another name.</li>
+  </ul>
+
+  <h3 id="c-perunit-tech">Per-unit on the nameplate</h3>
+
+  <h4>Equipment technology</h4>
+
+  <p>The "equipment" of per-unit is the data that feeds it. The numbers come from
+  three physical places: <strong>nameplates</strong> (transformer Z%, rated kVA and
+  voltages — stamped after the factory short-circuit test per SASO-adopted IEC 60076),
+  <strong>type-test certificates</strong> (switchgear ratings expressed against rated
+  values), and the <strong>utility intake declaration</strong> (SEC fault level in kA
+  or MVA at 13.8 kV — ask for the design value in writing; the range is typically
+  25–40 kA). Treat all three as controlled documents: a per-unit study is only as good
+  as the bases and impedances it was fed.</p>
+
+  <h3 id="c-perunit-control">Per-unit in relays and studies</h3>
+
+  <h4>Control</h4>
+
+  <p>Power-system software (load flow, short circuit, arc flash) works internally in
+  per-unit; what you control is the <strong>model data discipline</strong>. The plant
+  single-line in the software must carry the same bases, the same nameplate impedances
+  and the same SEC intake fault level as the controlled documents — and every
+  modification (new transformer, tie philosophy change, SEC reinforcement) triggers a
+  model update and re-run. The PMS and metering supply the measured MW / Mvar /
+  voltage values you compare against the model's per-unit predictions: persistent
+  disagreement means the model, not the plant, is wrong.</p>
+
+  <h3 id="c-perunit-sizing">Choosing the base values</h3>
+
+  <h4>Sizing method</h4>
+
+  <p>The per-unit / MVA recipe you will reuse for the rest of Part 2 — pin it up:</p>
+  <ol>
+    <li><strong>Choose bases and say so out loud:</strong> one S_base for the whole
+    study (the transformer rating, or a round 10/100 MVA); V_base = nominal voltage of
+    each level (13.8 kV, 400 V). Base currents follow: I_base = S_base / (sqrt(3) × V_base).</li>
+    <li><strong>Convert every impedance to the common base:</strong>
+    Z_new = Z_nameplate × (S_base / S_nameplate). Grid: Z_grid,pu = S_base / S_sc,grid.</li>
+    <li><strong>Combine:</strong> series impedances add; parallel sources add their
+    short-circuit MVA (or combine impedances product-over-sum).</li>
+    <li><strong>Read off the answers:</strong> I_sc = (V_pu / Z_pu) × I_base at the bus
+    of interest; voltage drops and loadings fall out in percent directly.</li>
+    <li><strong>Sanity-check against the direct method</strong> (FLC / Z_pu for a
+    single transformer) and against the previous study revision before trusting any
+    new number.</li>
+  </ol>
+
+  <div class="key">
+    Per-unit is the dialect the whole industry speaks: nameplates, relays, trip units
+    and grid codes all quote per-unit numbers. Master the base conversion once and
+    every fault, dip and loading question in this manual becomes one or two lines of
+    arithmetic.
+  </div>
+
+  <h3 id="c-perunit-selfcheck">Self-check — Per-Unit &amp; MVA Method</h3>
+
+  <ul class="checklist">
+    <li>State the four base quantities and compute I_base on both sides of TX-1 from
+    S_base = 1600 kVA (answers: 66.9 A / 2309 A — indicative).</li>
+    <li>Convert Z = 6 % on 1600 kVA to a 2 MVA base (answer: 0.075 pu) and explain why
+    the fault current result is unchanged.</li>
+    <li>Compute the LV fault level by the MVA method including the 597 MVA SEC grid
+    (answer: ≈ 25.6 MVA → ≈ 36.9 kA) and explain why the infinite-bus 38.5 kA is the
+    conservative number to check breaker ratings against.</li>
+    <li>Explain in one sentence why two paralleled 1600 kVA transformers give ≈ 77 kA
+    and what the normally-open bus-tie does about it.</li>
+    <li>Find the per-unit statements on a breaker trip-unit settings sheet (L/S/I
+    multiples) and identify the base each multiple refers to.</li>
+  </ul>
+
+</section>

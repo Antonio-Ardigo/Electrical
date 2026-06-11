@@ -1,0 +1,109 @@
+<article class="concept" id="concept-arcflash">
+  <h2>6. Arc Flash Energy</h2>
+  <p class="backlink">Manual deep-dive: <a href="manual-rev3.html#c-arcflash">open the full section</a></p>
+
+  <h3>The Problem</h3>
+  <p>Everything in Chapters 2–5 treated the fault as a problem for <em>equipment</em>: busbars, breakers, cables. But the most likely moment for a fault at the LV-MSB is precisely when a <em>person</em> is standing in front of it — racking a breaker, lifting a cover, taking a measurement. If the fault current of Ch. 2 flows not through a bolted joint but through open air, it becomes an <strong>arc flash</strong>: the same 5 000–20 000 °C plasma that lives briefly inside a breaker's arc chute (Ch. 4), except now unconfined, a metre from someone's chest, accompanied by a pressure wave, molten copper droplets and vaporised metal.</p>
+  <p>For decades electrical safety meant shock safety: don't touch live parts. Workers in ordinary overalls were severely burned at distances where they touched nothing at all — the injury arrived as radiant and convective heat. The blind spot was that nothing in the equipment specifications bounded the <em>thermal dose a person could receive</em>. A switchboard could meet every withstand rating in this manual and still deliver lethal burns through 60 cm of air.</p>
+  <p>The cruellest twist comes from Ch. 5: selectivity deliberately makes the main bus protection <em>slow</em> (0.3 s short-time delay at the LV-MSB) to keep the plant running through feeder faults. Arc-flash energy is almost exactly proportional to time. The engineering that protects production is the same engineering that, unmanaged, cooks the electrician. Quantifying that — and then choosing where on the trade-off to stand — is what this concept is for.</p>
+  <h3>Core Principles</h3>
+  <h4>Principle 1: The arcing current is less than the bolted current — and that is bad news</h4>
+  <p><strong>Statement:</strong> an arc has resistance, so the arcing fault draws less than the bolted value — at 400 V typically only 50–60 % of it (≈22 kA against our 38.5 kA). The bad news: protection devices are graded against <em>high</em> currents; a reduced arcing current can sit below an instantaneous pickup and ride the slow part of the curve, burning for longer. Arc-flash studies always check the protection at the <em>arcing</em> current, including a low tolerance case, not the bolted one.</p>
+
+  <h4>Principle 2: Incident energy = power density × time, falling off with distance</h4>
+  <p><strong>Statement:</strong> the hazard metric is <em>incident energy</em> — thermal energy per unit area arriving at the worker, in cal/cm² (1 cal/cm² = 4.184 J/cm²). To first order it scales with arcing current × arc duration, and decreases with working distance (roughly as 1/distance² in open air, more slowly out of a box, whose walls focus the blast forward — an LV switchboard compartment is a directed heater).</p>
+  <p><strong>Example:</strong> the benchmark is <strong>1.2 cal/cm²</strong> — the dose that gives bare skin the onset of a second-degree burn. Everything is judged against this small number.</p>
+
+  <h4>Principle 3: Of the three levers — current, distance, time — time is the one you own</h4>
+  <p><strong>Statement:</strong> arcing current is fixed by the network (Ch. 2–3). Working distance is constrained by the task. But <em>clearing time</em> is a setting. Energy is linear in time: clear in 0.1 s instead of 0.3 s and the dose falls threefold. No other lever in the plant converts a relay parameter into burns avoided at this exchange rate.</p>
+
+  <h4>Principle 4: PPE is a last line, rated in the same currency</h4>
+  <p><strong>Statement:</strong> arc-rated clothing carries an arc thermal performance value in cal/cm²; PPE categories run CAT 1 (4), CAT 2 (8), CAT 3 (25), CAT 4 (40 cal/cm²). PPE caps the burn, not the blast, shrapnel or pressure; above ~40 cal/cm² the correct PPE is distance, de-energisation or engineering controls — there is no suit for everything.</p>
+
+  <h3>Key Innovations</h3>
+  <h4>Quantifying the hazard (Ralph Lee 1982; IEEE 1584 empirical model, 2002/2018)</h4>
+  <p><strong>What:</strong> Lee's theoretical paper first put numbers on arc thermal exposure; IEEE 1584 then fitted equations to hundreds of staged arc tests in real enclosures, giving arcing current, incident energy and an <em>arc-flash boundary</em> (the distance where the dose falls to 1.2 cal/cm²) as functions of bolted current, voltage, gap, geometry, time and distance.</p>
+  <p><strong>Why it mattered:</strong> "be careful around switchboards" became a calculable engineering quantity, bus by bus — printed on the orange label on the panel door, with the boundary distance and required PPE category. The label on LV-MSB is the output of exactly the calculation worked below, done rigorously in the study.</p>
+  <h4>Energy-reduction engineering (ZSI, maintenance switches, arc-quenching systems)</h4>
+  <p><strong>What:</strong> applying Principle 3 in hardware: zone-selective interlocking and "maintenance mode" switches (Ch. 5) that cut clearing to ~0.1 s while a person is at the board; arc-detection relays using light + current that trip in a few ms; arc-resistant switchgear that channels the blast away from the operator.</p>
+  <p><strong>Why it mattered:</strong> these inventions decouple the production trade-off from the safety one — the ladder of Ch. 5 protects uptime when the board is closed, and collapses to fast clearing when a human opens it. The worked example shows that single mode switch is worth two full PPE categories.</p>
+  <h3>Worked Example</h3>
+  <p><strong>Scenario:</strong> estimate the incident energy at the LV-MSB for the protection as set in Ch. 5 (0.3 s), then for a maintenance-mode setting (0.1 s). <strong>Given:</strong> bolted fault 38.5 kA (Ch. 2); 400 V switchboard, working distance 450 mm; simplified field model — for a 400 V enclosed board at 450 mm, incident energy ≈ <code>3.5 cal/cm² per (kA of arcing current × second)</code>, an indicative linearisation of the IEEE 1584 behaviour for this voltage/geometry. The formal study uses the full IEEE 1584 equations; this estimate shows the structure and the lever.</p>
+  <div class="worked">
+    <p><strong>Step 1 — Arcing current from bolted current.</strong> At 400 V the arc's own resistance typically cuts current to ~55–60 % of bolted:</p>
+    <code class="formula">I_arc ≈ 0.57 × 38.5 kA ≈ 22 kA</code>
+    <p><em>Why:</em> all protection times must now be read off the TCCs at 22 kA, not 38.5 kA. Check: 22 kA is still far above the ACB short-time pickup, so the 0.3 s stage governs — but a feebler arc on a long feeder might not be, which is why studies also run an 85 % arcing-current case.</p>
+    <p><strong>Step 2 — Clearing time as set (Ch. 5 ladder).</strong></p>
+    <code class="formula">t = 0.3 s (ACB short-time delay) + ~0.05 s breaker ≈ 0.35 s; use 0.3 s for the estimate</code>
+    <p><strong>Step 3 — Incident energy at 450 mm, normal settings.</strong></p>
+    <code class="formula">E ≈ 3.5 cal/cm²·(kA·s)⁻¹ × 22 kA × 0.3 s ≈ 23 cal/cm²</code>
+    <p><em>Why:</em> compare to the 1.2 cal/cm² burn threshold — this is ~19 times the dose that blisters skin. In SI: 23 × 4.184 ≈ 96 J/cm²; over the ~0.5 m² of a torso facing the board, of the order of a megajoule-class event delivering tens of kJ to the body in a third of a second. PPE: 23 &lt; 25, so CAT 3 arc-rated clothing at minimum — in practice treated as the top of CAT 3, with CAT 4 commonly mandated for margin.</p>
+    <p><strong>Step 4 — Same fault, maintenance-mode 0.1 s.</strong></p>
+    <code class="formula">E ≈ 3.5 × 22 × 0.1 ≈ 7.7 cal/cm²</code>
+    <p><em>Why:</em> energy is linear in time (Principle 3): one-third the time, one-third the dose. 7.7 &lt; 8 cal/cm² → CAT 2 — ordinary arc-rated shirt and trousers plus face protection instead of a full flash suit. One switch position changed the worker's worst day by a factor of three.</p>
+    <p><strong>Step 5 — Sanity checks.</strong></p>
+    <code class="formula">Ratio check: 23 / 7.7 = 3.0 = 0.3 s / 0.1 s ✓ (linear in t)</code>
+    <code class="formula">Scale check: LV boards at tens of kA with 0.2–0.5 s clearing typically study out at 10–40 cal/cm² — 23 sits mid-range ✓</code>
+    <p><em>Note:</em> the tie-closed case (77 kA bolted) roughly doubles the dose again — one more reason the normally-open tie (Ch. 2) is also a safety boundary, and why racking/live work is forbidden in that configuration.</p>
+  </div>
+  <div class="warning">
+    <p><strong>Hierarchy of controls, in order:</strong> de-energise and prove dead (the only zero-energy state) → reduce the energy (maintenance switch ON before opening the board, ZSI healthy) → increase distance (remote racking, remote operation) → and only then PPE per the panel label. The orange label is a study output: if settings, transformers or the tie status change, the label is stale until the study is revised.</p>
+  </div>
+
+  <h3>Intuitive Formalization</h3>
+  <p>Symbols: <code>I_arc</code> = arcing current (kA); <code>t</code> = arc duration (s); <code>D</code> = working distance; <code>E</code> = incident energy (cal/cm²); <code>k</code> = geometry/voltage constant (here ≈3.5 at 450 mm, 400 V box).</p>
+  <div class="worked">
+    <code class="formula">I_arc ≈ (0.5–0.6) × I_bolted        at 400 V — the arc throttles itself</code>
+    <code class="formula">E ≈ k × I_arc × t                    linear in BOTH, but only t is yours to set</code>
+    <code class="formula">E falls roughly as 1/D^x, x ≈ 1–2    distance helps; boxes focus the blast forward</code>
+    <code class="formula">Boundary: distance where E = 1.2 cal/cm² — the line on the floor</code>
+  </div>
+  <p>Physical meaning: an arc is a resistor made of plasma; V_arc × I_arc is megawatts of radiant power (Ch. 4 measured it at ~11.6 MW <em>inside</em> a chute — here it is in the open). The product I·t is the dose integral; the constant k hides enclosure focusing and distance. The 1.2 cal/cm² threshold converts all of it into the only unit that finally matters: human skin.</p>
+
+  <h3>CTQ Mapping</h3>
+  <table class="tbl">
+    <thead><tr><th>Critical-to-quality requirement</th><th>How the concept delivers it</th><th>What to check in the field</th></tr></thead>
+    <tbody>
+      <tr><td>Worker thermal dose known before the cover comes off</td><td>IEEE 1584 study converts bus data + settings into cal/cm² and a boundary per bus</td><td>Orange label on LV-MSB/MCCs: energy, boundary, PPE category present, dated, and matching the current study revision</td></tr>
+      <tr><td>Protection actually operates at arcing current</td><td>Principle 1 forces TCC checks at ~22 kA and at the 85 % low case</td><td>Study shows the governing device and time at the arcing current — not assumed instantaneous</td></tr>
+      <tr><td>Energy reduced while humans are exposed</td><td>Time is the lever: 0.3 s→0.1 s cuts 23→7.7 cal/cm² (CAT 3→CAT 2)</td><td>Maintenance-mode switch used and logged before live diagnostics/racking; ZSI function-tested</td></tr>
+      <tr><td>Configuration changes don't silently raise the dose</td><td>E ∝ I_arc: tie-closed ≈ doubles it; transformer Z changes shift it</td><td>No racking or live work with bus-tie closed; study revalidated after any setting or equipment change</td></tr>
+      <tr><td>PPE matched, not guessed</td><td>PPE categories rated in the same cal/cm² currency as the hazard</td><td>Flash suit/CAT rating on the permit ≥ label value; above ~40 cal/cm², task is redesigned, not re-dressed</td></tr>
+    </tbody>
+  </table>
+  <h3>Conceptual Map</h3>
+  <pre>
+                       ARC FLASH ENERGY (core)
+                "the fault, priced in human skin"
+                                |
+        +-----------------------+-----------------------+
+        | requires              | rests on              | rests on
+        v                       v                       v
+  [Ch.2 bolted fault      [Arc throttles itself:   [Dose = k·I_arc·t,
+   38.5 kA at LV-MSB]      I_arc ≈ 0.57×I_bolted    falls with distance,
+        |                  ≈ 22 kA]                  focused by the box]
+        |                       |                       |
+        |                       | led to                | led to
+        |                       v                       v
+        |              [Check protection at      [IEEE 1584 / Lee:
+        |               ARCING current,           label per bus,
+        |               +85 % low case]           1.2 cal/cm² boundary]
+        |                                               |
+        +---------- inherits Ch.5's trade-off ----------+
+                                |
+                 0.3 s clear → 23 cal/cm² (CAT 3)
+                 0.1 s clear → 7.7 cal/cm² (CAT 2)
+                                |
+                                | answered by
+                                v
+        +-----------------------+-----------------------+
+        v                       v                       v
+  [De-energise,           [TIME lever: ZSI,       [Distance + PPE:
+   prove dead]             maintenance switch,     remote racking,
+   the only zero           arc-detection ms        arc-rated suits
+                           relays]                 as LAST line]
+  </pre>
+  <div class="note">
+    <p>The 3.5 cal/cm² per kA·s factor and all results are <strong>indicative teaching values</strong> on the Rev 3 basis (400 V, 60 Hz, 450 mm working distance); the project IEEE 1584 arc-flash study and panel labels govern PPE selection.</p>
+  </div>
+</article>

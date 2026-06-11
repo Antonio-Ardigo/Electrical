@@ -1,0 +1,102 @@
+<article class="concept" id="concept-harmonics">
+  <h2>9. Harmonics &amp; VFDs</h2>
+  <p class="backlink">Manual deep-dive: <a href="manual-rev3.html#c-pfc">open the full section</a> (harmonics are treated with the PFC bank; see also <a href="manual-rev3.html#c-motors">the motors &amp; VFD section</a>)</p>
+
+  <h3>The Problem</h3>
+  <p>The Rev 3 plant, like every modern process plant, is full of variable frequency drives (tag <strong>VFD</strong>): pumps, fans and compressors whose speed is controlled electronically. Each drive front-end is a rectifier that does not draw current smoothly from the 400 V / 60 Hz bus — it gulps current in pulses, twice per phase per cycle, only when the incoming sine wave is near its peak. The bus sees a current waveform that is no longer a sine wave at all.</p>
+  <p>Any distorted but repeating wave can be decomposed into a family of clean sine waves: the 60 Hz <strong>fundamental</strong> plus <strong>harmonics</strong> at integer multiples — 300 Hz (5th), 420 Hz (7th), 660 Hz (11th) and so on. These harmonic currents are invisible to a standard ammeter reading "amps", yet they heat transformers and neutrals, make motors growl and run hot in a 50 °C ambient that has no margin to spare, trip breakers mysteriously, and corrupt the voltage wave that every other load on LV-MSB shares.</p>
+  <p>The lethal twist is the interaction with power factor capacitors. A plain capacitor bank and the 1600 kVA transformer's inductance form a parallel resonant circuit — an electrical bell. If a VFD happens to "ring the bell" at one of its harmonic frequencies, a modest 5th or 7th harmonic current is amplified many times over, and the first casualties are the capacitors themselves: bulging cans, blown fuses, and in the worst case a switchboard fire. Before this was understood, plants installed capacitors and drives independently and watched the capacitors die in months. The fix — the detuned bank — is the centrepiece of this chapter.</p>
+
+  <h3>Core Principles</h3>
+  <h4>Principle 1: A distorted wave is a sum of clean waves (Fourier)</h4>
+  <p><strong>Statement:</strong> Any periodic waveform equals a fundamental sine wave plus harmonics at integer multiples of the fundamental frequency.</p>
+  <p>At 60 Hz the family is 60, 120, 180, 240, 300 Hz… Think of a violin string: the same string vibrates at its fundamental pitch and simultaneously at overtones, and the mix is the timbre. A VFD input current has a very harsh "timbre". Distortion is quantified by <strong>THD</strong> (total harmonic distortion): the RMS of all harmonics divided by the fundamental, in percent.</p>
+  <h4>Principle 2: A 6-pulse rectifier produces the h = 6k ± 1 family</h4>
+  <p><strong>Statement:</strong> A three-phase bridge rectifier (six diodes — the standard small/medium VFD front-end) draws characteristic harmonics at orders 5, 7, 11, 13, 17, 19…, with magnitude falling roughly as 1/h.</p>
+  <p>Why those numbers: the bridge takes six current pulses per cycle, and the symmetry of that pattern cancels the triplen (3rd, 9th) and even harmonics, leaving 6k ± 1. So the dominant pollutants are the <strong>5th (300 Hz, typically ~30 % of fundamental)</strong> and the <strong>7th (420 Hz, ~10 %)</strong>. Define on first use: "order h" simply means h × 60 Hz.</p>
+  <h4>Principle 3: Harmonic currents create harmonic voltages across impedance</h4>
+  <p><strong>Statement:</strong> Each harmonic current flowing back through the supply impedance (transformer + grid) drops a harmonic voltage, distorting the bus voltage for <em>every</em> consumer on it.</p>
+  <p>Ohm's law per frequency: U_h = I_h × Z_h, and inductive impedance grows with frequency (Z_h ≈ h × Z₁). A small high-order current can therefore make a disproportionate voltage mess. IEEE 519 and the SEC Distribution Code limit voltage THD (typically ≤5 % at LV) for exactly this reason.</p>
+  <h4>Principle 4: A capacitor plus an inductance is a resonant circuit</h4>
+  <p><strong>Statement:</strong> The PFC bank (capacitive, impedance falling with frequency) in parallel with the transformer (inductive, impedance rising with frequency) has one frequency where the two are equal — parallel resonance — at which harmonic currents are amplified instead of absorbed.</p>
+  <p>The resonant order is set by the ratio of available fault level to capacitor size: <code>h_res = √(S_sc / Q_c)</code>. If that lands on 5 or 7, the bell rings. The worked example below shows it lands uncomfortably close in our plant.</p>
+
+  <h3>Key Innovations</h3>
+  <h4>The detuned reactor (1970s, European LV practice)</h4>
+  <p><strong>What:</strong> A series reactor added to each capacitor step, sized so that reactor reactance is a fixed percentage p (here <strong>7 %</strong>) of the capacitor reactance. The branch becomes a series L-C circuit tuned to <code>f_tune = f₁ / √p</code> — <strong>227 Hz at 60 Hz</strong> — deliberately <em>below</em> the lowest characteristic harmonic (300 Hz).</p>
+  <p><strong>Why it mattered:</strong> Above its tuning frequency a series L-C branch looks <em>inductive</em>. So at 300 Hz and everything above, the "capacitor" bank is no longer a capacitor at all — parallel resonance with the transformer can no longer occur at any harmonic the VFDs produce. The bank still delivers its kvar at 60 Hz almost unchanged. One cheap reactor converts a fire hazard into a mildly helpful harmonic sink.</p>
+  <h4>Multi-pulse and active front ends (1980s–2000s)</h4>
+  <p><strong>What:</strong> 12-pulse rectifiers (two 6-pulse bridges fed by a phase-shifting transformer) cancel the 5th and 7th, leaving 11th and 13th; active front ends (AFE) use switched transistors to draw a near-sinusoidal current (THD-i &lt; 5 %).</p>
+  <p><strong>Why it mattered:</strong> Treats the disease at the source instead of the symptom at the bus — used for the largest drives where one machine dominates the harmonic budget.</p>
+  <h4>The active harmonic filter (1990s onward)</h4>
+  <p><strong>What:</strong> A power-electronic device that measures the distorted bus current in real time and injects the exact anti-phase harmonic current — noise-cancelling headphones for the switchboard.</p>
+  <p><strong>Why it mattered:</strong> Retrofittable, adaptive, and the standard remedy when a plant grows more drives than its original harmonic study assumed.</p>
+
+  <h3>Worked Example: Resonance check — plain bank vs 7 % detuned bank on LV-MSB</h3>
+  <div class="worked">
+    <p><strong>Given:</strong> LV bus 400 V / 60 Hz fed by one TX (1600 kVA, Z = 6 %), short-circuit current Isc ≈ 38.5 kA; PFC bank Q_c ≈ 580 kvar (Chapter 8). All values indicative.</p>
+    <p><strong>Step 1 — Short-circuit (stiffness) level of the bus.</strong></p>
+    <p><code class="formula">S_sc = √3 × U × I_sc = 1.732 × 400 V × 38 500 A ≈ 26.7 MVA</code></p>
+    <p><em>Why:</em> S_sc measures how "stiff" the bus is — the inductance behind it. It is the L of the resonant circuit. (Cross-check: S_sc ≈ S_tx / Z = 1600 kVA / 0.06 = 26.7 MVA. Consistent.)</p>
+    <p><strong>Step 2 — Resonant order with a PLAIN (no reactor) bank.</strong></p>
+    <p><code class="formula">h_res = √(S_sc / Q_c) = √(26 700 / 580) = √46.0 = 6.8</code></p>
+    <p><code class="formula">f_res = 6.8 × 60 Hz ≈ 407 Hz</code></p>
+    <p><em>Why:</em> 407 Hz sits almost exactly on the <strong>7th harmonic (420 Hz)</strong> — one of the two frequencies every 6-pulse VFD in the plant pumps out. The 7th-harmonic currents would be amplified by the resonance, circulate between transformer and capacitors, and cook the bank. <em>Note:</em> the result also moves with switching state — close the bus-tie (Isc ≈ 77 kA, S_sc ≈ 53.3 MVA) and h_res shifts to √(53 300/580) = 9.6 (≈575 Hz). You cannot "tune around" a resonance that moves; you must remove it.</p>
+    <p><strong>Step 3 — Tuning frequency of the 7 % DETUNED bank.</strong> Detuning factor p = X_L/X_C = 0.07.</p>
+    <p><code class="formula">f_tune = f₁ / √p = 60 / √0.07 = 60 / 0.2646 = 227 Hz&nbsp;&nbsp;(order n = 3.78)</code></p>
+    <p><em>Why:</em> The series reactor and capacitor resonate (series) at 227 Hz. Above 227 Hz the branch impedance is net inductive.</p>
+    <p><strong>Step 4 — Verdict at the harmonic frequencies.</strong></p>
+    <p><code class="formula">5th = 300 Hz &gt; 227 Hz → branch inductive → no parallel resonance possible</code></p>
+    <p><code class="formula">7th = 420 Hz &gt; 227 Hz → inductive → safe;&nbsp; same for 11th, 13th…</code></p>
+    <p><strong>Sanity check:</strong> 227 Hz lies below 300 Hz with ~25 % margin, but above the 3rd (180 Hz) — triplens are scarce on a balanced three-wire system, so the bank cannot be overloaded by them either. The 7 % reactor raises the capacitor terminal voltage by roughly 1/(1−p) − 1 ≈ 7.5 %, which is why the cans are 480 V-class units on a 400 V bus. <strong>Result: plain bank = resonance at ≈407 Hz, on top of the 7th harmonic — reject. Detuned 7 % bank = tuned to 227 Hz, inductive at all VFD harmonics — accept.</strong></p>
+  </div>
+
+  <h3>Intuitive Formalization</h3>
+  <p>Three short formulas carry the whole chapter. First, frequencies: harmonic order h means frequency <code>f_h = h × 60 Hz</code>, and a 6-pulse rectifier emits <code>h = 6k ± 1</code> (k = 1, 2, 3…) with current magnitude roughly <code>I_h ≈ I₁ / h</code>. Second, the danger condition for a plain capacitor bank:</p>
+  <p><code class="formula">h_res = √(S_sc / Q_c)</code></p>
+  <p>where <strong>S_sc</strong> (MVA) is the bus short-circuit level — physically, the strength of the transformer/grid inductance behind the bus — and <strong>Q_c</strong> (Mvar) is the connected capacitor power. The square root appears because resonance happens where inductive and capacitive reactances cross, and each scales linearly (one up, one down) with frequency. If h_res lands near 5, 7, 11 or 13, expect amplification. Third, the cure:</p>
+  <p><code class="formula">f_tune = f₁ / √p</code></p>
+  <p>where <strong>p</strong> is the reactor's reactance as a fraction of the capacitor's (p = 0.07 → 227 Hz at 60 Hz, n = 3.78). Physical meaning: below f_tune the branch behaves as the capacitor you wanted; above f_tune the reactor wins and the branch is an inductor — and an inductor cannot parallel-resonate with another inductor. Everything a field engineer needs is: compute h_res, see that it threatens, specify p = 7 %, verify f_tune &lt; 300 Hz.</p>
+
+  <h3>CTQ Mapping</h3>
+  <table class="tbl">
+    <thead><tr><th>Critical-to-quality requirement</th><th>How the concept delivers it</th><th>What to check in the field</th></tr></thead>
+    <tbody>
+      <tr><td>Bus voltage clean enough for all loads (THD-V ≤ 5 %, IEEE 519 / SEC code)</td><td>Detuned bank absorbs part of the 5th/7th instead of amplifying them; large drives use 12-pulse/AFE or line reactors</td><td>Power-quality meter snapshot at LV-MSB at full production; THD-V and individual h₅, h₇</td></tr>
+      <tr><td>Capacitor bank survives its design life</td><td>227 Hz tuning prevents resonance; 480 V-class cans absorb the 7.5 % voltage rise</td><td>Reactor nameplate p = 7 %; can temperatures; step currents balanced; no bulged cans</td></tr>
+      <tr><td>Transformers not derated by stealth</td><td>Harmonic heating (eddy losses ∝ h²) kept inside the K-factor/THDI assumed in sizing</td><td>TX top-oil/winding temperature vs load; THD-I at TX secondary &lt; study value</td></tr>
+      <tr><td>No nuisance tripping or metering error</td><td>True-RMS sensing assumed in breaker trip units and meters; harmonic study sets limits</td><td>Trip units set per coordination study; meters specified true-RMS</td></tr>
+      <tr><td>Resonance stays absent in every switching state</td><td>Detuning works regardless of S_sc (tie open/closed, on DG)</td><td>Confirm bank behaviour and THD with bus-tie closed during commissioning, and on DG supply</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Conceptual Map</h3>
+  <pre>
+                       HARMONICS &amp; VFDs (core)
+                                |
+        +----------- rests on --+----------------------+
+        |                       |                      |
+   Fourier:                6-pulse bridge         U_h = I_h × Z_h
+   wave = Σ harmonics      → h = 6k±1             (current pollution
+   (THD metric)            (5th 300 Hz,            becomes voltage
+        |                   7th 420 Hz)            pollution)
+        |                       |                      |
+        +---------- collides with PFC capacitors ------+
+                                |
+                   h_res = √(S_sc/Q_c) ≈ 6.8
+                   → ≈407 Hz, ON the 7th  (danger)
+                                |
+                    led to      |      led to
+            +-------------------+------------------+
+            |                   |                  |
+     DETUNED BANK         12-pulse / AFE      Active filter
+     p = 7 % → 227 Hz     (fix at source)     (anti-noise
+     &lt; 300 Hz → safe                           injection)
+            |                   |                  |
+            +------- enables ---+------------------+
+                                |
+              Clean 400 V bus: THD-V ≤ 5 %, cool
+              transformers, long capacitor life
+  </pre>
+  <div class="note"><p>All values indicative on the Rev 3 basis (60 Hz, Isc 38.5 kA / 77 kA tie-closed, PFC ≈580 kvar detuned 7 %); the plant harmonic study (per IEEE 519 and the SEC Distribution Code) governs.</p></div>
+</article>

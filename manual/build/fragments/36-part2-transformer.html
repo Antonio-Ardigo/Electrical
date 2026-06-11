@@ -1,0 +1,795 @@
+<!-- ============================================================
+     §C-TRANSFORMER  Transformer sizing, impedance & N-1 check
+     Rev 3 (Saudi/SEC edition) — 13.8 kV / 400-230 V / 60 Hz / 50 °C
+     Deep-dive tutorial. Replaces the short seed section; keeps the
+     section id (c-transformer) and the seed h3 ids that still map
+     (c-transformer-normal, c-transformer-n1, c-transformer-assess).
+     All numbers indicative — detailed studies govern.
+============================================================ -->
+<section id="c-transformer" data-title="Transformer Sizing and N-1 Check" data-part="Part 2 — Calculations">
+
+  <h2>2 — Transformer Sizing &amp; N-1 Check <span style="font-size:0.65em; font-weight:normal; background:#e8f4fd; border:1px solid #aad4f5; border-radius:3px; padding:1px 5px; color:#1a6fa0;">Core</span></h2>
+
+  <p><strong>Goal:</strong> understand why the plant distributes at 13.8 kV but uses power
+  at 400 V, verify the <code>TX-1</code>/<code>TX-2</code> selection of
+  2&nbsp;&times;&nbsp;1600 kVA from first principles, learn what the nameplate impedance
+  Z&nbsp;=&nbsp;6&nbsp;% physically means and what it does to fault level and voltage
+  regulation, and be able to size, specify and live with a distribution transformer on the
+  Rev 3 plant basis (13.8/0.4&nbsp;kV, 60&nbsp;Hz, Dyn11, 50&nbsp;&deg;C design ambient,
+  dust and sand).</p>
+
+  <p>This section is the deep dive behind the headline numbers used everywhere else in the
+  manual: the 38.5 kA LV fault level analysed in
+  <a href="#c-shortcircuit">§4 — Short-Circuit Current &amp; Switchgear Withstand</a>, the
+  per-unit base quantities in <a href="#c-perunit">§ Per-Unit System</a>, the relay grading
+  in <a href="#c-protection">§10 — Protection Coordination &amp; Selectivity</a>, and the
+  cable sizing in <a href="#c-cables">§ Cable Sizing</a> all start from the two machines
+  described here. Typical product families are surveyed in the
+  <a href="#cat-transformers">transformer catalogue</a>.</p>
+
+  <div class="note">
+    <strong>Indicative data.</strong> Every numeric value in this section — ratings,
+    losses, temperatures, settings, margins — is indicative and chosen for teaching on the
+    Rev 3 plant basis. The plant's formal load study, short-circuit study and protection
+    coordination study govern. Standards cited are the SASO-adopted editions of
+    IEC&nbsp;60076 (power transformers; part 11 for dry-type), applied together with
+    SBC&nbsp;401 and the SEC Distribution Code / Saudi Grid Code.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       1. WHY THIS EXISTS
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-transformer-concept">The Plant's Heart: Why 13.8 kV In and 400 V Out</h3>
+
+  <h4>Why this exists</h4>
+
+  <p>If the switchboard is the plant's spine and the cables are its arteries, the
+  transformer is its heart — every watt the plant ever uses passes through the windings of
+  <code>TX-1</code> or <code>TX-2</code>. It is also, by a comfortable margin, the most
+  passive major item in the installation: no moving parts, no contacts, no electronics in
+  the power path. Two sets of copper windings wound around a common steel core, doing one
+  thing only — exchanging <em>voltage for current</em> at almost perfect efficiency. To
+  understand why the plant needs that exchange, follow the power from the SEC network to a
+  motor terminal box.</p>
+
+  <p>The plant draws about 2.0 MW at 0.85 power factor — roughly 2353 kVA. Power can be
+  delivered as <em>high voltage and low current</em> or <em>low voltage and high
+  current</em>; the product is the same. The cost of moving it is not. Cable heating goes
+  as <strong>I&sup2;R</strong> — current <em>squared</em> times resistance — so the current
+  you choose matters twice over.</p>
+
+  <div class="worked">
+    <h4>Why distribute at MV — the I&sup2;R argument in one line</h4>
+    <p>Same apparent power, two voltage choices:</p>
+    <code class="formula">At 400 V:&nbsp;&nbsp;&nbsp;I = 2 353 000 / (1.732 &times; 400) &asymp; 3 396 A</code>
+    <code class="formula">At 13.8 kV:&nbsp;I = 2 353 000 / (1.732 &times; 13 800) &asymp; 98 A</code>
+    <p>Voltage ratio 13.8 / 0.4 = <strong>34.5</strong>, so the MV current is 34.5 times
+    smaller. Cable loss in a given conductor goes as I&sup2;:</p>
+    <code class="formula">Loss ratio = 34.5&sup2; &asymp; 1 190</code>
+    <p>For the same conductor, carrying the plant's power at 13.8 kV dissipates roughly
+    <strong>1 190 times less</strong> heat in the cable than carrying it at 400 V. That is
+    the entire economic case for medium voltage in two numbers: 34.5 and 1 190.</p>
+  </div>
+
+  <p>So why not run the whole plant at 13.8 kV and skip the transformer? Because the
+  trade-off cuts the other way at the point of use. Insulating, isolating and safely
+  working on 13.8 kV equipment is expensive: creepage distances grow, every switching
+  device becomes a certified MV apparatus, every termination needs stress control, and
+  every task needs MV-authorised people. A 5.5 kW pump motor wound for 13.8 kV would be
+  absurd — the insulation would occupy more of the slot than the copper. Utilisation
+  equipment — motors below a few hundred kW, lighting, sockets, control gear — is cheapest,
+  safest and most standardised at 400/230 V.</p>
+
+  <p>The transformer is the device that lets the plant have both: <strong>transport at
+  13.8 kV where current is the enemy, use at 400 V where insulation is the enemy</strong>.
+  It performs the exchange through nothing but electromagnetic induction: the MV winding
+  magnetises the steel core 60 times a second, and the alternating flux induces a voltage
+  in the LV winding in exact proportion to its turns. No contact between the windings, no
+  moving parts, efficiency around 99 %. It is arguably the most reliable machine humanity
+  has ever mass-produced — and that reliability is precisely why it gets forgotten until
+  the day it fails.</p>
+
+  <p><strong>Why two transformers?</strong> Because the heart metaphor has a dark side: a
+  single transformer is a single point of failure for the entire plant. A distribution
+  transformer is not a stocked commodity — a failed 1600 kVA cast-resin unit is typically
+  a <strong>4–8 month</strong> factory lead item (longer in tight markets). No plant that
+  earns money can accept a credible single failure with a half-year outage attached. The
+  Rev 3 design therefore splits the load across <strong>two 1600 kVA units feeding two
+  half-busbars of the LV-MSB, with a normally-open bus-tie</strong>. Lose either
+  transformer and the tie closes, the other unit picks up the essential load, and the
+  plant limps but lives. That is the <em>N-1 criterion</em>: the plant must survive the
+  loss of any one major item. The worked calculation below proves the arithmetic.</p>
+
+  <div class="key">
+    The transformer exists because power is cheapest to <em>move</em> at high voltage
+    (current down 34.5&times;, cable loss down ~1 190&times; at 13.8 kV vs 400 V) and
+    cheapest to <em>use</em> at low voltage. There are two of them because one is a single
+    point of failure with a 4–8 month replacement time. Everything else in this section —
+    sizing, impedance, taps, cooling — is detail in service of those two facts.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       2. WHAT GOES WRONG WITHOUT IT
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-transformer-failure">A Failure Story: the Summer the Plant Went Dark</h3>
+
+  <h4>What goes wrong without it</h4>
+
+  <p>The following narrative is fictional but assembled from real failure modes. It
+  describes a plant much like ours — same load, same climate — but built to a cheaper
+  single-transformer design. Read it once for the story, then again counting the decisions
+  that were really made years before the failure.</p>
+
+  <p><strong>The setup.</strong> The plant was built with one 2500 kVA oil-filled
+  transformer feeding a single LV busbar. On paper it was generous: 2353 kVA of demand on
+  a 2500 kVA nameplate, 94 % loading at peak. But the nameplate was an IEC rating at
+  40&nbsp;&deg;C maximum ambient, and the transformer bay faces west, unshaded, where
+  August afternoons reach 50&nbsp;&deg;C. Over the years the plant also accumulated VFDs —
+  about a third of the load now draws distorted, harmonic-rich current that heats the
+  windings beyond what the fundamental amps suggest. Every summer afternoon for nine
+  years, the hottest spot inside the HV winding ran 10–15 K above its design temperature.
+  Insulation ageing is brutally exponential: as a rule of thumb each sustained
+  <strong>6–8 K</strong> above rated hot-spot temperature roughly <strong>halves</strong>
+  insulation life. Nine summers of that arithmetic, silently.</p>
+
+  <p><strong>The fault.</strong> A Thursday in August, 14:40, peak cooling load. Somewhere
+  in the HV winding, paper insulation that should have lasted thirty years but has aged
+  like ninety finally punctures between adjacent discs. A turn-to-turn fault — small at
+  first, just a shorted loop acting like the secondary of a current transformer, cooking
+  itself with hundreds of amps in a single turn. Gas bubbles through the oil. Within
+  minutes the fault spreads across discs; the Buchholz relay finally trips the MV breaker.
+  The transformer is dead. So, immediately and completely, is the plant: every pump, every
+  compressor, the control room air conditioning, the lot. The standby generator carries
+  the emergency loads only — it was never sized for production.</p>
+
+  <p><strong>The aftermath is the real lesson.</strong></p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Time after trip</th><th>What happens</th><th>Cost driver</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Hour 1</td><td>Process trips ungracefully; product in lines begins to set/spoil.</td><td>Lost batch, cleanup</td></tr>
+      <tr><td>Day 1–3</td><td>Oil sample and electrical tests confirm the winding is unrepairable on site.</td><td>Outage continues</td></tr>
+      <tr><td>Week 1–2</td><td>Search for a replacement. A 2500 kVA, 13.8/0.4 kV, Dyn11, 60 Hz unit matching the plant's impedance and dimensions is <em>not</em> on any local shelf.</td><td>Expediting fees</td></tr>
+      <tr><td>Month 1–2</td><td>A rental/secondhand unit is found with the wrong impedance (4 %) — the LV switchboard withstand has to be re-checked before it may even be energised (<a href="#c-shortcircuit">§4</a>).</td><td>Engineering, risk</td></tr>
+      <tr><td>Month 4–8</td><td>The new factory-built transformer arrives, is installed, tested, commissioned.</td><td>Capital + months of lost production</td></tr>
+    </tbody>
+  </table>
+
+  <p>Total: a production outage measured in <strong>months</strong>, triggered by a
+  component whose duplicate would have cost a low single-digit percentage of one month's
+  production value. The post-incident review finds no villain — only a design decision
+  made on a spreadsheet years earlier, where the second transformer looked like the
+  easiest line to delete.</p>
+
+  <p><strong>Contrast with the Rev 3 design.</strong> Same fault, our plant:
+  <code>TX-1</code> develops a winding fault and its protection clears it. Half the
+  LV-MSB goes dark. The PMS sheds the non-essential load group, the bus-tie
+  <code>BT</code> closes, and <code>TX-2</code> picks up the essential ~1.4 MVA at about
+  87.5 % loading — proven in the worked calculation below. Production runs partial but
+  runs. The failed unit is replaced on a planned programme while the plant earns. The
+  entire difference between the two stories is one purchase order and one busbar
+  partition, decided on day one.</p>
+
+  <div class="warning">
+    The N-1 story only works if three things are true <em>on the day of the fault</em>:
+    the healthy transformer is genuinely able to carry the essential load at the actual
+    ambient; the bus-tie closes (auto or by drilled manual procedure); and load shedding
+    actually sheds. A bus-tie that has not been exercised in years, or a shedding list
+    that no longer matches the plant, silently converts the two-transformer design back
+    into the single-transformer story above. Verify all three — see the site checklist at
+    the end of this section.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       3. FEEL FOR THE NUMBERS
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-transformer-feel">Sixteen Kilowatts of Heat and a Hum at 120 Hz</h3>
+
+  <h4>Feel for the numbers</h4>
+
+  <p>Before the formal calculation, build honest physical intuition for what a 1600 kVA
+  transformer <em>is</em>: roughly two tonnes of steel and copper, the size of a large
+  wardrobe, silently handling the power of about two thousand homes' worth of kettles.
+  Three estimates anchor the scale.</p>
+
+  <div class="worked">
+    <h4>Estimate 1 — "99 % efficient" still means a roomful of heaters</h4>
+    <p>A good 1600 kVA cast-resin unit is about 99 % efficient at full load. The missing
+    1 % does not vanish — it appears as heat inside the enclosure:</p>
+    <code class="formula">P_loss &asymp; no-load (core) loss + load (copper) loss &asymp; 2.5 kW + 13.5 kW &asymp; 16 kW</code>
+    <p>Sixteen kilowatts is <strong>about seven domestic kettles boiling continuously,
+    24 hours a day</strong>, inside one steel box. Per day that is:</p>
+    <code class="formula">E = 16 kW &times; 24 h &asymp; 380 kWh/day</code>
+    <p>Now place that box in a 50&nbsp;&deg;C Saudi summer. The transformer can only cool
+    itself by being hotter than its surroundings — and its surroundings are already at a
+    temperature most machines consider an alarm condition. This is why ambient temperature
+    is not a footnote in the spec but a headline: IEC ratings assume 40&nbsp;&deg;C
+    maximum ambient, and every degree above that is subtracted directly from the
+    insulation's thermal budget. Cooling design (room ventilation, fan boost, insulation
+    class margin) is covered under <em>Equipment technology</em> below.</p>
+    <p><em>Sanity check:</em> at the normal 73 % loading the copper loss falls with the
+    square of load (13.5 &times; 0.73&sup2; &asymp; 7.2 kW), so day-to-day dissipation is
+    nearer 10 kW — still four kettles, still continuous.</p>
+  </div>
+
+  <div class="worked">
+    <h4>Estimate 2 — Inrush: the transformer's one violent moment</h4>
+    <p>Energising a transformer is the only time it behaves badly. At the instant the MV
+    breaker closes, the core can be driven deep into saturation (worst case: switching at
+    voltage zero with unfavourable residual flux), and for a few cycles the magnetising
+    current is enormous:</p>
+    <code class="formula">I_inrush &asymp; 8–12 &times; FLC = 8–12 &times; 66.9 A &asymp; 540–800 A (MV side)</code>
+    <p>That is fault-sized current — yet it is completely healthy, decaying to the normal
+    magnetising current (about 1–2 % of FLC, roughly 1 A) with a time constant such that
+    the big peaks are over in roughly <strong>0.1 s</strong>, with a long harmonic-rich
+    tail. The protection must ride through it: an MV overcurrent element or fuse that
+    trips on inrush makes the transformer impossible to energise. This is exactly why
+    transformer protection curves are checked against the classic "12 &times; FLC at
+    0.1 s" inrush point, and why the 87T differential element uses second-harmonic
+    restraint — see <em>Equipment settings</em> below and
+    <a href="#c-protection">§10</a>.</p>
+    <p><em>Sanity check:</em> 540–800 A is 8–12&times; the 66.9 A nameplate current but
+    still well below the ~25 kA-class faults the MV protection is set for — there is
+    room to grade between "loud but healthy" and "fault", and the calculation in
+    <a href="#c-protection">§10</a> uses it.</p>
+  </div>
+
+  <div class="worked">
+    <h4>Estimate 3 — The hum is the core breathing at 120 Hz</h4>
+    <p>Stand next to an energised transformer and you hear a low hum. It is not the
+    windings and it is not 60 Hz. The steel core physically changes length very slightly
+    every time it is magnetised — a property called <strong>magnetostriction</strong>.
+    The core does not care which <em>direction</em> the flux points, only how strongly it
+    is magnetised, so it contracts and relaxes <strong>twice per cycle</strong>:</p>
+    <code class="formula">f_hum = 2 &times; f_supply = 2 &times; 60 Hz = 120 Hz (Saudi grid)</code>
+    <p>On a 50 Hz system the same machine hums at 100 Hz — a useful party trick: you can
+    tell a grid's frequency by ear. The practical value is diagnostic: the hum's loudness
+    rises steeply with flux density, so a transformer that suddenly hums louder may be
+    seeing overvoltage, a wrong tap position, or DC/geomagnetic bias pushing the core
+    toward saturation. A change in the sound of a machine with no moving parts is always
+    worth investigating.</p>
+  </div>
+
+  <p>Finally, hold on to the two currents that define this machine and that you will use
+  constantly: <strong>66.9 A on the 13.8 kV side, 2 309 A on the 400 V side</strong> —
+  same power, 34.5&times; ratio. The MV cable feeding 1.6 MVA is a modest single cable;
+  the LV connection carrying the <em>same power</em> is a busduct or a bundle of
+  single-core cables as thick as your wrist (<a href="#c-cables">§ cables</a>). Seeing
+  both sides of one transformer is the fastest way to internalise why MV exists.</p>
+
+  <!-- ────────────────────────────────────────────────────────────
+       4. WORKED CALCULATION
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-transformer-normal">Worked Calculation (a): Sizing and Normal Loading</h3>
+
+  <h4>Worked calculation</h4>
+
+  <p>Three calculations follow, and together they are the transformer's complete identity
+  card: <strong>(a)</strong> how big it must be and what it carries normally and under
+  N-1; <strong>(b)</strong> what its impedance means and what it does to fault level and
+  voltage; <strong>(c)</strong> its full-load currents on both sides. Every step is shown;
+  everything can be redone on a phone calculator.</p>
+
+  <figure class="fig">
+    <div class="svg-embed" data-src="diagrams/svg/sld-master-2MW.svg"></div>
+    <figcaption>Fig — Plant single-line diagram: TX-1 / TX-2 feeding the split LV-MSB
+    with normally-open bus-tie BT.</figcaption>
+  </figure>
+  <div class="warning drawing-basis"><strong>Drawing basis note.</strong> This diagram was
+  drawn for the original 11 kV / 415 V / 50 Hz reference design and has not been re-rendered.
+  For this Saudi (SEC) Rev 3 edition read 11 kV as 13.8 kV, 415 V as 400 V and 50 Hz as 60 Hz.
+  Topology, tags and protection philosophy are unchanged.</div>
+
+  <div class="worked">
+    <h4>Step a-1 — From plant load to apparent power</h4>
+    <p>The load study gives 2.0 MW of demand at an uncorrected power factor of 0.85.
+    Transformers are rated in kVA, not kW, because the windings carry the full current
+    regardless of power factor:</p>
+    <code class="formula">S = P / pf = 2 000 kW / 0.85 = 2 353 kVA</code>
+    <p>(After power-factor correction to 0.95 the apparent power drops to about
+    2 105 kVA, but the transformers must be sized for the worst credible case — PFC out
+    of service — so we size on 2 353 kVA. See <a href="#c-pfc">§ PFC</a>.)</p>
+  </div>
+
+  <div class="worked">
+    <h4>Step a-2 — Choose the unit count and standard size</h4>
+    <p>One 2500 kVA unit would carry the load (2 353 / 2 500 = 94 %) but is the
+    single-point-of-failure design from the failure story. The Rev 3 choice is two units
+    on a split bus. Each must carry half the load normally, with margin:</p>
+    <code class="formula">S_per&nbsp;tx = 2 353 / 2 = 1 176 kVA</code>
+    <p>The next standard IEC rating above 1 176 kVA is <strong>1600 kVA</strong>
+    (standard ladder: &hellip;1000, 1250, 1600, 2000, 2500&hellip;). 1250 kVA would also
+    "fit" normally (94 % loading) but leaves no margin for growth, no headroom at
+    50&nbsp;&deg;C, and a hopeless N-1 case. So: <strong>2 &times; 1600 kVA</strong>.</p>
+    <code class="formula">Loading_normal = 1 176 / 1 600 = 0.735 pu &asymp; 73 %</code>
+    <p>Each transformer runs at about 73 % of nameplate in normal split-bus operation — a
+    comfortable thermal regime that also extends insulation life (losses go as
+    load&sup2;: 0.73&sup2; &asymp; 53 % of full-load copper loss).</p>
+  </div>
+
+  <h3 id="c-transformer-n1">Worked Calculation (a, continued): the N-1 Check</h3>
+
+  <div class="worked">
+    <h4>Step a-3 — The N-1 check: one transformer lost</h4>
+    <p><strong>Worst case, no load shedding:</strong> the surviving unit would see the
+    whole plant:</p>
+    <code class="formula">Loading_N-1,full = 2 353 / 1 600 = 1.47 pu (147 %)</code>
+    <p>Not acceptable continuously — at 50&nbsp;&deg;C ambient it would cook the
+    insulation in short order. So the N-1 claim <em>requires automatic load
+    shedding</em>: the PMS trips the pre-agreed non-essential group before or as the
+    bus-tie closes.</p>
+    <p><strong>With shedding:</strong> the essential fraction is about 55 % of plant
+    load:</p>
+    <code class="formula">S_essential &asymp; 0.55 &times; 2 353 &asymp; 1 294 kVA</code>
+    <p>Design practice adds an allowance (&asymp;&nbsp;8 %) on top of the studied
+    essential load — for measurement uncertainty, motor restarting current after the
+    transfer, and quiet load growth since the last load study. That sets the N-1 design
+    check point at:</p>
+    <code class="formula">S_N-1,check &asymp; 1 294 &times; 1.08 &asymp; 1 400 kVA &asymp; 1.4 MVA</code>
+    <code class="formula">Loading_N-1 = 1 400 / 1 600 = 0.875 pu = 87.5 %</code>
+    <p><strong>Margin math:</strong> remaining headroom on the surviving unit:</p>
+    <code class="formula">Margin = 1 600 − 1 400 = 200 kVA = 12.5 % of nameplate</code>
+    <p>87.5 % continuous loading is acceptable — below nameplate, with 200 kVA in hand
+    for the unexpected. If the site later adds essential load, this margin is the first
+    number to re-check. (With the AN/AF fan boost described later, short-term capability
+    rises further — but never size <em>relying</em> on fans for the steady N-1 case.)</p>
+    <p><em>Sanity check:</em> 73 % normal / 87.5 % N-1 / 147 % unshed forms a consistent
+    ladder — shedding ~45 % of the load takes the surviving unit from an impossible 147 %
+    to a comfortable 87.5 %. If your own numbers ever show N-1 loading <em>below</em>
+    normal loading, you have made an error.</p>
+  </div>
+
+  <div class="key">
+    The sizing logic in one line: 2 353 kVA total &rarr; two units &rarr; 1 176 kVA each
+    &rarr; next standard size 1600 kVA &rarr; 73 % normal loading &rarr; with shedding to
+    ~1.4 MVA essential, the survivor runs at 87.5 % under N-1, leaving 200 kVA of margin.
+    Every number is auditable on site against nameplates, ammeters and the shedding list.
+  </div>
+
+  <h3 id="c-tx-impedance">Worked Calculation (b): What Z = 6 % Really Means</h3>
+
+  <p>The nameplate says <code>Z = 6 %</code> (more formally u<sub>k</sub>, the
+  short-circuit impedance voltage). This single number sets the plant's LV fault level,
+  its voltage regulation, and its ability to share load in parallel — it is the most
+  consequential number on the plate after the kVA. First, what it physically
+  <em>means</em>:</p>
+
+  <p><strong>The physical meaning.</strong> Z = 6 % says: <em>if you short-circuit the LV
+  terminals and slowly raise the MV voltage, full-load current flows when you reach just
+  6 % of rated MV voltage.</em> That is literally how the factory measures it (the
+  short-circuit test). Equivalently, the transformer behaves like an ideal transformer in
+  series with a small internal impedance that absorbs 6 % of rated voltage at full-load
+  current. The two consequences fall straight out:</p>
+
+  <ul>
+    <li><strong>Fault current:</strong> if 6 % of voltage drives 100 % of current, then
+    100 % of voltage (a bolted fault on the LV terminals with the grid behind) drives
+    100 / 6 &asymp; 16.7 times full-load current.</li>
+    <li><strong>Voltage regulation:</strong> at full load, up to ~6 % of the voltage is
+    "used up" inside the transformer — how much actually appears as a drop depends on
+    the power factor, calculated below.</li>
+  </ul>
+
+  <div class="worked">
+    <h4>Step b-1 — LV fault level from Z (per-unit method)</h4>
+    <p>Base current is the LV full-load current (derived in part c below):</p>
+    <code class="formula">I_base = 2 309 A,&nbsp;&nbsp;Z = 0.06 pu</code>
+    <code class="formula">I_sc = I_base / Z = 2 309 / 0.06 = 38 480 A &asymp; 38.5 kA</code>
+    <p>This is the fault current for a three-phase bolted fault at the LV terminals fed
+    through one transformer, treating the 13.8 kV source as infinite — a slightly
+    conservative and very useful simplification (including the real SEC source impedance
+    shaves only a few percent off; <a href="#c-shortcircuit">§4</a> does the refined
+    version, and <a href="#c-perunit">§ per-unit</a> explains the method). It is why the
+    LV-MSB is specified at 50–65 kA withstand.</p>
+    <p><em>Sanity check:</em> 38 480 / 2 309 = 16.7 = 1/0.06. The fault level is exactly
+    "full-load current divided by per-unit impedance" — if your answer is not ~16.7&times;
+    FLC, recheck.</p>
+    <div class="warning"><strong>Tie-closed warning:</strong> with the bus-tie closed and
+    both transformers in parallel, both feed the fault: &asymp; 2 &times; 38.5 = 77 kA —
+    above the switchboard rating. This is the calculational reason the tie is
+    <em>normally open</em> (<a href="#c-shortcircuit">§4</a>).</div>
+  </div>
+
+  <div class="worked">
+    <h4>Step b-2 — Voltage regulation at full load, 0.85 pf</h4>
+    <p>The 6 % impedance is mostly reactance. Split it into resistance and reactance:
+    R comes from the load-loss: P<sub>k</sub> &asymp; 13.5 kW on 1600 kVA &rarr;
+    R &asymp; 13.5/1600 &asymp; 0.85 %, round to <strong>R &asymp; 1 %</strong>; then:</p>
+    <code class="formula">X = √(Z² − R²) = √(6² − 1²) = √35 &asymp; 5.9 %</code>
+    <p>The standard approximate regulation formula (drop in % of rated voltage at
+    full-load current, lagging pf):</p>
+    <code class="formula">ΔV &asymp; R·cos φ + X·sin φ</code>
+    <p>At pf 0.85: cos φ = 0.85, sin φ = √(1 − 0.85²) = 0.527. Substitute:</p>
+    <code class="formula">ΔV &asymp; (1.0 × 0.85) + (5.9 × 0.527) = 0.85 + 3.11 &asymp; 3.96 % &asymp; ~3.9–4 %</code>
+    <p>So at full nameplate load and 0.85 pf, the LV busbar sits about 4 % below its
+    no-load value — on a 400 V base, roughly 16 V. Two readings of this number:</p>
+    <ul>
+      <li><strong>Why X dominates:</strong> the resistive term contributes only 0.85 %;
+      over three-quarters of the drop is the reactive term X·sin φ. This is why
+      power-factor correction (<a href="#c-pfc">§ PFC</a>) also <em>recovers busbar
+      voltage</em>: at pf 0.95, sin φ = 0.31 and ΔV falls to ≈ 0.85 + 1.83 ≈ 2.7 %.</li>
+      <li><strong>Why taps exist:</strong> a ±5 % off-circuit tap range comfortably
+      brackets this ~4 % internal drop plus SEC supply-voltage variation — see
+      <em>Equipment settings</em>.</li>
+    </ul>
+    <p><em>Sanity check 1:</em> the drop can never exceed Z itself; 3.96 % &lt; 6 % ✓
+    (the theoretical maximum drop ≈ 6 % occurs at pf = sin φ &rarr; X/Z, i.e. pf ≈ 0.17 —
+    almost purely reactive load).
+    <em>Sanity check 2:</em> at unity pf, ΔV ≈ 1.0 × 1 + 5.9 × 0 ≈ 1 % — a resistive
+    load barely dents the voltage, confirming the drop is a reactive phenomenon.</p>
+  </div>
+
+  <div class="note">
+    <strong>The impedance trade-off in one paragraph.</strong> The designer chooses Z.
+    <em>Lower</em> Z (say 4 %): stiffer voltage (ΔV ≈ 2.7 % at 0.85 pf), but fault level
+    jumps to 2 309/0.04 ≈ 58 kA — a more expensive switchboard. <em>Higher</em> Z (say
+    8 %): fault level drops to ≈ 29 kA (cheaper switchgear), but regulation worsens to
+    ≈ 4 % + and motor-starting dips deepen. Z = 6 % is the classic distribution-class
+    compromise, and both transformers must have <em>equal</em> Z if they are ever to
+    share load in parallel (unequal Z splits load in inverse proportion to impedance).
+  </div>
+
+  <h3 id="c-tx-flc">Worked Calculation (c): Full-Load Current, Both Sides</h3>
+
+  <div class="worked">
+    <h4>Step c-1 — MV side (13.8 kV)</h4>
+    <code class="formula">I_MV = S / (√3 × U_MV) = 1 600 000 / (1.732 × 13 800)</code>
+    <code class="formula">I_MV = 1 600 000 / 23 902 = 66.9 A</code>
+    <p>This 66.9 A sets the MV cable size, the MV protection pickup
+    (<a href="#c-protection">§10</a>) and — multiplied by 8–12 — the inrush window
+    (540–800 A) that the protection must ride through.</p>
+  </div>
+
+  <div class="worked">
+    <h4>Step c-2 — LV side (400 V)</h4>
+    <code class="formula">I_LV = S / (√3 × U_LV) = 1 600 000 / (1.732 × 400)</code>
+    <code class="formula">I_LV = 1 600 000 / 692.8 = 2 309 A</code>
+    <p>This 2 309 A sets the LV incomer ACB frame, the LV busduct/cable group
+    (<a href="#c-cables">§ cables</a>), and the base current for the 38.5 kA fault
+    calculation above.</p>
+    <p><em>Sanity check:</em> the two currents must be in the inverse voltage ratio:
+    2 309 / 66.9 = 34.5 = 13 800 / 400 ✓. Power in = power out; only the
+    voltage–current exchange rate changes. (At the plant level, both transformers
+    together at full plant load carry 2 353 kVA → 3 396 A total on the LV side, matching
+    the plant data card.)</p>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       5. EQUIPMENT SETTINGS
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-tx-settings">Taps, Temperatures and the 87T Zone</h3>
+
+  <h4>Equipment settings</h4>
+
+  <p>A transformer has no trip unit of its own, but four things <em>are</em> set on or
+  for it: the tap position, the temperature thresholds, the fan-control points, and the
+  protection elements that watch over it. All values below are indicative — the
+  coordination study and the manufacturer's test report govern.</p>
+
+  <p><strong>1. Off-circuit taps — ±2 × 2.5 %.</strong> The MV winding carries five tap
+  positions: nominal, ±2.5 % and ±5 %, changing the effective MV turns and hence the LV
+  voltage. They exist to compensate for two slow, steady offsets: the SEC supply voltage
+  sitting persistently above or below 13.8 kV at this point of the network, and the
+  transformer's own ~4 % full-load internal drop (worked calculation b-2). The logic is
+  inverted from intuition: if the LV bus runs <em>low</em>, you select a <em>minus</em>
+  tap (fewer MV turns → higher LV volts per MV volt).</p>
+
+  <div class="warning">
+    <strong>Off-circuit means dead plant.</strong> These are <em>off-circuit</em> tap
+    links, not an on-load tap changer: they may only be moved with the transformer
+    <strong>de-energised, isolated and earthed</strong> — moving them live causes an
+    internal flashover. Both transformers must always be on the <em>same</em> tap;
+    unequal taps create a circulating current through any closed tie and unequal bus
+    voltages. Change taps only on the evidence of a logged voltage trend over weeks (not
+    one hot afternoon's reading), record the new position on the nameplate card, and
+    expect to do it roughly never after commissioning.
+  </div>
+
+  <p><strong>2. Winding temperature — PT100 alarm and trip.</strong> Each cast-resin unit
+  carries PT100 resistance sensors embedded in the LV winding ducts (one per limb, often
+  plus a spare), wired to a temperature relay. Typical settings for a class F
+  (155 &deg;C) insulation system, indicative:</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Stage</th><th>Typical setting</th><th>Action</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Fan start</td><td>&asymp; 100 &deg;C</td><td>Start AF cooling fans</td></tr>
+      <tr><td>Alarm</td><td>&asymp; 140 &deg;C</td><td>PMS/DCS alarm — investigate load, fans, ventilation</td></tr>
+      <tr><td>Trip</td><td>&asymp; 150 &deg;C</td><td>Trip MV feeder breaker — insulation at limit</td></tr>
+    </tbody>
+  </table>
+
+  <p>At 50 &deg;C ambient the margin between "normal hot day" and "alarm" is thinner than
+  the same machine enjoys in Europe — which is exactly why the alarm must go somewhere a
+  human sees it (see <em>Control</em>) and why a fan failure in August is an operational
+  event, not a maintenance note.</p>
+
+  <p><strong>3. Fan boost — AN/AF +40 %.</strong> Cast-resin units are rated AN (air
+  natural). Adding thermostatically-controlled fans (AF — air forced) typically lifts
+  capability by about 40 %:</p>
+  <code class="formula">S_AF &asymp; 1.4 &times; 1 600 = 2 240 kVA (indicative, per manufacturer test)</code>
+  <p>Treat the AF rating as <em>contingency capability</em> — riding through the N-1
+  period, a heatwave, or a short overload — never as the basis for normal sizing. Fans
+  fail, filters clog with dust, and a plant that needs its fans every afternoon has no
+  margin left. The N-1 case above (87.5 %) deliberately fits inside the plain AN
+  rating.</p>
+
+  <p><strong>4. Protection elements (set in the relays, not the transformer).</strong>
+  The transformer is protected by the MV feeder relay and, classically, a differential
+  element. The concept of <strong>87T transformer differential</strong>: measure current
+  into the MV side and out of the LV side, correct for the 34.5:1 ratio and the Dyn11
+  30&deg; phase shift, and trip if the difference exceeds a restrained threshold —
+  current that goes in and does not come out is feeding an internal fault. It is the only
+  protection that is both fast <em>and</em> precisely bounded to the transformer zone.
+  Two practical notes for a 1600 kVA unit:</p>
+  <ul>
+    <li><strong>Inrush discrimination:</strong> on energisation the MV side sees 540–800 A
+    with nothing on the LV side — a perfect false differential. Modern 87T relays detect
+    the characteristic <em>second-harmonic</em> content of inrush current and restrain.</li>
+    <li><strong>Is 87T justified at this size?</strong> Dedicated differential is
+    standard above roughly 5–10 MVA; at 1600 kVA many designs rely instead on MV
+    overcurrent/earth-fault (graded above inrush and through-fault), LV restricted
+    earth fault, and the temperature trip. The Rev 3 philosophy and the actual relay
+    complement are set in <a href="#c-protection">§10 — Protection Coordination</a>;
+    the point here is to understand what each element can and cannot see.</li>
+  </ul>
+
+  <!-- ────────────────────────────────────────────────────────────
+       6. EQUIPMENT TECHNOLOGY
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-tx-technology">Cast Resin at 50 °C, Dyn11, and the V/f Rule</h3>
+
+  <h4>Equipment technology</h4>
+
+  <p><strong>Cast-resin dry-type vs oil-filled.</strong> The two mainstream technologies
+  at this rating: <em>oil-immersed</em> (ONAN — windings in mineral/ester oil, cooled by
+  natural oil and air circulation) and <em>cast-resin dry-type</em> (windings encapsulated
+  in epoxy, air-cooled, IEC 60076-11). The Rev 3 plant uses cast-resin indoors, and the
+  choice is driven by the environment:</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Aspect</th><th>Oil ONAN</th><th>Cast-resin AN/AF</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Fire risk</td><td>Oil is fuel — needs bunding, separation or fire walls</td><td>Fire-behaviour class <strong>F1</strong> (self-extinguishing, low smoke/toxicity) — can sit next to the switchroom</td></tr>
+      <tr><td>Maintenance</td><td>Oil sampling, gaskets, breather, Buchholz</td><td>Essentially clean, dry, inspect &amp; test</td></tr>
+      <tr><td>50 &deg;C / dust</td><td>Robust outdoors; oil cooling tolerant of heat</td><td>Needs a ventilated, dust-filtered enclosure; resin classes C2/E2/F1 cover condensation, pollution, fire</td></tr>
+      <tr><td>Overload behaviour</td><td>Large thermal mass — forgiving</td><td>Less thermal mass — fans (AF) buy back capability</td></tr>
+      <tr><td>Typical siting</td><td>Outdoor bays, larger ratings</td><td>Indoor substations, ≤ ~3 MVA — the Rev 3 case</td></tr>
+    </tbody>
+  </table>
+
+  <p><strong>The 40 °C problem.</strong> IEC 60076 thermal ratings are referenced to a
+  <strong>40 &deg;C maximum ambient</strong> (30 &deg;C monthly / 20 &deg;C yearly
+  average). The Rev 3 design ambient is <strong>50 &deg;C</strong>. The insulation does
+  not care where the heat comes from — ambient plus temperature rise must stay under the
+  class limit — so a standard unit at 50 &deg;C must either be <strong>derated</strong>
+  (order of 10 % per 10 K above reference, per manufacturer data) or, better,
+  <strong>specified up</strong>: a class F (155 &deg;C) insulation system run at a
+  class-B-like rise, leaving the missing 10 K as designed-in margin. Remember the ageing
+  rule of thumb from the failure story — each sustained 6–8 K above rated hot-spot
+  roughly halves insulation life. Specify the ambient explicitly on the data sheet;
+  never let "1600 kVA" silently mean "1600 kVA in Frankfurt". Enclosure ingress
+  protection follows the same climate logic: ventilated indoor enclosures around IP31
+  with sand-trap/filtered louvres as a minimum, IP54 for anything outdoors per the plant
+  basis — accepting that tighter enclosures trap more heat, which the ventilation design
+  must remove.</p>
+
+  <p><strong>Dyn11 — reading the vector group.</strong> The code on the plate unpacks
+  as:</p>
+  <ul>
+    <li><strong>D</strong> — MV winding in <em>delta</em>;</li>
+    <li><strong>yn</strong> — LV winding in <em>star</em> ("wye") with the <em>neutral
+    brought out</em> — which is what makes 400/230 V and the TN-S earthing system
+    possible: 400 V between phases for motors, 230 V phase-to-neutral for lighting and
+    small loads;</li>
+    <li><strong>11</strong> — clock notation: the LV phasor sits at 11 o'clock relative
+    to the MV at 12, i.e. the LV side <em>leads by 30&deg;</em>.</li>
+  </ul>
+  <p>The delta MV winding earns its keep twice. First, it gives the third-harmonic
+  magnetising currents (which are co-phasal in all three phases) a closed loop to
+  circulate in — <em>trapping</em> them inside the delta so they never reach the network,
+  and keeping the LV voltage waveform clean. Second, it isolates zero-sequence: an LV
+  earth fault drives current through the LV neutral and the delta, but produces no
+  zero-sequence current on the MV network — which is precisely why LV and MV earth-fault
+  protections can be set independently (<a href="#c-protection">§10</a>). The 30&deg;
+  shift itself matters operationally in one way: <strong>never parallel transformers of
+  different vector groups</strong> — a Dyn11 and a Dyn1 differ by 60&deg; and would drive
+  a ruinous circulating current through the tie.</p>
+
+  <p><strong>K-factor — harmonics from the VFDs.</strong> A significant share of the
+  Rev 3 load runs on variable-frequency drives, which draw harmonic-rich current. Winding
+  eddy losses rise with the <em>square</em> of harmonic order, so distorted current heats
+  the windings far more than its RMS amps suggest. Specify the harmonic duty: either a
+  K-rated design (K-4 typical for mixed industrial load, K-13 for drive-dominated MCCs,
+  per the UL/IEEE convention) or the IEC "factor K" calculation to EN 50541/IEC 61378
+  practice — or, equivalently, an agreed derating of a standard unit. A transformer sized
+  on fundamental amps alone for a drive-heavy plant runs chronically hotter than its
+  loading suggests; the detuned PFC design (<a href="#c-pfc">§ PFC</a>) addresses the
+  same harmonics on the capacitor side.</p>
+
+  <div class="warning">
+    <strong>50 vs 60 Hz — the V/f rule.</strong> Core flux is proportional to
+    <strong>V / f</strong> (Faraday: the same voltage sustained over a longer cycle
+    drives more flux). The Rev 3 grid is 60 Hz. A transformer designed <em>only</em> for
+    60 Hz, applied at the same voltage on a 50 Hz system, sees V/f rise by
+    60/50 = 1.2 — <strong>20 % more core flux</strong>, driving the core into
+    saturation: magnetising current soars, the core overheats, the hum turns into a
+    roar, and the unit fails. <strong>Never apply a 60 Hz-only unit at 50 Hz.</strong>
+    (The reverse — a 50 Hz design at 60 Hz, same voltage — lowers flux and is generally
+    benign, subject to manufacturer confirmation.) This matters in a global spares
+    market: check the nameplate frequency on any borrowed, rented or relocated unit
+    before it is ever energised, and beware dual-rating claims without test evidence.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       7. CONTROL
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-tx-control">Watching a Machine with No Moving Parts</h3>
+
+  <h4>Control</h4>
+
+  <p>A transformer cannot be "controlled" in the usual sense — once energised it simply
+  follows the load. Control therefore means <em>monitoring and automatic response</em>,
+  in four layers:</p>
+
+  <ul>
+    <li><strong>Temperature relay (local).</strong> The PT100 sensors land on a dedicated
+    temperature monitoring relay in or near the transformer enclosure: it displays per-limb
+    winding temperature, drives the fan-start / alarm / trip stages set out under
+    <em>Equipment settings</em>, and supervises its own sensor circuits (an open or
+    shorted PT100 raises a discrepancy alarm rather than a false trip).</li>
+    <li><strong>Fan control.</strong> The AF fans start automatically from the
+    temperature relay (&asymp; 100 &deg;C stage), with a hand/off/auto selector for
+    testing and a run-feedback contact to the PMS. In this climate, fan filters and
+    fan-failure alarms deserve the same respect as protection relays — a clogged filter
+    quietly deletes the +40 % contingency margin.</li>
+    <li><strong>PMS load monitoring.</strong> The power management system trends each
+    transformer's kVA loading (from the incomer metering), winding temperatures, fan
+    status and tap position record. It is the PMS that holds the N-1 logic: on loss of
+    one transformer it executes the load-shed list and (where so configured) the
+    bus-tie auto-close — the sequence whose arithmetic was proven in worked calculation
+    a-3. Alarms route to the DCS/operator and the maintenance system.</li>
+    <li><strong>Condition monitoring (periodic).</strong> For cast-resin units:
+    <em>thermography</em> of terminations, cable boxes and busbar joints under load
+    (resistive hot-spots announce themselves years before they fail);
+    <em>partial-discharge (PD) measurement</em> on the resin insulation at major outages
+    — rising PD is the earliest warning of insulation degradation; insulation-resistance
+    and ratio tests at shutdowns; and the humblest, most valuable check of all: clean,
+    intact ventilation paths and the absence of dust blankets on the windings (a dust
+    layer is a thermal insulation upgrade nobody ordered).</li>
+  </ul>
+
+  <div class="tip">
+    Trend, don't snapshot. A winding temperature of 120 &deg;C means little in
+    isolation; the same reading <em>15 K higher than the same load and ambient produced
+    last summer</em> means blocked cooling, harmonics growth or sensor drift — all worth
+    finding early. The PMS history is the transformer's medical record; make sure it is
+    actually being recorded.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       8. SIZING METHOD
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-tx-sizing-method">Sizing Method — Step by Step</h3>
+
+  <h4>Sizing method</h4>
+
+  <p>The procedure below generalises this section into a checklist you can apply to any
+  distribution transformer purchase or verification. Steps 1–4 set the rating; steps
+  5–10 set the specification.</p>
+
+  <ol>
+    <li><strong>Load study.</strong> Build the kW/kVA list from the load schedule:
+    connected load × utilisation, at the realistic (uncorrected) power factor. Rev 3:
+    2.0 MW at 0.85 → 2 353 kVA.</li>
+    <li><strong>Apply diversity.</strong> Not everything runs at once — apply documented
+    diversity/coincidence factors per load group, and resist the habit of stacking
+    worst cases (that is how 2 MW plants buy 5 MVA of transformer).</li>
+    <li><strong>Set the redundancy policy.</strong> Decide N-1 scope explicitly: which
+    loads are essential (Rev 3: ~55 % ≈ 1.3–1.4 MVA with allowance), what is shed,
+    whether the tie closes automatically. This decision, not the load study, fixes the
+    unit count.</li>
+    <li><strong>Choose the standard size.</strong> Per-unit normal loading ≤ ~75–80 %
+    and N-1 loading ≤ ~90 % of nameplate, then round up the standard ladder (1000 /
+    1250 / 1600 / 2000 / 2500 kVA). Rev 3: 2 × 1600 kVA → 73 % / 87.5 %.</li>
+    <li><strong>Choose impedance.</strong> Z trades fault level against voltage
+    regulation (worked calculation b): check I<sub>sc</sub> = I<sub>FLC</sub>/Z against
+    the intended switchboard withstand, and ΔV ≈ R·cosφ + X·sinφ against the voltage
+    budget, including motor starting. Rev 3: 6 % → 38.5 kA and ~4 %.</li>
+    <li><strong>Correct for cooling and ambient.</strong> State the real ambient
+    (50 &deg;C) on the data sheet; derate or upspec insulation class against the IEC
+    40 &deg;C reference; decide the AN/AF fan policy (contingency only) and the
+    enclosure IP/ventilation scheme for dust.</li>
+    <li><strong>Fix the vector group and earthing.</strong> Dyn11 for a TN-S 400/230 V
+    LV system with the neutral brought out; identical group and Z for any units that may
+    parallel.</li>
+    <li><strong>Specify taps.</strong> Off-circuit ±2 × 2.5 % covers supply variation
+    plus internal drop; on-load tap changers are not justified at this rating.</li>
+    <li><strong>Address harmonics.</strong> Estimate the non-linear (VFD) load share and
+    specify K-factor / factor-K or derating accordingly.</li>
+    <li><strong>Verify against protection.</strong> Confirm the inrush window
+    (8–12 × FLC for ~0.1 s) sits below the MV protection curve and the fault level sits
+    within switchgear ratings and relay reach — close the loop with
+    <a href="#c-shortcircuit">§4</a> and <a href="#c-protection">§10</a> before the
+    order is placed.</li>
+  </ol>
+
+  <!-- ────────────────────────────────────────────────────────────
+       SPEC CARD + SITE CHECKS
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-tx-spec-card">TX-1 / TX-2 Specification Card (Rev 3 Basis)</h3>
+
+  <p>The consolidated specification — all values indicative, per the Rev 3 plant data
+  card; the issued data sheets and factory test reports govern. Typical product families
+  are listed in the <a href="#cat-transformers">transformer catalogue</a>.</p>
+
+  <table class="form">
+    <tr><td>Tags</td><td>TX-1, TX-2 (identical units)</td></tr>
+    <tr><td>Rating</td><td>1600 kVA AN; &asymp; 2240 kVA AF (fan boost, contingency only)</td></tr>
+    <tr><td>Voltage ratio</td><td>13.8 / 0.4 kV (LV 400/230 V)</td></tr>
+    <tr><td>Frequency</td><td>60 Hz (SEC grid) — check V/f before any cross-frequency substitution</td></tr>
+    <tr><td>Vector group</td><td>Dyn11 — delta MV, star LV with neutral (TN-S), LV leads 30&deg;</td></tr>
+    <tr><td>Impedance</td><td>Z = 6 % (R &asymp; 1 %, X &asymp; 5.9 %), equal on both units</td></tr>
+    <tr><td>Full-load current</td><td>66.9 A (MV) / 2 309 A (LV)</td></tr>
+    <tr><td>LV fault contribution</td><td>&asymp; 38.5 kA per unit; &asymp; 77 kA tie closed — tie normally open</td></tr>
+    <tr><td>Loading</td><td>&asymp; 73 % normal (split bus); &asymp; 87.5 % N-1 on essential ~1.4 MVA after shedding</td></tr>
+    <tr><td>Technology</td><td>Cast-resin dry-type, IEC 60076-11 (SASO adopted), classes C2 / E2 / F1</td></tr>
+    <tr><td>Insulation / temperature</td><td>Class F system; PT100 per limb; fan start &asymp; 100 &deg;C, alarm &asymp; 140 &deg;C, trip &asymp; 150 &deg;C (indicative)</td></tr>
+    <tr><td>Design ambient</td><td>50 &deg;C (specified above the IEC 40 &deg;C reference — derate/upspec applied)</td></tr>
+    <tr><td>Enclosure</td><td>Indoor ventilated, &asymp; IP31 with filtered louvres (IP54 if outdoor); dust management mandatory</td></tr>
+    <tr><td>Taps</td><td>Off-circuit, ±2 × 2.5 % on MV winding — adjust dead and earthed only, both units alike</td></tr>
+    <tr><td>Harmonic duty</td><td>K-rated / factor-K per VFD load share (specify on data sheet)</td></tr>
+    <tr><td>Inrush</td><td>&asymp; 8–12 × FLC (&asymp; 540–800 A MV) for ~0.1 s — protection rides through</td></tr>
+    <tr><td>Standards</td><td>SASO-adopted IEC 60076 series; SBC 401; SEC Distribution Code / Saudi Grid Code</td></tr>
+    <tr><td>Current tap position (site)</td><td>_______________</td></tr>
+    <tr><td>Last PD / thermography date (site)</td><td>_______________</td></tr>
+  </table>
+
+  <h3 id="c-transformer-assess">What to Check on Site — Self-Check</h3>
+
+  <p>First the field verification items, then conceptual self-check questions. If you can
+  answer the questions without rereading, this section has done its job.</p>
+
+  <ul class="checklist">
+    <li>Nameplates: confirm kVA, 13.8/0.4 kV ratio, Dyn11, Z %, frequency, tap range and
+    the <em>current</em> tap position — and that both units match.</li>
+    <li>Loading: read incomer ammeters / PMS trend and compare against the 73 % normal
+    and 87.5 % N-1 figures; investigate any drift since the last load study.</li>
+    <li>Bus-tie <code>BT</code>: confirmed normally open, auto-close scheme functional,
+    last test date recorded.</li>
+    <li>Load-shedding list: documented, matches today's plant, relays/PMS logic active
+    and last tested.</li>
+    <li>Cooling: fans run on test, filters clean, ventilation paths clear, no dust
+    blanket on windings; temperature relay reads sensible per-limb values.</li>
+    <li>Self-check — Why does distributing at 13.8 kV cut cable loss by ~1 190× rather
+    than 34.5×? (Because loss goes as current <em>squared</em>.)</li>
+    <li>Self-check — A colleague proposes running with the bus-tie closed "for
+    flexibility". State the two calculations that forbid it. (Fault level ≈ 77 kA vs
+    switchboard rating; and the N-1/selectivity philosophy in
+    <a href="#c-protection">§10</a>.)</li>
+    <li>Self-check — From Z = 6 % alone, reconstruct the 38.5 kA fault level and the
+    ~16.7× FLC multiple without notes.</li>
+    <li>Self-check — Why is the voltage drop at 0.85 pf (~4 %) so much worse than at
+    unity pf (~1 %)? (X·sin φ dominates; the impedance is mostly reactance.)</li>
+    <li>Self-check — A rental transformer arrives marked "1600 kVA, 13.8/0.4 kV, 50 Hz".
+    May it be energised on the SEC 60 Hz grid? What about a 60 Hz unit on a 50 Hz grid?
+    (50→60 Hz generally benign — flux falls, confirm with maker; 60 Hz-only at 50 Hz:
+    never — V/f up 20 %, core saturates.)</li>
+    <li>Self-check — Why must taps only be changed with the plant dead, and why must
+    both transformers be on the same tap?</li>
+  </ul>
+
+  <div class="key">
+    Two 1600 kVA hearts, 73 % loaded, each able to carry the essential ~1.4 MVA at
+    87.5 % when the other dies — but only if the tie closes, the shedding sheds, and the
+    cooling cools at 50 &deg;C. The transformer itself almost never fails unprovoked;
+    what fails is the margin around it. Verify the margin, not just the machine.
+  </div>
+
+</section>

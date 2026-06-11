@@ -1,0 +1,813 @@
+<!-- ============================================================
+     §CAT-RELAYS / §CAT-AUX  Protection Relays & IEDs + Auxiliary
+     Equipment (NER, SPD, PFC) Catalogues
+     Rev 3 (Saudi/SEC edition) — 13.8 kV / 400-230 V / 60 Hz / 50 °C
+     Part 6 — Equipment Catalogues. How to read, compare and select
+     numerical protection IEDs, neutral earthing resistors, surge
+     protection and power-factor-correction equipment.
+     All data indicative; SASO-adopted IEC standards and the
+     manufacturer's certified data sheets govern.
+============================================================ -->
+<section id="cat-relays" data-title="Protection Relays &amp; IEDs" data-part="Part 6 — Equipment Catalogues">
+
+  <h2>Protection Relays &amp; IEDs</h2>
+
+  <div class="warning"><strong>Indicative catalogue data.</strong> Product families and typical
+parameters are listed for training and familiarisation only, are approximate, and change with
+manufacturer revisions. No part numbers are given; always obtain current certified data sheets
+and SASO/SEC acceptance status from the manufacturer.</div>
+
+  <p><strong>Goal:</strong> learn to read a protection-relay catalogue the way a protection
+  engineer reads it — starting from the plant's protection scheme (designed in
+  <a href="#c-protection">the protection coordination section</a>), mapping each protected
+  object to the class of intelligent electronic device (IED) that protects it, and learning
+  which catalogue parameters actually decide whether a relay fits: the ANSI function list,
+  the CT requirements, the I/O count, the station-bus capability and the auxiliary supply.
+  The four vendor families compared here — ABB Relion, Siemens SIPROTEC&nbsp;5, SEL and
+  GE Multilin — are the ones a field engineer in the Kingdom will meet most often. For how
+  Part 6 catalogue sections are meant to be used, see
+  <a href="#cat-intro">the catalogue introduction</a>.</p>
+
+  <!-- ────────────────────────────────────────────────────────────
+       1. THE PROTECTION CHAIN AND ITS IEDs
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-relay-overview">What the Plant Needs — IEDs in This Protection Chain</h3>
+
+  <p>A numerical IED is a small industrial computer that samples currents and voltages a
+  few thousand times per second, runs protection algorithms in firmware, and closes a
+  trip contact when an algorithm says so. One hardware box replaces a whole panel of
+  the electromechanical relays it descends from — overcurrent, earth fault, thermal,
+  under/overvoltage — and adds what no electromechanical relay could offer: event and
+  disturbance records, self-supervision, communications, and settings you change from a
+  laptop instead of a screwdriver. The protection <em>philosophy</em> for this plant is
+  fixed in <a href="#c-protection">the protection coordination section</a>; this section
+  is about choosing the hardware that executes it.</p>
+
+  <p>Walk the single line from the SEC intake down and list every place a decision-making
+  device sits. That list is the IED shopping list:</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Location (tag)</th><th>Protected object</th><th>IED class needed</th>
+          <th>Core functions (indicative)</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>MV-SWGR</code> incomer</td>
+          <td>SEC 13.8&nbsp;kV intake, board busbar (by extension)</td>
+          <td>Feeder protection IED</td>
+          <td>50/51 phase overcurrent, 50N/51N earth fault graded with the NER let-through
+          (400&nbsp;A), 27/59 voltage, 81 frequency, breaker-failure, SEC intertrip
+          interface.</td></tr>
+      <tr><td><code>MV-SWGR</code> feeders</td>
+          <td>Transformer feeders TX-1 / TX-2 (66.9&nbsp;A MV FLC each)</td>
+          <td>Feeder or transformer protection IED</td>
+          <td>50/51, 50N/51N, thermal image 49; optionally 87T transformer differential —
+          the 1600&nbsp;kVA trade-off is discussed in
+          <a href="#cat-relay-selection">the selection sub-section</a>.</td></tr>
+      <tr><td><code>LV-MSB</code> incomers / bus-tie</td>
+          <td>400&nbsp;V main switchboard, ~2309&nbsp;A per transformer</td>
+          <td>ACB electronic trip units (not separate IEDs)</td>
+          <td>LSIG protection in the breaker itself; zone-selective interlocking between
+          incomers, tie and outgoing ACBs — see
+          <a href="#c-breaker">the circuit-breaker tutorial</a>.</td></tr>
+      <tr><td><code>MCC-1..n</code> large motors</td>
+          <td>LV motors above roughly 75&nbsp;kW</td>
+          <td>Motor protection IED</td>
+          <td>49 thermal model, 48/51LR locked rotor and prolonged start, 46 unbalance,
+          66 starts-per-hour, undercurrent for pumps.</td></tr>
+      <tr><td><code>MCC-1..n</code> small motors</td>
+          <td>Motors below ~75&nbsp;kW</td>
+          <td>Thermal overload relay or electronic motor manager</td>
+          <td>Class 10/20 overload, phase loss; protection by switchgear components
+          rather than full IEDs.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note"><strong>Where the boundary sits.</strong> In a plant this size the
+  numerical-IED population is small — typically three to five devices on the MV board plus
+  a handful of motor IEDs — because below the LV incomers the protection intelligence
+  lives inside breaker trip units and motor starters. Do not let a vendor sell an IED for
+  every LV feeder; the money is better spent on the few MV devices, where a wrong or slow
+  trip takes out the entire plant.</div>
+
+  <p>One supporting actor appears throughout: the plant <strong>110&nbsp;V&nbsp;DC</strong>
+  battery system (tag <code>DCDB</code>). Every IED and every breaker trip coil runs from
+  it, precisely so that protection still works during the voltage collapse of a close-up
+  fault. When reading relay catalogues, the auxiliary-supply range is therefore not a
+  footnote — it is the second thing to check after the function list.</p>
+
+  <!-- ────────────────────────────────────────────────────────────
+       2. VENDOR FAMILIES
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-relay-families">The Vendor Families You Will Meet</h3>
+
+  <p>Four IED families dominate industrial MV protection in the Gulf. All are numerical,
+  all are type-tested to the IEC 60255 series, all speak IEC 61850, and a specification
+  written in ANSI-function and standards language will receive compliant offers from each.
+  The differences that matter are engineering-tool ecosystems, local support, and which
+  family the switchgear vendor pre-engineers into the LV compartment. Typical indicative
+  positioning:</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Family</th><th>Vendor</th><th>Members you will meet (indicative)</th>
+          <th>Application coverage</th><th>IEC 61850</th><th>Arc-flash option</th>
+          <th>Typical CT/VT inputs</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Relion 615/620</strong></td><td>ABB</td>
+          <td>REF615 / REF620 (feeder), RET620 (transformer), REM620 (motor)</td>
+          <td>Full MV distribution set: feeder O/C + E/F, transformer differential,
+          motor protection; standardised configurations make ordering simple.</td>
+          <td>Native — GOOSE and MMS, edition 2; widely used for GOOSE-based blocking
+          and interlocking schemes.</td>
+          <td>Integrated arc-fault detection option (lens/fibre sensors into the same
+          IED) — popular because no separate arc relay is needed.</td>
+          <td>Typically 3&ndash;4 phase CTs + sensitive earth CT, 1&ndash;5&nbsp;A
+          selectable; VT inputs on -620 versions; sensor (Rogowski/divider) variants
+          exist.</td></tr>
+      <tr><td><strong>SIPROTEC&nbsp;5 / Compact</strong></td><td>Siemens</td>
+          <td>7SJ8x (feeder O/C), 7UT8x (transformer differential), 7SK8x (motor),
+          7SX800 (compact class)</td>
+          <td>Modular hardware — order the CPU and add measurement/I-O modules; one
+          family scales from a simple feeder to a multi-winding differential.</td>
+          <td>Native — GOOSE and MMS, strong process-bus (9-2) support in the larger
+          frames.</td>
+          <td>Arc protection via fast binary inputs and point sensors or a dedicated
+          companion device, configured in the same DIGSI tool.</td>
+          <td>4&ndash;8 CT inputs depending on modules, 1/5&nbsp;A software-selectable;
+          VT modules optional; large binary I/O expansion.</td></tr>
+      <tr><td><strong>SEL 700 series</strong></td><td>SEL (Schweitzer)</td>
+          <td>SEL-751 (feeder), SEL-787 (transformer), SEL-710 (motor)</td>
+          <td>North-American heritage — very strong at 60&nbsp;Hz, ubiquitous in
+          oil &amp; gas and Aramco-orbit plants; renowned event reporting (SER and
+          oscillography).</td>
+          <td>Supported (GOOSE and MMS) alongside SEL's own MIRRORED&nbsp;BITS
+          peer-to-peer protocol.</td>
+          <td>Dedicated arc-flash option: point/loop fibre light sensors plus fast
+          overcurrent supervision in the 751/710.</td>
+          <td>Typically 3&ndash;4 phase + neutral CT inputs, 1/5&nbsp;A per order code;
+          optional VT card; conformal-coated boards standard — relevant in dusty
+          climates.</td></tr>
+      <tr><td><strong>Multilin 8 series</strong></td><td>GE Vernova</td>
+          <td>850 (feeder), 845 (transformer), 869 (motor) — successors to the 750/745/469
+          installed base</td>
+          <td>Full distribution and machines set; the legacy Multilin 469/745 population
+          in older Saudi plants makes like-for-like upgrades a common reason to meet
+          this family.</td>
+          <td>Native — GOOSE and MMS, edition 2.</td>
+          <td>Arc-flash detection option with light sensors on the 8-series platform.</td>
+          <td>4&ndash;8 CT inputs, 1/5&nbsp;A, optional VT bank; RTD modules (valuable
+          for motor and transformer winding temperature).</td></tr>
+    </tbody>
+  </table>
+
+  <p>Read the table as four answers to the same question. Any family can protect this
+  plant; the deciding factors are: (1) which family the <code>MV-SWGR</code> vendor
+  pre-wires by default (ABB boards arrive with Relion, Siemens with SIPROTEC — fighting
+  that costs engineering hours); (2) which engineering tool your maintenance team already
+  knows — PCM600, DIGSI&nbsp;5, AcSELerator or EnerVista are each a training investment;
+  (3) spares and support presence in the Kingdom; and (4) whether you want arc-flash
+  detection integrated in the same box, which all four offer but price differently.
+  Mixing families across one small board is legal but unwise — two engineering tools,
+  two spare-relay types, two training courses, for three panels.</p>
+
+  <div class="tip">Standardise on <em>one</em> family per plant and keep one tested spare
+  of each hardware variant on the shelf. A numerical IED fails safe (its watchdog contact
+  alarms) but a feeder without protection cannot stay in service; with a spare and an
+  exported settings file, exchange-and-restore is under an hour.</div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       3. HOW TO READ AN IED DATA SHEET
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-relay-datasheet">How to Read an IED Data Sheet</h3>
+
+  <p>An IED data sheet is long because the device does many jobs, but only six blocks of
+  it decide selection. Read them in this order.</p>
+
+  <h4>1 — The ANSI function list</h4>
+
+  <p>The first page is a grid of ANSI/IEEE device numbers — the shorthand the whole
+  protection world shares. For this plant the functions that must appear are:</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>ANSI</th><th>Function</th><th>Why this plant needs it</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>50 / 51</td><td>Instantaneous / time overcurrent (phase)</td>
+          <td>The workhorse: graded phase-fault protection on the incomer and both
+          transformer feeders (<a href="#c-protection">grading study</a>).</td></tr>
+      <tr><td>50N / 51N</td><td>Instantaneous / time earth fault</td>
+          <td>On a resistance-earthed 13.8&nbsp;kV system the earth-fault current is
+          capped by the NER at <strong>400&nbsp;A</strong> — phase elements never see it,
+          so dedicated, sensitive earth elements are mandatory and must clear well inside
+          the NER's <strong>10&nbsp;s</strong> rating (<a href="#c-earthing">earthing
+          section</a>).</td></tr>
+      <tr><td>87T</td><td>Transformer differential</td>
+          <td>Optional at 1600&nbsp;kVA — the trade-off is worked through in
+          <a href="#cat-relay-selection">the selection sub-section</a>.</td></tr>
+      <tr><td>27 / 59</td><td>Under / overvoltage</td>
+          <td>Detects SEC supply collapse or abnormal voltage; feeds the load-shed and
+          DG-start logic.</td></tr>
+      <tr><td>81 U/O</td><td>Under / overfrequency</td>
+          <td>60&nbsp;Hz grid disturbance detection; SEC connection requirements may
+          dictate settings at the intake.</td></tr>
+      <tr><td>49, 48/51LR, 46, 66</td><td>Thermal image, locked rotor, unbalance,
+          starts-per-hour</td>
+          <td>The motor-IED set for large motors on the MCCs.</td></tr>
+      <tr><td>50BF</td><td>Breaker failure</td>
+          <td>If a feeder breaker fails to clear, re-trip and trip the incomer — cheap
+          insurance on a single-bus board.</td></tr>
+    </tbody>
+  </table>
+
+  <h4>2 — CT requirements</h4>
+
+  <p>The relay is only as honest as its CTs. For plain overcurrent IEDs the catalogue
+  asks for a protection-class core, typically <strong>5P20</strong> — at most 5&nbsp;%
+  composite error at 20&nbsp;&times; rated current — with the rated burden matched to the
+  wiring run. Differential protection (87T) is stricter: the data sheet specifies a
+  minimum <strong>knee-point voltage</strong> (class PX/X or an equivalent 5P
+  requirement) per winding, because the two CT sets must not saturate unequally during a
+  heavy through-fault — unequal saturation manufactures a phantom differential current
+  and trips a healthy transformer. If you choose 87T, the CT sizing calculation in the
+  relay manual becomes a mandatory design deliverable, ordered <em>with the
+  switchgear</em>: CT cores are the hardest thing to change after manufacture. Check
+  also that the IED's rated input (1&nbsp;A or 5&nbsp;A, usually software-selectable)
+  matches the CT secondaries, and that accuracy is declared at <strong>60&nbsp;Hz</strong>.</p>
+
+  <h4>3 — Binary I/O count</h4>
+
+  <p>Count what the scheme actually needs before reading the options table: trip and
+  close outputs per breaker, breaker position (52a/52b) inputs, earth-switch position,
+  trip-circuit supervision, gas/temperature inputs from the transformer
+  (Buchholz-equivalent, winding temperature on the 1600&nbsp;kVA units), SEC intertrip
+  receive, watchdog out, and spare channels for the unforeseen. A base-model feeder IED
+  ships with roughly 8&ndash;14 binary inputs and 5&ndash;10 output contacts; transformer
+  and motor variants offer expansion modules. The classic error is ordering the base I/O
+  and discovering at commissioning that trip-circuit supervision and the intertrip have
+  consumed every spare — specify ~30&nbsp;% spare I/O in the RFQ.</p>
+
+  <h4>4 — Station bus: IEC 61850 and GOOSE</h4>
+
+  <p>All four families support <strong>IEC 61850</strong> — the substation communication
+  standard — over an Ethernet station bus. Two services matter here. <strong>MMS</strong>
+  reporting carries measurements, events and disturbance records up to the plant control
+  system (DCS/PMS). <strong>GOOSE</strong> is the fast peer-to-peer service: a relay
+  publishes a status change (typically in a few milliseconds) that other relays subscribe
+  to. In this plant GOOSE (or hard wiring on a board this small) implements the
+  <strong>blocking / zone-selective-interlocking scheme</strong>: a feeder IED that sees
+  the fault tells the incomer IED "this one is mine — hold back", letting the incomer
+  carry a fast setting for genuine bus faults without losing grading. The same mechanism
+  carries arc-flash detection trips. Check the data sheet for: 61850 edition,
+  GOOSE performance class, redundancy protocol on dual ports (PRP/HSR or RSTP), and
+  whether the 61850 licence is included or a paid option — it is the most common hidden
+  cost on the order.</p>
+
+  <h4>5 — Auxiliary supply</h4>
+
+  <p>Specify the plant standard <strong>110&nbsp;V&nbsp;DC</strong> from <code>DCDB</code>.
+  Catalogue power-supply variants are wide-range (e.g. 48&ndash;250&nbsp;V&nbsp;DC); make
+  sure the variant ordered covers 110&nbsp;V&nbsp;DC <em>including</em> the battery
+  end-of-discharge voltage (around 88&nbsp;V for a 110&nbsp;V system), and that binary
+  input thresholds are ordered for 110&nbsp;V&nbsp;DC so a half-earthed trip wire cannot
+  spuriously assert an input.</p>
+
+  <h4>6 — Environment</h4>
+
+  <p>Most IED data sheets state a continuous operating range of about
+  <strong>&minus;10&nbsp;&deg;C to +55&nbsp;&deg;C</strong> (storage wider). In this plant
+  every IED lives in the conditioned MV/LV switchrooms, so the 50&nbsp;&deg;C site
+  ambient is not a problem <em>while the HVAC runs</em> — but check the figure anyway,
+  ask what is certified during an HVAC failure, and prefer conformally coated electronics
+  (standard on some families, an option on others) as cheap insurance against dust and
+  humidity ingress.</p>
+
+  <div class="key">Key takeaway: select IEDs on six blocks — ANSI functions, CT
+  requirements (5P20, knee-point for 87T), binary I/O with ~30&nbsp;% spare, IEC 61850
+  GOOSE capability, 110&nbsp;V&nbsp;DC auxiliary, and &minus;10&hellip;+55&nbsp;&deg;C
+  environment. Everything else in the data sheet is configuration, not selection.</div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       4. SELECTION FOR THIS PLANT
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-relay-selection">Selection for This Plant — Mapped Picks</h3>
+
+  <p>Translating the Plant Data Card and the protection scheme into device classes —
+  family-level picks only, every line indicative and subject to the formal protection
+  study:</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Duty</th><th>Device class to specify</th><th>Family examples</th>
+          <th>Key catalogue checks</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>SEC incomer, <code>MV-SWGR</code></td>
+          <td>Feeder protection IED with voltage inputs</td>
+          <td>REF615/REF620, 7SJ8x, SEL-751, Multilin 850</td>
+          <td>50/51 + <strong>51N graded against the NER 400&nbsp;A / 10&nbsp;s
+          let-through</strong>; 27/59/81 for SEC interface; 50BF; GOOSE for the blocking
+          scheme; SEC protection requirements at the point of connection confirmed in
+          writing.</td></tr>
+      <tr><td>Transformer feeders TX-1 / TX-2</td>
+          <td>Feeder IED; optionally transformer IED with 87T</td>
+          <td>REF615 or RET620; 7SJ8x or 7UT8x; SEL-751 or SEL-787; 850 or 845</td>
+          <td>50/51 set above 66.9&nbsp;A FLC with inrush margin; 51N; 49 thermal;
+          winding-temperature inputs; see the 87T trade-off below.</td></tr>
+      <tr><td>LV incomers, bus-tie, large feeders on <code>LV-MSB</code></td>
+          <td>ACB electronic trip units (LSIG), ZSI-capable</td>
+          <td>Per the LV switchboard family — see <a href="#c-breaker">the breaker
+          tutorial</a></td>
+          <td>Coordination: the MV feeder IED curves must sit <em>above</em> the LV
+          incomer trip-unit curves with clear daylight; ask both vendors for curves on a
+          common 400&nbsp;V base before settings are frozen.</td></tr>
+      <tr><td>Motors &gt; ~75&nbsp;kW on <code>MCC-1..n</code></td>
+          <td>Motor protection IED</td>
+          <td>REM620, 7SK8x, SEL-710, Multilin 869</td>
+          <td>Thermal model tuned for 1800&nbsp;rpm/60&nbsp;Hz motors and 50&nbsp;&deg;C
+          ambient via RTD inputs; starts-per-hour; undercurrent for pumps.</td></tr>
+      <tr><td>Smaller motors</td>
+          <td>Electronic overload / motor manager in the starter</td>
+          <td>Per MCC vendor</td>
+          <td>Class 10/20 overload, phase-loss; communications to DCS optional.</td></tr>
+    </tbody>
+  </table>
+
+  <h4>The 87T question at 1600 kVA</h4>
+
+  <p>Transformer differential protection (87T) compares current into the 13.8&nbsp;kV
+  winding with current out of the 0.4&nbsp;kV winding; any imbalance beyond the bias
+  characteristic means an internal fault, cleared in a few cycles with no grading delay.
+  On large transformers it is non-negotiable. At <strong>1600&nbsp;kVA</strong> it is a
+  judgement call, and the honest catalogue answer is that most plants this size do
+  <em>not</em> fit it:</p>
+
+  <ul>
+    <li><strong>For 87T:</strong> fastest possible clearing of an internal fault limits
+    tank damage and fire risk; with only two transformers, losing one for months of
+    repair halves plant capacity (the bus-tie scenario in the SPOF study).</li>
+    <li><strong>Against 87T:</strong> a dedicated transformer IED, a matched
+    knee-point-rated CT set on <em>both</em> sides (the 2309&nbsp;A LV side CT
+    accommodation in the LV incomer is the awkward part), and engineering for inrush
+    stabilisation — meaningful cost against a transformer this small. The conventional
+    alternative — MV 50/51 with inrush-proof settings, 51N, plus the transformer's own
+    devices (winding temperature, pressure relief, gas detection on sealed units) wired
+    to trip — covers most internal failure modes a few hundred milliseconds slower.</li>
+  </ul>
+
+  <p>Indicative recommendation for this plant: <strong>feeder IEDs with full
+  transformer-device tripping, no 87T</strong>, unless the owner's insurer or reliability
+  target says otherwise — and if 87T is chosen, order the CT cores with the switchgear
+  and the LV board, not afterwards. Either way the decision must be written into the
+  protection study, not left to the panel builder's default.</p>
+
+  <div class="warning"><strong>One scheme, one author.</strong> The incomer IED, feeder
+  IEDs and LV trip units form a single grading ladder. If the MV relays are set by the
+  switchgear vendor and the LV trip units by the switchboard vendor, nobody owns the gap
+  between them — the classic result is an LV bus fault tripping the MV incomer first.
+  One protection engineer must own the whole curve set from the SEC fuse-line down to
+  the largest MCC starter (<a href="#c-protection">protection coordination</a>).</div>
+
+  <div class="key">Key takeaway: three to five well-chosen MV IEDs from one family, ZSI-
+  capable LV trip units coordinated with them, motor IEDs only above ~75&nbsp;kW, and a
+  deliberate, documented yes/no on 87T — that is the entire relay purchase for a 2&nbsp;MW
+  plant. All picks indicative; the protection study governs.</div>
+
+</section>
+
+<section id="cat-aux" data-title="Auxiliary Equipment (NER, SPD, PFC)" data-part="Part 6 — Equipment Catalogues">
+
+  <h2>Auxiliary Equipment (NER, SPD, PFC)</h2>
+
+  <div class="warning"><strong>Indicative catalogue data.</strong> Product families and typical
+parameters are listed for training and familiarisation only, are approximate, and change with
+manufacturer revisions. No part numbers are given; always obtain current certified data sheets
+and SASO/SEC acceptance status from the manufacturer.</div>
+
+  <p><strong>Goal:</strong> learn to read the catalogues of the three "quiet" equipment
+  classes that make the main equipment safe and efficient: the <strong>neutral earthing
+  resistor</strong> (tag <code>NER</code>) that tames earth-fault current, the
+  <strong>surge protective devices</strong> that tame lightning and switching transients,
+  and the <strong>power-factor-correction</strong> bank (tag <code>PFC</code>) that tames
+  the reactive power bill. None of them does anything on a good day — which is exactly
+  why their data sheets are misread more often than switchgear data sheets. For the
+  engineering behind each, see <a href="#c-earthing">earthing</a>,
+  <a href="#c-lightning">lightning and surge protection</a> and
+  <a href="#c-pfc">power factor correction</a>.</p>
+
+  <!-- ────────────────────────────────────────────────────────────
+       1. NEUTRAL EARTHING RESISTORS
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-aux-ner">Neutral Earthing Resistors — Reading an NER Data Sheet</h3>
+
+  <p>The NER is conceptually the simplest item in the plant — a resistor between the
+  13.8&nbsp;kV system neutral and earth — and its data sheet is correspondingly short.
+  That brevity is a trap: every line on it is load-bearing. The plant's NER duty, from
+  the Plant Data Card and <a href="#c-earthing">the earthing section</a>:
+  <strong>7.97&nbsp;kV, 400&nbsp;A, 10&nbsp;s &rarr; 19.9&nbsp;&Omega;</strong>.</p>
+
+  <h4>Vendor families</h4>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Family</th><th>Vendor</th><th>Construction (typ.)</th><th>Notes</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Post Glover</strong></td><td>Post Glover Resistors</td>
+          <td>Stainless-steel grid/edge-wound elements, ventilated steel enclosures;
+          NGR-monitoring relay offered alongside</td>
+          <td>Long-established NER specialist, common on North-American-influenced
+          (60&nbsp;Hz, oil &amp; gas) projects in the region.</td></tr>
+      <tr><td><strong>Cressall</strong></td><td>Cressall (EV resistor families)</td>
+          <td>Stainless grid and wound elements; modular outdoor enclosures</td>
+          <td>UK specialist, strong IEC project track record; desert-spec enclosures
+          available.</td></tr>
+      <tr><td><strong>Microelettrica / Metal Deploy&eacute;</strong></td>
+          <td>Microelettrica Scientifica; Metal Deploy&eacute; Resistances</td>
+          <td>Punched stainless grids in galvanised or stainless enclosures</td>
+          <td>Widely used by European switchgear OEMs; often arrive packaged with the
+          MV board contract.</td></tr>
+    </tbody>
+  </table>
+
+  <p>All serious NERs are <strong>stainless-steel grid resistors</strong>: punched plates
+  or edge-wound strip in open frames, chosen because stainless alloy holds its resistance
+  value and mechanical strength while being driven hundreds of kelvin upward in seconds.
+  Cast iron and wire-wound alternatives exist at small ratings; for a 13.8&nbsp;kV plant
+  neutral, specify stainless grid and move on.</p>
+
+  <h4>The five lines that matter on the data sheet</h4>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Data-sheet line</th><th>This plant (indicative)</th><th>How to read it</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Rated voltage (line-to-neutral)</td><td><strong>7.97&nbsp;kV</strong></td>
+          <td>System line-to-line voltage &divide; &radic;3 = 13.8&nbsp;kV / 1.732. This is
+          the voltage the resistor sees during a full earth fault; insulation class and
+          creepage follow from it.</td></tr>
+      <tr><td>Rated let-through current</td><td><strong>400&nbsp;A</strong></td>
+          <td>The deliberate cap on earth-fault current — high enough for relays to see
+          (<a href="#c-protection">51N grading</a>), low enough to limit burning damage at
+          the fault point. The whole earthing design hangs on this number.</td></tr>
+      <tr><td>Resistance</td><td><strong>19.9&nbsp;&Omega;</strong></td>
+          <td>Simply 7967&nbsp;V / 400&nbsp;A. Verify the tolerance (typically
+          &plusmn;10&nbsp;%) and the stated reference temperature — resistance rises as
+          the grids heat, which slightly <em>reduces</em> fault current; acceptable, but
+          the relay study should use the cold value.</td></tr>
+      <tr><td>Time rating</td><td><strong>10&nbsp;s</strong></td>
+          <td>The resistor carries 400&nbsp;A for 10&nbsp;s without exceeding its
+          temperature-rise class, then needs to cool. Protection must clear earth faults
+          well inside this — typically &le;1&nbsp;s with backup inside 10&nbsp;s. A
+          <em>continuous</em>-rated NER (for systems that run faulted, per IEEE&nbsp;32
+          extended ratings) is several times the size and price; do not pay for it unless
+          the operating philosophy genuinely keeps a faulted system energised.</td></tr>
+      <tr><td>Temperature-rise class</td><td>e.g. 760&nbsp;K rise (short-time, per
+          IEEE&nbsp;32 practice)</td>
+          <td>How hot the elements may run at the end of the rated time. Check the stated
+          rise is on top of the <strong>50&nbsp;&deg;C</strong> site ambient, not the
+          standard 40&nbsp;&deg;C — a desert NER ends its 10&nbsp;s hotter than the
+          type-test assumption unless the vendor accounts for it.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="worked">
+    <h4>Worked check — the data-sheet numbers agree with each other</h4>
+    <p>Always close the triangle on an NER data sheet:</p>
+    <code class="formula">V_LN = 13.8 kV / √3 = 7.97 kV</code>
+    <code class="formula">R = V_LN / I = 7967 V / 400 A = 19.9 Ω</code>
+    <code class="formula">Energy per event ≈ I² × R × t = 400² × 19.9 × 10 s ≈ 31.8 MJ</code>
+    <p><strong>Sanity check:</strong> 31.8&nbsp;MJ is roughly the energy of 9&nbsp;kWh —
+    a domestic kettle running for four hours — dumped into a steel grid in ten seconds.
+    That is why the enclosure is ventilated, why the time rating exists, and why the
+    resistor must be allowed to cool before a second event. All figures indicative.</p>
+  </div>
+
+  <h4>Enclosure, siting and monitoring</h4>
+
+  <p>The NER lives outdoors next to the transformer or switchroom. Specify the enclosure
+  for desert siting: hot-dip galvanised or stainless housing, <strong>IP23 minimum for a
+  ventilated resistor</strong> (the elements must breathe; a sealed IP54 box defeats the
+  cooling — instead use mesh-screened louvres, vermin- and sand-screened) and check the
+  vendor's stance on wind-blown sand accumulation on the grids. Include an elevated
+  plinth, padlockable access (the terminals sit at 7.97&nbsp;kV during a fault) and a
+  warning label stating the time rating.</p>
+
+  <p>Finally, the line most often missed: an NER can fail <strong>open-circuit</strong> —
+  corroded joint, broken grid — and nothing visible happens until the next earth fault,
+  when the system behaves as unearthed and healthy-phase voltages run wild. Specify an
+  <strong>NGR monitoring relay</strong> (offered by the NER vendors themselves and as a
+  function in some feeder IEDs): it injects a small sensing signal through the resistor
+  continuously and alarms on open or shorted elements. Wire it to alarm at the DCS and,
+  per the operating philosophy, to trip — see <a href="#c-earthing">the earthing
+  section</a> for the system behaviour it protects against.</p>
+
+  <!-- ────────────────────────────────────────────────────────────
+       2. SURGE PROTECTION
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-aux-spd">Surge Protection — MV Arresters and LV SPDs</h3>
+
+  <p>Surge protection comes in two distinct catalogue worlds that must be read with two
+  distinct vocabularies: <strong>metal-oxide surge arresters</strong> on the MV system
+  (IEC 60099-4 language: U<sub>c</sub>, U<sub>r</sub>, energy class) and <strong>surge
+  protective devices</strong> on the LV system (IEC 61643-11 language: Type 1/2/3,
+  I<sub>imp</sub>/I<sub>n</sub>, U<sub>p</sub>). The coordination philosophy — why
+  protection cascades from the service entrance inwards — is in
+  <a href="#c-lightning">the lightning and surge section</a>; this is the catalogue
+  view.</p>
+
+  <h4>MV arresters at 13.8 kV</h4>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Family</th><th>Vendor</th><th>Typical scope</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>POLIM</strong></td><td>ABB</td>
+          <td>Silicone-housed MO arresters, distribution through station class; the
+          common choice packaged with ABB switchgear and transformers.</td></tr>
+      <tr><td><strong>3EL / 3EK</strong></td><td>Siemens</td>
+          <td>Silicone-housed MO arresters, distribution and medium/station duty.</td></tr>
+      <tr><td><strong>Hubbell (Ohio Brass)</strong></td><td>Hubbell Power Systems</td>
+          <td>Distribution and station arresters with a large 60&nbsp;Hz utility
+          installed base; frequent on SEC-side and overhead-line scopes.</td></tr>
+    </tbody>
+  </table>
+
+  <p>Three catalogue decisions, in order:</p>
+
+  <p><strong>(1) Class.</strong> <em>Distribution class</em> arresters (lower energy,
+  lighter duty) protect overhead distribution equipment; <em>station class</em> (higher
+  energy capability, better protective level) protect substations and major plant. For
+  the plant intake and the 1600&nbsp;kVA transformers, common industrial practice on a
+  cable-fed intake is a heavy-duty distribution-class or small station-class arrester at
+  the overhead-to-cable transition and/or transformer terminals — driven by whether the
+  SEC feed arrives overhead (higher lightning exposure: go station class) or fully in
+  cable (lower exposure). Confirm the supply arrangement with SEC before specifying.</p>
+
+  <p><strong>(2) U<sub>c</sub> / MCOV — the line everyone gets wrong.</strong> The
+  continuous operating voltage the arrester can hold forever must exceed the maximum
+  phase-to-earth voltage it will ever see <em>continuously</em> — and on this
+  resistance-earthed system, during an earth fault the two healthy phases rise toward the
+  full line-to-line voltage, 13.8&nbsp;kV, for up to the NER's 10&nbsp;s rating. The
+  arrester must ride through that temporary overvoltage. The data sheet's TOV curve
+  answers it: indicatively, a 13.8&nbsp;kV resistance-earthed system lands on a rated
+  voltage U<sub>r</sub> around <strong>15&ndash;18&nbsp;kV</strong> with
+  U<sub>c</sub>/MCOV around <strong>12.7&ndash;15.3&nbsp;kV</strong> — noticeably higher
+  than the &asymp;8&nbsp;kV phase-earth voltage would suggest, precisely because of the
+  earthing method. An arrester chosen as if for a solidly-earthed system will cook during
+  the first sustained earth fault.</p>
+
+  <p><strong>(3) Energy class and protective level.</strong> Check the nominal discharge
+  current (10&nbsp;kA class typical here), the energy/charge classification, and the
+  residual voltage U<sub>res</sub> at nominal discharge — which must sit comfortably
+  below the equipment lightning withstand (95&nbsp;kV BIL for the 17.5&nbsp;kV-class
+  switchgear, with margin per IEC 60071 insulation coordination). Housing: silicone,
+  with creepage specified for the desert pollution class; mount with disconnectors and
+  counters where visible indication is wanted.</p>
+
+  <h4>LV SPDs at 400/230 V</h4>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Family</th><th>Vendor</th><th>Typical scope</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>DEHN (DEHNventil / DEHNguard families)</strong></td><td>DEHN</td>
+          <td>Full Type 1 / 2 / 3 portfolio including combined Type 1+2 spark-gap/MOV
+          units; the reference brand in lightning-protection scopes.</td></tr>
+      <tr><td><strong>OBO Bettermann V-series</strong></td><td>OBO Bettermann</td>
+          <td>Type 1/2/3 portfolio, common in Gulf building and industrial
+          contracts.</td></tr>
+      <tr><td><strong>Phoenix Contact (FLASHTRAB / VALVETRAB)</strong></td>
+          <td>Phoenix Contact</td>
+          <td>Type 1/2/3 plus the signal/instrumentation SPD ranges — useful for one-stop
+          DCS loop protection.</td></tr>
+      <tr><td><strong>PRD / PRF1 families</strong></td><td>Schneider Electric</td>
+          <td>Type 1/2/3 integrated with the Schneider LV switchboard system — arrives
+          pre-engineered when the LV boards are Schneider.</td></tr>
+    </tbody>
+  </table>
+
+  <p>The LV catalogue logic is the <strong>Type 1 / 2 / 3 cascade</strong> (IEC 61643-11
+  test classes): <strong>Type 1</strong> at the service entrance / <code>LV-MSB</code>,
+  tested with the 10/350&nbsp;&micro;s impulse (I<sub>imp</sub>, typically
+  12.5&ndash;25&nbsp;kA per pole), absorbs partial lightning currents where the lightning
+  protection system bonds to the power system; <strong>Type 2</strong> at distribution
+  boards (<code>DB</code>/<code>EDB</code>, MCC incomers), tested with 8/20&nbsp;&micro;s
+  (I<sub>n</sub> typically 20&nbsp;kA), clips what passes the first stage;
+  <strong>Type 3</strong> at sensitive terminal equipment (UPS input, DCS cabinets),
+  fine-clipping to a low protective voltage. Read off each data sheet:
+  U<sub>c</sub> &ge; 255&nbsp;V for a 230&nbsp;V phase-to-neutral TN-S system, the
+  protective level U<sub>p</sub> (&le;1.5&nbsp;kV at terminal equipment is the usual
+  target), the short-circuit withstand with the specified backup fuse, and the status
+  contact for DCS alarming of a failed cartridge. Keep cable stubs short —
+  the cascade only coordinates if the catalogue's separation-distance or
+  energy-coordination rules between stages are followed
+  (<a href="#c-lightning">lightning section</a>).</p>
+
+  <div class="tip">In TN-S, specify the connection scheme deliberately (4-pole, or "3+1"
+  with a summary gap to PE) and order SPDs with remote-signalling contacts wired to the
+  DCS — a surge arrester that died silently last thunderstorm protects nothing during the
+  next one.</div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       3. POWER FACTOR CORRECTION
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-aux-pfc">Power Factor Correction — Reading a Capacitor-Bank Catalogue</h3>
+
+  <p>The plant target, from the Plant Data Card and
+  <a href="#c-pfc">the power-factor-correction section</a>: raise 2.0&nbsp;MW at
+  pf&nbsp;0.85 to pf&nbsp;0.95 with <strong>&asymp;580&nbsp;kvar</strong> of automatically
+  switched, <strong>7&nbsp;% detuned</strong> capacitance on the 400&nbsp;V bus (tag
+  <code>PFC</code>). The catalogue task is to buy that as an engineered cubicle, not as a
+  bag of capacitors.</p>
+
+  <h4>Vendor families</h4>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Family</th><th>Vendor</th><th>What it is (typ.)</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>VarSet (with PowerLogic controllers)</strong></td>
+          <td>Schneider Electric</td>
+          <td>Engineered LV capacitor-bank cubicles, contactor- or thyristor-switched,
+          detuned options, var controller included; integrates with Schneider LV
+          boards.</td></tr>
+      <tr><td><strong>QCap capacitors / Dynacomp</strong></td><td>ABB</td>
+          <td>Dry gas-filled capacitor elements (QCap) built into banks; Dynacomp is the
+          thyristor-switched <em>active/dynamic</em> range for fast-changing loads.</td></tr>
+      <tr><td><strong>Frako</strong></td><td>Frako</td>
+          <td>German PFC specialist — capacitors, detuned reactors, controllers and
+          complete cubicles; common via panel builders.</td></tr>
+      <tr><td><strong>EPCOS / TDK</strong></td><td>TDK Electronics</td>
+          <td>Capacitor elements, reactors and controllers sold to panel builders — what
+          is often inside a locally assembled Saudi bank; judge the <em>panel builder's</em>
+          engineering, not just the component brand.</td></tr>
+    </tbody>
+  </table>
+
+  <h4>The detuned reactor — why 7 % and what it does to every other number</h4>
+
+  <p>A plant full of VFDs (tag <code>VFD</code>) injects harmonic currents. A plain
+  capacitor bank can resonate with the supply-transformer inductance near one of those
+  harmonics, amplifying it until capacitors fail and fuses scatter. The fix is a series
+  <strong>detuning reactor</strong> in each step, sized so that reactor + capacitor are
+  series-resonant <em>below</em> the lowest significant harmonic — the branch then looks
+  inductive to the 5th harmonic and above and cannot resonate with them. The detuning
+  factor p&nbsp;=&nbsp;7&nbsp;% means the reactor's reactance is 7&nbsp;% of the
+  capacitor's at fundamental.</p>
+
+  <div class="worked">
+    <h4>Worked check — tuning frequency and capacitor voltage at p = 7 %</h4>
+    <p>Series tuning frequency on a 60&nbsp;Hz system:</p>
+    <code class="formula">f_res = f_n / √p = 60 Hz / √0.07 = 60 / 0.2646 ≈ 227 Hz</code>
+    <p><strong>Sanity check:</strong> 227&nbsp;Hz sits below the 5th harmonic
+    (300&nbsp;Hz at 60&nbsp;Hz) and clear of the 3rd (180&nbsp;Hz) — the branch is
+    inductive at every harmonic a 6-pulse VFD produces. The reactor also raises the
+    fundamental voltage across the capacitor terminals:</p>
+    <code class="formula">U_cap = U_network / (1 − p) = 400 V / 0.93 ≈ 430 V</code>
+    <p>so the capacitors inside a 7&nbsp;% detuned 400&nbsp;V bank must be rated
+    typically <strong>440&ndash;480&nbsp;V</strong>, not 400&nbsp;V. A catalogue that
+    offers 400&nbsp;V-rated capacitors behind a 7&nbsp;% reactor is offering early
+    failures. All figures indicative.</p>
+  </div>
+
+  <h4>kvar at rated voltage versus kvar at network voltage</h4>
+
+  <p>The most common PFC ordering error follows directly: capacitor output scales with
+  voltage squared,</p>
+
+  <p><code class="formula">Q_at_network = Q_rated × (U_network / U_rated)²</code></p>
+
+  <p>so a "100&nbsp;kvar, 480&nbsp;V" capacitor delivers only
+  100&nbsp;&times;&nbsp;(400/480)&sup2;&nbsp;&asymp;&nbsp;69&nbsp;kvar on a 400&nbsp;V
+  network <em>before</em> the reactor effect is added back. Reputable catalogues quote the
+  <strong>effective kvar of the complete detuned step at network voltage</strong> —
+  always confirm that the &asymp;580&nbsp;kvar plant target is specified on that basis,
+  in writing, and let the vendor pick element ratings to deliver it.</p>
+
+  <h4>The rest of the data sheet</h4>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Parameter</th><th>What to demand (indicative)</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Bank size and stepping</td>
+          <td>&asymp;580&nbsp;kvar effective at 400&nbsp;V / 60&nbsp;Hz, in steps
+          (e.g. 12&nbsp;&times;&nbsp;50 or a 25/50/100 mix) so the controller can track
+          load without hunting; target pf 0.95 set on the var controller.</td></tr>
+      <tr><td>Detuning</td>
+          <td>p = 7&nbsp;% (tuned &asymp;227&nbsp;Hz at 60&nbsp;Hz); reactors with linear
+          current characteristic and thermal cutouts wired to trip the step.</td></tr>
+      <tr><td>Harmonic current capability</td>
+          <td>Declared permissible harmonic loading of capacitors and reactors against
+          the plant's measured/estimated VFD spectrum; overcurrent margin typically
+          1.3&ndash;1.5&nbsp;&times; I<sub>n</sub> for the capacitor elements.</td></tr>
+      <tr><td>Switching technology</td>
+          <td><strong>Contactor-switched</strong> (with pre-charge damping contacts) is
+          standard and fine for slowly varying process load; <strong>thyristor-switched
+          / active</strong> (e.g. Dynacomp class) responds in cycles instead of seconds —
+          worth it only for fast-cycling loads (welders, crushers, hoists). Choose on
+          load dynamics, not brochure appeal.</td></tr>
+      <tr><td>Safety features</td>
+          <td>Self-healing dry or gas-filled elements with overpressure disconnectors,
+          discharge resistors to &le;75&nbsp;V in 3&nbsp;min (or fast-discharge for
+          thyristor banks), HRC fusing or breaker per step.</td></tr>
+      <tr><td>Thermal design at 50&nbsp;&deg;C</td>
+          <td>The killer line in the desert: capacitor life roughly halves per
+          ~7&nbsp;K over-temperature, and detuning reactors are genuine heaters inside
+          the cubicle. Demand the cubicle's certified rating at <strong>50&nbsp;&deg;C
+          ambient</strong> — forced ventilation sized by the vendor, temperature
+          supervision tripping steps, reactors in a separated/ventilated compartment —
+          or install in the conditioned switchroom and say so in the RFQ.</td></tr>
+      <tr><td>Controller</td>
+          <td>Var controller with pf target, step-wear rotation, harmonic (THD-V) alarm,
+          and comms to the DCS/PMS so a dead bank raises a flag before the SEC bill
+          does.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="key">Key takeaway: specify the PFC bank by <em>effective kvar at 400&nbsp;V
+  / 60&nbsp;Hz with 7&nbsp;% detuning and a 50&nbsp;&deg;C certified cubicle</em> —
+  &asymp;580&nbsp;kvar for this plant — and let the vendor engineer element voltages and
+  step sizes to deliver it. Banks bought as raw capacitor kvar at rated voltage
+  chronically under-deliver by 20&ndash;30&nbsp;%.</div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       4. SAUDI-SPECIFIC PRACTICE
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-aux-saudi">Saudi-Specific Practice — SASO/SABER, Spares and Support</h3>
+
+  <h4>Conformity paperwork</h4>
+
+  <p>Everything in this fragment — IEDs, NER, arresters, SPDs, capacitor banks — is
+  imported electrical equipment and therefore passes through the <strong>SASO
+  conformity</strong> regime via the <strong>SABER</strong> platform: certificates of
+  conformity against the SASO-adopted IEC standards (IEC 60255 series for relays,
+  IEEE&nbsp;32 / IEC practice for the NER, IEC 60099-4 for arresters, IEC 61643-11 for
+  SPDs, IEC 60831/60931 for LV capacitors), plus SEC acceptance where the device sits at
+  or interacts with the utility interface — notably the incomer IED functions and
+  settings, which SEC reviews against the Distribution Code. Make the vendor responsible
+  in the purchase order for SABER registration and certificate delivery; the auxiliary
+  equipment is exactly the category that gets forgotten until it is sitting in customs
+  while the switchgear it serves is already on its plinth. SBC&nbsp;401 applies to the
+  LV installation side (SPD provision and earthing practice in particular).</p>
+
+  <h4>Spares philosophy</h4>
+
+  <p>These are low-population, long-lead items; the spares logic is different from bulk
+  consumables:</p>
+
+  <ul>
+    <li><strong>IEDs:</strong> one spare unit per hardware variant (not per installed
+    relay), kept with current firmware and the plant settings files exported and version-
+    controlled. A relay model is typically manufactured for a decade and supported for
+    another; plan a mid-life fleet review rather than ad-hoc replacements.</li>
+    <li><strong>NER:</strong> spare grid elements and joint hardware rather than a whole
+    spare resistor; the enclosure and frame outlive the plant. Keep the NGR-monitor spare
+    with the IED stock.</li>
+    <li><strong>Arresters / SPDs:</strong> arresters are not repairable — hold one spare
+    set per class; for LV SPDs hold plug-in cartridges per type, and expect to consume
+    them: a cartridge that sacrificed itself in a storm did its job.</li>
+    <li><strong>PFC:</strong> capacitor elements are wear parts at 50&nbsp;&deg;C — hold
+    one or two step's worth of elements, step fuses and a spare switching contactor
+    (contactor contacts wear fastest of all); record step capacitance annually and trend
+    it, replacing elements that drift more than ~5&nbsp;% down.</li>
+  </ul>
+
+  <h4>Vendor support in the Kingdom</h4>
+
+  <p>All families named here are represented in Saudi Arabia, but with different depth:
+  the switchgear-OEM relay families (ABB, Siemens, GE, Schneider) come with the OEM's
+  Saudi service organisation; SEL runs regional protection support strong in the
+  oil &amp; gas corridor; NER, arrester and SPD specialists typically work through
+  local agents — so name the local agent and the firmware/settings support arrangement
+  in the bid evaluation, not after award. For IEDs, ask explicitly: who in-Kingdom can
+  reconfigure the relays and run secondary injection, and within how many days? A
+  protection scheme nobody local can maintain decays into "do not touch" folklore within
+  five years.</p>
+
+  <ul class="checklist">
+    <li>One IED family selected for the MV board; settings files exported, version-controlled and one tested spare per hardware variant on the shelf.</li>
+    <li>Incomer IED 51N grading checked against the NER 400&nbsp;A / 10&nbsp;s let-through; clearing well inside 10&nbsp;s (<a href="#c-protection">protection study</a>).</li>
+    <li>87T decision (fit / omit at 1600&nbsp;kVA) documented in the protection study; if fitted, knee-point CT cores ordered with the switchgear and LV board.</li>
+    <li>NER data sheet triangle verified: 7.97&nbsp;kV / 400&nbsp;A / 19.9&nbsp;&Omega; / 10&nbsp;s; ventilated desert-spec enclosure; NGR monitoring relay wired to DCS.</li>
+    <li>MV arrester U<sub>c</sub>/TOV checked against the 10&nbsp;s healthy-phase rise of the resistance-earthed 13.8&nbsp;kV system, not against phase-earth voltage alone.</li>
+    <li>LV SPD Type 1/2/3 cascade located per the zone plan with status contacts to DCS (<a href="#c-lightning">lightning section</a>).</li>
+    <li>PFC bank specified as &asymp;580&nbsp;kvar <em>effective</em> at 400&nbsp;V / 60&nbsp;Hz, 7&nbsp;% detuned (&asymp;227&nbsp;Hz), cubicle certified at 50&nbsp;&deg;C; SABER/SASO certificates for all items in the dossier before shipment.</li>
+  </ul>
+
+  <div class="note"><strong>Closing the loop.</strong> Everything in this catalogue
+  section is indicative training data. The binding chain for the real purchases runs
+  through the formal studies — protection coordination, earthing, insulation
+  coordination and the power-quality/PFC study — then approved data sheets, vendor
+  certified documents, FAT and SEC acceptance. The catalogue's job is only to make you
+  fluent for that conversation.</div>
+
+</section>

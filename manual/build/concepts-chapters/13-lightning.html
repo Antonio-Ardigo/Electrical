@@ -1,0 +1,99 @@
+<article class="concept" id="concept-lightning">
+  <h2>13. Lightning &amp; Surge Protection</h2>
+  <p class="backlink">Manual deep-dive: <a href="manual-rev3.html#c-lightning">open the full section</a></p>
+
+  <h3>The Problem</h3>
+  <p>It is tempting to dismiss lightning in Saudi Arabia. The interior plateau sees perhaps 5–15 thunderstorm days a year — a tenth of the tropics — and months can pass without a cloud. But the plant's exposure is not measured in storms per year; it is measured in <em>consequences per strike</em>. A single discharge onto or near the incoming 13.8 kV overhead line injects tens of kilo-amps with a rise time of microseconds, and the travelling voltage wave it launches arrives at MV-SWGR at the speed of light in cable. Spring storms over the escarpments and the Red Sea coast are real, violent, and statistically certain over a 25-year plant life.</p>
+  <p>And lightning is only the loudest member of the surge family. Every capacitor-bank step switching (Chapter <a href="08-pfc.html">8</a>, several times a day), every transformer energisation, every fault clearance on the SEC network generates <strong>switching surges</strong> — smaller than lightning but vastly more frequent. The victims are always the same: insulation, and above all electronics. A 400 V variable frequency drive or a DCS input card has insulation designed to withstand perhaps 1.5–2.5 kV for microseconds; a surge of 6 kV at the main board, left untreated, is a dead drive, and dead drives across a plant are a production outage with a six-week lead time.</p>
+  <p>Before coordinated protection, plants relied on a lightning rod and hope. The rod protects the <em>building</em> from fire; it does nothing for the <em>electronics</em>, because the surge problem is conducted, not structural. The modern answer has two halves: capture the strike where it can do no harm (air terminals placed by the rolling-sphere method, down-conductors, earthing), and then clamp what still gets onto the wires with a <strong>cascade of surge protective devices (SPDs)</strong> whose let-through voltage steps down, board by board, below what each category of equipment can survive.</p>
+
+  <h3>Core Principles</h3>
+  <h4>Principle 1: A surge is a travelling wave, fast beyond intuition</h4>
+  <p><strong>Statement:</strong> Standard test waves codify reality: <strong>8/20 µs</strong> (current reaches crest in 8 µs, decays to half in 20 µs) for induced/switching surges, <strong>10/350 µs</strong> for direct strike currents carrying far more charge and energy.</p>
+  <p>For scale: an entire 8/20 surge is over in less time than the 400 V mains takes to move one degree of its 60 Hz cycle. No breaker, no relay, nothing mechanical can react — only physics already sitting in the circuit (spark gaps, metal-oxide varistors) can act on this timescale.</p>
+  <h4>Principle 2: Equipment withstand is graded in categories (IEC 60664-1)</h4>
+  <p><strong>Statement:</strong> On a 230/400 V system, insulation coordination assigns rated impulse withstand by location: <strong>Category IV 6 kV</strong> (origin of installation — metering, main incomer), <strong>Category III 4 kV</strong> (distribution boards, MCCs), <strong>Category II 2.5 kV</strong> (appliances, drives), <strong>Category I 1.5 kV</strong> (sensitive electronics — DCS cards, network gear).</p>
+  <p>This ladder is the design contract: the protection scheme's only job is to guarantee that the surge voltage actually arriving at each location stays below that location's number.</p>
+  <h4>Principle 3: An SPD is a voltage-controlled short circuit</h4>
+  <p><strong>Statement:</strong> A surge protective device is invisible (megohms) at 230 V but collapses to a near-short within nanoseconds when voltage rises, diverting surge current to earth and "clamping" the voltage at its protection level <strong>Up</strong>.</p>
+  <p>Two technologies split the work: <strong>spark gaps</strong> (Type 1) swallow the brutal 10/350 direct-strike energy; <strong>metal-oxide varistors (MOVs)</strong> (Type 2/3) clamp lower and faster but with less energy capacity. Jargon defined: Up = the voltage the SPD lets through at its rated discharge current — the single most important number on its nameplate.</p>
+  <h4>Principle 4: The lead length is part of the SPD</h4>
+  <p><strong>Statement:</strong> The voltage seen by downstream equipment is Up <em>plus</em> the inductive drop along the SPD's connection conductors: U = Up + L·di/dt, and at surge di/dt even half a metre of wire matters.</p>
+  <p>A perfect SPD on lazy 1 m tails is a mediocre SPD. The installation rule — total connection length ≤ 0.5 m, or use the V-wiring (through-terminal) connection — comes straight from this principle, and the worked example puts numbers on it.</p>
+
+  <h3>Key Innovations</h3>
+  <h4>The rolling-sphere method (electro-geometric model, 1960s–70s)</h4>
+  <p><strong>What:</strong> Imagine a sphere — radius 20 m for the strictest protection level LPL I, 30/45/60 m for LPL II–IV (IEC 62305) — rolled over every surface of the plant. Anywhere the sphere can touch, lightning can strike; air terminals are placed so the sphere rests only on them.</p>
+  <p><strong>Why it mattered:</strong> It replaced guesswork cones with a physical model of the final leader jump, and it reveals the unintuitive: tall tank edges, pipe-rack corners and roof-mounted coolers — not just the highest mast — are strike points needing terminals.</p>
+  <h4>The coordinated SPD cascade (IEC 61643 / 62305, 1990s)</h4>
+  <p><strong>What:</strong> Type 1 (spark-gap, 10/350-rated) at the service entrance / LV-MSB; Type 2 (MOV, 8/20-rated) at each distribution board; Type 3 at sensitive terminal equipment within 10 m of the load. Each stage absorbs energy and hands a smaller remnant to the next; decoupling inductance (≥10 m of cable, or coils) ensures they fire in the right order.</p>
+  <p><strong>Why it mattered:</strong> No single device can both swallow 25–100 kA of strike energy <em>and</em> clamp below 1.5 kV. The cascade divides the labour, exactly like the worked example shows.</p>
+  <h4>Lightning protection zones and bonding (IEC 62305-4)</h4>
+  <p><strong>What:</strong> The plant is mapped into nested zones LPZ 0 (exposed) → LPZ 1 (inside building) → LPZ 2 (inside cabinet); every conductive service crossing a boundary is bonded or surge-protected at the crossing, and all earths (lightning, protective, instrument, NER) meet a single earthing system.</p>
+  <p><strong>Why it mattered:</strong> Surges enter on <em>any</em> metal — armour, screens, pipes, fences. Zoning turns "protect everything" into a checkable boundary discipline, and a single bonded earth prevents the lethal potential differences that multiple "clean earths" create during a strike.</p>
+
+  <h3>Worked Example: A 10 kA 8/20 µs surge through the Type 1/2 cascade</h3>
+  <div class="worked">
+    <p><strong>Given:</strong> Surge 10 kA, 8/20 µs waveform, arriving on the 400 V system at LV-MSB. Type 1 SPD at LV-MSB: Up = 2.5 kV at its rated discharge current. Type 2 SPD at distribution board DB: Up = 1.5 kV. SPD connection leads at the MSB: 0.5 m phase tail + 0.5 m earth tail = 1.0 m total, wire inductance ≈ 1 µH/m. Equipment withstand per IEC 60664-1 (230/400 V): Cat III = 4 kV at boards, Cat II = 2.5 kV at drives, Cat I = 1.5 kV at DCS electronics. All values indicative.</p>
+    <p><strong>Step 1 — Rate of current rise.</strong> The 8/20 wave crests at 10 kA in 8 µs:</p>
+    <p><code class="formula">di/dt = 10 000 A / 8 µs = 1.25 kA/µs = 1.25 × 10⁹ A/s</code></p>
+    <p><em>Why:</em> inductive voltage depends on the <em>steepness</em>, not the size, of the current — this number drives everything that follows.</p>
+    <p><strong>Step 2 — Inductive voltage on the SPD leads.</strong></p>
+    <p><code class="formula">U_lead = L × di/dt = (1.0 m × 1 µH/m) × 1.25 × 10⁹ A/s = 1.0 × 10⁻⁶ × 1.25 × 10⁹ = 1250 V</code></p>
+    <p><em>Note:</em> one metre of ordinary wire "adds" 1.25 kV to a 2.5 kV protector — half the SPD's own rating. This is Principle 4 in cash terms, and why the ≤0.5 m total-lead rule exists.</p>
+    <p><strong>Step 3 — Let-through voltage at the main board.</strong></p>
+    <p><code class="formula">U_MSB = Up + U_lead = 2500 + 1250 = 3750 V ≈ 3.75 kV</code></p>
+    <p><strong>Step 4 — Compare to withstand categories.</strong></p>
+    <p><code class="formula">3.75 kV &lt; 4 kV (Cat III) → boards/MCC equipment at the MSB: protected, slim margin</code></p>
+    <p><code class="formula">3.75 kV &gt; 2.5 kV (Cat II) → drives, and &gt; 1.5 kV (Cat I) → DCS: NOT protected by Type 1 alone</code></p>
+    <p><em>Why:</em> the Type 1 did its job — it absorbed the energy and brought 10 kA down to a 3.75 kV remnant — but that remnant still kills electronics. The cascade must continue.</p>
+    <p><strong>Step 5 — Type 2 stage at the DB.</strong> At least 10 m of cable (inductance ≈ 10 µH) separates MSB from DB, attenuating the surge front and ensuring coordination; the Type 2 clamps the remnant:</p>
+    <p><code class="formula">U_DB ≈ Up(Type 2) + lead term = 1500 + (0.5 m × 1 µH/m × reduced di/dt ≈ 0.3 kA/µs) ≈ 1500 + 150 ≈ 1.65 kV</code></p>
+    <p><code class="formula">1.65 kV &lt; 2.5 kV (Cat II) → drives protected; for Cat I (1.5 kV) DCS cards: add Type 3 within 10 m</code></p>
+    <p><strong>Sanity check:</strong> each stage roughly halves the threat (≈3.75 kV → ≈1.65 kV → &lt;1.2 kV at Type 3), and every location ends below its IEC 60664 category with margin. Reverse check: without any SPD, even a modest induced surge of 6 kV exceeds every category below the service entrance — consistent with the field experience that unprotected VFDs die in the first spring storm. <strong>Result: Type 1 (MSB) + Type 2 (DBs) + Type 3 (DCS cabinets), short leads, one bonded earth — every equipment class sits below its withstand.</strong></p>
+  </div>
+
+  <h3>Intuitive Formalization</h3>
+  <p>Surge protection is governed by one additive equation per location and one inequality per equipment class:</p>
+  <p><code class="formula">U_equipment = Up + L_lead × di/dt&nbsp;&nbsp;&nbsp;and require&nbsp;&nbsp;&nbsp;U_equipment &lt; U_withstand(category)</code></p>
+  <p>Symbols and their physics: <strong>Up</strong> (kV) — the SPD's let-through voltage, the residual the clamp cannot remove (a MOV is a resistor whose value collapses with voltage, never to zero); <strong>L_lead</strong> (µH) — connection inductance, about 1 µH per metre of any practical wire, an irreducible property of geometry; <strong>di/dt</strong> (kA/µs) — the surge steepness, set by nature (8/20, 10/350) not by us; <strong>U_withstand</strong> — the IEC 60664-1 ladder (6 / 4 / 2.5 / 1.5 kV at 230/400 V). The cascade exists because no single device satisfies the inequality everywhere: energy capacity and low clamping are opposing virtues, so the Type 1 trades clamping for energy, the Type 3 trades energy for clamping, and the cable between them decouples the stages. For strike capture, the geometric rule is the rolling sphere: a strike terminates wherever a sphere of radius R (20 m at LPL I) can touch — protection means it touches only air terminals.</p>
+
+  <h3>CTQ Mapping</h3>
+  <table class="tbl">
+    <thead><tr><th>Critical-to-quality requirement</th><th>How the concept delivers it</th><th>What to check in the field</th></tr></thead>
+    <tbody>
+      <tr><td>No structural strike damage or fire</td><td>Air terminals placed by rolling sphere (LPL per IEC 62305 risk assessment); down-conductors; earthing</td><td>Terminal positions vs roof equipment added since design; down-conductor continuity; earth resistance test records</td></tr>
+      <tr><td>Electronics survive both lightning and daily switching surges</td><td>Type 1/2/3 cascade keeps every location below its IEC 60664 category</td><td>SPD status indicators (window/remote contact); Up ratings on nameplates match the study; Type 3 within 10 m of DCS</td></tr>
+      <tr><td>SPDs actually achieve their nameplate Up</td><td>≤0.5 m total lead rule / V-wiring</td><td>Measure installed tail lengths; reroute or re-terminate if longer</td></tr>
+      <tr><td>No side-flash or earth potential differences during a strike</td><td>Single bonded earthing system; all services bonded at zone boundaries</td><td>Bonding of cable armour, pipe entries, fences at LPZ boundaries; one earth bar lineage (incl. NER earth)</td></tr>
+      <tr><td>Protection still alive after years of desert duty</td><td>SPDs are sacrificial — they age with every absorbed surge; monitoring and replacement regime</td><td>Failed-SPD alarms wired to DCS; inspection after every storm season; spares held</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Conceptual Map</h3>
+  <pre>
+                LIGHTNING &amp; SURGE PROTECTION (core)
+                             |
+       +--------- rests on --+---------------------------+
+       |                     |                           |
+  Travelling waves      Withstand ladder          SPD = voltage-
+  8/20 &amp; 10/350 µs      IEC 60664-1:              controlled short
+  (too fast for         6 / 4 / 2.5 / 1.5 kV      (Up + L·di/dt is
+  anything mechanical)  (Cat IV→I)                what arrives)
+       |                     |                           |
+  led to|              led to|                    led to |
+       v                     v                           v
+  Rolling sphere        Coordinated cascade       ≤0.5 m lead rule,
+  (R = 20 m @ LPL I)    Type 1 → 2 → 3            V-wiring, LPZ
+  air terminals at      (energy ↓, clamping ↓     boundary bonding,
+  real strike points    stage by stage)           single earth
+       |                     |                           |
+       +------- enables -----+---------------------------+
+                             |
+     10 kA surge → 3.75 kV @ MSB → 1.65 kV @ DB → &lt;1.2 kV @ DCS:
+     every class below withstand, in a low-keraunic but
+     non-zero desert + daily capacitor/VFD switching surges
+  </pre>
+  <div class="note"><p>All values indicative on the Rev 3 basis (230/400 V, 60 Hz, SASO-adopted IEC 62305 / 61643 / 60664, SBC 401); the lightning risk assessment and surge coordination study govern device classes, Up values and placement.</p></div>
+</article>
+

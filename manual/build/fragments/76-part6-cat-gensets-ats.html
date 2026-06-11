@@ -1,0 +1,732 @@
+<!-- ============================================================
+     §CAT-GENSETS / §CAT-ATS  Diesel Generator Set & ATS Catalogues
+     Rev 3 (Saudi/SEC edition) — 13.8 kV / 400-230 V / 60 Hz / 50 °C
+     Part 6 — Equipment Catalogues. How to read, compare and select
+     standby diesel generator sets (tag DG, 1250 kVA ESP) and
+     automatic transfer switches (tag ATS, open transition ≤ 10 s).
+     All data indicative; ISO 8528, SASO-adopted IEC and the
+     manufacturer's certified data sheets govern.
+============================================================ -->
+<section id="cat-gensets" data-title="Diesel Generator Sets" data-part="Part 6 — Equipment Catalogues">
+
+  <h2>Diesel Generator Sets</h2>
+
+  <div class="warning"><strong>Indicative catalogue data.</strong> Product families and typical
+parameters are listed for training and familiarisation only, are approximate, and change with
+manufacturer revisions. No part numbers are given; always obtain current certified data sheets
+and SASO/SEC acceptance status from the manufacturer.</div>
+
+  <p><strong>Goal:</strong> learn to read a generator-set catalogue the way a specifying
+  engineer reads it — starting from what the plant actually needs (tag <code>DG</code>:
+  a <strong>1250&nbsp;kVA ESP</strong> standby set at <strong>400/230&nbsp;V,
+  60&nbsp;Hz, 1800&nbsp;rpm</strong>, in a 50&nbsp;&deg;C desert ambient), translating
+  each plant requirement into the catalogue parameter that answers it, and finishing
+  with a worked frame selection. The engineering behind the sizing lives in
+  <a href="#c-genset">the standby generator tutorial</a>; this section is the shopping
+  companion to it, used as explained in <a href="#cat-intro">the catalogue
+  introduction</a>.</p>
+
+  <!-- ────────────────────────────────────────────────────────────
+       1. ROLE OF THE STANDBY SET
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-dg-overview">What the Plant Needs — the Standby Role Defined</h3>
+
+  <p>Begin, as always in Part 6, on the demand side. The plant draws about 2.0&nbsp;MW
+  at 0.85 power factor — roughly <strong>2353&nbsp;kVA</strong> — from the SEC
+  13.8&nbsp;kV intake. The standby diesel generator does <em>not</em> back up that whole
+  plant. It backs the <strong>essential bus</strong> only: the loads whose loss creates
+  a safety, asset-damage or restart problem — emergency lighting, instrument and UPS
+  supplies, fire and gas systems, critical cooling and lube pumps, the control building
+  HVAC that keeps the switchgear and servers alive, and whatever process loads the
+  shutdown philosophy declares "must ride through a grid outage". Everything else stays
+  dark until SEC returns.</p>
+
+  <p>That single decision — essential bus, not whole plant — sets the size class. The
+  essential load list (built in <a href="#c-genset">the Part 2 tutorial</a>) sums to an
+  indicative <strong>~900&nbsp;kVA peak</strong>, and after motor-starting and
+  50&nbsp;&deg;C ambient checks the selected machine is a <strong>1250&nbsp;kVA
+  standby-rated (ESP) set at 400/230&nbsp;V, 60&nbsp;Hz</strong>. On the 60&nbsp;Hz SEC
+  grid a 4-pole machine runs at <strong>1800&nbsp;rpm</strong> — a number worth
+  internalising, because a 50&nbsp;Hz catalogue page for the "same" engine quotes
+  1500&nbsp;rpm and different powers; mixing the two columns is a classic transplant
+  error, exactly like ordering 12&nbsp;kV-class switchgear for a 13.8&nbsp;kV
+  system.</p>
+
+  <div class="note"><strong>Why not back the whole plant?</strong> A set able to carry
+  2353&nbsp;kVA continuously through a long outage would be a ~2500&nbsp;kVA-class
+  machine (or two paralleled units), with several times the capital cost, fuel storage,
+  cooling airflow and exhaust treatment — bought to cover the rare hours per year when
+  SEC is down, and running at part load (bad for diesels) whenever the outage load is
+  modest. Standby engineering is the art of buying exactly the kVA the shutdown
+  philosophy demands, and not one frame more. All figures indicative; the load schedule
+  and detailed studies govern.</div>
+
+  <p>The set connects to the essential bus through the automatic transfer switch (tag
+  <code>ATS</code>, <strong>open transition, &le;&nbsp;10&nbsp;s</strong> total
+  break — see <a href="#cat-ats">the ATS catalogue section</a> below and
+  <a href="#c-ats">the ATS logic tutorial</a>). Within that 10&nbsp;s budget the engine
+  must crank, fire, reach 1800&nbsp;rpm and 400&nbsp;V, and close onto a bus that then
+  hits it with motor re-acceleration. Every catalogue parameter examined in this
+  section — rating class, load-acceptance steps, transient voltage dip, fuel rate —
+  exists to answer whether a given frame can survive exactly that sequence, year after
+  year, at 50&nbsp;&deg;C.</p>
+
+
+  <!-- ────────────────────────────────────────────────────────────
+       2. ISO 8528 RATING LADDER
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-dg-ratings">The ISO 8528 Rating Ladder — ESP, PRP, COP</h3>
+
+  <p>The single most consequential line on a genset data sheet is not the kVA number —
+  it is the <em>rating class</em> printed next to it. The same physical engine-alternator
+  pair carries two or three different kVA figures depending on how often and how hard
+  you intend to run it, codified in <strong>ISO 8528-1</strong>. Reading "1250&nbsp;kVA"
+  without reading the class beside it is like reading a speed limit without noticing
+  whether it is in km/h or mph.</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Class</th><th>Name</th><th>Intended duty (indicative)</th><th>Load profile</th><th>Typical use</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>ESP</strong></td><td>Emergency Standby Power</td>
+          <td>Utility-outage backup only; typically &le;&nbsp;200&nbsp;h/year, with a
+          limited fraction (vendors often state ~25&nbsp;h/year) at full nameplate.
+          <em>No overload capability</em> — ESP is already the ceiling.</td>
+          <td>Variable load; average over 24&nbsp;h commonly limited to ~70&nbsp;% of
+          rating</td>
+          <td><strong>This plant's DG</strong> — grid is the normal source, the set runs
+          only on SEC failure and on test.</td></tr>
+      <tr><td><strong>PRP</strong></td><td>Prime Power</td>
+          <td>Unlimited hours per year at <em>variable</em> load (24-h average typically
+          &le;&nbsp;70&nbsp;%), with 10&nbsp;% overload available 1&nbsp;h in 12.</td>
+          <td>Variable</td>
+          <td>Remote sites and rental fleets where the genset <em>is</em> the
+          utility.</td></tr>
+      <tr><td><strong>COP</strong></td><td>Continuous Power</td>
+          <td>Unlimited hours at <em>constant</em> 100&nbsp;% load, no overload.</td>
+          <td>Constant base load</td>
+          <td>Baseload/cogeneration duty; the lowest kVA figure of the three.</td></tr>
+    </tbody>
+  </table>
+
+  <p>The three classes are rungs of one ladder for one machine. As a rule of thumb,
+  <strong>ESP&nbsp;&asymp;&nbsp;110&nbsp;% of PRP</strong>, and COP sits another
+  10&ndash;15&nbsp;% below PRP — so a frame sold as "1250&nbsp;kVA ESP" is typically
+  about 1136&nbsp;kVA PRP and roughly 1000&nbsp;kVA COP (indicative; each vendor
+  publishes its own exact ladder). The physics is thermal and tribological: the extra
+  10&nbsp;% standby power is borrowed from the engine's wear and temperature margins on
+  the argument that it will only ever be used a few dozen hours a year.</p>
+
+  <div class="warning"><strong>Why mis-applying ESP as prime destroys engines.</strong>
+  Run a standby-rated set as the everyday power source and you are operating
+  continuously inside the margin the manufacturer reserved for emergencies: higher
+  exhaust and coolant temperatures, higher cylinder pressures, faster lube-oil
+  degradation, and service intervals computed for 200&nbsp;h/year arriving every few
+  weeks instead. The failure pattern is depressingly repeatable — burned exhaust valves,
+  cracked heads, turbocharger failures and bearing wear inside the first year or two —
+  and the manufacturer's warranty is void from the first month, because the controller's
+  hour counter tells the story. If a site genuinely needs daily generation (a
+  construction phase before SEC connection is the common Saudi case), buy or rent a
+  PRP-rated set for that phase; do not burn the plant's emergency machine.</div>
+
+  <div class="key">Key takeaway: this plant's <code>DG</code> is specified as
+  <strong>1250&nbsp;kVA ESP at 50&nbsp;&deg;C site conditions</strong> — an
+  emergency-standby figure valid because the SEC grid, not the engine, is the normal
+  source. Every comparison between catalogue pages must be made at the <em>same</em>
+  rating class, the same site conditions and the same frequency, or it is not a
+  comparison at all.</div>
+
+
+  <!-- ────────────────────────────────────────────────────────────
+       3. VENDOR FAMILIES
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-dg-families">The Vendor Families You Will Meet</h3>
+
+  <p>Four genset families dominate the Gulf industrial market in the 1&ndash;2&nbsp;MVA
+  class this plant shops in. All build packaged sets — engine, alternator, radiator,
+  base frame, controller — type-tested as a unit to ISO 8528; a specification written
+  around the standard and the site conditions will draw compliant offers from all of
+  them. Typical indicative ranges at <strong>60&nbsp;Hz, 1800&nbsp;rpm</strong>:</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Family</th><th>Vendor</th><th>Engine series (typ.)</th>
+          <th>kVA range at 60&nbsp;Hz / 1800&nbsp;rpm (typ., standby)</th>
+          <th>Native controller</th><th>Notes for this plant</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Cat electric power</strong></td><td>Caterpillar</td>
+          <td>C-series (C9&ndash;C32) mid-range; 3500 series above ~1.5&nbsp;MVA</td>
+          <td>~250&nbsp;kVA to ~3000+&nbsp;kVA; the 1250&nbsp;kVA point sits at the top
+          of the C32 class / bottom of the 3500 class</td>
+          <td>Cat <strong>EMCP</strong> series</td>
+          <td>Very strong dealer network in the Kingdom; rental fleet compatibility is
+          a plus for temporary paralleling.</td></tr>
+      <tr><td><strong>Cummins Power Generation</strong></td><td>Cummins</td>
+          <td>QSK series (electronic) and the long-lived KTA series</td>
+          <td>~250&nbsp;kVA to ~3500&nbsp;kVA; 1250&nbsp;kVA falls in the
+          QSK40/KTA50 class</td>
+          <td><strong>PowerCommand</strong></td>
+          <td>Engine, alternator and ATS from one factory simplifies the
+          DG&ndash;ATS signal interface (<a href="#cat-ats2-families">ATS families</a>).</td></tr>
+      <tr><td><strong>Kohler&ndash;SDMO</strong></td><td>Kohler Energy</td>
+          <td>KD series engines plus packaged sets on Kohler, Mitsubishi and other
+          blocks</td>
+          <td>~20&nbsp;kVA to ~4000&nbsp;kVA across the packaged range</td>
+          <td>Kohler APM / DEC series</td>
+          <td>European (ex-SDMO) packaging heritage; wide enclosure catalogue.</td></tr>
+      <tr><td><strong>MTU (Rolls-Royce Power Systems)</strong></td><td>MTU</td>
+          <td>Series 1600 / 2000 / 4000</td>
+          <td>~700&nbsp;kVA to ~3500+&nbsp;kVA; 1250&nbsp;kVA sits in the
+          Series&nbsp;2000 class</td>
+          <td>MTU controller line</td>
+          <td>Premium positioning; strong in data-centre and utility standby.</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Controllers — native versus aftermarket</h4>
+
+  <p>The controller is the genset's brain: it cranks, monitors, protects, synchronises
+  and talks to the plant. The majors fit their own (Cat EMCP, Cummins PowerCommand,
+  Kohler DEC/APM, MTU's line); the large <em>packager</em> market — firms that marry a
+  bought-in engine and alternator on their own base frame, very common in the Gulf —
+  fits aftermarket controllers, dominated by <strong>Deep Sea Electronics (DSE)</strong>
+  and <strong>ComAp</strong>. These are perfectly capable devices; the specification
+  points that matter are Modbus/Ethernet integration to the plant control system
+  (<a href="#c-ats">ATS/PMS interface</a>), remote start/stop and status contacts,
+  protection functions per the study, and local support for spares and firmware. What
+  to be wary of is not the controller brand but an undocumented packager: demand the
+  ISO 8528 type-test evidence for the <em>packaged set</em>, not just the engine
+  brochure.</p>
+
+  <h4>Enclosures and silencers</h4>
+
+  <p>At 1250&nbsp;kVA the catalogue offers the set open-skid (for an equipment room),
+  in a <strong>weatherproof enclosure</strong>, or in a <strong>containerised</strong>
+  package (ISO 20/40&nbsp;ft) with integral tank, attenuation and switchgear. For a
+  Saudi outdoor installation the enclosure must be specified for dust (filtration on
+  combustion and cooling air, minimum IP54 thinking on the electrical compartments per
+  the plant basis) and for 50&nbsp;&deg;C cooling airflow — a sound-attenuated canopy
+  restricts airflow, and the attenuation and the derating interact. Silencer grades run
+  industrial (~&minus;15&nbsp;dB) / residential (~&minus;25&nbsp;dB) / critical
+  (~&minus;35&nbsp;dB); typical attenuated canopies achieve around
+  75&ndash;85&nbsp;dB(A) at 1&nbsp;m (indicative). Specify the noise limit at the plant
+  boundary and let the vendor pick the hardware.</p>
+
+  <div class="tip">Ask every bidder one question early: "state the set's standby rating
+  at <strong>50&nbsp;&deg;C ambient, with your dust filters and your canopy
+  fitted</strong>, at 60&nbsp;Hz / 1800&nbsp;rpm". The brochure kVA almost never
+  survives that sentence intact — see <a href="#cat-dg-datasheet">the data-sheet
+  anatomy</a> next.</div>
+
+
+  <!-- ────────────────────────────────────────────────────────────
+       4. ANATOMY OF A GENSET DATA SHEET
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-dg-datasheet">Anatomy of a Genset Data Sheet</h3>
+
+  <p>A generator-set data sheet is four documents stapled together: ratings (already
+  covered), <em>site derating</em>, <em>dynamic performance</em> (load acceptance and
+  transient response), and <em>consumption and emissions</em>. The brochure headline is
+  written for a cool, low-altitude, unfiltered, open-skid machine; the Saudi answer
+  lives in the footnotes.</p>
+
+  <h4>Site derating — altitude, temperature, dust</h4>
+
+  <p>Engine ratings are referenced to standard conditions (ISO 3046 /
+  ISO 8528: 25&nbsp;&deg;C air, 100&nbsp;kPa, 30&nbsp;% humidity, with most vendors
+  guaranteeing full power up to 40&nbsp;&deg;C and a stated altitude). Beyond the
+  reference point the diesel loses breath: thinner or hotter air means less oxygen per
+  stroke. Indicative rules of thumb — the vendor's curves govern:</p>
+
+  <ul>
+    <li><strong>Temperature:</strong> roughly <strong>0.5&ndash;1&nbsp;% of power per
+    &deg;C above 40&nbsp;&deg;C</strong> for a typical air-to-air aftercooled engine.
+    At the plant's 50&nbsp;&deg;C design ambient that is an indicative
+    5&ndash;10&nbsp;% off the brochure figure.</li>
+    <li><strong>Altitude:</strong> typically ~1&nbsp;% per 100&nbsp;m above the rated
+    altitude (often 1000&nbsp;m for turbocharged engines). Most Saudi coastal and
+    central sites are low enough for this to be minor — but check Riyadh-region sites
+    (~600&ndash;700&nbsp;m).</li>
+    <li><strong>Dust filtration:</strong> heavy-duty combustion-air filters and canopy
+    inlet attenuation/filtration add intake restriction — a further 1&ndash;3&nbsp;%
+    indicative, plus a maintenance obligation: a choked filter in a shamal re-derates
+    the set in real time.</li>
+    <li><strong>Alternator:</strong> the alternator derates too (class H insulation,
+    typically rated at 40&nbsp;&deg;C); the packaged-set rating at 50&nbsp;&deg;C is
+    the <em>lower</em> of the engine and alternator answers.</li>
+  </ul>
+
+  <h4>Load acceptance — ISO 8528-5 performance classes</h4>
+
+  <p>A standby set is judged by what happens in the first seconds after the ATS closes,
+  not by its steady-state nameplate. A diesel cannot swallow its full rating in one
+  gulp: the turbocharger needs time to spool, so a naturally limited "first step" of
+  load is all it can take without stalling or a deep frequency excursion. ISO 8528-5
+  packages this as performance classes — <strong>G1</strong> (lighting-grade),
+  <strong>G2</strong> (general purpose: typical limits around 20&nbsp;% transient
+  voltage dip and recovery within a few seconds), <strong>G3</strong> (tighter:
+  ~15&nbsp;% dip, faster recovery, for telecoms/UPS-heavy loads), and G4 (by
+  agreement). The data sheet expresses the same physics as a <em>load acceptance
+  table</em>: e.g. "first step 60&nbsp;% of standby rating" with stated dip and
+  recovery. For this plant — UPS rectifiers, contactor coils that drop out below
+  ~70&ndash;80&nbsp;% volts, and re-accelerating motors — specify <strong>class G2 as
+  minimum, G3 preferred</strong>, and check the largest single load step against the
+  table, not against the nameplate (worked in
+  <a href="#cat-dg-selection">the selection below</a>).</p>
+
+  <h4>Transient dip and recovery</h4>
+
+  <p>Two curves matter: <strong>voltage dip</strong> (alternator transient reactance
+  X&prime;<sub>d</sub> versus the kVA of the step — bigger alternator frame = smaller
+  dip; vendors offer an "upsized alternator" option exactly for motor-heavy standby
+  buses) and <strong>frequency dip</strong> (engine inertia and governor response). The
+  data sheet states both for defined steps. Check them against what the essential bus
+  tolerates: UPS input windows, contactor hold-in, VFD undervoltage trips. If the dip
+  fails the check, the fix is usually one alternator frame size, far cheaper than one
+  engine size.</p>
+
+  <h4>Fuel consumption and sound</h4>
+
+  <p>Fuel rate is tabulated at 50&nbsp;/&nbsp;75&nbsp;/&nbsp;100&nbsp;% load. For a
+  1250&nbsp;kVA (&asymp;1000&nbsp;kWe) class set, indicative figures are roughly
+  <strong>130&nbsp;L/h at 50&nbsp;%, 185&nbsp;L/h at 75&nbsp;%, 250&nbsp;L/h at
+  100&nbsp;%</strong> — i.e. a specific consumption around 0.20&ndash;0.27&nbsp;L/kWh.
+  These numbers size the day tank and the autonomy claim
+  (<a href="#cat-dg-selection">worked below</a>). Sound data is given as dB(A) at
+  defined distances per enclosure option; specify the limit at the receptor (plant
+  boundary, control-room wall), not at the canopy. Finally, check the small print on
+  fuel specification — Saudi diesel grades and sulphur content versus the engine's
+  emissions package — and on coolant for sustained 50&nbsp;&deg;C operation.</p>
+
+  <div class="key">Key takeaway: read a genset data sheet in this order — rating
+  class, then the 50&nbsp;&deg;C/dust derated figure, then the load-acceptance and
+  dip tables, then fuel. A set that passes the first two lines but fails the dynamic
+  check will black out the essential bus it was bought to save.</div>
+
+
+  <!-- ────────────────────────────────────────────────────────────
+       5. SELECTION FOR THIS PLANT
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-dg-selection">Selection for This Plant — from Load List to 1250 kVA ESP</h3>
+
+  <p>This is the worked path from the plant's needs to the catalogue frame, on the Rev 3
+  Plant Data Card basis. The full engineering treatment is in
+  <a href="#c-genset">the Part 2 standby generator tutorial</a>; here it is compressed
+  into the sequence a specifier actually follows on the catalogue page. All numbers
+  indicative.</p>
+
+  <div class="worked">
+    <h4>Worked selection — essential bus standby set</h4>
+    <p><strong>Step 1 — essential load.</strong> The essential load schedule
+    (lighting/small power, UPS input, fire &amp; safety, critical pumps and fans,
+    control-building HVAC) sums to an indicative running peak of:</p>
+    <code class="formula">S_essential ≈ 900 kVA  (≈ 765 kW at pf 0.85)</code>
+    <p><strong>Step 2 — motor-start check.</strong> The largest single motor step on
+    the essential bus is an indicative 75&nbsp;kW pump (&asymp;&nbsp;90&nbsp;kVA
+    running). Started direct-on-line at ~6&nbsp;&times; FLC:</p>
+    <code class="formula">S_start ≈ 6 × 90 kVA ≈ 540 kVA (at ~0.2 pf, mostly reactive)</code>
+    <p>Against a 1250&nbsp;kVA frame this step is ~43&nbsp;% of rating — inside a
+    typical G2/G3 load-acceptance first step, with a predicted transient dip well under
+    20&nbsp;% on the standard alternator (vendor dip curve governs). The PMS sequences
+    loads in steps (<a href="#c-ats">ATS/load-sequencing tutorial</a>) so the set never
+    sees the whole 900&nbsp;kVA at once.</p>
+    <p><strong>Step 3 — growth and pf margin.</strong> Add ~10&nbsp;% schedule growth:</p>
+    <code class="formula">S_required ≈ 900 × 1.10 ≈ 990 kVA</code>
+    <p><strong>Step 4 — site derating at 50&nbsp;&deg;C.</strong> Work backwards: a
+    frame whose reference standby rating is ~1400&nbsp;kVA, derated an indicative
+    1&nbsp;%/&deg;C for the 10&nbsp;&deg;C above 40&nbsp;&deg;C plus filter/canopy
+    losses:</p>
+    <code class="formula">S_site ≈ 1400 kVA × (1 − 0.10) ≈ 1260 kVA → select 1250 kVA ESP at site conditions</code>
+    <p><strong>Step 5 — utilisation sanity check.</strong></p>
+    <code class="formula">990 kVA / 1250 kVA ≈ 0.79 → ~79 % loaded at peak ✓</code>
+    <p>Comfortably inside the ESP envelope, high enough to avoid chronic light-running
+    (wet stacking) on test runs. <strong>Result: 1250&nbsp;kVA ESP, 400/230&nbsp;V,
+    60&nbsp;Hz, 1800&nbsp;rpm, class G3 preferred</strong> — matching tag
+    <code>DG</code> on the Plant Data Card. Detailed load schedule and vendor transient
+    data govern the final frame.</p>
+  </div>
+
+  <div class="worked">
+    <h4>Worked sketch — fuel autonomy and day tank</h4>
+    <p>Specify 8&nbsp;h autonomy at an average outage load of ~75&nbsp;% (the essential
+    bus rarely sits at peak for a whole outage). From the data-sheet fuel table,
+    ~185&nbsp;L/h at 75&nbsp;% for this class:</p>
+    <code class="formula">V_fuel = 185 L/h × 8 h = 1480 L → specify ≥ 1500 L usable; round to a 2000 L day tank</code>
+    <p><strong>Sanity check:</strong> 2000&nbsp;L gives ~10.8&nbsp;h at 75&nbsp;% load,
+    or a full 8&nbsp;h even at 100&nbsp;% (250&nbsp;L/h&nbsp;&times;&nbsp;8&nbsp;h =
+    2000&nbsp;L). Add low-level alarm at ~4&nbsp;h remaining, fill connection sized for
+    a road tanker, and bunding per SBC/civil requirements. Longer autonomy belongs in a
+    separate bulk tank with transfer pumps, not a bigger day tank at the engine.</p>
+  </div>
+
+  <p>The remaining specification lines come straight from the earlier sub-sections:
+  ISO 8528 ESP rating declared <em>at site conditions</em>
+  (<a href="#cat-dg-ratings">ratings ladder</a>), G2/G3 load acceptance with the
+  540&nbsp;kVA step demonstrated (<a href="#cat-dg-datasheet">data-sheet anatomy</a>),
+  60&nbsp;Hz / 1800&nbsp;rpm type evidence, dust-rated enclosure and silencer to the
+  boundary noise limit, controller with remote start and Modbus to the plant control
+  system, and the ATS interface contacts defined jointly with
+  <a href="#cat-ats2-selection">the ATS selection</a>.</p>
+
+
+</section>
+
+<section id="cat-ats" data-title="Automatic Transfer Switches" data-part="Part 6 — Equipment Catalogues">
+
+  <h2>Automatic Transfer Switches</h2>
+
+  <div class="warning"><strong>Indicative catalogue data.</strong> Product families and typical
+parameters are listed for training and familiarisation only, are approximate, and change with
+manufacturer revisions. No part numbers are given; always obtain current certified data sheets
+and SASO/SEC acceptance status from the manufacturer.</div>
+
+  <p><strong>Goal:</strong> learn to read an automatic transfer switch catalogue —
+  transition types first (because they define the product class), then ampere and
+  withstand ratings, then the controller features — and finish with the worked pick for
+  this plant's essential bus (tag <code>ATS</code>: <strong>open transition,
+  &le;&nbsp;10&nbsp;s</strong>, fed by SEC normal / <code>DG</code> standby). The
+  transfer logic and timing engineering is in <a href="#c-ats">the ATS tutorial</a>;
+  the generator it pairs with is in <a href="#cat-gensets">the genset catalogue
+  section</a> above.</p>
+
+  <!-- ────────────────────────────────────────────────────────────
+       1. TRANSFER SCHEMES
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-ats2-overview">Transfer Schemes — Open, Delayed, Closed, Bypass</h3>
+
+  <p>An ATS is conceptually simple — two sources in, one load out, an interlock that
+  forbids both at once — but catalogues split into four scheme families, and choosing
+  the scheme is the real engineering decision; the ampere rating is just shopping.</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Scheme</th><th>How it transfers</th><th>Dead time (typ.)</th><th>Use it when…</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Open transition</strong> (break-before-make)</td>
+          <td>Opens the connected source, then closes the other. The two sources are
+          never paralleled.</td>
+          <td>Tens of ms to a few s of switch dead time; total outage on grid failure
+          is governed by engine start — <strong>&le;&nbsp;10&nbsp;s end-to-end is this
+          plant's standard</strong>.</td>
+          <td>Default for standby duty. Loads ride on the UPS (100&nbsp;kVA /
+          30&nbsp;min) or simply tolerate the gap. No utility consent needed because
+          the DG never touches the SEC network.</td></tr>
+      <tr><td><strong>Delayed transition</strong> (open with centre-off pause)</td>
+          <td>Opens, pauses deliberately in a centre-off position (programmable, often
+          1&ndash;5&nbsp;s), then closes the other source.</td>
+          <td>Seconds, on purpose.</td>
+          <td>Motor and transformer-rich loads: the pause lets motor residual voltage
+          decay so re-energisation does not slam an out-of-phase back-EMF — torque
+          transients that snap shafts and trip breakers. The in-phase-monitor option is
+          the faster alternative for the same problem.</td></tr>
+      <tr><td><strong>Closed transition</strong> (make-before-break)</td>
+          <td>Synchronises and parallels the two live sources for
+          <strong>&le;&nbsp;100&nbsp;ms</strong>, then opens the outgoing one. Used for
+          <em>return</em> transfer and load tests; a dead grid still means an open
+          transfer.</td>
+          <td>Zero (when both sources are live).</td>
+          <td>Seamless monthly testing and return-to-utility. <strong>Requires utility
+          consent</strong> — paralleling with the SEC network engages the Saudi Grid
+          Code / SEC Distribution Code interconnection rules and usually mandated
+          protection (see <a href="#cat-ats2-saudi">Saudi notes</a>).</td></tr>
+      <tr><td><strong>Bypass-isolation</strong></td>
+          <td>Any of the above, built with a second, manually-operated switch path so
+          the automatic mechanism can be isolated, drawn out and serviced while the
+          load stays fed.</td>
+          <td>n/a (a construction option, not a transition type)</td>
+          <td>When the ATS itself must not be a maintenance single point of failure —
+          hospitals, data centres, and a defensible option for this plant's essential
+          bus.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note"><strong>Where the 10 seconds goes.</strong> For this plant's open
+  transition the budget is roughly: undervoltage sensing and timers confirm the SEC
+  loss (~1&ndash;3&nbsp;s, to ride through dips without nuisance starts), engine crank
+  and field build-up to 1800&nbsp;rpm / 400&nbsp;V (~5&ndash;8&nbsp;s for a warm
+  1250&nbsp;kVA-class set), then the transfer operation itself (&lt;&nbsp;1&nbsp;s).
+  The ATS controller owns the first and last items; the engine owns the middle. The
+  full timing diagram is worked in <a href="#c-ats">the Part 2 ATS tutorial</a>.</div>
+
+
+  <!-- ────────────────────────────────────────────────────────────
+       2. VENDOR FAMILIES
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-ats2-families">The Vendor Families You Will Meet</h3>
+
+  <p>The ATS market splits into purpose-built transfer-switch specialists and
+  genset-vendor lines designed to pair with their own controllers. Typical indicative
+  ranges:</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Family</th><th>Vendor</th><th>Ampere range (typ.)</th>
+          <th>Transition types offered</th><th>Controller features (typ.)</th>
+          <th>Notes for this plant</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>ASCO 7000 SERIES</strong></td>
+          <td>ASCO Power Technologies (Schneider Electric)</td>
+          <td>~30 to 4000&nbsp;A</td>
+          <td>Open, delayed, closed transition; <strong>bypass-isolation</strong>
+          versions with draw-out automatic switch</td>
+          <td>Group-5/7-class controllers: in-phase monitor, programmable timers,
+          engine exerciser, load-shed contacts, comms (Modbus/Ethernet)</td>
+          <td>The industry benchmark for critical-power ATS; the bypass-isolation
+          option fits an essential bus that cannot tolerate ATS maintenance
+          outages.</td></tr>
+      <tr><td><strong>Cat ATC contactor-type ATS</strong></td><td>Caterpillar</td>
+          <td>~40 to 3000&nbsp;A class</td>
+          <td>Open and delayed transition; closed-transition variants in the
+          larger frames</td>
+          <td>ATC controller family, engineered to talk natively to Cat EMCP genset
+          controllers; exerciser, timers, status comms</td>
+          <td>Natural pick when the DG is a Cat set — single-vendor responsibility for
+          the start-signal chain.</td></tr>
+      <tr><td><strong>Cummins OTPC / BTPC</strong></td><td>Cummins Power Generation</td>
+          <td>~40 to 4000&nbsp;A</td>
+          <td>OTPC: open/delayed transition power-contactor type; BTPC adds
+          <strong>bypass-isolation</strong>; closed-transition variants exist</td>
+          <td>PowerCommand ATS controllers, native integration with PowerCommand
+          genset controls; in-phase monitor, load shed, network comms</td>
+          <td>Same single-vendor logic as Cat, for a Cummins DG.</td></tr>
+      <tr><td><strong>TransferPacT / ASCO 300-class tiers</strong></td>
+          <td>Schneider Electric / ASCO</td>
+          <td>~40 to 1600&nbsp;A (TransferPacT); ASCO 300 SERIES to ~3000&nbsp;A</td>
+          <td>Open and delayed transition; simpler feature set</td>
+          <td>Commercial-tier controllers: basic timers, exerciser, fewer programmable
+          I/O and comms options</td>
+          <td>The value tier — adequate for non-critical sub-distribution transfers,
+          usually <em>not</em> the pick for a plant's main essential-bus ATS.</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Construction classes hiding behind the brands</h4>
+
+  <p>Underneath the branding, catalogues offer three mechanism constructions, and the
+  difference matters more than the logo. <strong>Dedicated transfer mechanisms</strong>
+  (ASCO 7000, OTPC class) are purpose-built double-throw devices, mechanically
+  interlocked over-centre mechanisms type-tested specifically for transfer duty — the
+  benchmark for endurance and withstand. <strong>Contactor-based</strong> switches are
+  two mechanically and electrically interlocked contactors — economical at smaller
+  sizes. <strong>Breaker-pair</strong> arrangements use two motor-operated circuit
+  breakers with interlocks; they add integral overcurrent protection but transfer more
+  slowly and their endurance is breaker-class, not contactor-class. For IEC
+  procurement, all should be type-tested to <strong>IEC 60947-6-1</strong> (transfer
+  switching equipment); that certificate, at 400&nbsp;V / 60&nbsp;Hz, is the line to
+  demand regardless of family. Utilisation category matters too:
+  <strong>AC-33A/AC-33B</strong> (mixed/motor loads) rather than AC-31 (non-inductive)
+  for this bus.</p>
+
+  <div class="tip">Decide early who supplies the ATS: with the genset (one
+  responsibility for the start chain and timing) or with the LV switchboard package
+  (one responsibility for busbar, withstand and arc containment). Both work; an ATS
+  bought separately from both is how interface gaps are born. Whichever route is
+  chosen, the DG controller, ATS controller and plant control system signal map is a
+  drawing to approve before manufacture — see
+  <a href="#cat-ats2-selection">the selection</a>.</div>
+
+
+  <!-- ────────────────────────────────────────────────────────────
+       3. ANATOMY OF AN ATS DATA SHEET
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-ats2-datasheet">Anatomy of an ATS Data Sheet</h3>
+
+  <h4>Rated current versus withstand — two different questions</h4>
+
+  <p>The ampere number in the model name answers the easy question: how much load
+  current the switch can carry continuously. The hard question is printed further down
+  as the <strong>withstand and closing rating (WCR)</strong>: how much fault current
+  the switch can carry — and, worse, <em>close onto</em> — without welding or
+  exploding, for long enough for an upstream protective device to clear. An ATS is not
+  a breaker; it does not interrupt faults. It must survive them while something else
+  does the interrupting. The WCR is therefore stated <em>in combination with</em> a
+  protecting device: either "any breaker" for a stated time (e.g. X&nbsp;kA for
+  3&nbsp;cycles / specific-breaker tables) or a short-time rating (e.g. X&nbsp;kA for
+  0.05&ndash;0.5&nbsp;s) that lets it coordinate with an upstream breaker's short-time
+  delay. The rule is absolute: <strong>WCR &ge; prospective fault current at the point
+  of installation, verified against the actual upstream breaker or fuse type and its
+  clearing time</strong> — not against a generic assumption. On this plant the
+  essential-bus fault level is dominated by the LV network (one transformer
+  &asymp;&nbsp;38.5&nbsp;kA at the MSB; the level at the ATS depends on intervening
+  cable and is fixed by the short-circuit study).</p>
+
+  <h4>3-pole versus 4-pole — the neutral decision</h4>
+
+  <p>On this plant's <strong>TN-S</strong> system the question "switch the neutral or
+  not?" must be answered deliberately. A 3-pole ATS leaves the neutral solidly shared
+  between SEC and DG sources; a <strong>4-pole</strong> ATS transfers the neutral with
+  the phases (overlapping or early-make/late-break neutral contacts in better designs,
+  so the load neutral is never floated). The driver is earth-fault protection
+  integrity: with both source neutrals permanently interconnected, parallel neutral
+  return paths form, and residual/earth-fault relays on either source can be
+  desensitised or made to nuisance-trip by circulating neutral current. Where the DG
+  has its own neutral-earth bond and earth-fault protection — the normal arrangement
+  for a packaged set, and the assumption here — <strong>specify 4-pole</strong> and
+  switch the neutral. (The 3-pole alternative requires a single, carefully engineered
+  neutral-earth bond and a protection review; it is a design decision, not a default.)
+  The earthing logic is developed in the Part 2 earthing material.</p>
+
+  <h4>Endurance, duty and environment</h4>
+
+  <ul>
+    <li><strong>Endurance cycles:</strong> catalogues state mechanical and electrical
+    operation counts (IEC 60947-6-1 classes; thousands of cycles for dedicated
+    mechanisms). A standby ATS transfers rarely but is <em>exercised</em> monthly —
+    30+ years &times; 12 tests is only ~400 cycles, so endurance is rarely limiting;
+    contact inspection intervals are.</li>
+    <li><strong>Utilisation category:</strong> AC-33A/B for the mixed motor/UPS load of
+    an essential bus, declared at 400&nbsp;V, 60&nbsp;Hz.</li>
+    <li><strong>50&nbsp;&deg;C derating:</strong> as with every catalogue in Part 6,
+    the ampere rating is referenced to 40&nbsp;&deg;C (and often to free-air or a
+    specific enclosure). Ask for the certified continuous rating at
+    <strong>50&nbsp;&deg;C, in the offered enclosure</strong> — an indicative
+    5&ndash;10&nbsp;% reduction — plus IP54-thinking dust protection if outside the
+    conditioned room.</li>
+    <li><strong>Controller data:</strong> pickup/dropout voltage and frequency windows
+    (set for 400&nbsp;V / 60&nbsp;Hz nominal), programmable timers (engine start
+    delay, transfer, retransfer, cool-down), in-phase monitor or programmed-pause
+    options, load-shed/elevator pre-signal contacts, engine exerciser, and
+    comms protocol to the plant control system.</li>
+  </ul>
+
+  <div class="key">Key takeaway: an ATS data sheet is read in this order — transition
+  type, then <strong>WCR against the real upstream device</strong>, then poles (4-pole
+  for this TN-S plant), then the 50&nbsp;&deg;C ampere rating, and only then the
+  controller features. A switch that merely matches the load current but not the
+  fault duty is a bomb with a brand name.</div>
+
+
+  <!-- ────────────────────────────────────────────────────────────
+       4. SELECTION FOR THIS PLANT
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-ats2-selection">Selection for This Plant — the Essential-Bus ATS</h3>
+
+  <div class="worked">
+    <h4>Worked selection — ATS for tag ATS</h4>
+    <p><strong>Step 1 — frame current.</strong> The ATS must carry whatever the DG can
+    deliver, because the genset breaker — not the ATS — is the limiting protection on
+    the standby side. Full-load current of the 1250&nbsp;kVA set at 400&nbsp;V:</p>
+    <code class="formula">I = S / (√3 × U) = 1,250,000 VA / (1.732 × 400 V) ≈ 1804 A</code>
+    <p>Next standard frame up:</p>
+    <code class="formula">1804 A → 2000 A frame class</code>
+    <p><strong>Sanity check:</strong> the essential load itself (~900&nbsp;kVA &asymp;
+    1300&nbsp;A) fits with margin; sizing to the source rather than the load is the
+    conservative convention and costs one frame size.</p>
+    <p><strong>Step 2 — withstand and closing rating.</strong> Demand WCR &ge; the
+    prospective short-circuit current at the ATS location from the short-circuit study
+    (upper bound: one-transformer infeed &asymp; 38.5&nbsp;kA at the LV-MSB; the value
+    at the essential switchboard is lower after cable impedance — the study fixes it).
+    Verify the WCR against the <em>actual</em> upstream breaker type and clearing time,
+    or specify a short-time-rated switch coordinated with the upstream breaker's
+    short-time delay.</p>
+    <p><strong>Step 3 — poles and transition.</strong> <strong>4-pole</strong>
+    (switched neutral, overlapping contacts) for the TN-S system with a
+    neutral-earthed DG; <strong>open transition</strong> with programmable delayed
+    transition / in-phase monitor for the motor loads; total transfer budget
+    <strong>&le;&nbsp;10&nbsp;s</strong> per the plant standard. Bypass-isolation
+    construction is the recommended option so the essential bus never goes dark for
+    ATS maintenance.</p>
+    <p><strong>Result (indicative): 2000&nbsp;A, 4-pole, open/delayed-transition
+    bypass-isolation ATS, IEC 60947-6-1 class AC-33, 400/230&nbsp;V 60&nbsp;Hz, WCR per
+    the short-circuit study, rated at 50&nbsp;&deg;C.</strong> The formal studies and
+    vendor certified data govern.</p>
+  </div>
+
+  <h4>Signal interfaces — the lines on the drawing that make it work</h4>
+
+  <p>The ATS is a node in a control chain, and the interface list is part of the
+  specification, not an afterthought:</p>
+
+  <ul>
+    <li><strong>To the DG controller:</strong> the hardwired, fail-safe
+    <em>engine-start</em> contact (closed = run is the safe convention), plus
+    generator-available status back to the ATS; remote stop and common alarm.</li>
+    <li><strong>To the plant control / building management system:</strong> position
+    indication (normal / emergency / centre-off), source-availability status,
+    transfer-in-progress, fail-to-transfer alarm, exerciser status — via volt-free
+    contacts and/or Modbus.</li>
+    <li><strong>Load shed / staged reconnection:</strong> programmable contacts that
+    drop or delay non-priority essential loads so the DG sees the staged load steps
+    assumed in <a href="#cat-dg-selection">the genset selection</a>.</li>
+    <li><strong>UPS coordination:</strong> the 100&nbsp;kVA UPS rides through the
+    &le;10&nbsp;s break; confirm its input window accepts the DG's voltage/frequency
+    excursions on retransfer (<a href="#c-ats">timing tutorial</a>).</li>
+  </ul>
+
+
+  <!-- ────────────────────────────────────────────────────────────
+       5. SAUDI-SPECIFIC PRACTICE
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-ats2-saudi">Saudi-Specific Practice — SASO, SEC and the Desert</h3>
+
+  <h4>SASO / SABER conformity</h4>
+
+  <p>Imported transfer switches and generator sets clear Saudi customs through the
+  <strong>SABER platform</strong> with certificates of conformity against the
+  SASO-adopted standards (IEC 60947-6-1 for the ATS; ISO 8528 and the LV directives'
+  IEC equivalents for the packaged genset). Make the vendor contractually responsible
+  for the SABER/SASO certificates, type-test reports at <strong>60&nbsp;Hz</strong>,
+  and country-of-origin documents at order stage — paperwork strands equipment in port
+  far more often than technical faults do, exactly as noted for the MV switchgear.</p>
+
+  <h4>SEC notification and the closed-transition question</h4>
+
+  <p>An <strong>open-transition</strong> ATS never connects the DG to the SEC network,
+  so no interconnection approval is engaged — this is a quiet but real advantage of the
+  plant's chosen scheme. The moment <strong>closed transition</strong> (or any
+  paralleling, however brief) is contemplated, the installation becomes an embedded
+  generator paralleling with the distribution network: SEC must be notified and must
+  consent, the Saudi Grid Code / SEC Distribution Code interconnection requirements
+  apply, and protection (sync-check, reverse power, over/under voltage and frequency,
+  and the mandated means of disconnection) must be agreed with SEC in writing. The
+  ~100&nbsp;ms overlap does not exempt it. If seamless retransfer is ever requested by
+  operations, treat it as a project with an SEC workstream, not an ATS option
+  tick-box.</p>
+
+  <h4>Siting — heat and dust</h4>
+
+  <p>Best practice is the ATS inside the conditioned electrical room with the
+  essential switchboard, restoring the 40&nbsp;&deg;C catalogue basis. If it must live
+  outside (e.g. in a containerised genset package), specify the enclosure for dust
+  (minimum IP54 per the plant environmental basis), shaded installation, the certified
+  50&nbsp;&deg;C ampere rating, and anti-condensation heaters for coastal humidity
+  swings. Verify the controller electronics' declared operating temperature — control
+  boards, not copper, are usually the first thermal casualty.</p>
+
+  <h4>Exercising under permit</h4>
+
+  <p>A standby system that is never tested is a hope, not a system. Set the ATS
+  exerciser for a <strong>monthly on-load test</strong> (engine start, transfer,
+  30&ndash;60&nbsp;min on load to reach full operating temperature and avoid wet
+  stacking, retransfer) — but on an operating plant this is a planned operation under
+  the <strong>permit-to-work system</strong>, scheduled with operations, with the
+  essential loads' tolerance of the two open-transition breaks confirmed in advance,
+  and logged: start time, time-to-ready (verify &le;&nbsp;10&nbsp;s), load reached,
+  fuel state, alarms. Quarterly, add a genuine "pull-the-plug" black test of the whole
+  chain — sensing, start, transfer, sequencing — because the exerciser's polite
+  pre-arranged test exercises everything except the part that fails in real life:
+  the loss-of-source detection.</p>
+
+  <ul class="checklist">
+    <li>Confirm DG rating is declared <strong>ESP per ISO 8528 at site conditions</strong> — 1250&nbsp;kVA at 50&nbsp;&deg;C, with dust filters and enclosure fitted, at 400/230&nbsp;V, 60&nbsp;Hz, 1800&nbsp;rpm (indicative; studies govern).</li>
+    <li>Check the largest essential motor-start step against the vendor's load-acceptance table and transient-dip curve (ISO 8528-5 class G2 minimum, G3 preferred).</li>
+    <li>Verify day-tank autonomy calculation against the data-sheet fuel rates (indicative 8&nbsp;h → ~2000&nbsp;L) with low-level alarm and bunding.</li>
+    <li>Verify ATS frame (2000&nbsp;A class for 1804&nbsp;A DG full-load current) and <strong>WCR &ge; prospective fault current with the actual upstream device</strong> per the short-circuit study.</li>
+    <li>Confirm <strong>4-pole</strong> (switched neutral) construction for the TN-S system, with overlapping neutral contacts, and the open/delayed-transition scheme within the &le;&nbsp;10&nbsp;s budget.</li>
+    <li>Approve the DG-controller / ATS / plant-control signal map (engine start, status, load shed, alarms) before manufacture; test every line at commissioning.</li>
+    <li>Collect SASO/SABER certificates and 60&nbsp;Hz type-test reports with the bid; if closed transition is ever proposed, obtain SEC written consent first.</li>
+  </ul>
+
+  <div class="note"><strong>Closing the loop.</strong> Catalogue fluency is the means,
+  not the end. The binding chain for the real purchase runs: essential-load schedule
+  and shutdown philosophy &rarr; <a href="#c-genset">genset sizing study</a> and
+  <a href="#c-ats">ATS timing study</a> &rarr; approved data sheets &rarr; vendor
+  certified drawings and type tests &rarr; FAT and the witnessed black test &rarr;
+  the monthly exercising log. Every number in this section is indicative training
+  data; the formal studies and SEC/SASO correspondence govern.</div>
+
+</section>

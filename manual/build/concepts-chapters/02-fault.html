@@ -1,0 +1,103 @@
+<article class="concept" id="concept-fault">
+  <h2>2. Fault Current</h2>
+  <p class="backlink">Manual deep-dive: <a href="manual-rev3.html#c-shortcircuit">open the full section</a></p>
+
+  <h3>The Problem</h3>
+  <p>Every conductor in the plant is sized for its job: the LV main bus carries up to about 3 396 A on a hot Saudi afternoon, a motor feeder maybe 100 A. Then a cable lug works loose, a rodent bridges two busbars, a tool is left in a panel — and the careful hierarchy of currents collapses. A <strong>bolted fault</strong> (a short circuit with effectively zero resistance at the fault point) connects the full system voltage directly across almost nothing. The current is no longer decided by the load; it is decided by how little impedance stands between the source and the fault. At our LV main switchboard that is about <strong>38 500 A</strong> — roughly 17 times the transformer's full-load current, through equipment that was happily carrying hundreds.</p>
+  <p>The historical failure mode was buying switchgear by load current alone. A board rated to <em>carry</em> 2 500 A but only to <em>withstand</em> 20 kA, installed where 38.5 kA is available, does not merely trip on a fault — busbars tear off their supports, breakers that try to open are destroyed mid-operation, and the panel can burst. Load current tells you what the equipment must carry all day; fault current tells you what it must survive for the worst tenth of a second of its life. They are different questions with different answers, and the second one is the expensive one.</p>
+  <p>What is at stake: equipment selection (interrupting and withstand ratings), busbar bracing, cable thermal limits, protection settings (Ch. 5) and arc-flash energy (Ch. 6) all start from one number — the prospective fault current at each bus.</p>
+  <h3>Core Principles</h3>
+  <h4>Principle 1: Fault current is set by impedance, not by load</h4>
+  <p><strong>Statement:</strong> during a short circuit the load vanishes from the equation; <code>I_fault = V / Z_path</code>, where Z_path is the total impedance from all sources to the fault. At our LV bus the path is essentially one 1600 kVA transformer at Z = 6 %, because the SEC 13.8 kV grid behind it is comparatively enormous (25 kA design fault level — a near-ideal source from the LV bus's point of view).</p>
+  <p><strong>Example:</strong> in per-unit (Ch. 1): I_fault = 1.0/0.06 = 16.7 pu = 16.7 × 2 309 A ≈ 38.5 kA.</p>
+
+  <h4>Principle 2: Sources add — every path in parallel contributes</h4>
+  <p><strong>Statement:</strong> fault current at a bus is the sum of contributions from every source connected to it. Close the normally-open bus-tie so both transformers feed one bus, and two 38.5 kA contributions superpose: ≈ <strong>77 kA</strong>. Running motors also contribute for a few cycles (each motor briefly acts as a small generator, feeding roughly its own starting current back into the fault), which is why studies add a motor contribution on top of the transformer figure.</p>
+  <p><strong>Example:</strong> this single principle is why our LV-MSB is rated 50–65 kA and the bus-tie is operated <em>normally open</em> with interlocks — the tie-closed condition (77 kA) must remain a controlled, short-duration switching state, not a running arrangement.</p>
+
+  <h4>Principle 3: The first instant is worse than the steady value — the DC offset</h4>
+  <p><strong>Statement:</strong> a 60 Hz current cannot jump instantly; if the fault strikes at the wrong point of the voltage wave, a decaying DC component rides on top of the AC, and the first peak can reach about 2.0–2.2 times the RMS symmetrical value. For 38.5 kA RMS that is a first peak of roughly <strong>80 kA</strong>. Mechanical forces follow the peak; breaker "making" and busbar bracing ratings are peak ratings.</p>
+
+  <h4>Principle 4: Damage scales with the square of current</h4>
+  <p><strong>Statement:</strong> the two destructive agents both go as I². Magnetic force between parallel conductors is proportional to I² (double the current, four times the force). Heat deposited in a conductor is proportional to I²t (the "let-through energy"). This square law is why a 17× current is not "17 times worse" — mechanically and thermally it is nearly <strong>300 times</strong> worse than full load, and why milliseconds of clearing time matter.</p>
+
+  <h3>Key Innovations</h3>
+  <h4>The prospective fault level as a design quantity (codified in IEC 60909)</h4>
+  <p><strong>What:</strong> standardising how to compute the worst-case ("prospective") short-circuit current at every bus — voltage factors, impedance corrections, motor contribution, decay — so that one declared number per bus (e.g. "38.5 kA at LV-MSB") can be compared directly against equipment ratings.</p>
+  <p><strong>Why it mattered:</strong> it turned fault current from a research calculation into a procurement checkbox: every breaker carries an interrupting rating (Icu), every panel a 1 s or 3 s withstand, and the rule is simply rating ≥ prospective level. Our MV switchgear is specified 31.5 kA/3 s against the SEC 25 kA design level (SEC range 25–40 kA); the LV board 50–65 kA against 38.5 kA.</p>
+  <h4>Current limitation — clearing inside the first rise (fuses, current-limiting MCCBs)</h4>
+  <p><strong>What:</strong> devices fast enough to interrupt before the first peak even forms, "cutting off" the current at a fraction of its prospective value.</p>
+  <p><strong>Why it mattered:</strong> downstream equipment then never sees the full 38.5 kA, allowing cheaper, smaller gear behind a current-limiting device — the basis of cascade/back-up arrangements in our MCCs. The trade-off: extreme speed conflicts with selectivity (Ch. 5), so current limitation is used at the edges of the network, not at the main board.</p>
+  <h3>Worked Example</h3>
+  <p><strong>Scenario:</strong> bolted three-phase fault on the LV main switchboard, single transformer in service; then assess what that current physically does to the busbars. <strong>Given:</strong> TX-1 = 1600 kVA, 13.8/0.4 kV, Z = 6 %, LV FLC = 2 309 A; busbar phase spacing assumed 0.20 m (indicative).</p>
+  <div class="worked">
+    <p><strong>Step 1 — Symmetrical fault current (one transformer).</strong></p>
+    <code class="formula">Isc = FLC / Z(pu) = 2 309 A / 0.06 = 38 483 A ≈ 38.5 kA</code>
+    <p><em>Why:</em> with a stiff 13.8 kV grid behind it, the transformer impedance is effectively the whole path (Ch. 1). Including grid impedance would trim this ~4 %; studies keep it, field estimates may not.</p>
+    <p><strong>Step 2 — Tie-closed case.</strong> Both transformers in parallel halve the source impedance:</p>
+    <code class="formula">Isc(tie closed) = 2 × 38.5 kA = 77 kA</code>
+    <p><em>Why:</em> two equal impedances in parallel give Z/2, so current doubles. This exceeds the 50–65 kA board rating — hence the normally-open tie and interlocking.</p>
+    <p><strong>Step 3 — First-cycle peak.</strong> With a typical LV X/R, the IEC peak factor is about 2.1:</p>
+    <code class="formula">i_peak ≈ 2.1 × 38.5 kA ≈ 81 kA (first peak, ~4 ms after fault inception at 60 Hz)</code>
+    <p><strong>Step 4 — Magnetic force on the busbars at that peak.</strong> Force per metre between two parallel conductors:</p>
+    <code class="formula">F/L = 2×10⁻⁷ × i² / d  [N/m, i in A, d in m]</code>
+    <code class="formula">F/L = 2×10⁻⁷ × (81 000)² / 0.20 = 2×10⁻⁷ × 6.56×10⁹ / 0.20 ≈ 6 600 N/m</code>
+    <p><em>Why:</em> this is the standard parallel-conductor force law; the i² term is Principle 4 made visible. 6 600 N/m is like hanging a <strong>670 kg load on every metre of busbar</strong> — applied sideways, reversing direction 120 times per second at 60 Hz. This is what busbar supports and bracing are designed against, and why withstand ratings are mechanical, not just thermal.</p>
+    <p><strong>Step 5 — Thermal let-through for a 50 ms (3-cycle) clearance.</strong></p>
+    <code class="formula">I²t = (38 500)² × 0.05 = 1.48×10⁹ × 0.05 ≈ 7.4×10⁷ A²s</code>
+    <p><em>Why:</em> I²t is the quantity compared against cable and busbar thermal withstand (k²S² for cables). It is also why every extra cycle of clearing time costs real copper temperature.</p>
+    <p><strong>Sanity check:</strong> 38.5 kA / 2 309 A = 16.7 — consistent with 1/0.06 pu. Peak factor 2.1 lies in the standard 2.0–2.2 LV band. Forces in the kN/m range match typical LV switchboard bracing design values.</p>
+  </div>
+  <div class="warning">
+    <p><strong>Field consequence:</strong> never parallel TX-1 and TX-2 by closing the bus-tie with both incomers closed, except under the approved interlock scheme. The 77 kA tie-closed level is above the board's withstand; the interlock is a fault-rating boundary, not an operational convenience.</p>
+  </div>
+
+  <h3>Intuitive Formalization</h3>
+  <p>Strip the standard apparatus away and three relations remain. Symbols: <code>V</code> = pre-fault line voltage (V), <code>Z</code> = total source-to-fault impedance (Ω or pu), <code>i</code> = instantaneous current (A), <code>d</code> = conductor spacing (m), <code>t</code> = duration (s).</p>
+  <div class="worked">
+    <code class="formula">Isc = V / (√3 × Z)        — how big      (Ohm's law; load is irrelevant)</code>
+    <code class="formula">F/L = 2×10⁻⁷ × i² / d     — how hard it pushes   (∝ i²)</code>
+    <code class="formula">E_heat ∝ I² × t           — how hot it gets      (∝ I², ∝ t)</code>
+  </div>
+  <p>Physical reading: the first line says a fault is a property of the <em>network</em>, fixed the day the transformer was bought; you cannot operate your way out of it, only clear it fast and rate equipment above it. The second and third lines say the destructiveness is quadratic in current but only linear in time — which is precisely why protection (Ch. 5) trades time, and equipment ratings trade current.</p>
+
+  <h3>CTQ Mapping</h3>
+  <table class="tbl">
+    <thead><tr><th>Critical-to-quality requirement</th><th>How the concept delivers it</th><th>What to check in the field</th></tr></thead>
+    <tbody>
+      <tr><td>Switchgear survives the worst credible fault</td><td>Prospective level per bus (38.5 kA LV, 25 kA design MV) compared against Icu/Icw ratings</td><td>Nameplates: LV-MSB ≥ 50 kA, MV gear 31.5 kA/3 s; no device anywhere rated below its bus fault level</td></tr>
+      <tr><td>Tie-closed overstress never occurs in service</td><td>Sources-add principle quantifies the 77 kA paralleled case</td><td>Bus-tie interlock functional test; operating procedure forbids sustained 3-breaker-closed state</td></tr>
+      <tr><td>Cables not damaged before protection clears</td><td>I²t let-through compared with cable k²S² withstand</td><td>Study confirms each cable's adiabatic check at its actual clearing time, at 50 °C ratings</td></tr>
+      <tr><td>Busbar bracing adequate for peak forces</td><td>Peak (≈81 kA) drives the i²/d force calculation</td><td>Board type-test certificate covers rated peak withstand (Ipk), not only RMS Icw</td></tr>
+    </tbody>
+  </table>
+  <h3>Conceptual Map</h3>
+  <pre>
+                         FAULT CURRENT (core)
+                "the network's worst day, quantified"
+                                |
+       +------------------------+------------------------+
+       | rests on               | rests on               | rests on
+       v                        v                        v
+ [Impedance decides]      [Sources superpose]      [DC offset: first
+  Isc = V/(√3·Z)           1 TX: 38.5 kA            peak ≈ 2.1 × RMS
+  load irrelevant          tie closed: 77 kA        ≈ 81 kA]
+       |                        |                        |
+       | requires               | led to                 | led to
+       v                        v                        v
+ [Ch.1 Per-unit:          [Normally-open tie +     [Peak (making) and
+  Isc ≈ FLC/Z(pu)]         interlocks]              bracing ratings]
+       |
+       +------------- I² damage laws -------------+
+       |                                          |
+       v                                          v
+ [Force ∝ i²/d ≈ 6.6 kN/m]              [Heat ∝ I²t ≈ 7.4×10⁷ A²s]
+       | enables                                  | enables
+       v                                          v
+ Equipment withstand ratings             Ch.4 Interruption, Ch.5
+ (Icu, Icw, Ipk ≥ bus level)             Selectivity, Ch.6 Arc Flash
+  </pre>
+  <div class="note">
+    <p>All figures are <strong>indicative</strong> Rev 3 plant-basis values (SEC 13.8 kV, 60 Hz; LV 400/230 V TN-S). The IEC 60909 short-circuit study governs equipment selection.</p>
+  </div>
+</article>

@@ -1,0 +1,2393 @@
+<!-- ============================================================
+     §C-GENSET / §C-UPS / §C-ATS / §C-SUMMARY / §C-FORMULA-CARD / §C-SELFCHECK
+     Rev 3 (Saudi/SEC edition) — 13.8 kV / 400-230 V / 60 Hz / 50 °C
+     Standby-power deep dives (DG, UPS, ATS) plus the Part 2
+     close-out: summary table, formula card, self-check problems.
+     All numbers indicative; SASO-adopted IEC + ISO 8528 basis.
+============================================================ -->
+<section id="c-genset" data-title="Standby Diesel Generator — Sizing, Step Loading &amp; Fuel" data-part="Part 2 — Calculations">
+
+  <h2>8 — Standby Diesel Generator — Sizing, Step Loading &amp; Fuel <span style="font-size:0.65em; font-weight:normal; background:#e8f4fd; border:1px solid #aad4f5; border-radius:3px; padding:1px 5px; color:#1a6fa0;">Core</span></h2>
+
+  <p><strong>Goal:</strong> size the <code>DG</code> standby set on an essential-load basis
+  (Rev 3: <strong>1 250 kVA ESP at 50&nbsp;&deg;C</strong>), design the staged restart so the
+  set is never block-loaded beyond its step capability, estimate the voltage/frequency dip
+  per load step from first principles, and verify fuel autonomy — then read an ISO 8528
+  nameplate without being fooled by the rating fine print.</p>
+
+  <p>This section is one third of the standby-power triangle. The other two corners are the
+  <a href="#c-ups">UPS (§16)</a>, which keeps the no-break loads alive while the engine
+  cranks, and the <a href="#c-ats">ATS (§17)</a>, which decides when to start the engine and
+  when to move the essential bus. Read all three together: each one's sizing assumptions are
+  the other two's inputs.</p>
+
+  <div class="note">
+    <strong>Indicative data.</strong> Every number here — ratings, fuel rates, reactances,
+    timings — is indicative and chosen for teaching on the Rev 3 plant basis. The genset
+    vendor's certified data sheet, the plant's load-acceptance study and the protection
+    coordination study govern. Standards cited are <strong>ISO&nbsp;8528</strong>
+    (generating sets), the SASO-adopted IEC suite (IEC&nbsp;60034 rotating machines,
+    IEC&nbsp;61439 assemblies), SBC&nbsp;401 and the SEC Distribution Code.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       1. WHY THIS EXISTS
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-genset-why">The Island Heart: What Must Survive a SEC Outage</h3>
+
+  <h4>Why this exists</h4>
+
+  <p>For 99.9-something per cent of the year, this plant is a passenger. SEC's 13.8 kV
+  network — backed by gigawatts of generation and a grid stiff enough to hold 60.00 Hz
+  against anything the plant does — supplies every kilowatt. Then, perhaps two or three
+  times a year, a feeder fault, a storm or a planned outage opens the intake breaker and
+  the plant becomes, for a few hours, an <strong>electrical island</strong>. The standby
+  diesel generator is the heart of that island: the only spinning machine on site capable
+  of making voltage and frequency from nothing but fuel and air.</p>
+
+  <p>The first design decision is brutal and happens long before any kVA arithmetic:
+  <strong>what deserves to survive?</strong> Nobody sizes a standby set for the full
+  2.0 MW / 2 353 kVA plant load — the capital cost, the fuel logistics and the rarity of
+  outages do not justify it. Instead the LV distribution is split into two families:</p>
+
+  <ul>
+    <li><strong>Non-essential loads</strong> — the process itself, large utility motors,
+    HVAC comfort cooling. When SEC dies, these die with it and wait. Production is lost;
+    nothing is damaged; restart follows a procedure.</li>
+    <li><strong>Essential loads</strong> — everything whose loss converts an outage from
+    "lost production" into "damaged plant or unsafe plant": emergency lighting, the DCS
+    and its marshalling cabinets, instrument air compressors, critical cooling and
+    lube-oil pumps, fire-fighting systems, the UPS rectifier, the battery chargers for the
+    <code>DCDB</code> 110 V DC system, communications, and the HVAC that keeps switchrooms
+    and battery rooms below their design temperatures in a 50&nbsp;&deg;C summer.</li>
+  </ul>
+
+  <p>The essential family lives on a dedicated <strong>essential bus</strong> (or essential
+  MCC section) downstream of the <a href="#c-ats">ATS</a>. In normal operation the ATS
+  feeds that bus from the <code>LV-MSB</code>; on a confirmed SEC failure it starts the
+  <code>DG</code> and transfers the essential bus to it. The split is therefore not just a
+  list on paper — it is copper: separate switchboard sections, separate feeders, and a
+  transfer switch whose rating and logic are calculations in their own right (§17).</p>
+
+  <p>Sizing the DG is then a four-question problem, and this section works all four:</p>
+
+  <ol>
+    <li><strong>How big is the essential load?</strong> — steady-state kVA with diversity
+    (the worked calculation below).</li>
+    <li><strong>How is it applied?</strong> — a generator that can carry 1 250 kVA cannot
+    necessarily <em>accept</em> 1 250 kVA in one hit. Step-load capability, not nameplate,
+    is usually the binding constraint.</li>
+    <li><strong>How long must it run?</strong> — fuel autonomy: day tank plus bulk storage
+    against a stated policy (24–48 h is typical for a plant that can be refuelled by road).</li>
+    <li><strong>What does it do to everything else?</strong> — the DG is a weak source:
+    fault levels collapse (<a href="#c-shortcircuit">§4</a>), protection that relied on
+    38.5 kA may no longer see faults (<a href="#c-protection">§10</a>, 51V below), and
+    every motor start becomes a system event (<a href="#c-motors">§5</a>).</li>
+  </ol>
+
+  <div class="key">
+    The genset is not "backup power for the plant". It is the dedicated heart of a small,
+    deliberately chosen island — the essential bus — and its size is set by what that
+    island needs <em>and the order in which the island asks for it</em>. Define the
+    essential-load list first; every other number in this section is derived from it.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       2. WHAT GOES WRONG WITHOUT IT
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-genset-failure">A Failure Story: Sized on Paper, Crashed on Concrete</h3>
+
+  <h4>What goes wrong without it</h4>
+
+  <p>The following story is fictional but every failure mode in it is routine in incident
+  reports. The plant resembles ours; the mistakes are the two classics: <em>sizing on
+  nameplate kW only</em>, and <em>treating fuel as somebody else's problem</em>.</p>
+
+  <p><strong>The setup.</strong> At design time, someone added up the essential-load list:
+  about 1 000 kW. A 1 250 kVA set was bought — correctly, as it happens. But the
+  load-acceptance study was never done. The ATS was wired to transfer the <em>whole</em>
+  essential bus in one operation, with every motor contactor left energised so that
+  everything that was running before the outage tries to restart the instant the bus goes
+  live. On the load list this is invisible: the kW column adds up. Electrically it is a
+  monster: six motors starting simultaneously draw 6–7 times their full-load current at a
+  power factor of ~0.2 (<a href="#c-motors">§5</a>) — a starting demand of well over
+  2 000 kVA thrown at a 1 250 kVA machine.</p>
+
+  <p><strong>The event.</strong> A July afternoon, 49&nbsp;&deg;C. A SEC feeder fault takes
+  the intake out. The UPS carries the DCS; the engine cranks, fires, and reaches
+  400 V / 60 Hz in eleven seconds — flawless. The ATS transfers. Then:</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Time after transfer</th><th>What is happening</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>0–0.3 s</td>
+        <td>Every held-in contactor recloses. Starting kVA &gt; 2 000 kVA hits the
+        alternator. The subtransient/transient reactance of the machine drops the bus
+        voltage by 25–30 % — far beyond any AVR's instantaneous correction.</td>
+      </tr>
+      <tr>
+        <td>0.3–2 s</td>
+        <td>At 70 % voltage, motor torque (&prop; V&sup2;) is half of normal: the motors
+        accelerate slowly, holding their starting current for seconds instead of the usual
+        one. The engine, suddenly asked for double its rated torque, bogs down: frequency
+        dives toward 55 Hz. The turbocharger has no exhaust energy yet — the engine is
+        smoke-limited and simply cannot make the power.</td>
+      </tr>
+      <tr>
+        <td>2–4 s</td>
+        <td>Undervoltage (27) and underfrequency (81U) protection — set to protect the
+        machine — give up first: the generator breaker trips. The essential bus goes dark
+        <em>again</em>. The ATS, seeing a dead source, locks out on some designs, or
+        cycles on worse ones.</td>
+      </tr>
+      <tr>
+        <td>+ minutes</td>
+        <td>The control room is on UPS, watching screens, with no instrument air
+        compressor and no critical cooling. The operators are now managing a plant
+        shutdown on battery time.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p><strong>The second insult.</strong> Two months later, after a staged-restart sequence
+  has been hastily programmed, the next outage lasts longer. The set runs beautifully for
+  five hours — then hunts, smokes and stops. The day tank shows half full. Cause: years of
+  storage at 50&nbsp;&deg;C tank-skin temperatures have bred microbial sludge ("diesel
+  bug") and water at the tank bottom; five hours of vibration stirred it into the suction
+  line and blinded both filters. The fuel <em>quantity</em> was fine; the fuel
+  <em>quality</em> had never been polished, sampled or drained. At desert temperatures
+  fuel degrades faster, water condenses overnight in half-empty tanks, and filter
+  plugging is a question of when, not if.</p>
+
+  <p><strong>The lessons</strong>, in the order this section addresses them:</p>
+
+  <ul>
+    <li>A genset is sized in <strong>kVA and torque transients</strong>, not kW totals. The
+    starting sequence is part of the design, owned jointly with the PMS/ATS logic.</li>
+    <li><strong>Step-load capability</strong> (~60 % of rating in one block for a typical
+    turbocharged set) is a hard physical limit set by the turbocharger and the alternator
+    reactance — no setting changes it.</li>
+    <li><strong>Fuel autonomy is litres &times; quality &times; delivery.</strong> A tank
+    volume calculation is necessary but nowhere near sufficient at 50&nbsp;&deg;C.</li>
+    <li>A standby set that has never been <strong>tested on real load</strong> is a
+    hypothesis, not a backup (see Control, below).</li>
+  </ul>
+
+  <!-- ────────────────────────────────────────────────────────────
+       3. FEEL FOR THE NUMBERS
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-genset-feel">How Big Is 1 250 kVA, Really?</h3>
+
+  <h4>Feel for the numbers</h4>
+
+  <p>Before the formal sizing, calibrate your intuition on what a 1 250 kVA / 1 000 kW
+  diesel set actually is — because the numbers decide everything from the slab to the
+  fuel-truck schedule.</p>
+
+  <div class="worked">
+    <h4>Estimate 1 — The engine</h4>
+    <p>Electrical output 1 000 kW at alternator efficiency &asymp; 0.95 means the engine
+    must deliver:</p>
+    <code class="formula">P_mech = 1 000 / 0.95 &asymp; 1 050 kW &asymp; 1 410 hp</code>
+    <p>Engines in this class are catalogued around 1 400–1 700 hp to leave torque reserve.
+    A heavy long-haul truck engine is roughly 450 hp — so the <code>DG</code> is
+    <strong>three to four truck engines on one crankshaft</strong>: typically a V12 or V16
+    of 30–60 litres displacement, two tonnes of engine plus another two of alternator,
+    radiator and base frame. It arrives on a low-loader, not in a van.</p>
+  </div>
+
+  <div class="worked">
+    <h4>Estimate 2 — Fuel burn and tank life</h4>
+    <p>A modern diesel genset burns roughly <strong>0.27 litres per kWh</strong> generated
+    (specific fuel consumption &asymp; 210–220 g/kWh). At a typical essential-bus loading
+    of 80 %:</p>
+    <code class="formula">P = 0.80 &times; 1 000 kW = 800 kW</code>
+    <code class="formula">Fuel rate = 0.27 L/kWh &times; 800 kW &asymp; 216 L/h</code>
+    <p>That is a full 200 L oil drum <strong>every 56 minutes</strong>. A 10 000 L day
+    tank therefore lasts:</p>
+    <code class="formula">t = 10 000 L / 216 L/h &asymp; 46 h</code>
+    <p>— call it two days at 80 % load. <em>Sanity check:</em> 216 L/h of diesel carries
+    about 216 &times; 10 kWh/L &asymp; 2.2 MW of chemical power, of which we extract
+    0.8 MW electrical — an overall efficiency of ~37 %, exactly where a good diesel sits.
+    The other 1.4 MW leaves as exhaust and radiator heat, which is why the cooling system
+    is a calculation of its own at 50&nbsp;&deg;C (Equipment technology, below).</p>
+  </div>
+
+  <div class="worked">
+    <h4>Estimate 3 — What "step load" means</h4>
+    <p>A turbocharged diesel can typically accept only <strong>~60 % of its rating in a
+    single block</strong> without excessive frequency dip (ISO 8528-5 performance class
+    G2/G3 territory). For our set:</p>
+    <code class="formula">Max first block &asymp; 0.60 &times; 1 250 kVA &asymp; 750 kVA</code>
+    <p>The physics: below the load, the turbocharger is idling; torque beyond the
+    naturally-aspirated capability of the engine must wait ~1–3 s for exhaust energy to
+    spin the turbo up ("turbo lag"). Ask for more and the engine smoke-limits, the
+    frequency dives, and the alternator's internal reactance simultaneously drops the
+    voltage. Hence the staged restart designed in the worked calculation.</p>
+  </div>
+
+  <p>One more intuition: while islanded, the <strong>grid's inertia is gone</strong>. On
+  SEC, switching a 200 kW motor moves the frequency by nothing measurable. On the island,
+  the only rotating energy is the genset's own flywheel and rotor — a few megajoules. The
+  same motor start is now a 16 % load step on the only machine holding 60 Hz. Everything
+  the plant does while islanded, the engine governor feels personally.</p>
+
+  <div class="tip">
+    Field shortcut: <strong>fuel L/h &asymp; 0.27 &times; kW load</strong>, and
+    <strong>autonomy h &asymp; tank litres / (0.27 &times; kW)</strong>. Two numbers from
+    the logbook — tank dip and kW meter — give you autonomy on a phone calculator during
+    any outage.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       4. WORKED CALCULATION
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-dg-worked">Worked Sizing Study — Rating, Steps, Dips and Fuel</h3>
+
+  <h4>Worked calculation</h4>
+
+  <p>Four linked calculations, in the order a designer does them: steady rating &rarr;
+  step-load sequence &rarr; transient dip per step &rarr; fuel autonomy.</p>
+
+  <div class="worked">
+    <h4>Part A — Steady-state rating from the essential load</h4>
+    <p>The audited essential-load list (after diversity — not every essential load runs
+    simultaneously) totals <strong>&asymp; 1.0 MW at pf 0.85</strong>:</p>
+    <code class="formula">S_ess = P / pf = 1 000 kW / 0.85 = 1 176 kVA</code>
+    <p>Select the next standard rating with margin:</p>
+    <code class="formula">S_DG = 1 250 kVA (ESP, quoted at 50 &deg;C site ambient) &ge; 1 176 kVA  &#10003;</code>
+    <p>Margin = 1 250 / 1 176 = 1.06 — only <strong>6 %</strong>, which is acceptable
+    <em>only because</em> the rating is already derated to site conditions (see Equipment
+    settings) and the essential list is policed. <em>Sanity check:</em> 1 250 kVA at 400 V
+    is I = 1 250 000 / (1.732 &times; 400) &asymp; <strong>1 804 A</strong> — this is the
+    essential-bus FLC that also sizes the <a href="#c-ats">ATS (§17)</a> and the generator
+    breaker (<a href="#c-breaker">§14</a>).</p>
+  </div>
+
+  <div class="worked">
+    <h4>Part B — Step-load (staged restart) design</h4>
+    <p>Step capability &asymp; 60 % of rating in one block:</p>
+    <code class="formula">S_step,max = 0.60 &times; 1 250 = 750 kVA</code>
+    <p>So the PMS/ATS restart sequence is designed so no stage exceeds 750 kVA of
+    <em>starting</em> demand (motors counted at starting kVA, not running kW). Indicative
+    sequence:</p>
+    <table class="tbl">
+      <thead>
+        <tr><th>Stage</th><th>Delay after transfer</th><th>Loads picked up</th>
+        <th>Starting demand</th><th>Running demand (cum.)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>0</td><td>0 s</td><td>Essential lighting, DCS/UPS rectifier, battery
+        chargers, small static loads (transferred live)</td><td>&asymp; 250 kVA</td>
+        <td>&asymp; 230 kVA</td></tr>
+        <tr><td>1</td><td>+5 s</td><td>Instrument air compressor (soft-start) + critical
+        lube-oil pumps</td><td>&asymp; 650 kVA</td><td>&asymp; 530 kVA</td></tr>
+        <tr><td>2</td><td>+15 s</td><td>Critical cooling pumps and fans (staggered
+        contactors)</td><td>&asymp; 600 kVA</td><td>&asymp; 830 kVA</td></tr>
+        <tr><td>3</td><td>+30 s</td><td>Switchroom/battery-room HVAC, remaining essential
+        loads</td><td>&asymp; 400 kVA</td><td>&asymp; 1 000–1 100 kVA</td></tr>
+      </tbody>
+    </table>
+    <p>Every stage's starting demand &le; 750 kVA &#10003; and the final running demand
+    &le; 1 176 kVA &#10003;. Note stage 0 transfers <em>held</em> loads instantly; all
+    motor contactors are deliberately dropped out on loss of voltage and re-closed only by
+    the sequence — exactly the discipline whose absence crashed the set in the failure
+    story.</p>
+  </div>
+
+  <div class="worked">
+    <h4>Part C — Transient voltage dip per step (concept formula)</h4>
+    <p>During the first cycles of a load step, the alternator behaves like an EMF behind
+    its subtransient reactance X&Prime;<sub>d</sub>. The fractional voltage dip is
+    approximately the step's apparent power as a fraction of the machine base, scaled by
+    that reactance:</p>
+    <code class="formula">dip &asymp; X&Prime;_d &times; S_step / S_gen</code>
+    <p>With a typical X&Prime;<sub>d</sub> &asymp; 0.12 pu for a low-voltage alternator,
+    the worst stage (750 kVA starting block):</p>
+    <code class="formula">dip &asymp; 0.12 &times; 750 / 1 250 = 0.072 &rarr; &asymp; 7.2 %</code>
+    <p>Bus voltage momentarily &asymp; 0.93 pu &asymp; 371 V — recoverable by the AVR
+    within ~1–2 s, and above the ~0.85 pu contactor drop-out danger zone &#10003;. For
+    comparison, a single 300 kVA soft-started step gives 0.12 &times; 300/1 250 &asymp;
+    <strong>2.9 %</strong> — invisible. This formula is deliberately crude (it ignores the
+    step's power factor and the AVR forcing) but it is the right first filter: anything
+    over ~15 % by this estimate needs the vendor's transient-performance curves and
+    probably a bigger machine or a softer start. Frequency dips follow the same logic with
+    the engine/governor instead of the reactance — vendors quote both against
+    ISO&nbsp;8528-5 performance classes.</p>
+  </div>
+
+  <div class="worked">
+    <h4>Part D — Fuel autonomy</h4>
+    <p>Policy: <strong>&ge; 24 h on site without refuelling</strong> at realistic load
+    (here 850 kW average over a long outage):</p>
+    <code class="formula">Fuel rate = 0.27 L/kWh &times; 850 kW &asymp; 230 L/h</code>
+    <code class="formula">Day tank: 10 000 L / 230 L/h &asymp; 43 h &ge; 24 h  &#10003;</code>
+    <p>If the policy were 48 h at full essential load (1 000 kW &rarr; 270 L/h), required
+    storage = 270 &times; 48 &asymp; <strong>13 000 L</strong> — the day tank alone is not
+    enough and a bulk tank with automatic transfer pump is needed. <em>Sanity check:</em>
+    43 h &times; 230 L/h = 9 890 L &asymp; tank volume &#10003;.</p>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       5. EQUIPMENT SETTINGS
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-dg-settings">Reading the Nameplate and Setting the Machine</h3>
+
+  <h4>Equipment settings</h4>
+
+  <p><strong>First, decode the rating — ISO 8528-1 defines three, and they are not
+  interchangeable:</strong></p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Rating</th><th>Meaning</th><th>Load profile</th><th>Overload</th>
+      <th>Use here</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>ESP</strong> — Emergency Standby Power</td>
+        <td>Highest number on the sheet. Emergency use for the duration of an outage
+        (typical guidance &asymp; 200 h/yr).</td>
+        <td>Variable; average &le; ~70 % of ESP over 24 h</td>
+        <td><strong>None</strong> — ESP is already the ceiling</td>
+        <td><strong>Yes</strong> — our 1 250 kVA is ESP</td>
+      </tr>
+      <tr>
+        <td><strong>PRP</strong> — Prime Rated Power</td>
+        <td>Unlimited annual hours, variable load (&asymp; 10 % below ESP).</td>
+        <td>Variable; average &le; ~70 % of PRP</td>
+        <td>10 % for 1 h in 12 h</td>
+        <td>If the set were the normal supply (it is not)</td>
+      </tr>
+      <tr>
+        <td><strong>COP</strong> — Continuous Operating Power</td>
+        <td>Constant 100 % load, unlimited hours (lowest number, &asymp; 80 % of ESP).</td>
+        <td>Constant</td>
+        <td>None</td>
+        <td>Baseload plants only</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="warning">
+    <strong>The 50 &deg;C trap.</strong> Catalogue ratings are quoted at 25–40 &deg;C air
+    inlet and modest altitude. At a 50 &deg;C Saudi design ambient the engine breathes
+    thinner, hotter air and the radiator works against a smaller temperature difference —
+    expect roughly <strong>−1 % per 5 &deg;C above the reference temperature</strong>
+    (plus −1 % per 100 m of altitude) unless the vendor certifies otherwise. A set sold as
+    "1 400 kVA" on its 27 &deg;C catalogue page may be a 1 250 kVA machine here.
+    <strong>Always specify the ESP rating at 50 &deg;C site ambient</strong> — as the Rev 3
+    data card does — and demand the derate curve in the data sheet, including the radiator
+    (cooling at 50 &deg;C, not 40 &deg;C) and the alternator's own thermal class margin.
+  </div>
+
+  <p><strong>Then the settings, group by group (all indicative):</strong></p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Device</th><th>Setting</th><th>Typical value</th><th>Why</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td rowspan="2">AVR</td>
+        <td>Voltage setpoint</td>
+        <td>400 V &plusmn;0.5 % steady-state</td>
+        <td>Match the bus the loads were designed for; fine-tune to compensate cable drop
+        to the essential bus.</td>
+      </tr>
+      <tr>
+        <td>Voltage droop / quadrature droop</td>
+        <td>0 % (single set); 3–5 % only if parallel operation is ever intended</td>
+        <td>Droop shares reactive power between parallel machines; a lone set runs flat
+        (isochronous voltage).</td>
+      </tr>
+      <tr>
+        <td rowspan="2">Governor</td>
+        <td>Frequency mode</td>
+        <td><strong>Isochronous 60.00 Hz</strong> (single set on an island)</td>
+        <td>The set is the only frequency reference — it must hold 60 Hz at any load, not
+        droop with load. Droop mode (3–5 %) is for grid-parallel or multi-set operation
+        only.</td>
+      </tr>
+      <tr>
+        <td>Load acceptance class</td>
+        <td>ISO 8528-5 G2 (G3 for stricter dips)</td>
+        <td>Defines the guaranteed transient voltage/frequency dip and recovery time per
+        load step — the contractual face of Part C above.</td>
+      </tr>
+      <tr>
+        <td rowspan="5">Generator protection</td>
+        <td>27 undervoltage / 59 overvoltage</td>
+        <td>27: &lt;80 % t = 2–5 s; 59: &gt;110 % t = 1–2 s</td>
+        <td>Delayed enough to ride the designed 7 % step dips; fast enough to save the
+        loads from a failed AVR.</td>
+      </tr>
+      <tr>
+        <td>81 U/O under/overfrequency</td>
+        <td>&lt;57 Hz / &gt;63 Hz, 1–3 s</td>
+        <td>Protects engine and loads from governor failure; must ride the transient
+        frequency dip of the largest designed step.</td>
+      </tr>
+      <tr>
+        <td>32 reverse power</td>
+        <td>&asymp; 5 % of rating, 2–5 s</td>
+        <td>Only relevant if ever paralleled with SEC (closed-transition or sync schemes):
+        stops the alternator "motoring" a dead engine. Harmless to fit, vital if the
+        scheme ever changes.</td>
+      </tr>
+      <tr>
+        <td>51V voltage-restrained overcurrent</td>
+        <td>Pickup &asymp; 1.1 &times; FLC, restrained by bus voltage</td>
+        <td>A generator's sustained fault current is only ~2.5–3 &times; FLC (the field
+        collapses) — a plain 51 set above load would never trip. 51V lowers its pickup as
+        the voltage collapses, so it can tell a fault from an overload
+        (<a href="#c-protection">§10</a>).</td>
+      </tr>
+      <tr>
+        <td>Differential / earth fault</td>
+        <td>87G on larger/critical machines; 51G on the neutral</td>
+        <td>Fast stator-fault clearance; the neutral CT also confirms the TN-S earthing of
+        the island (the genset neutral is earthed via the 4-pole ATS scheme — §17).</td>
+      </tr>
+      <tr>
+        <td rowspan="2">Engine controller</td>
+        <td>Crank attempts / rest</td>
+        <td>3 attempts &times; 10 s crank, 10 s rest, then "fail to start" alarm</td>
+        <td>Protects the starters; defines the worst-case start time the
+        <a href="#c-ups">UPS autonomy (§16)</a> must really cover.</td>
+      </tr>
+      <tr>
+        <td>Cooldown timer</td>
+        <td>3–5 min unloaded run before stop</td>
+        <td>Lets the turbocharger and exhaust valves cool on circulating oil — stopping a
+        hot turbo dead is how bearings die.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ────────────────────────────────────────────────────────────
+       6. EQUIPMENT TECHNOLOGY
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-dg-tech">Anatomy of a Desert Genset</h3>
+
+  <h4>Equipment technology</h4>
+
+  <p>Walk the machine end to end — every subsystem below has killed a "perfectly good"
+  standby set somewhere, usually in summer.</p>
+
+  <ul>
+    <li><strong>Engine.</strong> Turbocharged, aftercooled V12/V16 diesel, 1 800 rpm for
+    60 Hz with a 4-pole alternator (rpm = 120 &times; f / poles = 120 &times; 60 / 4).
+    The <strong>turbocharger</strong> is what makes 1 050 kW from 40-odd litres possible —
+    and what imposes the 60 % step limit. The <strong>aftercooler</strong> matters doubly
+    at 50&nbsp;&deg;C: charge air enters the engine hotter, so the same boost delivers
+    less oxygen — part of the temperature derate.</li>
+    <li><strong>Alternator.</strong> Brushless synchronous machine: a small exciter
+    generator on the same shaft feeds the main rotor field through shaft-mounted rotating
+    diodes — no slip rings, no brushes, nothing to wear in dusty air. The
+    <strong>AVR</strong> controls the exciter field; a <strong>PMG</strong> (permanent
+    magnet generator pilot) powers the AVR independently of the main output, so excitation
+    survives the voltage collapse of a close-in fault and the machine can drive its 51V
+    protection. Insulation class H, used at class F rise — the margin is the
+    50&nbsp;&deg;C ambient.</li>
+    <li><strong>Cooling.</strong> A set radiator rejecting ~1.2 MW of heat must do it into
+    50&nbsp;&deg;C air with a top-tank limit around 100&nbsp;&deg;C — roughly half the
+    temperature difference assumed by a European catalogue, so nearly double the core
+    area/airflow. Specify the radiator for 50+&nbsp;&deg;C explicitly; many "tropicalised"
+    sets stop at 46&nbsp;&deg;C. Dust screens on the inlet, and discharge ducting so hot
+    air is not recirculated inside an enclosure.</li>
+    <li><strong>Fuel system.</strong> Day tank (10 000 L here) feeding the engine by
+    gravity/lift pump; bulk tank with transfer pumps for longer autonomy policies.
+    Desert specifics: <strong>fuel polishing</strong> (recirculating filtration) or a
+    scheduled sample/drain regime against water and microbial growth, tank shading or
+    burial against 60+&nbsp;&deg;C skin temperatures, water-separator filters in duplex
+    (changeable while running), and a low-level alarm wired to the PMS — the failure
+    story's second act lives entirely in this bullet.</li>
+    <li><strong>Starting system.</strong> Two independent 24 V DC starter motors and
+    <strong>duplicated battery banks</strong> with individual chargers — the single most
+    common cause of standby failure worldwide is a flat or sulphated start battery.
+    Battery life at 50&nbsp;&deg;C is a fraction of catalogue life (same chemistry lesson
+    as <a href="#c-ups">§16</a>); some plants specify air-conditioned battery compartments
+    or NiCd start batteries. Jacket-water heaters keep the block warm for fast starts —
+    less critical in Saudi summers, still specified for winter nights.</li>
+    <li><strong>Enclosure.</strong> Weatherproof, sand-trap louvred, min IP54-equivalent
+    ingress philosophy for the electrical compartments, with acoustic attenuation
+    (residential-rated canopies achieve ~75 dBA at 1 m; site limits govern). The enclosure
+    is also a thermal system: its airflow design is part of the 50&nbsp;&deg;C rating, not
+    cosmetic.</li>
+    <li><strong>Generator breaker.</strong> An ACB or MCCB at the set, rated for the
+    1 804 A FLC and the <em>generator's</em> modest fault current — but coordinated with
+    the 38.5 kA grid-side world through the ATS interlocks
+    (<a href="#c-breaker">§14</a>, <a href="#c-ats">§17</a>).</li>
+  </ul>
+
+  <p>See the <a href="#cat-gensets">genset catalogue section</a> for indicative vendor
+  families and data-sheet parameters to request.</p>
+
+  <figure class="fig">
+    <div class="svg-embed" data-src="diagrams/svg/sld-master-2MW.svg"></div>
+    <figcaption>Fig — Plant SLD: the DG, ATS and essential bus sit bottom-right of the
+    LV distribution; note the normally-open standby path versus the normal LV-MSB
+    feed.</figcaption>
+  </figure>
+  <div class="warning drawing-basis"><strong>Drawing basis note.</strong> This diagram was
+  drawn for the original 11 kV / 415 V / 50 Hz reference design and has not been re-rendered.
+  For this Saudi (SEC) Rev 3 edition read 11 kV as 13.8 kV, 415 V as 400 V and 50 Hz as 60 Hz.
+  Topology, tags and protection philosophy are unchanged.</div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       7. CONTROL
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-dg-control">Who Starts It, Who Watches It</h3>
+
+  <h4>Control</h4>
+
+  <p>The set is run by its own <strong>genset controller</strong> (engine management,
+  AVR/governor interfaces, protection, alarms) with three operating modes:</p>
+
+  <ul>
+    <li><strong>AUTO</strong> — the normal standing state. The controller waits for the
+    <strong>remote-start contact from the ATS</strong> (§17): contact closes &rarr; crank
+    sequence &rarr; build voltage/frequency &rarr; signal "ready to load". Contact opens
+    &rarr; cooldown timer &rarr; stop. A set found in MANUAL or OFF during an assessment
+    is a P1 finding: it will not start at 03:00.</li>
+    <li><strong>MANUAL</strong> — local start/stop for maintenance, with the operator
+    owning the transfer decisions.</li>
+    <li><strong>TEST</strong> — periodic exercise without (or with) transfer, scheduled
+    from the controller or PMS.</li>
+  </ul>
+
+  <p><strong>Why there is no synchronizing here.</strong> This plant uses an
+  <strong>open-transition</strong> ATS: the essential bus is always connected to
+  <em>either</em> SEC <em>or</em> the DG, never both. The set therefore never runs in
+  parallel with the grid, never needs a synchroniser, sync-check (25) relay, or SEC
+  grid-code interconnection approval — at the price of a ~1 s dead-bus blink at each
+  transfer, which the <a href="#c-ups">UPS</a> and the staged restart absorb by design.
+  Plants that cannot tolerate the blink buy closed-transition schemes and inherit the full
+  synchronizing/protection/utility-approval workload (§17 discusses the trade).</p>
+
+  <p><strong>Testing — the only proof that standby exists:</strong></p>
+
+  <ul>
+    <li><strong>Weekly</strong>: auto-start test, off-load or briefly loaded — proves the
+    start chain (batteries, fuel valves, controller).</li>
+    <li><strong>Monthly</strong>: on-load run &ge; 30–60 min at &ge; 30 % load. Diesels
+    run lightly loaded soot their cylinders and turbos ("wet stacking") — light-load
+    testing slowly destroys the machine it is meant to prove. If the essential bus cannot
+    be risked, use a <strong>load bank</strong> (resistive trailer or permanently
+    installed) to load the set realistically.</li>
+    <li><strong>Annually</strong>: full transfer test — actually fail the SEC supply and
+    let ATS + DG + staged restart + retransfer run end to end, witnessed and logged.</li>
+  </ul>
+
+  <p>The PMS/DCS supervises remotely: run/stop status, kW/kvar/V/Hz, fuel level, battery
+  voltage, lube and coolant parameters, "fail to start" and "not in AUTO" alarms. The
+  controller's event recorder is the equivalent of the breaker's trip log — read it after
+  every real outage.</p>
+
+  <!-- ────────────────────────────────────────────────────────────
+       8. SIZING METHOD
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-dg-sizing">Sizing Method, Step by Step</h3>
+
+  <h4>Sizing method</h4>
+
+  <ol>
+    <li><strong>Write the essential-load list</strong> — load by load, with kW, pf,
+    starting method and a defensible reason each item is essential. Resist scope creep:
+    every kilowatt added is genset, ATS, cable and fuel money.</li>
+    <li><strong>Apply diversity</strong> to get the realistic simultaneous demand
+    (here 1 000 kW / 1 176 kVA).</li>
+    <li><strong>Design the starting sequence</strong> — group loads into stages; compute
+    each stage's <em>starting</em> kVA (motors at 6–7 &times; FLC if DOL, ~1.5–2.5 &times;
+    if soft-started/VFD).</li>
+    <li><strong>Select the rating:</strong> S_DG &ge; running demand <em>and</em>
+    0.6 &times; S_DG &ge; largest stage's starting kVA. Take the larger machine the two
+    rules give.</li>
+    <li><strong>Derate to site:</strong> demand the ESP rating at 50 &deg;C and site
+    altitude (&minus;1 %/5 &deg;C, &minus;1 %/100 m as a screening rule); re-check rule 4
+    with the derated number.</li>
+    <li><strong>Choose the ISO 8528 rating class</strong> — ESP for pure standby (this
+    plant); PRP if any sustained operation is foreseeable; never let a vendor quote ESP
+    against a prime-duty need.</li>
+    <li><strong>Verify transients:</strong> dip &asymp; X&Prime;_d &times; S_step/S_gen per
+    stage (&le; ~15 % screening limit; check ISO 8528-5 class G2/G3 curves for the real
+    commitment) and frequency dip/recovery from the vendor's load-acceptance data.</li>
+    <li><strong>Set the fuel autonomy policy</strong> (24–48 h typical) and size day +
+    bulk tanks: litres = 0.27 &times; kW &times; hours; add the fuel-quality regime
+    (polishing/sampling) to the maintenance plan.</li>
+    <li><strong>Verify the islanded fault world:</strong> generator fault contribution
+    (~2.5–3 &times; FLC sustained) into the essential bus — confirm downstream protection
+    still operates (<a href="#c-shortcircuit">§4</a>, <a href="#c-protection">§10</a>,
+    51V above) and the ATS/board ratings cover <em>both</em> source regimes (§17).</li>
+    <li><strong>Close the loop with ATS and UPS:</strong> the crank/start time budget
+    feeds §17's timing diagram and §16's autonomy margin.</li>
+  </ol>
+
+  <h3 id="c-genset-selfcheck">Self-Check — Standby Generator</h3>
+
+  <ul class="checklist">
+    <li>State the four sizing questions (how big, how applied, how long, what does it do
+    to the rest) and which one the failure story violated first.</li>
+    <li>From memory: essential 1.0 MW at 0.85 — show why 1 250 kVA is selected and compute
+    the essential-bus FLC at 400 V.</li>
+    <li>Explain physically why a turbocharged diesel accepts only ~60 % of rating in one
+    block, and recompute the maximum first stage for a 1 600 kVA set.</li>
+    <li>Use dip &asymp; X&Prime;_d &times; S_step/S_gen to estimate the dip for a 500 kVA
+    step on the 1 250 kVA set (X&Prime;_d = 0.12) and state whether contactors are at
+    risk.</li>
+    <li>Decode ESP vs PRP vs COP in one line each, and explain why "1 400 kVA" on a
+    27 &deg;C catalogue page may not satisfy a 1 250 kVA at 50 &deg;C specification.</li>
+    <li>Why is the governor isochronous at 60.00 Hz here, and when would droop be
+    correct?</li>
+    <li>Why does generator protection need 51V rather than a plain 51? What is a typical
+    sustained generator fault current in multiples of FLC?</li>
+    <li>Compute fuel autonomy for a 10 000 L day tank at 600 kW average load, and name
+    three fuel-quality defences mandatory at 50 &deg;C.</li>
+    <li>Explain wet stacking and how the monthly test regime avoids it.</li>
+    <li>During assessment you find the controller in MANUAL and the last on-load test
+    13 months old. Classify and justify.</li>
+  </ul>
+
+  <div class="key">
+    The genset is sized twice: once in kVA for the load it must <em>carry</em>, and once
+    in step capability for the way the load <em>arrives</em>. The second sizing — staged
+    restart, dip per step, turbo physics — is the one paper exercises skip and real
+    outages punish. And no calculation substitutes for a witnessed on-load transfer test:
+    a standby set is only as real as its last test report.
+  </div>
+
+</section>
+
+
+<!-- ============================================================
+     §C-UPS  UPS sizing & battery autonomy
+============================================================ -->
+<section id="c-ups" data-title="UPS Sizing &amp; Battery Autonomy" data-part="Part 2 — Calculations">
+
+  <h2>16 — UPS Sizing &amp; Battery Autonomy <span style="font-size:0.65em; font-weight:normal; background:#e8f4fd; border:1px solid #aad4f5; border-radius:3px; padding:1px 5px; color:#1a6fa0;">Core</span></h2>
+
+  <p><strong>Goal:</strong> understand why some loads cannot ride through even a
+  10-millisecond interruption, size the Rev 3 <strong>100 kVA / 30 min</strong> UPS
+  battery from first principles (cells, discharge voltage, ampere-hours, derating
+  factors), and choose a battery technology that survives a 50&nbsp;&deg;C country —
+  because at desert temperatures the battery, not the electronics, is the part that
+  quietly stops being real.</p>
+
+  <div class="note">
+    <strong>Indicative data.</strong> All ratings, cell voltages, efficiencies and life
+    figures are indicative teaching values on the Rev 3 plant basis (400/230 V, 60 Hz,
+    TN-S, 50 &deg;C design ambient). The UPS vendor's battery sizing tables and the plant
+    autonomy policy govern. Standards: SASO-adopted IEC&nbsp;62040 (UPS),
+    IEC&nbsp;60896 / IEC&nbsp;60623 (batteries), with SBC&nbsp;401.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       1. WHY THIS EXISTS
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-ups-why">The Loads That Cannot Blink</h3>
+
+  <h4>Why this exists</h4>
+
+  <p>Most of the plant tolerates interruption gracefully. A motor coasts for seconds; a
+  heater doesn't notice; even the lighting can blink. But a small family of loads lives on
+  a different timescale: <strong>digital electronics, whose working memory evaporates in
+  milliseconds</strong>. The DCS controllers and their I/O, the ESD (emergency shutdown)
+  logic solver, plant telecoms and network switches, analyser systems, and the operator
+  stations. Their power supplies hold up for perhaps 10–20 ms — one 60 Hz cycle, 16.7 ms,
+  is roughly the entire ride-through budget. Lose them and you do not just lose
+  production: you lose <em>visibility and control of the plant during the most abnormal
+  event of the year</em>, and the safety system reverts to its de-energised trip state,
+  slamming the process down hard.</p>
+
+  <p>Now put that against the standby-power timeline of <a href="#c-genset">§8</a> and
+  <a href="#c-ats">§17</a>: a SEC outage means roughly <strong>3 s of confirmation, 10 s
+  of engine cranking and stabilising, and a transfer</strong> — the essential bus is dark
+  for ~10–30 s. To electronics, 15 seconds is fifteen thousand lifetimes. Something must
+  carry these loads <em>continuously</em>, with zero transfer time, across the gap — and
+  for long enough afterwards to matter if the engine never starts at all.</p>
+
+  <p>That something is the UPS: a rectifier, a battery and an inverter arranged so the
+  critical bus is <em>always</em> fed from the inverter, with the battery standing behind
+  it. There is no "switchover" to fail because there is no switchover: when SEC dies, the
+  only thing that changes is where the inverter's DC comes from — the rectifier stops
+  pushing and the battery starts pulling, on the same DC busbar, seamlessly, in zero
+  milliseconds. The UPS turns the worst 30 seconds of the plant's year into a
+  non-event for the loads that think in microseconds.</p>
+
+  <p>The two sizing questions are independent and people regularly confuse them:</p>
+
+  <ul>
+    <li><strong>kVA rating</strong> — how much load the power electronics can carry
+    continuously (here 100 kVA). This is an electronics thermal rating.</li>
+    <li><strong>Autonomy</strong> — how long the battery can hold that load (here
+    30 min). This is an electrochemistry rating, and it is the one that silently decays
+    with age and temperature.</li>
+  </ul>
+
+  <div class="key">
+    The UPS exists because the DG needs ~10–30 seconds and the DCS has ~10 milliseconds.
+    The kVA rating sizes the electronics; the autonomy sizes the battery; and at
+    50 &deg;C the battery is a wasting asset whose real autonomy must be measured, not
+    assumed from the nameplate.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       2. WHAT GOES WRONG WITHOUT IT
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-ups-failure">A Failure Story: the Thirty Minutes That Were Four</h3>
+
+  <h4>What goes wrong without it</h4>
+
+  <p>Fictional, assembled from utterly standard battery post-mortems. Note that in this
+  story the UPS electronics never miss a beat — the failure is chemistry, and it happened
+  years before the outage.</p>
+
+  <p><strong>The setup.</strong> The plant's 100 kVA UPS was commissioned eight years ago
+  with a VRLA (valve-regulated lead-acid) battery string: "10-year design life,
+  30 minutes autonomy" on the data sheet. The fine print nobody re-read: design life is
+  quoted at <strong>25 &deg;C</strong>. The battery room's air-conditioner was downsized
+  in a cost review, and for the last five summers the cells have lived at
+  35–40&nbsp;&deg;C — with weeks nearer 45 when the AC struggled. The rule of thumb for
+  lead-acid is merciless: <strong>service life halves for every 10 &deg;C above
+  25 &deg;C</strong>. At an average of 37 &deg;C, the "10-year" battery is a 4-year
+  battery. It is now eight years old — twice dead. Nothing alarms: float voltage looks
+  normal (float voltage measures the <em>charger</em>, not the battery), the UPS panel
+  shows a green battery icon, and the annual "battery test" has quietly become a
+  30-second float-voltage reading because a real discharge test "risks the plant".</p>
+
+  <p><strong>The event.</strong> 14:10, August, SEC outage. The UPS transfers to battery
+  flawlessly. The control room sees "On battery — estimated runtime 30:00". The DG cranks
+  — and fails to start: attempt one, attempt two, attempt three; "FAIL TO START" (the
+  starting batteries live in the same hot room — same chemistry, same lie). Operators
+  begin an orderly plant shutdown, budgeting on thirty minutes of DCS visibility.</p>
+
+  <p><strong>The reality.</strong> The aged cells, internal resistance tripled by dried
+  electrolyte and grid corrosion, sag immediately under the 90 kW load. The runtime
+  estimate recalculates downward in lurches: 30:00, 19:00, 08:00. At
+  <strong>minute four</strong> the string hits the low-DC disconnect and the inverter
+  drops the critical bus. Every operator screen goes black mid-procedure. The ESD does
+  its de-energise-to-trip duty and slams every valve in the plant simultaneously.
+  Compressors trip on their own mechanical protections; the flare takes the inventory.
+  The plant is now dark, blind, and hard-shutdown — the precise scenario the UPS was
+  bought to prevent — with hours of recovery and a list of thermally-shocked equipment.</p>
+
+  <p><strong>The audit afterwards finds the whole chain:</strong></p>
+
+  <ul>
+    <li>Battery room temperature never alarmed because no one set a battery-room
+    temperature alarm.</li>
+    <li>No periodic <strong>capacity (discharge) test</strong> — the only test that
+    measures autonomy — in eight years.</li>
+    <li>No battery monitoring system: per-block voltages and internal-resistance trends
+    would have shown the decay years earlier.</li>
+    <li>Replacement was in the 10-year budget plan — calendar-based, not
+    condition-based, and indexed to a 25 &deg;C datasheet life the room never
+    provided.</li>
+  </ul>
+
+  <div class="warning">
+    A UPS battery fails <em>silently and gradually</em>, then <em>completely and
+    instantly</em>. Float voltage proves nothing about capacity. The only honest numbers
+    are a measured discharge test and an internal-resistance trend — at 50 &deg;C ambient
+    country, treat the datasheet life as a fiction and the battery room's thermometer as
+    a protection device.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       3. FEEL FOR THE NUMBERS
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-ups-feel">Two Wardrobes of Lead, One Car Battery of Perspective</h3>
+
+  <h4>Feel for the numbers</h4>
+
+  <div class="worked">
+    <h4>Estimate 1 — How much energy is "100 kVA for 30 minutes"?</h4>
+    <code class="formula">P &asymp; 100 kVA &times; 0.9 pf = 90 kW;  E &asymp; 90 kW &times; 0.5 h &asymp; 45–50 kWh drawn from the battery</code>
+    <p>Calibrate that: a healthy car battery stores ~0.7 kWh — so the UPS battery must
+    deliver the useful content of <strong>~70 car batteries in half an hour</strong>. In
+    hardware it is a string of 240 two-volt cells, each the size of a large shoebox and
+    ~30–50 kg, racked in tiers: <strong>roughly two wardrobes' worth of lead</strong>
+    occupying its own ventilated room, several tonnes on the slab. Battery rooms are civil
+    engineering, not a cupboard decision.</p>
+  </div>
+
+  <div class="worked">
+    <h4>Estimate 2 — The discharge current</h4>
+    <code class="formula">I &asymp; 95 kW / 456 V &asymp; 210 A — continuously, for 30 minutes</code>
+    <p>(The numbers are derived properly in the worked calculation.) 210 A DC is welding-
+    cable current: this is why battery strings are connected with bolted bus links and
+    why one corroded inter-cell connector — a few extra milliohms at 210 A — becomes a
+    hot spot dissipating ~100 W, and the string's weakest link in both senses.</p>
+  </div>
+
+  <div class="worked">
+    <h4>Estimate 3 — The inverter's party trick</h4>
+    <p>The inverter takes raw DC and manufactures a 230/400 V, 60.00 Hz sine wave by
+    switching IGBTs at several kilohertz — slicing the DC into thousands of
+    pulse-width-modulated slivers per cycle and filtering them smooth. The output is
+    typically <em>cleaner</em> than SEC's own waveform (THD &lt; 2 % vs the 3–5 %
+    of a working industrial bus). The critical bus is, ironically, the best power in the
+    plant — synthesised ~80 times per millisecond from a row of batteries.</p>
+  </div>
+
+  <p>And the temperature intuition, since it dominates this whole topic: chemical reaction
+  rates roughly double per 10 &deg;C (Arrhenius). The same doubling that ages the plates
+  also applies to self-discharge and grid corrosion. A battery at 45 &deg;C is living
+  roughly <strong>four times faster</strong> than its 25 &deg;C datasheet — everything on
+  the battery data sheet is a 25 &deg;C number unless it says otherwise.</p>
+
+  <!-- ────────────────────────────────────────────────────────────
+       4. WORKED CALCULATION
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-ups-worked">Worked Battery Autonomy Sizing — 100 kVA / 30 min</h3>
+
+  <h4>Worked calculation</h4>
+
+  <div class="worked">
+    <h4>Step 1 — Power the battery must deliver</h4>
+    <p>Load: 100 kVA at pf 0.9 &rarr; P_ac = 90 kW. The inverter is ~94 % efficient, and
+    the battery must supply its losses too:</p>
+    <code class="formula">P_dc = P_ac / &eta;_inv = 90 / 0.94 &asymp; 95.7 kW</code>
+
+    <h4>Step 2 — The DC voltage during discharge (be explicit — this is where sizings go wrong)</h4>
+    <p>DC bus: <strong>240 lead-acid cells &times; 2.0 V nominal = 480 V</strong>. But the
+    battery does not discharge at nominal. Three voltages matter:</p>
+    <ul>
+      <li>Float (charged, standing): 2.25–2.27 V/cell &rarr; ~542 V</li>
+      <li>End-of-discharge (EOD) limit: <strong>1.75 V/cell &rarr; 420 V</strong> — below
+      this the inverter disconnects to save the cells;</li>
+      <li><strong>Mean discharge voltage</strong> over the 30 min: &asymp; 1.90 V/cell
+      &rarr; <strong>456 V</strong> — this is the honest number to divide by.</li>
+    </ul>
+
+    <h4>Step 3 — Mean discharge current</h4>
+    <code class="formula">I_dc = P_dc / V_mean = 95 700 / 456 &asymp; 210 A</code>
+    <p>(Cross-check at worst case: near EOD, 95 700 / 420 &asymp; 228 A — cables, fuses
+    and the battery breaker are sized for this end-of-discharge current, not the
+    mean.)</p>
+
+    <h4>Step 4 — Raw capacity at the 30-minute rate</h4>
+    <code class="formula">C_raw = I &times; t = 210 A &times; 0.5 h = 105 Ah (at the 30-min discharge rate)</code>
+
+    <h4>Step 5 — Apply the design factors</h4>
+    <p>Standard practice (IEEE 485 philosophy): an <strong>aging factor 1.25</strong>
+    (battery is replaced when it falls to 80 % of rated capacity — sizing must work on
+    the day before replacement), and a <strong>design margin ~1.1</strong> for load
+    growth and temperature/initial-capacity allowances:</p>
+    <code class="formula">C_design = 105 &times; 1.25 &times; 1.1 &asymp; 144 Ah  &rarr;  select a ~150 Ah (30-min-rate) cell</code>
+
+    <h4>Step 6 — The Peukert honesty clause</h4>
+    <p>"150 Ah at the 30-minute rate" is <strong>not</strong> a catalogue "150 Ah"
+    battery. Capacity is rate-dependent: a cell labelled 150 Ah at the 10-hour rate
+    (15 A) might deliver only ~60–70 % of that at a 30-minute rate, because high currents
+    don't give the acid time to diffuse into the plates (the Peukert effect). Vendors
+    therefore publish <strong>discharge tables: amps (or watts) per cell vs time vs
+    EOD voltage</strong> — real sizing means entering that table at 1.75 V/cell, 30 min,
+    and 210 A &times; factors, and reading off the cell type. Our calculation predicts
+    which row of the table we will land on; the table has the final word.</p>
+
+    <h4>Step 7 — Sanity check in energy</h4>
+    <code class="formula">E = 95.7 kW &times; 0.5 h &asymp; 48 kWh delivered;  string stores &asymp; 456 V &times; 150 Ah &asymp; 68 kWh nominal</code>
+    <p>We use ~70 % of nominal content — consistent with stopping at 1.75 V/cell and the
+    rate penalty. If the arithmetic had demanded &gt; 100 % of the string's energy, a
+    step would be wrong. &#10003;</p>
+
+    <h4>Step 8 — Recharge check</h4>
+    <p>Rule: recover within ~10 &times; the discharge time. The rectifier must carry the
+    full 95.7 kW load <em>and</em> recharge ~48 kWh (plus ~15 % charge inefficiency) in
+    &asymp; 5 h &rarr; ~11 kW of recharge power, i.e. ~24 A at 456 V — about 0.15 C, well
+    within lead-acid acceptance. The rectifier is therefore sized ~110–115 % of the
+    inverter's demand. &#10003;</p>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       5. EQUIPMENT SETTINGS
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-ups-settings">The Numbers on the UPS and Its Battery</h3>
+
+  <h4>Equipment settings</h4>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Setting</th><th>Typical value (240-cell VRLA string)</th><th>Why</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Float voltage</td>
+        <td>2.25–2.27 V/cell &rarr; 540–545 V, <strong>temperature-compensated
+        &minus;3 mV/&deg;C/cell</strong></td>
+        <td>Holds full charge without gassing. Compensation is non-negotiable in a hot
+        room: a fixed 25 &deg;C float voltage applied at 40 &deg;C chronically
+        overcharges, dries the cells and invites thermal runaway.</td>
+      </tr>
+      <tr>
+        <td>Boost/equalise voltage</td>
+        <td>2.35–2.40 V/cell, time-limited (manual or post-discharge auto)</td>
+        <td>Fast recharge after discharge and equalising of drifted cells; limited
+        because sustained boost gasses VRLA cells to death.</td>
+      </tr>
+      <tr>
+        <td>Low-DC alarm / disconnect</td>
+        <td>Alarm &asymp; 1.85 V/cell (444 V); inverter shutdown
+        <strong>1.75 V/cell (420 V)</strong></td>
+        <td>Below ~1.75 V/cell, lead-acid cells suffer deep-discharge damage and may
+        never recover. The disconnect sacrifices the last minutes of autonomy to save the
+        string.</td>
+      </tr>
+      <tr>
+        <td>Static bypass transfer thresholds</td>
+        <td>Output V outside &plusmn;10 % or inverter fault &rarr; transfer in
+        &lt; &frac14; cycle; inhibit if bypass source outside &plusmn;10 % / &plusmn;1 Hz
+        of 60 Hz</td>
+        <td>On inverter failure or downstream-fault overload the load transfers
+        seamlessly to raw mains — but only if the mains is healthy and in sync, otherwise
+        better a controlled fall than a wild one.</td>
+      </tr>
+      <tr>
+        <td>Overload profile</td>
+        <td>~125 % for 10 min, ~150 % for 1 min on inverter; more on bypass</td>
+        <td>Lets downstream MCB faults clear (the inverter current-limits at ~150 % — a
+        coordination input for the critical distribution board's breakers,
+        <a href="#c-breaker">§14</a>).</td>
+      </tr>
+      <tr>
+        <td>Alarm set</td>
+        <td>On-battery, autonomy-low, battery-room temperature &gt; 27–30 &deg;C, earth
+        fault on DC, bypass unavailable, fan failure</td>
+        <td>Every one of these is an early chapter of the failure story; all repeat to
+        DCS/PMS.</td>
+      </tr>
+      <tr>
+        <td>Battery test schedule</td>
+        <td>Monthly: automatic partial-discharge test (~10–20 % depth).
+        Annually/biennially: <strong>full capacity discharge test</strong> to EOD against
+        a load bank, measured in Ah</td>
+        <td>The capacity test is the only measurement of real autonomy. Partial tests
+        plus impedance trending bridge the gap between them.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ────────────────────────────────────────────────────────────
+       6. EQUIPMENT TECHNOLOGY
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-ups-tech">Inside the Box, and the Chemistry Question</h3>
+
+  <h4>Equipment technology</h4>
+
+  <p><strong>Topologies — why industrial means double-conversion online
+  (IEC 62040-3 class VFI):</strong></p>
+
+  <ul>
+    <li><strong>Offline/standby</strong> — load on raw mains; inverter wakes on failure
+    (~5–10 ms gap). Acceptable for a desktop PC, not for an ESD system.</li>
+    <li><strong>Line-interactive</strong> — mains conditioned by an autotransformer,
+    inverter assists; still a transfer instant, still passes mains frequency events
+    through.</li>
+    <li><strong>Double-conversion online</strong> — rectifier makes DC, inverter remakes
+    AC, <em>all the power, all the time</em>. Zero transfer time, full isolation of the
+    load from every mains sag/swell/frequency excursion. The 2–4 efficiency points it
+    costs are the price of the only topology with no "switchover" failure mode. This is
+    what "UPS 100 kVA" means in this manual.</li>
+  </ul>
+
+  <p><strong>The power path:</strong> an IGBT <strong>rectifier</strong> (PWM,
+  near-unity input pf, low harmonic injection back into the LV-MSB — older thyristor
+  six-pulse units were a harmonics source that mattered to the
+  <a href="#c-pfc">detuned PFC bank, §7</a>); the <strong>DC link + battery</strong>;
+  an IGBT <strong>inverter</strong> switching at several kHz; the <strong>static bypass
+  switch</strong> — back-to-back thyristors that can pick the load up in under a quarter
+  cycle; and the <strong>maintenance (wraparound) bypass</strong> — a manually operated
+  external switch that carries the load on raw mains while the entire UPS is isolated,
+  dead and worked on. No wraparound bypass = no safe UPS maintenance = a "critical" bus
+  that must be killed to service its own protector. Check for it on every site
+  assessment.</p>
+
+  <p><strong>The chemistry question at 50 &deg;C:</strong></p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Technology</th><th>Strengths</th><th>Weaknesses at 50 &deg;C country</th>
+      <th>Verdict here</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>VRLA</strong> (valve-regulated lead-acid)</td>
+        <td>Cheap, compact, no topping-up, "maintenance-free" marketing</td>
+        <td>Life halves per +10 &deg;C; dries out; thermal-runaway risk on hot float;
+        capacity loss is invisible without testing</td>
+        <td>Acceptable <em>only</em> with a reliably air-conditioned battery room
+        (20–25 &deg;C) and disciplined testing; budget replacement every 4–6 real
+        years</td>
+      </tr>
+      <tr>
+        <td><strong>Vented NiCd</strong> (pocket-plate)</td>
+        <td>The desert classic: tolerates heat and deep discharge, 20+ year service
+        common, fails gradually and visibly, mechanical robustness</td>
+        <td>~2–3&times; purchase cost, larger footprint, electrolyte maintenance
+        (topping-up), lower cell voltage (1.2 V &rarr; ~400 cells per string), cadmium
+        disposal rules</td>
+        <td>The traditional Saudi industrial choice where HVAC reliability is doubted —
+        common for switchgear tripping duty (<code>DCDB</code> 110 V DC,
+        <a href="#cat-dc">DC systems catalogue</a>) and respectable for UPS</td>
+      </tr>
+      <tr>
+        <td><strong>Li-ion</strong> (LFP, with BMS)</td>
+        <td>Small, light, fast recharge, better cycle life, real-time per-cell
+        monitoring built in</td>
+        <td>Needs its certified BMS and fire-safety case (thermal-runaway propagation,
+        suppression, SBC fire-code acceptance); calendar life still degrades hot;
+        newer field history in this duty</td>
+        <td>Increasingly offered and credible; demand the UL 9540A / IEC 62619 fire test
+        evidence and design the room for it</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p><strong>The battery room</strong> is part of the equipment: ventilation sized for
+  hydrogen (lead-acid and NiCd both gas on charge — keep H&#8322; below ~1 % of room
+  volume, IEC 62485-2 method), no ignition sources, eyewash for vented cells, racks with
+  seismic restraint and insulated tiering, and <strong>air-conditioning treated as a
+  protection system</strong> with a temperature alarm to the DCS — the single cheapest
+  life-extension measure on the whole UPS.</p>
+
+  <p>See <a href="#cat-ups">the UPS catalogue section</a> for indicative vendor families
+  and the data-sheet items to demand (efficiency curve, overload profile, battery
+  discharge tables at 30-min rate, 50 &deg;C derating).</p>
+
+  <!-- ────────────────────────────────────────────────────────────
+       7. CONTROL
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-ups-control">Watching the Watchman</h3>
+
+  <h4>Control</h4>
+
+  <ul>
+    <li><strong>UPS HMI / controller:</strong> mimic of the power path (rectifier —
+    battery — inverter — bypass), measured kVA/kW per phase, battery current and voltage,
+    estimated runtime, event log. The event log outlives operator memory — read it on
+    every assessment: repeated "on battery" entries reveal an upstream supply problem the
+    plant has normalised.</li>
+    <li><strong>Battery monitoring system (BMS for stationary strings):</strong>
+    per-block (or per-cell) voltage, inter-cell connection resistance, internal
+    impedance trend, and string temperature. Impedance creeping up &asymp; capacity
+    going down — the trend is the early-warning the failure story lacked. On Li-ion the
+    BMS is mandatory and integral.</li>
+    <li><strong>Alarms to DCS/PMS:</strong> on-battery, autonomy-low, on-bypass, battery
+    breaker open, room temperature high, DC earth fault. "UPS on bypass" deserves the
+    same operator urgency as "DG not in AUTO" — in both states the plant has standby
+    equipment that will not perform.</li>
+    <li><strong>EPO (emergency power off):</strong> the hard-wired mushroom that kills
+    the critical bus for fire/rescue. It must be supervised, shrouded, and tested with
+    ceremony — a momentary EPO operation is a full critical-bus outage, and accidental
+    EPO operation is a well-known own-goal category.</li>
+    <li><strong>Interaction with the standby chain:</strong> the UPS rectifier is itself
+    an essential load on the <a href="#c-ats">ATS-fed bus (§17)</a> — when the DG picks
+    up, the rectifier restarts (walk-in current limit avoids a step on the genset) and
+    begins recharging — which is exactly the ~11 kW recharge load counted in the
+    essential list of <a href="#c-genset">§8</a>.</li>
+  </ul>
+
+  <!-- ────────────────────────────────────────────────────────────
+       8. SIZING METHOD
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-ups-sizing">Sizing Method, Step by Step</h3>
+
+  <h4>Sizing method</h4>
+
+  <ol>
+    <li><strong>List the true UPS loads</strong> — DCS/ESD, telecoms, analysers, operator
+    stations — with measured (not nameplate) VA. <strong>Police scope creep
+    ruthlessly</strong>: every printer and coffee machine that migrates onto the critical
+    bus steals autonomy from the ESD system. A UPS load list is a privilege list.</li>
+    <li><strong>Set the kVA rating:</strong> measured load + 20–25 % growth margin, with
+    inrush/crest-factor checks for any switched-mode-heavy load mix &rarr; here
+    <strong>100 kVA</strong>.</li>
+    <li><strong>Set the autonomy policy:</strong> either "bridge the DG start &times; a
+    fat safety factor" (minutes) or "ride a full DG failure long enough for an orderly
+    plant shutdown" (tens of minutes). This plant chose <strong>30 min</strong> — the
+    orderly-shutdown policy (see §17 for the honest margin discussion).</li>
+    <li><strong>Choose the chemistry for 50 &deg;C reality</strong> (table above):
+    VRLA + guaranteed HVAC, or NiCd, or engineered Li-ion. Decide on the
+    <em>whole-life</em> cost including replacements at desert life, not purchase
+    price.</li>
+    <li><strong>Fix the DC architecture:</strong> cells in string (240 &times; 2 V
+    lead-acid &rarr; 480 V here), EOD voltage, then cell Ah from the vendor's
+    rate-specific discharge table with aging 1.25 and design margin (worked calculation
+    above &rarr; ~150 Ah class at the 30-min rate).</li>
+    <li><strong>Check the recharge:</strong> rectifier sized for load + recharge within
+    ~10 &times; discharge time; confirm the recharge kW appears in the genset essential
+    list.</li>
+    <li><strong>Engineer the room:</strong> floor loading, hydrogen ventilation
+    (IEC 62485-2), HVAC with alarmed temperature, access for the biennial discharge
+    test (load-bank connection point!).</li>
+    <li><strong>Close the protection loop:</strong> battery breaker/fuse rated for EOD
+    current (~230 A here) and DC fault duty; downstream critical-board MCBs coordinated
+    with the inverter's ~150 % current limit and the bypass's higher let-through
+    (<a href="#c-breaker">§14</a>).</li>
+  </ol>
+
+  <h3 id="c-ups-selfcheck">Self-Check — UPS</h3>
+
+  <ul class="checklist">
+    <li>Explain in two sentences why double-conversion online has no transfer-time
+    failure mode, and what the static bypass adds on top.</li>
+    <li>State the two independent UPS ratings (kVA, autonomy) and which physical part of
+    the machine each one sizes.</li>
+    <li>From memory, rebuild the autonomy chain: 90 kW &rarr; P_dc &rarr; I_dc at mean
+    cell voltage &rarr; raw Ah &rarr; factored Ah. State why dividing by 480 V (nominal)
+    instead of 456 V (mean discharge) flatters the answer.</li>
+    <li>Why is "150 Ah at the 10-h rate" not the same battery as "150 Ah at the 30-min
+    rate"? Name the effect and the vendor document that resolves it.</li>
+    <li>What does the 1.25 aging factor represent, and what plant policy does it
+    imply about replacement timing?</li>
+    <li>Quote the lead-acid temperature-life rule and compute the real life of a
+    "10-year" VRLA string at a 35 &deg;C average room.</li>
+    <li>Why is float voltage useless as a capacity test? Name the two measurements that
+    are honest.</li>
+    <li>Make the case for vented NiCd in a Saudi plant despite its cost — and the case
+    against it.</li>
+    <li>What is a wraparound (maintenance) bypass, and what does its absence mean for
+    the plant's maintenance reality?</li>
+    <li>Why must the battery breaker be rated for the end-of-discharge current rather
+    than the mean discharge current?</li>
+  </ul>
+
+  <div class="key">
+    Size the electronics for the load, the battery for the policy, and the room for the
+    chemistry. Then remember that autonomy is a <em>measured, perishable</em> quantity:
+    at 50 &deg;C ambient the battery ages at multiple speed, and only a discharge test
+    tells the truth. The nameplate says 30 minutes; the last capacity test report says
+    what you actually have.
+  </div>
+
+</section>
+
+
+<!-- ============================================================
+     §C-ATS  Automatic transfer switch — logic & timing
+============================================================ -->
+<section id="c-ats" data-title="Automatic Transfer Switch — Logic &amp; Timing" data-part="Part 2 — Calculations">
+
+  <h2>17 — Automatic Transfer Switch — Logic &amp; Timing <span style="font-size:0.65em; font-weight:normal; background:#e8f4fd; border:1px solid #aad4f5; border-radius:3px; padding:1px 5px; color:#1a6fa0;">Core</span></h2>
+
+  <p><strong>Goal:</strong> design the decision-maker of the standby system — the device
+  that declares SEC dead, starts the <a href="#c-genset">DG (§8)</a>, moves the essential
+  bus, and brings it home again, all unattended. We build the complete transfer timing
+  diagram for the Rev 3 plant (<strong>open transition, &le; 10 s to DG availability
+  signal, ~13.5 s to essential bus live</strong>), set every timer with a reason, and
+  size the switch against the essential-bus FLC (1 804 A) and the 38.5 kA fault world it
+  lives in.</p>
+
+  <div class="note">
+    <strong>Indicative data.</strong> All thresholds and timings are indicative teaching
+    values on the Rev 3 basis (400/230 V, 60 Hz, TN-S). The plant's transfer study, the
+    genset vendor's start-time guarantee and the protection coordination study govern.
+    Standards: SASO-adopted IEC&nbsp;60947-6-1 (transfer switching equipment),
+    IEC&nbsp;61439, SBC&nbsp;401 and the SEC Distribution Code.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       1. WHY THIS EXISTS
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-ats-why">The Decision Nobody Is Awake to Make</h3>
+
+  <h4>Why this exists</h4>
+
+  <p>Strip the standby system to its essence and there are four decisions:</p>
+
+  <ol>
+    <li><strong>"SEC is really dead"</strong> — not a 200 ms voltage dip from a remote
+    fault, not a single-phase disturbance, but a genuine outage worth waking a diesel
+    for.</li>
+    <li><strong>"Start the engine — now."</strong></li>
+    <li><strong>"The generator is ready; move the essential bus"</strong> — and never,
+    under any combination of failures, connect both sources at once.</li>
+    <li><strong>"SEC is really back; go home"</strong> — not on the first flicker of
+    recovery, but when the grid has proven itself stable; then cool the engine down and
+    return to watch.</li>
+  </ol>
+
+  <p>Every one of these is time-critical, safety-involved and dull beyond human
+  endurance. An operator could make them — at 10:00 on a weekday, with coffee. The plant
+  needs them made identically at 03:12 on the second day of Eid, in a sandstorm, in
+  under fifteen seconds. That is the ATS: <strong>a voltage-watching brain bolted to a
+  mechanically interlocked pair of contacts</strong>, whose entire personality is a
+  handful of thresholds and timers. This section is about choosing those numbers, because
+  every single one is a trade-off between speed (the loads want power back) and
+  stability (the system must not be jerked around by a twitchy grid).</p>
+
+  <p>The ATS is also the <strong>keystone of the interlock philosophy</strong>: it is the
+  one device whose construction physically guarantees the DG never backfeeds the SEC
+  network (a lethal hazard to line crews and a Saudi Grid Code violation) and SEC never
+  feeds into an unsynchronised generator (a destructive hazard to the machine). The
+  brains decide; the mechanical interlock makes certain classes of wrong decision
+  impossible.</p>
+
+  <div class="key">
+    The genset makes the power and the UPS hides the gap — but the ATS makes the
+    <em>decisions</em>. Its dozen settings (pickup/dropout windows and five timers) encode
+    the plant's entire outage philosophy. Read them on site and you can reconstruct what
+    the designer feared; get them wrong and the failure story below happens.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       2. WHAT GOES WRONG WITHOUT IT
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-ats-failure">A Failure Story: the Switch That Couldn't Wait</h3>
+
+  <h4>What goes wrong without it</h4>
+
+  <p>Two short fictional case studies — one of bad timers, one of broken interlocks. Both
+  are standard entries in transfer-switch incident folklore.</p>
+
+  <p><strong>Case 1 — the four-transfer minute.</strong> A plant's ATS was commissioned
+  with the <strong>retransfer delay set to 10 seconds</strong> ("why make the plant wait
+  half an hour on diesel?" said someone at commissioning, and turned the dial down). One
+  evening a SEC 13.8 kV feeder develops an intermittent fault — the classic dying-cable
+  signature: trip, auto-reclose, hold for a few seconds, flash over again.</p>
+
+  <table class="tbl">
+    <thead><tr><th>Time</th><th>Event</th><th>Essential bus experience</th></tr></thead>
+    <tbody>
+      <tr><td>t = 0</td><td>SEC trips. ATS confirms, starts DG, transfers at
+      ~13 s.</td><td>Dark 13 s, then on DG.</td></tr>
+      <tr><td>t &asymp; 40 s</td><td>SEC recloses successfully. Retransfer timer (10 s)
+      expires; ATS retransfers, DG enters cooldown.</td><td>~1 s dead-bus blink; back on
+      SEC.</td></tr>
+      <tr><td>t &asymp; 55 s</td><td>The cable flashes over again. SEC dead. DG is still
+      spinning in cooldown — ATS transfers back.</td><td>Another confirmation delay +
+      blink; on DG again.</td></tr>
+      <tr><td>t &asymp; 90 s</td><td>Reclose succeeds again... and so on, four
+      source-transfers inside two minutes before the SEC breaker finally locks
+      out.</td><td>Four dead-bus events in 90 seconds.</td></tr>
+    </tbody>
+  </table>
+
+  <p>Each blink re-strikes the essential motors' contactors and re-draws starting inrush;
+  the UPS swings battery–rectifier–battery; the DCS logs hundreds of power-quality
+  alarms; and the staged-restart PMS sequence — designed for one orderly event — is
+  re-triggered while half-complete. The plant's "essential" systems took more punishment
+  from their own transfer switch than from the outage. A <strong>30-minute retransfer
+  stabilization timer</strong> exists precisely because real grid faults are often
+  intermittent: the first reclose is a claim, not a promise. Diesel fuel for half an hour
+  is the cheapest insurance the plant buys that night.</p>
+
+  <p><strong>Case 2 — both sources closed.</strong> An older plant, a breaker-pair
+  "ATS" assembled from two ordinary ACBs with only an <em>electrical</em> interlock —
+  an auxiliary-contact wiring scheme, no mechanical linkage, never functionally tested.
+  During a transfer test, a sticky auxiliary contact tells the controller the SEC breaker
+  is open when it is not. The controller closes the DG breaker. For a few hundred
+  milliseconds the running, <strong>unsynchronised</strong> generator is paralleled with
+  the SEC network: the phase difference appears across the alternator's subtransient
+  reactance and the resulting current is fault-magnitude with the full grid behind it.
+  The alternator end-windings are mechanically wrecked, its shaft coupling is sheared,
+  and the upstream protection trips the plant intake — converting a routine test into a
+  total outage plus a six-figure rewind. This is why a real transfer switch has a
+  <strong>mechanical interlock</strong> — a physical linkage that makes
+  both-closed geometrically impossible — with the electrical interlock as the second
+  layer, not the only one.</p>
+
+  <div class="warning">
+    The two cardinal ATS sins: <strong>impatience</strong> (short retransfer timers that
+    let an unstable grid batter the essential bus) and <strong>trust</strong> (electrical-
+    only interlocks between sources that must never meet). Both are invisible in normal
+    operation and devastating in the abnormal week the ATS exists for.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       3. FEEL FOR THE NUMBERS
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-ats-feel">Fifteen Seconds, Budgeted Like Money</h3>
+
+  <h4>Feel for the numbers</h4>
+
+  <p>The whole forward transfer lives inside about fifteen seconds, and every slice has
+  an owner and a reason:</p>
+
+  <ul>
+    <li><strong>1–3 s — detection and confirmation.</strong> Could the ATS react in
+    50 ms? Electrically yes — and it would then start the diesel for every remote
+    13.8 kV fault that SEC's own protection clears in 200 ms, every motor-start sag,
+    every lightning-induced dip. The 3 s is deliberate deafness: "I only believe in
+    outages that last longer than the grid's own self-healing."</li>
+    <li><strong>~10 s — engine start.</strong> Crank (2–4 s), fire, accelerate to
+    1 800 rpm, AVR builds 400 V, governor settles 60 Hz: ~8–10 s for a healthy warm
+    set. NFPA-110-style emergency sets demonstrate 10 s; our spec says DG available
+    &le; 10 s from start signal.</li>
+    <li><strong>&lt; 1 s — the transfer itself.</strong> A contactor-type ATS moves in
+    ~100 ms; with a deliberate open-transition pause (let motor flux decay before
+    re-energising) call it 0.5–1 s.</li>
+  </ul>
+
+  <div class="worked">
+    <h4>Estimate — the dark window</h4>
+    <code class="formula">t_dark &asymp; 3 s (confirm) + 10 s (DG start &amp; stabilise) + 0.5 s (transfer) &asymp; 13.5 s</code>
+    <p>Call it <strong>12–15 s of darkness</strong> for the essential bus — exactly the
+    gap the <a href="#c-ups">UPS (§16)</a> was bought to bridge, with its 30-minute
+    autonomy standing behind a 13.5-second requirement. That ratio (~130:1) is not waste;
+    it is the honest price of the question "and what if the engine doesn't start?" —
+    examined in the worked calculation.</p>
+  </div>
+
+  <p>For scale at the other end: the retransfer stabilization timer is
+  <strong>30 minutes — over a hundred times longer than the entire forward
+  transfer</strong>. Going to standby is urgent; coming home is optional. The asymmetry
+  is the design philosophy in one sentence: <em>fail toward the source you control.</em></p>
+
+  <!-- ────────────────────────────────────────────────────────────
+       4. WORKED CALCULATION
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-ats-worked">Worked Timing Diagram — One Complete Outage, Second by Second</h3>
+
+  <h4>Worked calculation</h4>
+
+  <p>The "calculation" for an ATS is the <strong>timing budget</strong> — every timer
+  justified and summed. Here is the full life of one outage on the Rev 3 settings:</p>
+
+  <div class="worked">
+    <h4>Forward transfer (SEC &rarr; DG)</h4>
+    <table class="tbl">
+      <thead>
+        <tr><th>t</th><th>Event</th><th>Timer / setting responsible</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>t = 0</td><td>SEC fails; essential-bus voltage collapses below the 85 %
+        dropout threshold.</td><td>Undervoltage sensing (85 % pickup-loss)</td></tr>
+        <tr><td>t = 0–3 s</td><td>ATS waits, watching. Motor contactors on the essential
+        MCC drop out (by design). UPS carries the critical bus from
+        battery.</td><td><strong>Start delay T1 = 3 s</strong> — rides through dips and
+        SEC autoreclose deadtime</td></tr>
+        <tr><td>t = 3 s</td><td>Outage confirmed. <strong>Engine-start contact
+        closes.</strong></td><td>T1 expiry</td></tr>
+        <tr><td>t = 3–13 s</td><td>DG cranks, fires, runs up; AVR and governor settle
+        400 V / 60 Hz. ATS watches the generator side for healthy voltage <em>and</em>
+        frequency (&ge; 90 % V, 59–61 Hz).</td><td>DG start performance (&le; 10 s,
+        §8)</td></tr>
+        <tr><td>t = 13 s</td><td>Generator declared healthy.</td><td>Source-acceptance
+        window</td></tr>
+        <tr><td>t &asymp; 13.5 s</td><td><strong>Transfer:</strong> SEC-side contacts
+        open, deliberate dead-bus pause, DG-side contacts close. Essential bus
+        live.</td><td>Transfer mechanism (~100 ms) + programmed open-transition pause
+        (~0.3–0.5 s)</td></tr>
+        <tr><td>t = 13.5 s &rarr; ~45 s</td><td>PMS staged restart rebuilds the
+        essential load in &le; 750 kVA blocks (§8 Part B). UPS rectifier walks in and
+        starts recharging.</td><td>PMS stage timers (+5 s, +15 s, +30 s)</td></tr>
+      </tbody>
+    </table>
+
+    <h4>Return transfer (DG &rarr; SEC)</h4>
+    <table class="tbl">
+      <thead>
+        <tr><th>t</th><th>Event</th><th>Timer / setting responsible</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>T</td><td>SEC voltage returns and sits inside the acceptance window
+        (&ge; 90 % V, 59–61 Hz).</td><td>Source-acceptance window</td></tr>
+        <tr><td>T &rarr; T+30 min</td><td>ATS runs on DG, <em>watching</em> SEC. Any
+        excursion outside the window resets the clock — an intermittent fault never gets
+        to touch the bus (failure story, Case 1).</td><td><strong>Retransfer delay
+        T2 = 30 min</strong></td></tr>
+        <tr><td>T+30 min</td><td><strong>Retransfer:</strong> DG contacts open, ~1 s
+        dead-bus pause (motor flux decay; UPS bridges the blink), SEC contacts close.
+        </td><td>Open-transition pause</td></tr>
+        <tr><td>+5 min</td><td>DG runs unloaded, cooling the turbo and stabilising
+        temperatures, then stops.</td><td><strong>Cooldown timer T3 = 5 min</strong></td></tr>
+        <tr><td>after</td><td>Controller back in AUTO, batteries recharging, fuel level
+        logged for the autonomy ledger. The system is re-armed.</td><td>—</td></tr>
+      </tbody>
+    </table>
+
+    <h4>Now the honest margin question: 13.5 s of need vs 30 min of UPS</h4>
+    <p>Strict bridging requirement: <strong>13.5 s</strong>. Even allowing the full crank
+    program — three 10 s attempts with 10 s rests (§8) — the worst "engine eventually
+    starts" case is:</p>
+    <code class="formula">t = 3 + (10+10) + (10+10) + 10 + 0.5 &asymp; 54 s</code>
+    <p>So why 30 minutes? Because the autonomy policy is not sized for the success case.
+    It is sized for <strong>"FAIL TO START" at 03:00</strong>: the time for an operator
+    to acknowledge, try a manual start, accept defeat, and then execute an <em>orderly,
+    instrumented</em> plant shutdown with the DCS and ESD alive — realistically 15–25
+    minutes. The 30-minute battery is not a 130&times; safety factor on a 13.5 s event;
+    it is a 1.2–2&times; factor on the real worst case. State it that way in design
+    reports, or the next cost review will "right-size" the battery to five minutes and
+    quietly delete the plant's last line of defence.</p>
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       5. EQUIPMENT SETTINGS
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-ats-settings">Every Threshold and Timer, With Its Reason</h3>
+
+  <h4>Equipment settings</h4>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Setting</th><th>Typical value</th><th>Why this value</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Undervoltage dropout (normal source)</td>
+        <td>&lt; 85 % of 400 V, any phase</td>
+        <td>Below ~85 % sustained, motor contactors drop and electronics brown out —
+        the source is unusable even if not dead. All three phases sensed: a single lost
+        phase (broken jumper, blown MV fuse) is an outage even though two phases read
+        healthy.</td>
+      </tr>
+      <tr>
+        <td>Pickup (source acceptable again)</td>
+        <td>&ge; 90 % V <em>and</em> 59–61 Hz</td>
+        <td>Hysteresis between 85 % drop and 90 % pick stops chattering on a wobbling
+        source. Frequency window matters mostly on the DG side — a generator can make
+        perfect voltage at the wrong speed during run-up.</td>
+      </tr>
+      <tr>
+        <td>Start delay (T1)</td>
+        <td>1–3 s (here 3 s)</td>
+        <td>The deliberate deafness: outlasts SEC fault-clearing and autoreclose deadtime
+        so remote faults don't crank the diesel. Longer steals UPS battery; shorter buys
+        nuisance starts. Each false start is engine wear and an operator callout.</td>
+      </tr>
+      <tr>
+        <td>Transfer to emergency</td>
+        <td>Immediate once DG healthy (+ open-transition pause 0.3–0.5 s)</td>
+        <td>The pause lets residual motor flux decay so re-energisation doesn't slam
+        out-of-phase torque into the (still-spinning) loads.</td>
+      </tr>
+      <tr>
+        <td>Retransfer delay (T2)</td>
+        <td><strong>30 min</strong>, excursion-resetting</td>
+        <td>Proven-stability requirement against intermittent faults (failure story
+        Case 1). Diesel hours are cheap; four transfers a minute are not.</td>
+      </tr>
+      <tr>
+        <td>Engine cooldown (T3)</td>
+        <td>5 min unloaded</td>
+        <td>Turbo/exhaust thermal protection (§8 settings).</td>
+      </tr>
+      <tr>
+        <td>Test modes</td>
+        <td>Off-load test (start DG, no transfer); on-load test (full transfer);
+        scheduled exerciser (e.g. weekly, 30 min)</td>
+        <td>§8 Control: the only proof the chain works. The exerciser schedule lives in
+        the ATS controller.</td>
+      </tr>
+      <tr>
+        <td>In-phase monitor / delayed-transition option</td>
+        <td>Not required here (open transition + contactor drop-out design)</td>
+        <td>Concept matters though: if motors were transferred <em>live</em> between two
+        live sources (closed transition or fast open transition), the switch must close
+        only when the sources (or motor residual EMF) are near phase agreement —
+        otherwise out-of-phase re-energisation produces torque transients several times
+        rated and can snap shafts. An in-phase monitor waits for the slip to bring the
+        vectors together; a delayed-transition (center-off) ATS simply pauses long
+        enough for motor flux to die. Our design achieves the same by dropping motor
+        contactors and restarting them in stages.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ────────────────────────────────────────────────────────────
+       6. EQUIPMENT TECHNOLOGY
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-ats-tech">Three Ways to Build a Transfer Switch</h3>
+
+  <h4>Equipment technology</h4>
+
+  <ul>
+    <li><strong>Contactor-type (dedicated ATS).</strong> Two mechanically interlocked
+    contactor mechanisms on a common frame, purpose-built to IEC 60947-6-1, driven by a
+    solenoid/motor mechanism in ~100 ms. Compact, fast, the default at this size. Its
+    fault credentials are <em>withstand and close-on</em> ratings (carry a fault until
+    the upstream breaker clears it; close onto a faulted bus and survive) — it is
+    <em>not</em> a circuit breaker and interrupts nothing (see Sizing).</li>
+    <li><strong>Breaker-type ATS / dual-breaker schemes.</strong> Two ACBs
+    (<a href="#c-breaker">§14</a>) with motor operators, plus <strong>both electrical
+    and mechanical interlocks</strong> (key-exchange or linkage). Slower (~1–3 s) but
+    each source path now has full protection and interrupting capability built in, and
+    maintenance uses standard breaker racking. Common at switchboard scale — this is
+    effectively how an essential-bus incomer pair is built when the "ATS" is part of the
+    LV-MSB lineup. Failure story Case 2 is the warning: the mechanical interlock is not
+    optional.</li>
+    <li><strong>Transition types.</strong>
+      <ul>
+        <li><strong>Open (break-before-make)</strong> — our plant: a deliberate dead-bus
+        instant; simple, no paralleling, no grid-code entanglement; the UPS eats the
+        blink.</li>
+        <li><strong>Closed (make-before-break)</strong> — parallels DG and SEC for
+        &lt; 100 ms during retransfer: no blink, but requires synchronising, reverse-power
+        protection (§8), utility approval under the Saudi Grid Code, and fault-level
+        coexistence of both sources. Bought when the process truly cannot blink
+        twice.</li>
+        <li><strong>Delayed transition (center-off)</strong> — an enforced pause in a
+        center position, sized for motor-flux decay; the standard answer for
+        motor-heavy buses transferred live.</li>
+      </ul>
+    </li>
+    <li><strong>Bypass-isolation construction.</strong> A second, manually operated
+    transfer path wrapped around the automatic one, so the ATS mechanism can be isolated,
+    racked out and serviced <em>while the essential bus stays fed</em>. Without it, ATS
+    maintenance means an essential-bus outage — which is why it never gets maintained,
+    which is how 20-year-old ATS mechanisms come to fail on demand. Same wraparound
+    philosophy as the UPS maintenance bypass (§16). Specify it for any bus that cannot
+    take a planned outage.</li>
+    <li><strong>4-pole switching.</strong> On this TN-S system the neutral is switched
+    too — see Sizing, step 4, for the earthing logic.</li>
+  </ul>
+
+  <p>See <a href="#cat-ats">the ATS catalogue section</a> for indicative product families
+  and ratings structure.</p>
+
+  <!-- ────────────────────────────────────────────────────────────
+       7. CONTROL
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-ats-control">The Logic, the Wire, and the Fail-Safe</h3>
+
+  <h4>Control</h4>
+
+  <ul>
+    <li><strong>The controller</strong> is a small dedicated logic unit (or a protection-
+    grade relay in breaker-pair schemes) running exactly the state machine of the worked
+    timing diagram: sense &rarr; confirm &rarr; start &rarr; accept &rarr; transfer
+    &rarr; watch &rarr; retransfer &rarr; cooldown. Its settings are the table above; its
+    event log is the plant's outage history, timestamped — photograph it on every
+    assessment.</li>
+    <li><strong>The engine-start wire</strong> is the most important two-core cable in
+    the standby system, and it is wired <strong>fail-safe</strong>: the convention is a
+    contact that <em>closes to start</em>, supervised, on a dedicated route — and the
+    scheme must be reviewed for its failure mode. Ask of every failure (broken wire,
+    dead ATS controller, lost DC): <em>does the engine start or stay silent?</em> Many
+    schemes add a "start on loss of signal" fallback at the genset controller so a
+    severed cable errs toward a running engine. Whatever the choice, it must be a
+    documented decision, and the cable separated from the tray routes whose fire would
+    create the very outage it serves.</li>
+    <li><strong>Remote status to PMS/DCS:</strong> position (normal/emergency), source
+    availabilities, "in AUTO", transfer in progress, fail-to-transfer, exerciser
+    results. The two alarms that must wake somebody: <strong>"ATS not in AUTO"</strong>
+    and <strong>"DG fail to start"</strong> — both mean the plant currently has no
+    automatic standby and nobody would otherwise know.</li>
+    <li><strong>Periodic auto-test:</strong> the controller's exerciser starts the DG
+    weekly (off-load) and transfers monthly (on-load, §8 Control), at a scheduled hour
+    with operations informed — an unannounced 1 s blink is a fine way to discover which
+    "non-critical" loads were secretly critical.</li>
+    <li><strong>Manual override:</strong> padlockable manual transfer handles and a
+    legible procedure, for the day the controller itself is the casualty. Verify the
+    handle is reachable, the procedure laminated, and at least one shift electrician has
+    actually done it.</li>
+  </ul>
+
+  <!-- ────────────────────────────────────────────────────────────
+       8. SIZING METHOD
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-ats-sizing">Sizing Method, Step by Step</h3>
+
+  <h4>Sizing method</h4>
+
+  <ol>
+    <li><strong>Rated current:</strong> ATS continuous rating &ge; essential-bus FLC.
+    Here the bus is sized to the DG: 1 250 kVA at 400 V &rarr; 1 804 A &rarr; a
+    <strong>2 000 A</strong> class switch, with the 50 &deg;C switchroom derating
+    checked against the manufacturer's temperature table (same discipline as breakers,
+    <a href="#c-breaker">§14</a> step 7).</li>
+    <li><strong>Withstand and closing ratings vs the real fault world:</strong> on the
+    SEC side the ATS sits downstream of the LV-MSB with prospective fault
+    <strong>38.5 kA</strong> (<a href="#c-shortcircuit">§4</a>). The ATS does not
+    interrupt — so it needs (a) a <strong>short-time withstand</strong> (I<sub>cw</sub>)
+    or a certified <strong>conditional rating with the specific upstream
+    breaker/fuse</strong> covering 38.5 kA for the upstream clearing time, and (b) a
+    <strong>close-on rating</strong> for the worst asymmetric peak, because the ugliest
+    duty is closing onto a faulted bus. Verify the certified combination, not two
+    separate numbers on two data sheets.</li>
+    <li><strong>Number of poles — 4-pole for this TN-S system.</strong> The DG is a
+    separately earthed source (its neutral-earth bond is at the set). If the neutral
+    were <em>not</em> switched, the DG and SEC neutral-earth bonds would be permanently
+    paralleled: earth-fault and neutral currents could return via the earthing system
+    (defeating clean TN-S separation and any RCD/earth-fault measurement
+    (<a href="#c-protection">§10</a>)), and a "dead" plant during maintenance could
+    carry live neutral potential from the other source. Switching all four poles
+    (overlapping-neutral designs avoid floating the load neutral mid-transfer) keeps
+    exactly one neutral-earth bond in service per state. 3-pole is correct only where
+    the DG neutral is unearthed and bonded solely through the plant (one-bond
+    schemes) — a deliberate earthing-design decision, never a cost shortcut.</li>
+    <li><strong>Transition type:</strong> open transition here (UPS bridges, motors
+    restarted in stages); choose delayed transition for live motor-bus transfer; choose
+    closed transition only with the full synchronising/protection/Grid-Code package
+    costed in.</li>
+    <li><strong>Bypass-isolation:</strong> yes/no by outage policy — for this plant's
+    essential bus, specified yes: the essential bus cannot take a planned dead-bus
+    maintenance window every year.</li>
+    <li><strong>Close the loop:</strong> timer set per the worked timing diagram;
+    engine-start wiring failure-mode review; UPS autonomy re-checked against the worst
+    crank sequence; protection re-checked for the islanded (low fault level) regime
+    (§8 step 9).</li>
+  </ol>
+
+  <h3 id="c-ats-selfcheck">Self-Check — ATS</h3>
+
+  <ul class="checklist">
+    <li>Recite the four decisions the ATS automates and the timer/threshold that
+    implements each.</li>
+    <li>Rebuild the forward timing budget from memory (detection + start + transfer) and
+    state what bridges the dark window.</li>
+    <li>Why is the start delay 3 s and not 0.3 s? What specifically would a 0.3 s
+    setting do, and how often?</li>
+    <li>Why is the retransfer delay 30 minutes and not 10 seconds? Tell Case 1 of the
+    failure story in three sentences.</li>
+    <li>Explain why the 30-min UPS autonomy is "only" a 1.2–2&times; margin, not a
+    130&times; one. What scenario is it actually sized for?</li>
+    <li>Distinguish withstand, close-on, and interrupting ratings — which two does an
+    ATS need, which one does it lack, and what supplies the missing function?</li>
+    <li>Why does a TN-S system with a separately earthed DG demand a 4-pole ATS? What
+    two specific problems does a solid neutral cause?</li>
+    <li>When is closed transition worth its synchronising and Grid-Code burden? What
+    protection element from §8 becomes mandatory?</li>
+    <li>What is an in-phase monitor / delayed transition for, and why does our
+    contactor-drop-out design not need one?</li>
+    <li>What is bypass-isolation construction, and what maintenance pathology does its
+    absence breed?</li>
+    <li>Name the two ATS alarms that must wake somebody, and what unprotected state each
+    one signals.</li>
+  </ul>
+
+  <div class="key">
+    An ATS is a dozen numbers wrapped around one mechanical promise. The numbers — 85 %,
+    3 s, 10 s, 30 min, 5 min — encode patience in both directions: slow to believe an
+    outage, slower to believe a recovery. The promise — never both sources at once — must
+    be kept by metal, not merely by wiring. Verify the settings against the timing
+    diagram and the interlock by functional test, and the standby system has a brain
+    worthy of its heart.
+  </div>
+
+</section>
+
+
+<!-- ============================================================
+     §C-SUMMARY  Calculations → equipment → cost-impact summary
+============================================================ -->
+<section id="c-summary" data-title="Calculations to Equipment to Cost-Impact Summary" data-part="Part 2 — Calculations">
+
+  <h2>18 — Calculations &rarr; Equipment &rarr; Cost-Impact Summary</h2>
+
+  <p>The table maps every Part 2 calculation to the equipment it sizes, the consequence
+  of skipping it, and the approximate capital-cost weight. Use it to prioritise what to
+  verify first in a time-limited assessment. All numbers are the Rev 3 plant basis
+  (SEC 13.8 kV / 400-230 V / 60 Hz / 50 &deg;C, TN-S) and indicative.</p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>§</th>
+        <th>Calculation</th>
+        <th>Key inputs</th>
+        <th>Key outputs (Rev 3)</th>
+        <th>Equipment sized</th>
+        <th>If skipped</th>
+        <th>Cost impact</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>Load &amp; demand</td>
+        <td>Connected kW, diversity, pf</td>
+        <td>2.0 MW, pf 0.85 &rarr; 2 353 kVA</td>
+        <td>Base for TX-1/TX-2, MV-SWGR, LV-MSB, feeders</td>
+        <td>Whole plant mis-sized; costly retrofit</td>
+        <td><strong>High</strong> — sets the entire plant size</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>Transformer sizing &amp; N-1</td>
+        <td>MVA, redundancy concept, essential fraction</td>
+        <td>2 &times; 1 600 kVA, 13.8/0.4 kV, Dyn11, Z = 6 %</td>
+        <td>TX-1/TX-2, bus-tie scheme</td>
+        <td>Overload on N-1 or oversized switchgear</td>
+        <td><strong>High</strong> — transformers + frames scale with it</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>FLC (LV &amp; MV)</td>
+        <td>Transformer kVA, voltage</td>
+        <td>LV FLC &asymp; 2 309 A; MV FLC &asymp; 66.9 A</td>
+        <td>LV-MSB incomer ACBs, busbars; MV feeder breakers</td>
+        <td>Under-rated busbar/breaker overheats</td>
+        <td><strong>High</strong> — ACB frame and busbar ampacity</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td>Short-circuit / fault level</td>
+        <td>LV FLC, Z %, SEC source (25 kA design, range 25–40 kA)</td>
+        <td>I<sub>sc</sub> &asymp; 38.5 kA (one TX); &asymp; 77 kA tie-closed</td>
+        <td>Breaking capacity &amp; bracing: LV-MSB (50–65 kA), MCC, MV gear 31.5 kA/3 s</td>
+        <td>Breaker cannot clear fault — safety failure</td>
+        <td><strong>High</strong> — drives I<sub>cu</sub> and busbar bracing</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td>Motor FLC &amp; starting</td>
+        <td>Motor kW, V, pf, &eta;, start multiple, 1 800 rpm at 60 Hz</td>
+        <td>FLC, start current, start method</td>
+        <td>MCC starters/overloads, soft-starters/VFDs</td>
+        <td>Bus dip / nuisance trips; starter fails</td>
+        <td><strong>Medium</strong> — soft-starter/VFD vs DOL cost</td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td>Cable sizing &amp; volt-drop</td>
+        <td>I<sub>B</sub>, 50 &deg;C air derating (&asymp; 0.82), length, R/X</td>
+        <td>I<sub>z</sub>(req), cross-section, %&Delta;V</td>
+        <td>Feeder cables throughout the plant</td>
+        <td>Cable overheats (fire) or volt-drop too high</td>
+        <td><strong>Medium</strong> — copper volume</td>
+      </tr>
+      <tr>
+        <td>7</td>
+        <td>Power-factor correction</td>
+        <td>P, present pf 0.85, target 0.95, harmonics</td>
+        <td>&asymp; 580 kvar, detuned 7 %</td>
+        <td>PFC bank + detuning reactors</td>
+        <td>Reactive penalties; bank/harmonic failures</td>
+        <td><strong>Medium</strong> — avoids ongoing SEC penalties</td>
+      </tr>
+      <tr>
+        <td>8</td>
+        <td>Standby generator</td>
+        <td>Essential load 1.0 MW @ 0.85, step capability, 50 &deg;C ESP derate</td>
+        <td>DG 1 250 kVA ESP; 750 kVA max step; dip &asymp; 7.2 %; fuel ~216 L/h</td>
+        <td>DG set, essential distribution, day/bulk tanks</td>
+        <td>Genset crashes on block load, or starves of fuel</td>
+        <td><strong>High</strong> — gensets are costly per kVA</td>
+      </tr>
+      <tr>
+        <td>9</td>
+        <td>Load-flow</td>
+        <td>Loads, source V, Z, taps, pf</td>
+        <td>Bus voltages, flows, losses, tap position</td>
+        <td>Transformer taps; validates cables &amp; PFC</td>
+        <td>Hidden under/over-voltage or overloads</td>
+        <td><strong>Medium</strong> — mainly validates; flags reinforcement</td>
+      </tr>
+      <tr>
+        <td>10</td>
+        <td>Protection coordination</td>
+        <td>Fault levels, TCC/IDMT curves, CT ratios</td>
+        <td>Relay pickups &amp; grading (&Delta;t &asymp; 0.3 s)</td>
+        <td>MV relays; ACB/MCCB trip units</td>
+        <td>Loss of selectivity; wider outage per fault</td>
+        <td><strong>Low–Med</strong> — mostly settings engineering</td>
+      </tr>
+      <tr>
+        <td>11</td>
+        <td>Arc-flash (IEEE 1584)</td>
+        <td>Arcing current, clearing time, working distance</td>
+        <td>E (cal/cm&sup2;) &prop; clearing time; AFB; PPE category</td>
+        <td>PPE, labels, maintenance-mode switches, ZSI</td>
+        <td>Burn risk; non-compliant labels</td>
+        <td><strong>Medium</strong> — safety-critical</td>
+      </tr>
+      <tr>
+        <td>12</td>
+        <td>Earthing &amp; lightning</td>
+        <td>NER duty, I<sub>ef</sub>, soil &rho;, k&middot;S adiabatic</td>
+        <td>NER 7.97 kV, 400 A/10 s &rarr; 19.9 &Omega;; earth csa by A = I&radic;t/k</td>
+        <td>MV-NER, earth grid, conductors, LPS</td>
+        <td>Touch/step hazard; undetected earth faults</td>
+        <td><strong>Medium</strong> — safety-critical</td>
+      </tr>
+      <tr>
+        <td>14</td>
+        <td>Circuit breakers (LSIG)</td>
+        <td>FLC, fault table, coordination, 50 &deg;C derate</td>
+        <td>Frame/I<sub>n</sub>, I<sub>cu</sub>/I<sub>cs</sub>/I<sub>cw</sub>, L-S-I-G settings</td>
+        <td>ACBs, MCCBs, MV vacuum breakers</td>
+        <td>Paper protection: settings the hardware can't honour</td>
+        <td><strong>High</strong> — frames and breaking capacity</td>
+      </tr>
+      <tr>
+        <td>15</td>
+        <td><a href="#c-perunit">Per-unit / MVA method</a></td>
+        <td>Base MVA, impedances on common base</td>
+        <td>Fault levels &amp; flows on one ruler</td>
+        <td>(Method — validates §4, §9 by hand)</td>
+        <td>No independent check of study software</td>
+        <td><strong>Low</strong> — engineering hours only</td>
+      </tr>
+      <tr>
+        <td>16</td>
+        <td>UPS &amp; battery autonomy</td>
+        <td>Critical load 100 kVA @ 0.9, 30 min policy, 50 &deg;C battery life</td>
+        <td>240 cells, ~210 A, ~150 Ah class @ 30-min rate; recharge &le; 10&times;</td>
+        <td>UPS, battery string, battery room + HVAC</td>
+        <td>DCS/ESD die mid-outage (4-minute "30 minutes")</td>
+        <td><strong>Medium</strong> — battery + room; consequence-critical</td>
+      </tr>
+      <tr>
+        <td>17</td>
+        <td>ATS logic &amp; timing</td>
+        <td>Essential FLC 1 804 A, 38.5 kA duty, timing budget</td>
+        <td>2 000 A 4-pole, open transition; 3 s / 10 s / 30 min / 5 min timers</td>
+        <td>ATS, engine-start circuit, interlocks</td>
+        <td>Transfer chatter, both-sources-closed, no auto standby</td>
+        <td><strong>Low–Med</strong> — small hardware, huge consequence</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 id="c-summary-money">Where the money is — and where the consequences are</h3>
+
+  <p>The calculations that <strong>dominate capital cost</strong> are load/transformer
+  sizing (§1–§3) and the fault-level pair (§4, §14): between them they fix ACB frames,
+  breaking capacities, busbar bracing, cable cross-sections and the 1 250 kVA genset —
+  the most expensive items on the plant. PFC (§7) and cable volt-drop (§6) mainly buy
+  back <strong>operating cost and SEC reactive-power penalties</strong>. The standby
+  chain (§8, §16, §17) is a different category again: moderate capital,
+  <strong>extreme consequence asymmetry</strong> — a mis-timed ATS relay or a dead
+  battery string costs little to fix and an entire plant shutdown to ignore. The studies
+  (§9–§12, §15) are mostly engineering hours whose value is measured in avoided
+  injuries and unplanned downtime.</p>
+
+  <div class="key">
+    Verify in this order: §1–§4 ratings first (if transformer/breaker/busbar numbers are
+    wrong, everything downstream is at risk); then the life-safety pair §11–§12; then
+    the standby chain §8/§16/§17 — the part of the plant that is only ever tested by
+    its worst day. Everything else follows.
+  </div>
+
+</section>
+
+
+<!-- ============================================================
+     §C-FORMULA-CARD  Printable formula reference card (Rev 3)
+============================================================ -->
+<section id="c-formula-card" data-title="Formula Reference Card" data-part="Part 2 — Calculations">
+
+  <h2>Formula Reference Card</h2>
+
+  <p><em>Printable quick-reference, Rev 3 (Saudi/SEC) basis. All values indicative —
+  confirm for your specific plant. Constants: &radic;3 = 1.732;
+  V<sub>LV</sub> = 400 V; V<sub>MV</sub> = 13.8 kV; <strong>60 Hz</strong>
+  (1 cycle = 16.7 ms); design ambient 50 &deg;C.</em></p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Quantity</th>
+        <th>Formula</th>
+        <th>This-plant example</th>
+        <th>Units</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Apparent power</td>
+        <td>S = P / pf</td>
+        <td>2.0 MW / 0.85 = 2.35 MVA</td>
+        <td>MVA, kVA</td>
+      </tr>
+      <tr>
+        <td>3-phase current (equipment)</td>
+        <td>I = S / (&radic;3 &times; V)</td>
+        <td>1 600 kVA @ 400 V &rarr; 2 309 A; @ 13.8 kV &rarr; 66.9 A</td>
+        <td>A</td>
+      </tr>
+      <tr>
+        <td>Motor FLC</td>
+        <td>I = P / (&radic;3 &times; V &times; pf &times; &eta;)</td>
+        <td>110 kW &rarr; 194 A</td>
+        <td>A</td>
+      </tr>
+      <tr>
+        <td>Motor speed (sync)</td>
+        <td>n = 120 &times; f / poles</td>
+        <td>120 &times; 60 / 4 = 1 800 rpm</td>
+        <td>rpm</td>
+      </tr>
+      <tr>
+        <td>Transformer loading</td>
+        <td>Loading = S<sub>load</sub> / S<sub>rated</sub></td>
+        <td>1.175 / 1.6 = 0.73 pu</td>
+        <td>pu or %</td>
+      </tr>
+      <tr>
+        <td>Short-circuit current (TX-limited)</td>
+        <td>I<sub>sc</sub> = I<sub>fl</sub> / Z<sub>pu</sub></td>
+        <td>2 309 / 0.06 = 38.5 kA (one TX); &times;2 tie-closed &asymp; 77 kA</td>
+        <td>kA</td>
+      </tr>
+      <tr>
+        <td>Per-unit conversion (base change)</td>
+        <td>Z<sub>pu,new</sub> = Z<sub>pu,old</sub> &times; (S<sub>base,new</sub> / S<sub>base,old</sub>)</td>
+        <td>6 % @ 1.6 MVA &rarr; 37.5 % @ 10 MVA</td>
+        <td>pu</td>
+      </tr>
+      <tr>
+        <td>MVA method (fault level)</td>
+        <td>S<sub>sc</sub> = S<sub>base</sub> / Z<sub>pu,total</sub>;&nbsp; I<sub>sc</sub> = S<sub>sc</sub> / (&radic;3 V)</td>
+        <td>1.6 / 0.06 = 26.7 MVA &rarr; 38.5 kA @ 400 V</td>
+        <td>MVA, kA</td>
+      </tr>
+      <tr>
+        <td>DOL starting current</td>
+        <td>I<sub>start</sub> &asymp; 6–7 &times; I<sub>fl</sub></td>
+        <td>6.5 &times; 194 = 1 260 A</td>
+        <td>A</td>
+      </tr>
+      <tr>
+        <td>Cable derating</td>
+        <td>I<sub>z</sub>(req) = I<sub>B</sub> / (k<sub>g</sub> &times; k<sub>t</sub>)</td>
+        <td>k<sub>t</sub> &asymp; 0.82 in 50 &deg;C air: 194 / (0.85 &times; 0.82) = 278 A</td>
+        <td>A</td>
+      </tr>
+      <tr>
+        <td>Cable voltage drop (3-phase)</td>
+        <td>&Delta;V = &radic;3 &times; I &times; (R&middot;cos&phi; + X&middot;sin&phi;) &times; L</td>
+        <td>&asymp; 9.6 V = 2.4 % @ 400 V</td>
+        <td>V, %</td>
+      </tr>
+      <tr>
+        <td>PFC reactive power</td>
+        <td>Q<sub>c</sub> = P &times; (tan&phi;<sub>1</sub> &minus; tan&phi;<sub>2</sub>)</td>
+        <td>2 000 &times; (0.620 &minus; 0.329) &asymp; 582 kvar (0.85 &rarr; 0.95)</td>
+        <td>kvar</td>
+      </tr>
+      <tr>
+        <td>Generator sizing (essential)</td>
+        <td>S<sub>DG</sub> &ge; P<sub>ess</sub> / pf; first step &le; 0.6 S<sub>DG</sub></td>
+        <td>1 000 / 0.85 = 1 176 &rarr; 1 250 kVA; step &le; 750 kVA</td>
+        <td>kVA</td>
+      </tr>
+      <tr>
+        <td>Generator step voltage dip</td>
+        <td>dip &asymp; X&Prime;<sub>d</sub> &times; S<sub>step</sub> / S<sub>gen</sub></td>
+        <td>0.12 &times; 750 / 1 250 &asymp; 7.2 %</td>
+        <td>pu, %</td>
+      </tr>
+      <tr>
+        <td>Fuel autonomy</td>
+        <td>t = V<sub>tank</sub> / (0.27 &times; P<sub>kW</sub>)</td>
+        <td>10 000 / (0.27 &times; 800) &asymp; 46 h</td>
+        <td>h</td>
+      </tr>
+      <tr>
+        <td>UPS battery autonomy (Ah)</td>
+        <td>Ah = (P<sub>ac</sub>/&eta;<sub>inv</sub>) / V<sub>dc,mean</sub> &times; t &times; k<sub>age</sub> &times; k<sub>margin</sub></td>
+        <td>(90/0.94)/456 &times; 0.5 &times; 1.25 &times; 1.1 &asymp; 144 Ah (30-min rate)</td>
+        <td>Ah</td>
+      </tr>
+      <tr>
+        <td>Transformer voltage regulation</td>
+        <td>&Delta;V% &asymp; load<sub>pu</sub> &times; (R%&middot;cos&phi; + X%&middot;sin&phi;)</td>
+        <td>0.73 &times; 3.65 = 2.7 %</td>
+        <td>%</td>
+      </tr>
+      <tr>
+        <td>Relay grading margin</td>
+        <td>t<sub>up</sub> = t<sub>down</sub> + &Delta;t (&Delta;t &asymp; 0.3 s)</td>
+        <td>0.20 + 0.30 = 0.50 s</td>
+        <td>s</td>
+      </tr>
+      <tr>
+        <td>IDMT standard-inverse curve</td>
+        <td>t = TMS &times; 0.14 / (M<sup>0.02</sup> &minus; 1), M = I/I<sub>pickup</sub></td>
+        <td>TMS 0.1, M = 10: t = 0.1 &times; 0.14/0.047 &asymp; 0.30 s</td>
+        <td>s</td>
+      </tr>
+      <tr>
+        <td>Arc-flash energy vs clearing time</td>
+        <td>E &prop; t:&nbsp; E<sub>2</sub> = E<sub>1</sub> &times; t<sub>2</sub>/t<sub>1</sub> (same I, distance)</td>
+        <td>18 cal/cm&sup2; @ 0.5 s &rarr; 3.6 @ 0.1 s</td>
+        <td>cal/cm&sup2;</td>
+      </tr>
+      <tr>
+        <td>Arc-flash boundary</td>
+        <td>AFB &asymp; D &times; &radic;(E / 1.2)</td>
+        <td>0.6 &times; &radic;(10/1.2) = 1.7 m</td>
+        <td>m</td>
+      </tr>
+      <tr>
+        <td>NER resistance</td>
+        <td>R<sub>NER</sub> = (V<sub>LL</sub>/&radic;3) / I<sub>ef</sub></td>
+        <td>(13 800/1.732)/400 = 7 967/400 = 19.9 &Omega; (400 A / 10 s)</td>
+        <td>&Omega;</td>
+      </tr>
+      <tr>
+        <td>Adiabatic conductor sizing</td>
+        <td>A = I &times; &radic;t / k  (i.e. k&middot;S = I&radic;t; k &asymp; 143 Cu/XLPE)</td>
+        <td>38 500 &times; &radic;0.3 / 143 &asymp; 147 &rarr; 150 mm&sup2;</td>
+        <td>mm&sup2;</td>
+      </tr>
+      <tr>
+        <td>Transformer Cu loss at load</td>
+        <td>P<sub>Cu</sub> = loading<sub>pu</sub>&sup2; &times; P<sub>Cu,fl</sub></td>
+        <td>0.73&sup2; &times; 17 kW &asymp; 9 kW</td>
+        <td>kW</td>
+      </tr>
+      <tr>
+        <td>UPS recharge check</td>
+        <td>t<sub>recharge</sub> &le; 10 &times; t<sub>discharge</sub></td>
+        <td>30 min discharge &rarr; recover in &le; 5 h (&asymp; 0.1–0.15 C)</td>
+        <td>h</td>
+      </tr>
+      <tr>
+        <td>ATS dark-window budget</td>
+        <td>t<sub>dark</sub> = t<sub>confirm</sub> + t<sub>DG start</sub> + t<sub>transfer</sub></td>
+        <td>3 + 10 + 0.5 &asymp; 13.5 s (UPS bridges)</td>
+        <td>s</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    <strong>Handy approximations for field checks (60 Hz / Rev 3 basis):</strong><br>
+    &bull; 3-phase current: I &asymp; kVA / (1.73 &times; kV)<br>
+    &bull; At 400 V: 1 kW &asymp; 1.8 A (pf 0.85, &eta; 0.95); 1 kVA &asymp; 1.44 A<br>
+    &bull; At 13.8 kV: 1 MW &asymp; 49 A (pf 0.85); 1 MVA &asymp; 42 A<br>
+    &bull; LV fault level (kA) &asymp; TX MVA / (Z<sub>pu</sub> &times; &radic;3 &times; 0.4)<br>
+    &bull; Genset fuel: L/h &asymp; 0.27 &times; kW load<br>
+    &bull; One 60 Hz cycle = 16.7 ms; typical ACB instantaneous clearing &asymp; 3–4 cycles<br>
+    &bull; Battery life (lead-acid): halves per +10 &deg;C above 25 &deg;C
+  </div>
+
+  <div class="key">
+    Keep this card on you during switchroom inspections. With the nameplate photos you
+    take on site, these twenty lines verify most ratings on the plant without a laptop —
+    on the 60 Hz / 13.8 kV / 400 V Saudi basis this manual uses throughout.
+  </div>
+
+</section>
+
+
+<!-- ============================================================
+     §C-SELFCHECK  Self-check problems (Rev 3)
+============================================================ -->
+<section id="c-selfcheck" data-title="Self-Check Problems" data-part="Part 2 — Calculations">
+
+  <h2>Self-Check Problems</h2>
+
+  <p>Work each problem before opening the answer. All values are <em>indicative</em> and
+  on the Rev 3 basis (13.8 kV / 400-230 V / 60 Hz / 50 &deg;C); use &radic;3 = 1.732.</p>
+
+  <h3 id="c-sc-interpretation">Interpretation questions</h3>
+
+  <p>These test your ability to draw conclusions from numbers — the skill the PM will
+  assess when reviewing your FMECA entries. Attempt each before opening the answer.</p>
+
+  <ol>
+    <li>
+      <p>The LV-MSB incomer ammeter reads <strong>2 650 A</strong> on a 1 600 kVA
+      transformer. The transformer FLC at 400 V is calculated as 2 309 A. What do you
+      conclude, and what is your immediate action?</p>
+      <details>
+        <summary>Show answer</summary>
+        <p>The transformer is loaded at 2 650 / 2 309 = <strong>1.15 pu (115 %)</strong>
+        — significantly above rated FLC. This is an overload condition, made worse by
+        the 50 &deg;C ambient eating the thermal margins.</p>
+        <p><strong>Immediate FMECA implication:</strong> continuous overload accelerates
+        insulation ageing. If this is normal operating load, the transformer is
+        undersized for its duty. If the other transformer is lost and the bus-tie closes
+        to back-feed from this overloaded unit, it will trip on overcurrent — the N-1
+        redundancy claim fails.</p>
+        <p><strong>Action:</strong> record the reading as an observation (OBS-xx in
+        SF-04); open an FMECA row for TX overloading (S = 4 — loss of N-1 capability; O
+        depends on whether the overload is sustained; D = 2 if transformer monitoring
+        with alarms is live). Recommend revalidating the load list and considering
+        demand reduction or uprating.</p>
+      </details>
+    </li>
+
+    <li>
+      <p>The LV prospective short-circuit current at the LV-MSB is calculated at
+      <strong>38.5 kA</strong> for a single transformer. The bus-tie ACB nameplate shows
+      a rated breaking capacity of <strong>36 kA at 400 V</strong>. The
+      two-transformer tie-closed fault level is <strong>77 kA</strong>. Implications?</p>
+      <details>
+        <summary>Show answer</summary>
+        <p><strong>Single-transformer case:</strong> 36 kA &lt; 38.5 kA — even in the
+        normal condition the bus-tie breaker is under-rated by ~7 %. A breaker must
+        never be put in a position where it may be asked to interrupt more than
+        I<sub>cu</sub>: potential P1 safety finding.</p>
+        <p><strong>Tie-closed parallel case:</strong> ~77 kA — more than double the
+        rating. Operating with the bus-tie closed and no ACB upgrade is a life-safety
+        hazard, and the board bracing (rated 50–65 kA) is also exceeded.</p>
+        <p><strong>FMECA row:</strong> S = 5 (catastrophic switchboard failure on
+        through-fault); P1 regardless of RPN. Actions: confirm fault level with a
+        detailed study using SEC source data (25–40 kA at 13.8 kV); enforce strict
+        normally-open bus-tie operation with interlocks; specify replacement breakers
+        with adequate I<sub>cu</sub> if paralleling is ever required
+        (<a href="#c-breaker">§14</a>).</p>
+      </details>
+    </li>
+
+    <li>
+      <p>The arc-flash label on the LV-MSB Bus A incomer cubicle shows
+      <strong>22 cal/cm&sup2;</strong>, derived from a study conducted years ago. Since
+      then, the second transformer (TX-2) has been connected, roughly doubling the
+      available fault current to the bus. How do you treat this finding?</p>
+      <details>
+        <summary>Show answer</summary>
+        <p>The old study is <strong>Obsolete</strong> — log it as such. With the changed
+        source, both the arcing current and (critically) the clearing times of every
+        device have changed; the incident energy at the bus is unknown, and the PPE
+        category printed on the label may be unsafe (<a href="#c-arcflash">§11</a>).</p>
+        <p><strong>Immediate QHSE action:</strong> flag the out-of-date label; no
+        energised work against the old label values until a restudy.</p>
+        <p><strong>FMECA row:</strong> "arc-flash label obsolete" — S = 5 (personnel
+        injury); O = 2 (switching events occasional); D = 4 (error undetectable without
+        a study). Escalate before the next live switching operation; commission an
+        updated IEEE 1584 study and relabel.</p>
+      </details>
+    </li>
+  </ol>
+
+  <h3 id="c-sc-problems">Numerical problems</h3>
+
+  <ol>
+    <li>
+      <p>An LV motor is rated <strong>75 kW</strong>, 400 V, pf 0.85, &eta; 0.94.
+      Find its FLC and its DOL starting current (use 6.5&times;).</p>
+      <details>
+        <summary>Show answer</summary>
+        <p>FLC = 75 000 / (1.732 &times; 400 &times; 0.85 &times; 0.94)
+        = 75 000 / 553 = <strong>136 A</strong></p>
+        <p>DOL = 6.5 &times; 136 = <strong>882 A</strong></p>
+      </details>
+    </li>
+
+    <li>
+      <p>A <strong>1 250 kVA</strong> transformer has Z = 6 %. Find its 400 V FLC and
+      secondary short-circuit current.</p>
+      <details>
+        <summary>Show answer</summary>
+        <p>FLC = 1 250 000 / (1.732 &times; 400) = 1 250 000 / 692.8
+        = <strong>1 804 A</strong></p>
+        <p>I<sub>sc</sub> = 1 804 / 0.06 = <strong>30.1 kA</strong></p>
+        <p>(Note this 1 804 A is also the essential-bus FLC behind the 1 250 kVA DG —
+        the number that sizes the <a href="#c-ats">ATS, §17</a>.)</p>
+      </details>
+    </li>
+
+    <li>
+      <p>Re-correct the plant from <strong>0.85 &rarr; 0.93</strong> (instead of the
+      0.95 target). How much kvar is needed (P = 2.0 MW)?</p>
+      <details>
+        <summary>Show answer</summary>
+        <p>pf<sub>2</sub> = 0.93 &rarr; &phi;<sub>2</sub> = 21.6&deg;,
+        tan&phi;<sub>2</sub> = 0.396; tan&phi;<sub>1</sub> = 0.620.</p>
+        <p>Q<sub>c</sub> = 2 000 &times; (0.620 &minus; 0.396) = 2 000 &times; 0.224
+        = <strong>448 kvar</strong> (&asymp; 450 kvar bank, detuned 7 % as
+        <a href="#c-pfc">§7</a>; the full 0.95 target needs &asymp; 580 kvar).</p>
+      </details>
+    </li>
+
+    <li>
+      <p>With one transformer out, the bus-tie carries <strong>1.3 MVA</strong> of
+      essential load on the surviving 1 600 kVA unit. Per-unit loading — acceptable?</p>
+      <details>
+        <summary>Show answer</summary>
+        <p>Loading = 1.30 / 1.60 = <strong>0.81 pu (81 %)</strong>.</p>
+        <p><strong>Acceptable</strong> for the essential-load N-1 case (non-essential
+        load shed), within continuous rating — but check the 50 &deg;C site rating of
+        the transformer, not just the nameplate. &#10003;</p>
+      </details>
+    </li>
+
+    <li>
+      <p>A feeder carries <strong>I<sub>B</sub> = 160 A</strong> with grouping derating
+      k<sub>g</sub> = 0.85 and the Rev 3 hot-air derating k<sub>t</sub> = 0.82.
+      What tabulated cable rating I<sub>z</sub> is required?</p>
+      <details>
+        <summary>Show answer</summary>
+        <p>I<sub>z</sub>(req) = 160 / (0.85 &times; 0.82) = 160 / 0.697
+        = <strong>230 A</strong>.</p>
+        <p>Select a cable with tabulated rating &ge; 230 A (e.g. 95 mm&sup2; Cu XLPE on
+        tray — confirm against manufacturer tables and <a href="#c-cables">§6</a>).
+        Note how the 50 &deg;C ambient (0.82 vs the temperate 0.91) pushed the answer a
+        full size up.</p>
+      </details>
+    </li>
+
+    <li>
+      <p>The 13.8 kV system is resistance-earthed to limit earth-fault current to
+      <strong>400 A</strong>. What NER resistance is required, and what is its rated
+      voltage?</p>
+      <details>
+        <summary>Show answer</summary>
+        <p>V<sub>ph</sub> = 13 800 / 1.732 = 7 967 V &asymp; <strong>7.97 kV</strong>
+        (the NER rated voltage).</p>
+        <p>R<sub>NER</sub> = 7 967 / 400 = <strong>19.9 &Omega;</strong>
+        (rated 400 A / 10 s, per the plant data).</p>
+      </details>
+    </li>
+
+    <li>
+      <p>A cable feeder is <strong>150 m</strong> long, carries <strong>220 A</strong>
+      at pf 0.90 (sin&phi; = 0.436). The cable is <strong>120 mm&sup2; Cu XLPE</strong>:
+      R = 0.196 &Omega;/km, X = 0.079 &Omega;/km. Calculate the voltage drop and check
+      against the 5 % motor-feeder limit at 400 V.</p>
+      <details>
+        <summary>Show answer</summary>
+        <p>&Delta;V = 1.732 &times; 220 &times; (0.196 &times; 0.90 + 0.079 &times;
+        0.436) &times; 0.150</p>
+        <p>= 1.732 &times; 220 &times; (0.1764 + 0.0344) &times; 0.150
+        = 1.732 &times; 220 &times; 0.2108 &times; 0.150 = <strong>12.1 V</strong></p>
+        <p>%&Delta;V = 12.1 / 400 = <strong>3.0 %</strong> — within the 5 % limit.
+        &#10003;</p>
+      </details>
+    </li>
+
+    <li>
+      <p>The downstream relay trips at t = 0.50 s for a given fault. The upstream relay
+      must grade above it with a 0.3 s margin. Minimum upstream trip time?</p>
+      <details>
+        <summary>Show answer</summary>
+        <p>t<sub>up</sub> = t<sub>down</sub> + &Delta;t = 0.50 + 0.30
+        = <strong>0.80 s</strong> (<a href="#c-protection">§10</a>).</p>
+      </details>
+    </li>
+
+    <li>
+      <p>A candidate genset's catalogue page quotes <strong>ESP 1 400 kVA at
+      27 &deg;C</strong> reference conditions. The site is 50 &deg;C and 400 m altitude.
+      Screening derates: &minus;1 % per 5 &deg;C above reference, &minus;1 % per 100 m.
+      Does it satisfy the 1 250 kVA-at-site specification?</p>
+      <details>
+        <summary>Show answer</summary>
+        <p>Temperature: &minus;1 % &times; (50 &minus; 27)/5 = &minus;4.6 %.
+        Altitude: &minus;1 % &times; 400/100 = &minus;4 %. Total &asymp; &minus;8.6 %.</p>
+        <p>Site rating = 1 400 &times; (1 &minus; 0.086) &asymp; <strong>1 280 kVA</strong>
+        &ge; 1 250 kVA — marginally yes, <em>subject to the manufacturer's certified
+        derate curve and the radiator's own 50 &deg;C capability</em>. A screening pass
+        this thin must be confirmed on the data sheet (<a href="#c-genset">§8</a>).</p>
+      </details>
+    </li>
+  </ol>
+
+  <h3 id="c-sc-newproblems">New problems — breakers, UPS, ATS, arc flash</h3>
+
+  <p>Four problems covering the Rev 3 deep-dive topics. Fully worked answers below
+  each.</p>
+
+  <ol>
+    <li>
+      <p><strong>(Breaker LSIG choice.)</strong> A feeder ACB on the LV-MSB supplies an
+      essential MCC. Feeder design current I<sub>B</sub> = 850 A; the largest downstream
+      motor is 75 kW (FLC 136 A, DOL start 882 A); prospective fault at the MCC bus
+      &asymp; 20 kA; at the LV-MSB &asymp; 38.5 kA. Choose the frame and propose L, S
+      and I settings (G pickup at 0.3 &times; I<sub>n</sub>), with grading reasons.</p>
+      <details>
+        <summary>Show answer</summary>
+        <p><strong>Frame:</strong> next standard above 850 A &rarr; <strong>I<sub>n</sub>
+        = 1 000 A</strong> ACB/MCCB with I<sub>cu</sub> &ge; 38.5 kA at 400 V (it sits
+        on the 38.5 kA board; use 50 kA class for margin), checked for 50 &deg;C
+        switchroom derating.</p>
+        <p><strong>L (long-time):</strong> I<sub>r</sub> = 0.9 &times; 1 000 =
+        <strong>900 A</strong> &ge; 850 A &#10003; — carries the load, protects the
+        cable (cable I<sub>z</sub> must be &ge; 900 A or I<sub>r</sub> set to the cable,
+        whichever is lower).</p>
+        <p><strong>S (short-time):</strong> pickup must ride the worst legitimate surge:
+        motor start on top of remaining load &asymp; 882 + (850 &minus; 136) = 1 596 A.
+        Set I<sub>sd</sub> = 4 &times; I<sub>r</sub> = <strong>3 600 A</strong> —
+        margin 3 600 / 1 596 = 2.3&times; &#10003;. Delay t<sub>sd</sub> =
+        <strong>0.1 s</strong>, sitting one grading step (&asymp; 0.2–0.3 s) below the
+        incomer's 0.3 s short-time delay and above the MCC outgoing devices' instantaneous
+        clearing (<a href="#c-protection">§10</a>, <a href="#c-breaker">§14</a>).</p>
+        <p><strong>I (instantaneous):</strong> must not operate for faults at the MCC bus
+        (those belong to the MCC devices / the S element): with ~20 kA available there,
+        set I<sub>i</sub> = <strong>off, or &asymp; 25–30 kA</strong> so only a fault
+        close to the LV-MSB end of the feeder cable (where current approaches 38.5 kA)
+        trips with zero delay. <strong>G:</strong> 0.3 &times; 1 000 = 300 A,
+        ~0.2 s, graded under the incomer's G.</p>
+        <p><strong>Sanity:</strong> every pickup is above the circuit's legitimate
+        currents and below its minimum fault duty: 900 &lt; 3 600 &lt; 20 000 A
+        &#10003;.</p>
+      </details>
+    </li>
+
+    <li>
+      <p><strong>(UPS battery autonomy.)</strong> A smaller UPS carries
+      <strong>80 kVA at pf 0.9</strong> with inverter efficiency 0.93. The battery is
+      240 lead-acid cells (mean discharge voltage 1.90 V/cell, EOD 1.75 V/cell).
+      Autonomy policy: <strong>15 min</strong>. Aging factor 1.25, design margin 1.1.
+      Find the required cell capacity at the 15-min rate, and sanity-check in kWh.</p>
+      <details>
+        <summary>Show answer</summary>
+        <p>P<sub>ac</sub> = 80 &times; 0.9 = 72 kW;&nbsp;
+        P<sub>dc</sub> = 72 / 0.93 = <strong>77.4 kW</strong></p>
+        <p>V<sub>mean</sub> = 240 &times; 1.90 = 456 V &rarr;
+        I<sub>dc</sub> = 77 400 / 456 = <strong>170 A</strong>
+        (EOD check: 77 400 / 420 = 184 A — rate the battery breaker for this).</p>
+        <p>Raw capacity = 170 A &times; 0.25 h = 42.5 Ah;&nbsp; factored
+        = 42.5 &times; 1.25 &times; 1.1 = <strong>58 Ah &rarr; ~60 Ah class at the
+        15-min rate</strong> (read the vendor's discharge table at 15 min /
+        1.75 V/cell — a "60 Ah" 10-h-rate catalogue cell will <em>not</em> do it; the
+        rate penalty means a larger nominal cell).</p>
+        <p><strong>Sanity (energy):</strong> delivered = 77.4 kW &times; 0.25 h
+        &asymp; 19.4 kWh; string nominal &asymp; 456 V &times; 60 Ah &asymp; 27 kWh —
+        using ~70 % of nominal, consistent with the EOD limit and high rate &#10003;.</p>
+      </details>
+    </li>
+
+    <li>
+      <p><strong>(ATS timing budget.)</strong> An ATS is set with: detection/confirm
+      delay 2 s; DG crank-to-ready 8 s plus 3 s of voltage/frequency stabilisation;
+      transfer (with open-transition pause) 0.5 s. (a) How long is the essential bus
+      dark if the engine starts first crank? (b) If the first crank fails and the
+      program is 10 s crank / 10 s rest before the second (successful) 8 s + 3 s start,
+      what is the dark window? (c) What minimum UPS autonomy would a "bridge the
+      DG start &times; 3" policy demand, and why does the plant carry 30 min anyway?</p>
+      <details>
+        <summary>Show answer</summary>
+        <p>(a) t = 2 + (8 + 3) + 0.5 = <strong>14 s</strong>.</p>
+        <p>(b) t = 2 + (10 + 10) + (8 + 3) + 0.5 = <strong>33.5 s</strong> —
+        a failed crank more than doubles the window; this, not the success case, is the
+        bridging number to quote.</p>
+        <p>(c) Policy minimum = 3 &times; 33.5 &asymp; 100 s &rarr; ~2 min of battery.
+        The plant nevertheless carries <strong>30 min</strong> because the sizing case
+        is <em>"DG never starts"</em>: time for a manual start attempt plus an orderly,
+        DCS-visible plant shutdown (~15–25 min). Against that case 30 min is a
+        1.2–2&times; margin, not a luxury (<a href="#c-ats">§17</a>,
+        <a href="#c-ups">§16</a>).</p>
+      </details>
+    </li>
+
+    <li>
+      <p><strong>(Arc-flash energy at two clearing times.)</strong> An arc-flash study
+      point at the LV-MSB gives <strong>E = 18 cal/cm&sup2;</strong> at the standard
+      working distance with the incomer clearing on its short-time delay,
+      t<sub>1</sub> = 0.5 s. A maintenance-mode switch drops the clearing time to
+      t<sub>2</sub> = 0.1 s at the same arcing current. (a) Estimate the new incident
+      energy. (b) What PPE reality does each number imply? (c) Estimate both arc-flash
+      boundaries (D = 0.6 m, E<sub>B</sub> = 1.2 cal/cm&sup2;).</p>
+      <details>
+        <summary>Show answer</summary>
+        <p>(a) Same arcing current and distance &rarr; E &prop; t:
+        E<sub>2</sub> = 18 &times; (0.1 / 0.5) = <strong>3.6 cal/cm&sup2;</strong>.</p>
+        <p>(b) 18 cal/cm&sup2; demands heavy arc-rated gear (&gt; 12 cal/cm&sup2; class
+        — arc suit territory, restricted tasks); 3.6 cal/cm&sup2; falls within ordinary
+        daily arc-rated workwear (&le; 8 cal/cm&sup2; class). The maintenance switch
+        converts the board from "suit up or stay out" to routinely workable — the
+        clearing-time lever of <a href="#c-arcflash">§11</a>, at the price of degraded
+        selectivity while engaged, so it is enabled only during the work.</p>
+        <p>(c) AFB<sub>1</sub> = 0.6 &times; &radic;(18/1.2) = 0.6 &times; 3.873 =
+        <strong>2.3 m</strong>;&nbsp; AFB<sub>2</sub> = 0.6 &times; &radic;(3.6/1.2) =
+        0.6 &times; 1.732 = <strong>1.04 m</strong>. <em>Sanity:</em> energy fell
+        5&times;, boundary fell &radic;5 &asymp; 2.2&times; &#10003;.</p>
+      </details>
+    </li>
+  </ol>
+
+  <div class="key">
+    You have now verified that the equipment on the SLD is correctly rated — or found
+    where it is not — on the full Rev 3 basis: fault duties, breaker settings, the
+    standby chain (DG / UPS / ATS) and the arc-flash consequences of every clearing
+    time. Part 3 (<a href="#s-fmeca">SPOF Analysis &amp; FMECA</a>) takes those findings
+    and asks: <em>what happens when this item fails?</em> The calculations in Part 2 are
+    your evidence base for the criticality ratings and recommendations you will write
+    there.
+  </div>
+
+</section>
+

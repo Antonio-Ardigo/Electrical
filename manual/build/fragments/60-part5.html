@@ -2,7 +2,8 @@
      Part 5 — Field Tools & Case Study
      Sections: t-desk | t-prep | t-visual-checklist |
                t-drawing-checklist | t-analysis | t-report |
-               t-jubail | t-walkthrough
+               t-jubail | t-selfcheck | t-walkthrough | t-heat-safety
+     Basis: Saudi (SEC) Rev 3 — 13.8 kV / 400-230 V / 60 Hz / 50 °C
      ============================================================ -->
 
 <!-- ============================================================ -->
@@ -45,6 +46,21 @@
         <td>
           Foundation of every analysis: SPOF identification, load-flow model, protection
           review, SLD verification on site.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Utility (SEC) connection data</strong></td>
+        <td>
+          SEC connection agreement / service order; declared point-of-supply voltage
+          (13.8 kV is typical for plants of this size); SEC-advised fault level at the
+          intake (typically quoted in the 25–40 kA range — confirm the site-specific
+          letter, indicative); metering arrangement; any Saudi Grid Code / SEC
+          Distribution Code compliance correspondence.
+        </td>
+        <td>
+          The SEC fault-level letter is the source datum for the short-circuit study;
+          without it the MV switchgear withstand check cannot be closed. SEC Distribution
+          Code conditions (power factor, harmonics) also frame the PFC review.
         </td>
       </tr>
       <tr>
@@ -181,8 +197,10 @@
     <li>
       <strong>Extract equipment ratings for the calculation model.</strong> From the load
       schedule and equipment schedule, build the shell of your load-flow and short-circuit
-      models. Fill in transformer ratings, impedances, and utility fault-level data where
-      available; mark unknowns to be resolved on site.
+      models. Fill in transformer ratings, impedances, and the SEC-advised utility
+      fault-level data where available (if the SEC letter is missing, assume a 25 kA
+      design value and state the SEC range 25–40 kA as the uncertainty — indicative);
+      mark unknowns to be resolved on site.
     </li>
     <li>
       <strong>List the open questions.</strong> For each missing or poor-quality document,
@@ -284,6 +302,7 @@
     <li>Working copy of SLD and annotated question list in hand (printed).</li>
     <li>Blank or pre-headed Site Visit Report (SF-04) and Document Inventory (SF-01) in hand.</li>
     <li>Emergency muster-point location and site emergency contact number confirmed.</li>
+    <li>Heat plan agreed for the day: water supply, shaded/air-conditioned refuge identified, outdoor work scheduled around the midday restriction window if in season (see <a href="#t-heat-stress">Working Safely in Saudi Conditions</a>).</li>
   </ul>
 
   <div class="tip">
@@ -322,7 +341,8 @@
 
   <ul class="checklist">
     <li>Building access: entry under valid PTW; door interlock or warning notice present and legible.</li>
-    <li>Room condition: adequate lighting (emergency lighting present); no water ingress; no condensation on walls or ceiling; ventilation / HVAC operating.</li>
+    <li>Room condition: adequate lighting (emergency lighting present); no water ingress; no condensation on walls or ceiling; HVAC operating and room temperature reasonable (record the thermostat / room thermometer reading — in a 50 °C ambient climate the switchroom HVAC is reliability-critical for relays and breakers; see <a href="#s-environment-failures">Part 3 — environment-driven failures</a>).</li>
+    <li>HVAC redundancy and filtration: is there a second (standby) A/C unit, or does a single unit serve the room (SPOF candidate)? Sand/dust filters on air intakes present and visibly clean.</li>
     <li>Housekeeping: no stored materials, rubbish, or non-electrical equipment inside the switchroom.</li>
     <li>Fire protection: fire extinguisher(s) present, in-date, correct type (CO₂ or clean agent — never water in live electrical rooms); smoke/heat detector present.</li>
     <li>Floor-plan organisation matches SLD layout (left-to-right / top-to-bottom incomer → bus → feeders); note any discrepancies.</li>
@@ -335,15 +355,15 @@
   <h3 id="t-vc-mvswgr">Zone 2 — MV switchgear (MV-SWGR, MV-MET, MV-NER)</h3>
 
   <ul class="checklist">
-    <li><strong>MV-MET:</strong> utility metering cubicle present; seals intact; meter readable through window; confirm utility voltage level on nameplate.</li>
-    <li><strong>MV-SWGR:</strong> switchgear make, type, voltage class, and year legible on main nameplate; photograph.</li>
+    <li><strong>MV-MET:</strong> SEC metering cubicle present; SEC seals intact (never break or disturb a utility seal); meter readable through window; confirm utility voltage level on nameplate (expect 13.8 kV, 60 Hz for an SEC distribution supply).</li>
+    <li><strong>MV-SWGR:</strong> switchgear make, type, voltage class (expect 17.5 kV class for a 13.8 kV system), rated short-time withstand current (kA / s) and year legible on main nameplate; photograph. Compare the withstand rating to the SEC-advised fault level (25–40 kA range — site letter governs).</li>
     <li>Switchgear type: RMU (ring-main unit), metal-clad drawout, or fixed — record and compare to SLD assumption.</li>
     <li>Number of panel sections and their function (incomer, bus-section/tie, feeder) matches SLD; record any discrepancy.</li>
     <li>Breaker/switch positions visible through window or on mimic diagram: incomer CB — CLOSED or OPEN; bus-tie CB — CLOSED or OPEN (mark on working SLD).</li>
     <li>Relay front plates visible: manufacturer, type, and functional label (IDMT O/C, E/F) legible; compare relay type to protection study assumptions.</li>
     <li>Arc-flash hazard label on each cubicle: present, legible, and carrying an incident-energy value or PPE category; record the study revision date if stated. If absent or clearly out of date, flag as an FMECA finding.</li>
     <li>Indication lamps functioning (visible from outside — no cubicle entry); trip indication flags reset or showing.</li>
-    <li><strong>MV-NER:</strong> neutral earthing resistor present in its housing; nameplate rating (ohms, kA continuous) legible; no visible damage or corrosion on resistor elements or bushing terminals.</li>
+    <li><strong>MV-NER:</strong> neutral earthing resistor present in its housing; nameplate rating (ohms, amperes, time rating) legible — for the reference design expect the order of 19.9 Ω, 400 A / 10 s at 7.97 kV (13.8 kV ÷ √3), indicative; no visible damage or corrosion on resistor elements or bushing terminals; housing ventilation louvres free of sand and dust accumulation.</li>
     <li>Cable sealing ends visible through inspection windows: no apparent tracking, surface discoloration, or visible damage.</li>
     <li>Switchgear age: note year of manufacture; if ≥ 20 years, flag for FMECA.</li>
   </ul>
@@ -352,8 +372,9 @@
   <h3 id="t-vc-transformers">Zone 3 — Transformers (TX-1, TX-2)</h3>
 
   <ul class="checklist">
-    <li><strong>TX-1 and TX-2</strong> both present and identified; nameplate data photographed: kVA, primary/secondary voltage, vector group (expect Dyn11 or Dyn1), impedance (%), year of manufacture.</li>
-    <li>Cooling type confirmed from nameplate: ONAN (oil natural air natural) or ONAF (with fans); fans operating if ONAF.</li>
+    <li><strong>TX-1 and TX-2</strong> both present and identified; nameplate data photographed: kVA, primary/secondary voltage (expect 13.8/0.4 kV for the reference design), vector group (expect Dyn11), impedance % (reference design Z = 6 % — record the exact nameplate value, it drives the short-circuit calculation), year of manufacture.</li>
+    <li>Cooling type confirmed from nameplate: ONAN (oil natural air natural) or ONAF (with fans); fans operating if ONAF. Check the nameplate reference ambient — a transformer rated for 40 °C ambient is effectively derated at a 50 °C site; record for the loading check.</li>
+    <li>Radiator condition: fins free of sand, dust, and wind-blown debris (desert sites foul radiators quickly); no bent or blanked fin sections; sun-shade over the tank present where specified.</li>
     <li>Oil level visible in sight-glass: within normal (green) range; no oil staining on tank or bund.</li>
     <li>Oil temperature indicator: temperature reading noted; no over-temperature alarm showing.</li>
     <li>Buchholz relay (if ONAN oil-cooled): present; no gas-alarm flag showing.</li>
@@ -368,7 +389,7 @@
   <h3 id="t-vc-lvmsb">Zone 4 — LV main switchboard (LV-MSB, bus-tie BT)</h3>
 
   <ul class="checklist">
-    <li><strong>LV-MSB</strong> nameplate: voltage (400/415 V), form type (Form 4 or similar), busbar rating (A), year of manufacture.</li>
+    <li><strong>LV-MSB</strong> nameplate: voltage (expect 400/230 V, 60 Hz), form type (Form 4 or similar), busbar rating (A), rated short-circuit withstand (Icw kA / 1 s), year of manufacture. For the reference design the prospective fault is ≈ 38.5 kA from one transformer and ≈ 77 kA with the bus-tie closed — the nameplate Icw must cover the worst credible case (indicative; the site short-circuit study governs).</li>
     <li>Split-bus arrangement confirmed: Bus A and Bus B sections physically identifiable; incomer A and incomer B breakers present.</li>
     <li><strong>Bus-tie (BT):</strong> bus-tie breaker clearly labelled; position confirmed: OPEN (N/O) or CLOSED — record on SLD. If closed under normal conditions, flag for FMECA (negates split-bus SPOF mitigation).</li>
     <li>Incomer A and incomer B breakers: rated current, type, and manufacturer legible on front label or nameplate.</li>
@@ -409,7 +430,7 @@
   <h3 id="t-vc-standby">Zone 7 — Standby plant (DG, ATS)</h3>
 
   <ul class="checklist">
-    <li><strong>DG:</strong> diesel generator set present; nameplate photographed: kVA rating, voltage (400/415 V), frequency (50 Hz), make/model/year, power factor.</li>
+    <li><strong>DG:</strong> diesel generator set present; nameplate photographed: kVA rating and rating class (ESP/PRP — note the ambient temperature at which the rating applies; a set rated at 25 °C delivers materially less at 50 °C site ambient), voltage (expect 400/230 V), frequency (60 Hz, 1800 rpm for a 4-pole set), make/model/year, power factor.</li>
     <li>DG fuel level: fuel-level gauge readable; adequate fuel for a minimum 8-hour run (indicative; confirm the site minimum with the escort).</li>
     <li>DG condition: coolant level visible; no oil or fuel pooling beneath unit; air-intake filters accessible and not visibly clogged.</li>
     <li>DG battery (starting battery): battery connections clean, no corrosion; battery charger indicator lamp showing charged. Note last documented start-test date from logbook if accessible.</li>
@@ -423,8 +444,8 @@
   <h3 id="t-vc-dc">Zone 8 — Control and DC supplies (UPS, DCDB)</h3>
 
   <ul class="checklist">
-    <li><strong>UPS:</strong> UPS present; nameplate: kVA, battery autonomy (hours at full load), AC input / output voltage; bypass switch position.</li>
-    <li>UPS battery condition: battery cabinet(s) present; no swollen or leaking cells visible through cabinet vents or viewing points (do not open cabinet).</li>
+    <li><strong>UPS:</strong> UPS present; nameplate: kVA, battery autonomy at full load (the reference design carries 100 kVA / 30 min — indicative), AC input / output voltage (expect 400/230 V, 60 Hz); bypass switch position.</li>
+    <li>UPS battery condition: battery cabinet(s) present; no swollen or leaking cells visible through cabinet vents or viewing points (do not open cabinet). Confirm the battery room / cabinet is air-conditioned — VRLA battery life roughly halves for every 8–10 °C above 25 °C, so an un-cooled battery room in a 50 °C climate is itself a finding.</li>
     <li>UPS front-panel status: mains-OK, battery-OK, fault-alarm indicators; note any active alarms.</li>
     <li><strong>DCDB:</strong> DC battery and charger panel identified; make, model, DC voltage (typically 110 V DC for MV switchgear trip circuits, or 24 V DC for control), charger rating.</li>
     <li>DC charger condition: note age; any audible fan noise, vibration, or elevated surface temperature? Check for corrosion on terminals. Note last capacity-discharge test date from records if accessible.</li>
@@ -758,7 +779,7 @@
       <strong>Load flow (indicative)</strong> —
       see <a href="#c-loadflow">Part 2 — Load Flow</a>:
       run a steady-state load flow to verify bus voltages and identify any heavily loaded
-      feeders. Confirm voltage at the end of the longest cable run is within ±5 % of nominal (IEC 60364 — consistent with the acceptance limit stated in <a href="#c-loadflow">Part 2 — Load Flow</a>).
+      feeders. Confirm voltage at the end of the longest cable run is within ±5 % of nominal (SASO-adopted IEC 60364 / SBC 401 — consistent with the acceptance limit stated in <a href="#c-loadflow">Part 2 — Load Flow</a>). Remember the 50 °C-ambient derating (XLPE in air ≈ 0.82) when judging "heavily loaded" cables.
     </li>
   </ul>
 
@@ -856,7 +877,9 @@
         <td>
           PTW conditions observed; any QHSE concerns identified on site (e.g. absent arc-flash
           labels, missing fire extinguisher, inadequate lighting); the non-intrusive rule
-          adherence statement; heat-stress or other environmental controls applied.
+          adherence statement; heat-stress and other environmental controls applied
+          (work-rest cycle used, hydration, midday restrictions if in season — see
+          <a href="#t-heat-stress">Working Safely in Saudi Conditions</a>).
         </td>
         <td>
           The arc-flash label finding (if raised) is both a QHSE entry here and an FMECA row
@@ -936,12 +959,12 @@
   <div class="note">
     <strong>Scope disclosure — why the Jubail plant is larger than the manual's reference basis.</strong>
     The Jubail SWRO study is a deliberately <em>larger, simulated plant</em> designed to show that
-    the assessment <em>method scales</em> beyond the manual's indicative ~2 MW / 11 kV / 400 V
-    reference. The Jubail plant uses:
+    the assessment <em>method scales</em> beyond the manual's indicative ~2 MW / 13.8 kV / 400 V
+    SEC reference basis. The Jubail plant uses:
     <ul>
-      <li>132 kV grid incomers (not 11 kV)</li>
-      <li>2 × 40 MVA 132/13.8 kV transformers (not 2 × 1600 kVA 11/0.4 kV)</li>
-      <li>13.8 kV main switchboard (not 400 V LV-MSB)</li>
+      <li>132 kV transmission grid incomers (not a 13.8 kV SEC distribution intake)</li>
+      <li>2 × 40 MVA 132/13.8 kV transformers (not 2 × 1600 kVA 13.8/0.4 kV)</li>
+      <li>a 13.8 kV main switchboard distributing directly to MV process loads (not a 400 V LV-MSB)</li>
     </ul>
     The method — SPOF tracing, FMECA scoring on a 1–5 scale, priority banding — is identical.
     The scale difference simply exercises the forms on a larger system.
@@ -1139,6 +1162,12 @@
   </div>
 
   <h3 id="t-jubail-embedded">Jubail SWRO study — all four forms</h3>
+
+  <div class="warning"><strong>Document basis note.</strong> The embedded study below was
+  prepared before the Rev 3 Saudi (SEC) localization of this manual and is retained verbatim
+  as a worked exemplar of the four-form method. Where it cites the original reference basis,
+  read 11 kV as 13.8 kV, 415 V as 400 V and 50 Hz as 60 Hz; the method, traceability chain
+  and form structure are unchanged.</div>
 
   <div class="doc-embed" data-src="Forms Examples/P01_JUBAIL_DESAL_STUDY.html"></div>
 
@@ -1405,9 +1434,12 @@
     </li>
     <li>
       <strong>Indicative short-circuit level</strong> (<a href="#c-shortcircuit">Part 2</a>):
-      using transformer impedance and utility fault level (if known), estimate the maximum
-      fault current at the LV main busbar. Compare to switchgear rated fault-withstand current.
-      If utility fault level is not yet available, note this as a data-call.
+      using transformer impedance and the SEC-advised utility fault level (if known), estimate
+      the maximum fault current at the LV main busbar — for the reference design (1600 kVA,
+      Z = 6 %) this is ≈ 38.5 kA per transformer, ≈ 77 kA with the bus-tie closed, indicative.
+      Compare to switchgear rated fault-withstand current. If the SEC fault-level letter is
+      not yet available, note this as a data-call and assume 25 kA at the MV intake
+      (SEC range 25–40 kA).
     </li>
     <li>
       <strong>Genset sizing check</strong> (<a href="#c-genset">Part 2</a>):
@@ -1472,6 +1504,15 @@
 
   <!-- ── DAY 1 ── -->
   <h3 id="t-wt-day1">Day 1 — Site visit</h3>
+
+  <div class="tip">
+    <strong>Tip — plan the day around the heat.</strong>
+    In summer, start the outdoor portions (transformer bays, DG compound, earthing pits) at
+    07:00–09:00 while ambient is lowest, keep the air-conditioned switchroom zones for the
+    middle of the day, and respect the midday outdoor-work restriction window where it applies
+    (see <a href="#t-heat-stress">Working Safely in Saudi Conditions</a>). The zone order below
+    may be re-sequenced for this — the checklist content does not change.
+  </div>
 
   <h4>Morning — MV and transformer walk-down</h4>
 
@@ -1605,5 +1646,113 @@
 
   <div class="key">
     You are now ready. You have completed one full plant cycle: desk study → site visit → analysis → recommendations → submission. Repeat this sequence for each of the 21 plants in the campaign, adjusting the timeline as plant complexity and document availability dictate. Blank forms for every new plant are in <a href="#a-blankforms">Appendix — Blank Forms</a>.
+  </div>
+</section>
+
+<section id="t-heat-safety" data-title="Working Safely in Saudi Conditions" data-part="Part 5 — Field Tools &amp; Case Study">
+  <h2>Working Safely in Saudi Conditions</h2>
+
+  <p>
+    Everything in this part assumes you can think clearly on site. In a Saudi summer that is
+    not a given: switchyards, rooftops and un-conditioned electrical rooms routinely exceed
+    the 50&nbsp;°C design ambient, and the physiological load of heat degrades exactly the
+    faculties an assessment depends on — attention, judgement and fine motor control. Treat
+    heat as a site hazard with the same discipline you apply to stored energy and arc flash.
+  </p>
+
+  <h3 id="t-heat-stress">Heat-stress management</h3>
+
+  <p>
+    Plan the day around the heat, not through it. Field work in summer follows a simple
+    pattern: outdoor and un-conditioned work in the early morning, desk work, document review
+    and conditioned-room inspections in the middle of the day, and a short second outdoor
+    window in the late afternoon if needed.
+  </p>
+
+  <ul>
+    <li><strong>Midday rule.</strong> Saudi labour regulations prohibit outdoor work under the
+      sun during the hottest midday hours (approximately 12:00–15:00) from mid-June to
+      mid-September (indicative — confirm the current ministerial decision and site rules).
+      Plan visits so that no outdoor task lands in that window.</li>
+    <li><strong>Work–rest cycles.</strong> At wet-bulb globe temperatures typical of a Gulf
+      summer, plan 15-minute breaks in shade or air conditioning at least every 45–60 minutes
+      of moderate outdoor work, shortening as humidity rises (indicative; follow the site HSE
+      plan).</li>
+    <li><strong>Hydration.</strong> Drink before you are thirsty — roughly a cup of water
+      every 15–20 minutes during outdoor work. Avoid starting a site day already dehydrated.</li>
+    <li><strong>Buddy system.</strong> Never work alone in un-conditioned electrical rooms or
+      outdoor switchyards in summer. Early heat exhaustion is easier to spot in a colleague
+      than in yourself: confusion, irritability, clumsiness, stopping sweating.</li>
+    <li><strong>Refuge.</strong> Identify the nearest air-conditioned refuge (control room,
+      vehicle, welfare cabin) before starting outdoor work, and pre-position water there.</li>
+  </ul>
+
+  <div class="warning">
+    Heat stroke is a medical emergency with rapid onset. If a team member becomes confused,
+    staggers, or stops sweating in the heat: stop work, move them to the refuge, cool
+    aggressively (water on skin, airflow), and call the site emergency number. Do not
+    "walk it off".
+  </div>
+
+  <h3 id="t-heat-ppe">PPE in the heat</h3>
+
+  <p>
+    Arc-flash PPE and heat work against each other. A CAT 2 arc-rated coverall is hot; a
+    CAT 3/4 suit with hood is a personal sauna. The practical consequences:
+  </p>
+
+  <ul>
+    <li><strong>Schedule energized tasks early.</strong> Any task requiring arc-rated PPE
+      beyond daily workwear (panel opening, racking, live testing) belongs in the coolest part
+      of the day — first thing in the morning.</li>
+    <li><strong>Shorten stints.</strong> In summer, halve the planned continuous working time
+      in CAT 2+ PPE and rotate personnel. Plan the task so the suited time is minimised
+      (preparation and briefing unsuited, suit up only for the energized step).</li>
+    <li><strong>Cooling aids.</strong> Cooling vests and neck wraps under arc-rated outer
+      layers are effective; verify they are non-melting and compatible with the arc rating.</li>
+    <li><strong>Never trade protection for comfort.</strong> The arc-flash boundary and PPE
+      category from the <a href="#c-arcflash">arc-flash study</a> are not negotiable in
+      summer. If the PPE cannot be tolerated, defer the task or de-energize.</li>
+  </ul>
+
+  <h3 id="t-heat-permits">Permits, rooms and thermography</h3>
+
+  <ul>
+    <li><strong>Heat as a permit condition.</strong> Summer permits-to-work should state the
+      work window, work–rest cycle and refuge location alongside the usual electrical
+      isolations. If the site permit form has no heat section, write it into "additional
+      precautions".</li>
+    <li><strong>Electrical-room thermal limits.</strong> A switchgear room above ~35&nbsp;°C
+      is telling you the HVAC is failing — and protection relays, VFDs and battery chargers
+      are suffering with you (see <a href="#s-environment-failures">environmental failure
+      modes</a>). Record the room temperature on the inspection checklist; treat a hot room
+      as a finding, not an inconvenience.</li>
+    <li><strong>Summer thermography.</strong> Peak summer load is the best time for a
+      thermographic round of busbar joints, cable terminations and transformer fans — and the
+      worst time to linger. Plan camera work in short stints from open doorways where
+      possible.</li>
+    <li><strong>Vehicle and equipment staging.</strong> Test instruments left in a parked
+      vehicle can exceed 70&nbsp;°C — beyond most instruments' storage rating. Stage
+      instruments in conditioned space and check calibration stickers after any heat soak.</li>
+  </ul>
+
+  <h3 id="t-heat-checklist">Summer field-day checklist</h3>
+
+  <ul class="checklist">
+    <li>Outdoor tasks scheduled outside the prohibited midday window (≈12:00–15:00, mid-June to mid-September).</li>
+    <li>Work–rest cycle and refuge location agreed at the toolbox talk; water pre-positioned.</li>
+    <li>Buddy assignments confirmed for all outdoor and un-conditioned-room work.</li>
+    <li>Energized / arc-rated-PPE tasks placed in the early-morning slot, with rotation planned.</li>
+    <li>Electrical-room temperatures recorded on the inspection checklist; HVAC alarms verified.</li>
+    <li>Cooling vests issued and checked compatible with the required arc rating.</li>
+    <li>Instruments staged in conditioned space; no instruments or batteries left in vehicles.</li>
+    <li>Site emergency number and heat-stroke first-aid steps reviewed at the briefing.</li>
+  </ul>
+
+  <div class="key">
+    Key takeaway: in a Saudi summer, the heat plan is part of the electrical safety plan. A
+    dehydrated engineer in a 55&nbsp;°C switchgear room makes the kind of mistakes that
+    arc-flash PPE exists to survive. Schedule the heat out of the job first; PPE is the last
+    line, not the first.
   </div>
 </section>

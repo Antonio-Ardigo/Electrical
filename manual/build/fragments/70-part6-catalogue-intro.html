@@ -1,0 +1,401 @@
+<section id="cat-intro" data-title="Using Commercial Catalogues" data-part="Part 6 — Equipment Catalogues">
+  <h2>Using Commercial Catalogues</h2>
+  <div class="warning"><strong>Indicative catalogue data.</strong> Product families and typical
+parameters are listed for training and familiarisation only, are approximate, and change with
+manufacturer revisions. No part numbers are given; always obtain current certified data sheets
+and SASO/SEC acceptance status from the manufacturer.</div>
+  <h3 id="cat-intro-why">Why a field engineer reads catalogues at all</h3>
+  <p>Everything in Parts 1–5 of this manual deals in <em>abstractions</em>: a tag on a single-line
+diagram, a calculated current, a required breaking capacity. <code>TX-1</code> is "a 1600 kVA,
+13.8/0.4 kV, Dyn11 transformer with Z = 6 %" — but you cannot phone a factory and order
+"<code>TX-1</code>". At some point every abstraction has to be translated into a <strong>commercial
+product</strong>: a specific manufacturer's product family, in a specific frame size, with a specific
+options package, that a factory will actually build, test and ship. Commercial catalogues are the
+dictionary for that translation, and Part 6 teaches you to read them fluently.</p>
+  <p>Consider the journey of one plant tag. The calculations in
+<a href="#c-transformer">Part 2 — Transformer sizing</a> tell you the plant needs 2 × 1600 kVA at
+13.8/0.4 kV. A transformer catalogue then tells you which standard ratings exist (1600 kVA is a
+standard IEC ladder step; 1700 kVA is not), whether the vendor offers cast-resin and oil-immersed
+construction at that rating, what impedance options are available around the 6 % you assumed, what
+the losses and noise levels typically are, and — critically for a Saudi site — what the unit can
+deliver continuously at <strong>50 °C ambient</strong> rather than the IEC reference conditions the
+headline rating assumes. Every other tag in the plant scheme makes the same journey:</p>
+  <table class="tbl">
+    <thead>
+      <tr><th>Plant tag</th><th>Abstraction on the SLD</th><th>What you actually buy (indicative)</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>TX-1 / TX-2</code></td><td>2 × 1600 kVA, 13.8/0.4 kV, Dyn11, Z = 6 %</td><td>A catalogue distribution transformer — cast-resin or ONAN family, standard ratings ladder (<a href="#cat-transformers">catalogue section</a>)</td></tr>
+      <tr><td><code>MV-SWGR</code></td><td>17.5 kV class, 31.5 kA / 3 s, 630–1250 A bus</td><td>A type-tested MV panel family, e.g. air- or gas-insulated metal-enclosed switchgear (<a href="#cat-mv-swgr">catalogue section</a>)</td></tr>
+      <tr><td><code>LV-MSB</code></td><td>400 V PCC, ~3200 A bus, 50–65 kA, Form 4b</td><td>A verified IEC 61439 assembly built from a vendor's ACB/MCCB system (<a href="#cat-lv-breakers">catalogue section</a>)</td></tr>
+      <tr><td><code>MCC-1..n</code></td><td>Motor control centre, starter buckets</td><td>A modular MCC platform with standard bucket sizes and starter types (<a href="#cat-mcc">catalogue section</a>)</td></tr>
+      <tr><td><code>VFD</code></td><td>Variable frequency drive per driven load</td><td>A drive family selected by kW/current frame, with chokes and filters as options (<a href="#cat-vfd">catalogue section</a>)</td></tr>
+      <tr><td><code>DG</code></td><td>1250 kVA standby set (ESP at 50 °C)</td><td>An engine-alternator package from a genset range, derated for site conditions (<a href="#cat-gensets">catalogue section</a>)</td></tr>
+      <tr><td><code>ATS</code></td><td>Open-transition transfer, ≤ 10 s</td><td>A transfer-switch or breaker-pair scheme with a transfer controller (<a href="#cat-ats">catalogue section</a>)</td></tr>
+      <tr><td><code>UPS</code></td><td>100 kVA / 30 min clean power</td><td>A three-phase double-conversion UPS family plus battery system (<a href="#cat-ups">catalogue section</a>)</td></tr>
+      <tr><td><code>NER</code></td><td>7.97 kV, 400 A / 10 s → 19.9 Ω</td><td>An engineered resistor assembly — semi-custom, built from standard grid elements (<a href="#cat-aux">catalogue section</a>)</td></tr>
+    </tbody>
+  </table>
+  <p>Notice the pattern in the right-hand column: almost nothing is bought as a one-off design.
+Vendors sell <em>families</em>, and your job is to land the plant's calculated requirement on the
+correct rung of a family's ratings ladder — with margin, with the right options, and with proof
+(test certificates) that the rung really holds the load. All values above are indicative; the
+detailed design and the vendor's certified data govern.</p>
+  <h3 id="cat-intro-document-types">Catalogue, datasheet, type-test certificate, GA drawing — four different documents</h3>
+  <p>Field engineers routinely use these four terms loosely, and vendors exploit the looseness.
+They are four different documents with four different levels of commitment:</p>
+  <ul>
+    <li><strong>Catalogue.</strong> A <em>marketing and selection</em> document covering an entire
+product family. It tells you what exists: frame sizes, the ratings ladder, the options matrix,
+typical dimensions. It is deliberately generic, frequently revised, and legally commits the vendor
+to almost nothing. Use it for shortlisting and feasibility — never for final design.</li>
+    <li><strong>Datasheet.</strong> A document describing <em>one specific configuration</em> —
+either a generic "technical data" sheet for one model, or (better) a project datasheet filled in
+for your order. A signed, project-specific datasheet is a contractual document; a catalogue page
+is not. The skill of reading one critically is the subject of
+<a href="#cat-howto-datasheets">the next section</a>.</li>
+    <li><strong>Type-test certificate.</strong> Proof, issued after laboratory testing of a
+representative sample (often by an independent body such as a recognised short-circuit testing
+station), that the <em>design</em> meets its standard — e.g. that an LV assembly survived its rated
+short-circuit withstand, or that a breaker actually interrupted its claimed I<sub>cu</sub>. Type
+tests are done once per design, not per unit. The companion document, the <strong>routine test
+report</strong>, is done on <em>your serial number</em> before despatch. You need both; they prove
+different things.</li>
+    <li><strong>GA (general arrangement) drawing.</strong> The dimensional truth: overall sizes,
+masses, cable entry positions, door swings, lifting points, foundation/plinth details. The GA is
+what the civil designer, the cable router and the rigger work from. A switchboard that meets every
+electrical number but does not fit through the switchroom door is still a failed procurement —
+check the GA against the room early.</li>
+  </ul>
+  <div class="key">Key takeaway: a catalogue tells you what <em>could</em> exist, a datasheet what
+you <em>asked for</em>, a type-test certificate what was <em>proven</em>, and a GA drawing what will
+<em>physically arrive</em>. A complete equipment dossier contains all four — accept nothing less at
+order and at FAT.</div>
+
+  <h3 id="cat-intro-part6-map">How Part 6 is organised</h3>
+  <p>Part 6 contains one catalogue section per equipment class. Each section follows the same
+recipe: the indicative-data disclaimer, the equipment class in one paragraph, the typical vendor
+product families with indicative parameters, the selection parameters that matter, and Saudi-specific
+notes (50 °C, dust, 60 Hz, SASO/SEC status). Crucially, every catalogue section maps back to the
+Part 2 calculation section that <em>sizes</em> the equipment — read them as pairs:</p>
+  <table class="tbl">
+    <thead>
+      <tr><th>Part 6 catalogue section</th><th>Equipment class</th><th>Sized by (Part 2)</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><a href="#cat-mv-swgr">MV switchgear</a></td><td>13.8 kV metal-enclosed switchgear</td><td><a href="#c-shortcircuit">Short-circuit study</a>, <a href="#c-breaker">breaker selection</a></td></tr>
+      <tr><td><a href="#cat-transformers">Transformers</a></td><td>MV/LV power transformers</td><td><a href="#c-transformer">Transformer sizing</a></td></tr>
+      <tr><td><a href="#cat-lv-breakers">LV ACBs &amp; MCCBs</a></td><td>Main LV switchboard breakers</td><td><a href="#c-breaker">Breaker selection</a>, <a href="#c-shortcircuit">fault levels</a></td></tr>
+      <tr><td><a href="#cat-mcc">Motor control centres</a></td><td>Starter assemblies</td><td><a href="#c-cables">Cable sizing</a> and motor load list</td></tr>
+      <tr><td><a href="#cat-vfd">Variable frequency drives</a></td><td>Speed-controlled drives</td><td>Motor list; harmonics feed the PFC design</td></tr>
+      <tr><td><a href="#cat-gensets">Diesel generator sets</a></td><td>Standby power</td><td>Essential-load schedule</td></tr>
+      <tr><td><a href="#cat-ats">Transfer switches</a></td><td>Utility ↔ DG changeover</td><td>Essential-bus design</td></tr>
+      <tr><td><a href="#cat-ups">UPS systems</a></td><td>Clean power for DCS/PLC</td><td>Control-power load schedule</td></tr>
+      <tr><td><a href="#cat-relays">Protection relays</a></td><td>IEDs for MV protection</td><td>Protection coordination study</td></tr>
+      <tr><td><a href="#cat-aux">NER &amp; auxiliaries</a></td><td>Neutral earthing resistor etc.</td><td>Earth-fault design (NER 19.9 Ω indicative)</td></tr>
+      <tr><td><a href="#cat-dc">DC systems</a></td><td>110 V DC battery &amp; charger</td><td>Tripping/closing duty schedule</td></tr>
+    </tbody>
+  </table>
+  <div class="tip">Working method: when a datasheet number puzzles you, jump back to the paired
+Part 2 section and re-derive the requirement yourself. If the vendor's number and your calculation
+disagree, one of you has missed a derating — at 50 °C in Saudi Arabia, it is usually the
+datasheet's reference conditions that are optimistic, not your arithmetic.</div>
+  <h3 id="cat-intro-product-families">How vendors structure product families</h3>
+  <p>Once you have read three or four catalogues, you notice that every major vendor organises its
+range the same way, because manufacturing economics force them to. Understanding the structure
+makes any catalogue navigable in minutes:</p>
+  <ul>
+    <li><strong>Frame sizes.</strong> The physical "chassis" comes in a small number of sizes, and
+each frame hosts a band of ratings. An air circuit breaker family might use three or four frames
+covering roughly 630 A up to 6300 A; a drive family might use eight frames from fractional kW to
+several hundred kW. Within one frame the cost, dimensions and spare parts are nearly identical —
+which is why stepping up <em>within</em> a frame is cheap, and stepping <em>across</em> a frame
+boundary is expensive. A 2500 A and a 3200 A breaker may share a frame; a 4000 A unit may not.</li>
+    <li><strong>Ratings ladders.</strong> Ratings follow preferred-number ladders inherited from
+the IEC R10 series: 630 — 800 — 1000 — 1250 — 1600 — 2000 — 2500 — 3200 A, or 800 — 1000 — 1250 —
+1600 — 2000 kVA. Your calculated requirement almost never lands exactly on a rung; you round
+<em>up</em> to the next rung, which is exactly how the plant's 2353 kVA demand became
+2 × 1600 kVA transformers and the ~2309 A transformer LV full-load current became a 2500 A-class
+incomer (indicative — see <a href="#c-breaker">Part 2</a>).</li>
+    <li><strong>Options matrices.</strong> The base unit is configured by an options matrix: trip
+unit grade, number of poles, fixed vs withdrawable, motorised charging, shunt trip and undervoltage
+releases, auxiliary contacts, communication protocols, terminal styles, coatings for harsh
+environments. The matrix is where datasheet surprises hide — two "identical" breakers can differ
+enormously in what their trip units can actually do. Always specify options explicitly; never let
+"standard configuration" decide for you.</li>
+  </ul>
+  <p>Typical families you will meet in the following sections include LV air circuit breaker
+ranges such as ABB Emax 2, Schneider Electric Masterpact MTZ and Siemens 3WA, and MV switchgear
+platforms such as Siemens NXAIR or ABB UniGear (indicative examples only — availability and
+SASO/SEC status must be confirmed per project).</p>
+
+  <h3 id="cat-intro-pricing-leadtimes">Prices and lead times — the part the catalogue does not say out loud</h3>
+  <p><strong>List price vs project price.</strong> Where catalogues quote prices at all, they quote
+<em>list</em> prices. Real projects buy at project pricing, negotiated per package, with discounts
+that vary widely by vendor, volume, region and how badly the local channel wants the job —
+differences of tens of percent against list are routine (indicative; commercial terms are outside
+this manual's scope). The practical consequences for the field engineer: never build a cost
+estimate from list prices without a factor; never assume two vendors' list prices compare like for
+like; and understand that a vendor's "free" options at quotation time may reappear as expensive
+spare parts later. The whole-of-life cost — spares, service, local support presence in the Kingdom
+— often matters more than the purchase delta.</p>
+  <p><strong>Lead time is a design constraint, not a procurement detail.</strong> Long-lead
+electrical equipment regularly sits on the project critical path. Indicative manufacturing lead
+times (ex-works, excluding shipping, customs and SASO/SABER clearance, and highly market-dependent):</p>
+  <table class="tbl">
+    <thead>
+      <tr><th>Equipment</th><th>Indicative lead time</th><th>Why it is long</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>MV/LV power transformers</td><td>~6–12 months</td><td>Core steel and winding capacity bookings; per-order design and routine testing</td></tr>
+      <tr><td>MV switchgear</td><td>~6–12 months</td><td>Engineered-to-order panels, protection integration, factory acceptance testing</td></tr>
+      <tr><td>LV switchboards / MCCs</td><td>~4–8 months</td><td>Local panel-building queue plus breaker component lead times</td></tr>
+      <tr><td>Diesel generator sets</td><td>~4–9 months</td><td>Engine allocation, alternator matching, canopy build</td></tr>
+      <tr><td>UPS &amp; battery systems</td><td>~3–6 months</td><td>Battery sourcing and certification documentation</td></tr>
+    </tbody>
+  </table>
+  <div class="warning">A 9-month transformer lead time means the transformer specification must be
+frozen and ordered while the rest of the plant is still being designed. Late changes to "just" the
+impedance or the tapping range can restart the queue. Lock the long-lead datasheets first; design
+the rest of the plant around them.</div>
+  <div class="tip">When schedule is tight, ask vendors early about (a) stock or short-cycle
+variants of standard ratings, (b) production slot reservations against a letter of intent, and
+(c) which options force engineered-to-order treatment. Sometimes choosing the next standard rung
+up the ladder — already in stock — beats waiting for the "exact" unit.</div>
+</section>
+
+<section id="cat-howto-datasheets" data-title="How to Read a Datasheet" data-part="Part 6 — Equipment Catalogues">
+  <h2>How to Read a Datasheet</h2>
+  <div class="warning"><strong>Indicative catalogue data.</strong> Product families and typical
+parameters are listed for training and familiarisation only, are approximate, and change with
+manufacturer revisions. No part numbers are given; always obtain current certified data sheets
+and SASO/SEC acceptance status from the manufacturer.</div>
+  <h3 id="cat-howto-anatomy">The anatomy of a datasheet — read it like an auditor, not a customer</h3>
+  <p>A datasheet is written to be believed; you should read it to be <em>verified</em>. The single
+most important habit is this: <strong>every number on a datasheet is true only under stated
+reference conditions</strong>, and the reference conditions are usually printed in small type, in a
+footnote, or in a separate "service conditions" clause. IEC reference conditions typically assume
+a 40 °C maximum ambient, ≤ 1000 m altitude, clean dry air and a stated frequency. The plant in
+this manual sits at <strong>50 °C design ambient, in dust and sand, on a 60 Hz system</strong> —
+so almost every headline number needs checking against a derating table before you may use it.</p>
+  <p>Read any datasheet in this order:</p>
+  <ul>
+    <li><strong>Standards line first.</strong> Which IEC standards, which edition, and — the key
+question — <em>tested</em> to them or merely "designed in accordance with" them (see the
+red-flag list below).</li>
+    <li><strong>Service conditions next.</strong> Reference ambient, altitude, pollution/humidity
+class. This calibrates every other number on the page.</li>
+    <li><strong>Then the ratings table</strong>, translating each row into the language of your
+Part 2 calculations.</li>
+    <li><strong>Finally the footnotes</strong> — read every one. Footnotes are where ratings die.</li>
+  </ul>
+
+  <h3 id="cat-howto-worked-acb">Worked walk-through — a typical LV ACB datasheet table</h3>
+  <p>Below is a <em>fictitious but typical</em> ratings table for an LV air circuit breaker of the
+class you would shortlist as the incomer of <code>LV-MSB</code> (which needs ≥ 2500 A continuous
+for the ~2309 A transformer LV full-load current, and a breaking capacity covering the tie-closed
+fault level of ~77 kA — see <a href="#c-breaker">breaker selection</a> and
+<a href="#c-shortcircuit">the short-circuit study</a>; all indicative). No manufacturer or part
+number is implied.</p>
+  <table class="tbl">
+    <thead>
+      <tr><th>Datasheet line (typical wording)</th><th>Typical value (indicative)</th><th>What it actually means for this plant</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Rated current I<sub>n</sub> (at 40 °C)</td><td>2500 A</td><td>Continuous capability <em>at the reference ambient</em>. Not yet usable — see the derating row.</td></tr>
+      <tr><td>Derated current at 50 °C / 55 °C</td><td>~2400 A / ~2300 A</td><td>The number that matters in Saudi Arabia. At 50 °C switchroom-failure conditions this "2500 A" breaker carries ~2400 A — still above 2309 A FLC, but the margin has shrunk from ~8 % to ~4 %. Check the <em>assembly</em> derating too: the breaker inside a Form 4b cubicle runs hotter than the bare breaker the table describes.</td></tr>
+      <tr><td>Rated operational voltage U<sub>e</sub></td><td>690 V</td><td>Maximum system voltage at which performance is guaranteed. Our 400 V system is comfortably inside — but I<sub>cu</sub> is quoted <em>per voltage</em>: read the kA column for 400/415 V, not the headline.</td></tr>
+      <tr><td>Rated insulation voltage U<sub>i</sub></td><td>1000 V</td><td>Dielectric design level of the insulation system; must be ≥ U<sub>e</sub>.</td></tr>
+      <tr><td>Rated impulse withstand U<sub>imp</sub></td><td>12 kV</td><td>Surge/lightning impulse capability; relevant to insulation coordination of the installation.</td></tr>
+      <tr><td>Ultimate breaking capacity I<sub>cu</sub> at 400/415 V</td><td>85 kA</td><td>The biggest fault the breaker can interrupt — <em>once</em>, possibly ending its service life. Must exceed the 77 kA tie-closed prospective fault (indicative).</td></tr>
+      <tr><td>Service breaking capacity I<sub>cs</sub></td><td>100 % of I<sub>cu</sub> (= 85 kA)</td><td>The fault level it can interrupt and <em>remain serviceable</em>. For a main incomer, demand I<sub>cs</sub> = 100 % I<sub>cu</sub>; budget breakers quoting I<sub>cs</sub> = 50 % I<sub>cu</sub> are throwaway devices after a full fault.</td></tr>
+      <tr><td>Short-time withstand I<sub>cw</sub></td><td>85 kA / 1 s</td><td>What it can <em>carry without tripping</em> while a downstream device clears — the property that makes time-graded selectivity possible. ACBs have high I<sub>cw</sub>; MCCBs typically do not. The time qualifier (1 s, 3 s) is part of the rating, never optional.</td></tr>
+      <tr><td>Rated frequency</td><td>50 / 60 Hz</td><td>Dual-rated — usable on the SEC 60 Hz system. Verify the trip unit and accessories share the dual rating (see below).</td></tr>
+      <tr><td>Degree of protection (front)</td><td>IP30 (IP54 with door kit)</td><td>The bare breaker is <em>not</em> dust-tight; the assembly around it must deliver the site's IP requirement.</td></tr>
+      <tr><td>Altitude</td><td>≤ 2000 m without correction</td><td>Above this, voltage and current corrections apply. Most Saudi industrial sites are low-altitude, but check — some inland plateau sites are not.</td></tr>
+      <tr><td>Standards</td><td>IEC 60947-1 / 60947-2, type-tested</td><td>The breaker product standard. The switchboard it lives in is verified separately to IEC 61439-1/-2 — two different certificates, both required.</td></tr>
+    </tbody>
+  </table>
+  <h3 id="cat-howto-ratings-decode">Decoding the ratings that bite hardest in Saudi service</h3>
+  <h4>Rated current — at <em>which</em> ambient?</h4>
+  <p>IEC LV gear is conventionally rated at 40 °C ambient (some assemblies at a 35 °C daily
+average). A Saudi outdoor or poorly cooled indoor location is designed at 50 °C, so the question
+to ask of <em>every</em> current rating is: "at what ambient, and what is the value at 50 °C?"
+A good datasheet has a derating table; a poor one is silent. Typical derating from 40 °C to 50 °C
+runs around 4–10 % depending on the device and enclosure (indicative). And remember the chain:
+breaker derating, busbar derating, cable derating (XLPE in 50 °C air ≈ ×0.82 — see
+<a href="#c-cables">cable sizing</a>) all stack on the same circuit. The weakest derated link sets
+the circuit rating.</p>
+  <h4>I<sub>cu</sub> vs I<sub>cs</sub> vs I<sub>cw</sub> — three different promises</h4>
+  <p>These three kA numbers answer three different questions: <em>can it break the worst fault at
+all</em> (I<sub>cu</sub>), <em>can it break a fault and stay in service</em> (I<sub>cs</sub>), and
+<em>can it sit there carrying the fault without tripping while something downstream clears</em>
+(I<sub>cw</sub>, always with a time — e.g. 1 s or 3 s). Selection against the plant's fault levels
+(~38.5 kA one transformer, ~77 kA tie-closed, indicative) is worked through in
+<a href="#c-breaker">Part 2 — breaker selection</a>. On a datasheet, the trap is comparing one
+vendor's I<sub>cu</sub> against another's I<sub>cs</sub>, or accepting any kA figure quoted at a
+voltage other than yours.</p>
+  <h4>U<sub>e</sub> / U<sub>i</sub> / U<sub>imp</sub></h4>
+  <p>Three voltage ratings, three jobs: U<sub>e</sub> is the operational voltage at which the
+performance tables are valid; U<sub>i</sub> is the insulation design voltage (≥ U<sub>e</sub>);
+U<sub>imp</sub> is the impulse withstand for surges. Breaking capacity generally <em>falls</em> as
+U<sub>e</sub> rises — always read the kA column at 400/415 V for this plant, not the flattering
+value at 240 V.</p>
+  <h4>50/60 Hz — usually dual, never assumed</h4>
+  <p>The SEC system is 60 Hz. Most modern switchgear, breakers, transformers in this class, and
+electronic equipment are genuinely dual-rated 50/60 Hz — but "most" is not "all", and the dual
+rating must appear <em>on the datasheet and the nameplate</em>, not in a salesman's email.
+Watch for: CTs/VTs and meters specified per-frequency; capacitor banks and detuned reactors whose
+tuning is frequency-specific by definition; and above all <strong>rotating machines</strong>.
+Motors and generator sets are <em>not</em> trivially dual-frequency: a 4-pole motor runs 1500 rpm
+at 50 Hz and 1800 rpm at 60 Hz, with different V/Hz, different fan loads and different driven-machine
+power demands. A genset alternator is wound and its engine governed for one frequency. Treat any
+50 Hz-referenced data for rotating plant as inapplicable until the vendor issues 60 Hz data.</p>
+  <h4>IP and IK — dust is the design case</h4>
+  <p>IP ratings (IEC 60529) code ingress protection: first digit solids/dust, second digit water.
+This plant's outdoor minimum is IP54 — "dust-protected" and splash-proof; IP65 buys "dust-tight".
+IK ratings (IEC 62262) code impact resistance, relevant for gear in traffic areas. Two cautions:
+the IP rating belongs to the <em>enclosure as installed</em> (every unsealed gland hole voids it),
+and higher IP means less ventilation — re-check thermal derating whenever you raise IP.</p>
+  <h4>Altitude and the standards line</h4>
+  <p>Air insulates and cools less well at altitude; standard ratings hold to 1000 m (MV gear) or
+2000 m (much LV gear), with correction factors above. Saudi sites are mostly low, but confirm —
+some inland sites exceed correction thresholds. Finally, the standards line: insist on the current
+edition of the relevant IEC standard (60947 for LV breakers, 62271 for MV gear, 61439 for
+assemblies, 60076 for transformers), cited as SASO-adopted IEC for Saudi procurement, with type-test
+evidence behind every claimed clause.</p>
+  <h3 id="cat-howto-redflags">Red-flag checklist — when a datasheet is hiding something</h3>
+  <p>Run this list over every datasheet that crosses your desk. Any single hit means "ask the
+vendor in writing"; two or more hits mean "treat the whole document as unverified marketing".</p>
+  <ul class="checklist">
+    <li>No type-test certificate offered, or "certificate available on request" with nothing attached — request it before technical acceptance, and check it names the same product family, frame and rating you are buying.</li>
+    <li>Ratings quoted at 20 °C or 25 °C ambient — laboratory-flattering conditions; demand the 40 °C standard values <em>and</em> the 50 °C derated values for Saudi service.</li>
+    <li>"Designed to", "in accordance with", "complies with the intent of" a standard — weasel wording. Only "type-tested to IEC xxxxx" (with the certificate) is evidence.</li>
+    <li>kA ratings quoted without a time qualifier or without the test voltage — a short-time withstand without its duration (1 s vs 3 s) or a breaking capacity without its voltage is not a rating, it is a slogan.</li>
+    <li>I<sub>cs</sub> not stated, or quietly set at 50 % of I<sub>cu</sub> on a main incomer application.</li>
+    <li>No 60 Hz column, or all performance data referenced to 50 Hz only — unacceptable for SEC-connected plant; rotating machines especially must have native 60 Hz data.</li>
+    <li>No derating tables at all (temperature, altitude, enclosure) — the vendor is leaving you to discover the limits in service.</li>
+    <li>Catalogue page submitted where a project datasheet was required — generic family data is not a commitment to your configuration.</li>
+    <li>IP rating quoted for the device but not for the assembly/enclosure as it will actually be installed on site.</li>
+    <li>Footnote symbols in the ratings table that lead to no visible footnote — request the unabridged document; the missing footnote is rarely good news.</li>
+  </ul>
+  <div class="key">Key takeaway: a datasheet is a claim, not a fact. The reference conditions
+(ambient, voltage, frequency, time) are part of every rating — a number quoted without its
+conditions is incomplete, and in a 50 °C, 60 Hz Saudi plant, incomplete usually means optimistic.</div>
+</section>
+
+<section id="cat-saudi-certification" data-title="Saudi Certification &amp; Vendor Approval" data-part="Part 6 — Equipment Catalogues">
+  <h2>Saudi Certification &amp; Vendor Approval</h2>
+  <div class="warning"><strong>Indicative catalogue data.</strong> Product families and typical
+parameters are listed for training and familiarisation only, are approximate, and change with
+manufacturer revisions. No part numbers are given; always obtain current certified data sheets
+and SASO/SEC acceptance status from the manufacturer.</div>
+  <h3 id="cat-saudi-saso-saber">SASO conformity and the SABER platform — the concept</h3>
+  <p>Technical compliance with an IEC standard and <em>legal importability into Saudi Arabia</em>
+are two different hurdles. The second is administered by <strong>SASO</strong> (the Saudi Standards,
+Metrology and Quality Organization), which adopts international standards — largely IEC for
+electrical products — as Saudi technical regulations, and requires regulated imported products to
+carry <strong>conformity certificates</strong> before they clear customs. The administrative vehicle
+is <strong>SABER</strong>, SASO's online conformity platform: at concept level, the importer
+registers the product, an accredited conformity assessment body verifies compliance against the
+applicable technical regulation, a <em>product certificate of conformity</em> is issued, and each
+consignment then receives a <em>shipment certificate of conformity</em> that customs checks at the
+border. (The exact scope of regulated categories, the certificate types and the process details
+evolve — treat this paragraph as orientation, and confirm current requirements per shipment.)</p>
+  <p>Why a field engineer should care about what looks like a customs formality: equipment that
+arrives without its SABER paperwork can sit in port while your outage window, your crane hire and
+your commissioning team do not. A transformer with a 9-month manufacturing lead time
+(<a href="#cat-intro-pricing-leadtimes">see above</a>) that then loses further weeks at customs for
+a missing certificate is a wholly avoidable project wound. Conformity certification belongs on the
+purchase order as a named deliverable, with the importer-of-record responsibility stated, not
+discovered at the port.</p>
+  <div class="note">SASO conformity tells you the product class meets Saudi technical regulations.
+It does <em>not</em> tell you the product suits your application — that is what the datasheet,
+type-test certificate and your Part 2 calculations are for. Both hurdles must be cleared
+independently.</div>
+
+  <h3 id="cat-saudi-sec-vendor">SEC vendor approval and the Saudi Building Code</h3>
+  <p>For equipment on or facing the utility side — metering panels, the incoming MV switchgear
+arrangement, protection schemes at the intake — the <strong>Saudi Electricity Company</strong>
+operates approved-vendor and approved-material lists, and connection works are accepted against
+SEC specifications and the SEC Distribution Code. At concept level: it is not enough that your
+13.8 kV switchgear is type-tested to IEC 62271-200; for the utility interface, the make and type
+should appear on (or be accepted onto) the relevant SEC list, and the intake design follows SEC
+standard arrangements. Getting a technically excellent but unlisted product accepted is possible
+but slow — for utility-facing packages, start from the approved list rather than from the open
+catalogue, and engage SEC early through the connection-application process. (List contents and
+procedures change; verify current SEC requirements per project.)</p>
+  <p>In parallel, the <strong>Saudi Building Code</strong> — specifically <strong>SBC 401</strong>
+for electrical works — governs the installation design itself: wiring methods, protection,
+earthing, safety provisions for buildings and facilities. SBC 401 is the Saudi adaptation of
+international electrical-code practice, and authorities having jurisdiction review designs and
+installations against it. Practically: cite SASO-adopted IEC standards for <em>products</em>,
+SBC 401 for the <em>installation</em>, and the SEC Distribution Code / Saudi Grid Code for the
+<em>utility connection</em> — the three cover different territory and a compliant project needs
+all three (see the standards approach used throughout this manual).</p>
+
+  <h3 id="cat-saudi-aramco-culture">The approved-vendor culture — Aramco/SABIC spillover</h3>
+  <p>Beyond the regulator and the utility, Saudi industrial procurement has been shaped for decades
+by the practices of the largest end users — Saudi Aramco and SABIC — whose engineering standards
+and approved-manufacturer regimes (such as Aramco's materials-system specifications and vendor
+qualification processes) define, for their own projects, exactly which manufacturers and which
+factories may supply each commodity class. This culture spills over: many private industrial
+clients, EPC contractors and PMC consultants in the Kingdom adopt Aramco- or SABIC-style
+approved-vendor lists wholesale, or write "shall be from an approved manufacturer regularly
+supplying the Saudi market" clauses into otherwise ordinary specifications (indicative — this
+varies widely by client and contract).</p>
+  <p>For the field engineer the consequence is simple: <strong>the real catalogue for your project
+is the intersection of the vendor's catalogue and the client's approved-vendor list.</strong>
+Establish that intersection before falling in love with a product family. A technically superior
+drive or relay that is not on the client's list is, for your project, a product that does not
+exist — or one that costs you a months-long qualification exercise. Conversely, list-qualified
+vendors usually carry the Saudi-specific documentation (SASO certificates, 50 °C derating data,
+60 Hz test reports, local service presence) as a matter of routine, which de-risks everything in
+the previous two sections.</p>
+  <h3 id="cat-saudi-documents">The document set — who issues what, and when you need it</h3>
+  <p>All of the above condenses into a finite set of documents. The table below is the field
+engineer's quick reference: for each document type, who issues it and at what project stage you
+must have it in hand (indicative — contract documentation requirements govern).</p>
+  <table class="tbl">
+    <thead>
+      <tr><th>Document</th><th>Issued by</th><th>When you need it</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Catalogue / family selection guide</td><td>Manufacturer (marketing/technical)</td><td>Shortlisting and feasibility — before enquiry</td></tr>
+      <tr><td>Project datasheet (filled, signed)</td><td>Manufacturer, against your enquiry datasheet</td><td>Technical bid evaluation; frozen at purchase order</td></tr>
+      <tr><td>Type-test certificates / reports</td><td>Independent test laboratory or certified manufacturer lab</td><td>With the technical bid; verified before PO, re-checked at FAT</td></tr>
+      <tr><td>Routine test report (your serial numbers)</td><td>Manufacturer's factory</td><td>At FAT / before despatch — witness where the contract allows</td></tr>
+      <tr><td>GA &amp; foundation drawings</td><td>Manufacturer (order engineering)</td><td>For approval early in order execution — civil and cable design depend on them</td></tr>
+      <tr><td>SASO product certificate of conformity</td><td>Accredited conformity assessment body via SABER</td><td>Before shipment is booked</td></tr>
+      <tr><td>SABER shipment certificate of conformity</td><td>Via SABER platform, per consignment</td><td>At customs clearance — every shipment</td></tr>
+      <tr><td>SEC vendor/material approval evidence</td><td>SEC (lists/acceptance correspondence)</td><td>At design stage, before ordering utility-facing equipment</td></tr>
+      <tr><td>Client approved-vendor list confirmation</td><td>Client / PMC procurement</td><td>Before shortlisting — it defines the playing field</td></tr>
+      <tr><td>Installation, O&amp;M manuals and spare parts list</td><td>Manufacturer</td><td>With delivery; reviewed before energisation</td></tr>
+    </tbody>
+  </table>
+
+  <h3 id="cat-saudi-field-practice">What this means at the FAT and in the field</h3>
+  <p>Pulling the threads together, here is the practical discipline. When you attend a factory
+acceptance test — or receive equipment on site — the hardware is only half the inspection. Ask
+for, and actually open, three documents: the <strong>SASO/SABER conformity certificate</strong>
+(does it cover this product category and this consignment?), the <strong>type-test report</strong>
+(does it name this family, frame and rating, this I<sub>cu</sub>/I<sub>cw</sub>, this standard
+edition?), and the <strong>routine test report</strong> (does the serial number match the nameplate
+in front of you, and did every routine test pass?). Then put the project datasheet beside the
+nameplate and read them line against line: voltage, frequency (60 Hz!), rated current and its
+reference ambient, fault ratings with their times, IP rating, tap range. Ten minutes of comparison
+at the factory saves ten weeks of dispute at site.</p>
+  <ul class="checklist">
+    <li>Confirm the vendor is on the client's (and where applicable SEC's) approved list before the technical evaluation starts.</li>
+    <li>Confirm SASO/SABER certification responsibility is named on the purchase order, with the importer of record identified.</li>
+    <li>At FAT: sight the type-test certificate and check it covers the exact family, frame, rating and standard edition supplied.</li>
+    <li>At FAT: obtain the routine test report and match serial numbers against nameplates, unit by unit.</li>
+    <li>Verify nameplate data against the frozen project datasheet — voltage, 60 Hz, current at stated ambient, kA ratings with time, IP rating.</li>
+    <li>Check 50 °C derating data is included in the final documentation, not just the 40 °C reference values.</li>
+    <li>File the complete dossier (datasheet, certificates, GA, O&amp;M) before energisation — it is also your baseline for every future modification.</li>
+  </ul>
+  <div class="key">Key takeaway: in Saudi practice a piece of equipment is only "real" when four
+proofs line up — the client's vendor approval, the SASO/SABER conformity certificate, the type-test
+certificate for the design, and the routine test report for your serial number. The field engineer
+who asks for all four at FAT, every time, almost never gets surprised at site.</div>
+</section>

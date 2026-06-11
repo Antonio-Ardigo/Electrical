@@ -1,0 +1,628 @@
+<!-- ============================================================
+     §CAT-LV-BREAKERS  LV Circuit Breakers Catalogue (LV-MSB / MCC)
+     Rev 3 (Saudi/SEC edition) — 13.8 kV / 400-230 V / 60 Hz / 50 °C
+     Part 6 — Equipment Catalogues. How to read, compare and select
+     ACBs, MCCBs and electronic trip units for the 400/230 V TN-S
+     LV system. All data indicative; SASO-adopted IEC 60947-2 and
+     the manufacturer's certified data sheets govern.
+============================================================ -->
+<section id="cat-lv-breakers" data-title="LV Circuit Breakers" data-part="Part 6 — Equipment Catalogues">
+
+  <h2>LV Circuit Breakers</h2>
+
+  <div class="warning"><strong>Indicative catalogue data.</strong> Product families and typical
+parameters are listed for training and familiarisation only, are approximate, and change with
+manufacturer revisions. No part numbers are given; always obtain current certified data sheets
+and SASO/SEC acceptance status from the manufacturer.</div>
+
+  <p><strong>Goal:</strong> learn to read a low-voltage circuit-breaker catalogue the way a
+  specifying engineer reads it — starting from what the plant's 400/230&nbsp;V TN-S system
+  actually demands (incomers carrying 2309&nbsp;A, a bus that can see 38.5&nbsp;kA from one
+  transformer or roughly 77&nbsp;kA with the tie closed), mapping each demand to the IEC
+  60947-2 parameter that answers it, and finishing with the breaker schedule for tags
+  <code>LV-MSB</code> and <code>MCC-1..n</code>. The vendor families named here (ABB Emax 2
+  and Tmax XT, Schneider Masterpact MTZ and ComPacT NSX, Siemens 3WA and 3VA, Eaton NZM) are
+  the ones you will meet on Saudi industrial sites. For the physics of interruption and the
+  LSIG protection study behind the settings, see
+  <a href="#c-breaker">the circuit-breaker tutorial</a> and
+  <a href="#c-shortcircuit">the short-circuit study</a>; for how Part 6 sections are meant to
+  be used, see <a href="#cat-intro">the catalogue introduction</a>.</p>
+
+  <!-- ────────────────────────────────────────────────────────────
+       1. THE THREE TIERS
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-lvcb-overview">Three Tiers of LV Breaker — Where Each One Lives in This Plant</h3>
+
+  <p>Low-voltage breakers come in three constructional tiers, and the easiest way to keep them
+  straight is to walk the plant's own LV system from the transformer down to the last socket.
+  All three tiers are certified to the same standard family — <strong>IEC 60947-2</strong> for
+  industrial breakers (ACBs and MCCBs) and <strong>IEC 60898-1</strong> for the household-grade
+  miniature breakers in final distribution boards — but they differ enormously in frame size,
+  breaking capacity, adjustability and price.</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Tier</th><th>Typical frames</th><th>Where in this plant</th><th>Defining traits</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>ACB</strong> — air circuit breaker</td>
+          <td>800&ndash;6300&nbsp;A</td>
+          <td><code>LV-MSB</code> incomers from TX-1/TX-2 (FLC <strong>2309&nbsp;A</strong> each),
+          the normally-open bus-tie, and the largest outgoing feeders.</td>
+          <td>Open-construction interrupter in air; usually withdrawable; high short-time withstand
+          (I<sub>cw</sub>) so it can <em>hold on</em> through a downstream fault while a smaller
+          breaker clears it — the anchor of selectivity. Always an electronic trip unit.</td></tr>
+      <tr><td><strong>MCCB</strong> — moulded-case circuit breaker</td>
+          <td>16&ndash;1600&nbsp;A</td>
+          <td><code>LV-MSB</code> outgoing feeders to <code>MCC-1..n</code>, the <code>PFC</code>
+          bank, <code>DB</code>/<code>EDB</code> sub-boards; MCC incomers and large motor
+          feeders; the <code>ATS</code>/<code>DG</code> LV connections.</td>
+          <td>Sealed moulded housing; mostly fixed-mounted (plug-in/withdrawable options exist);
+          current-limiting designs with very high I<sub>cu</sub>; thermal-magnetic or electronic
+          trip; little or no intentional short-time delay capability at the small end.</td></tr>
+      <tr><td><strong>MCB</strong> — miniature circuit breaker</td>
+          <td>0.5&ndash;125&nbsp;A</td>
+          <td>Final circuits in <code>DB</code>/<code>EDB</code> and the <code>UPS</code>
+          distribution: lighting, small power, sockets, instrument supplies at 230&nbsp;V.</td>
+          <td>DIN-rail, fixed characteristics (B/C/D curves), breaking capacity typically
+          6&ndash;10&nbsp;kA (IEC 60898-1) — acceptable only because cable impedance has
+          collapsed the fault level by the time it reaches the final board.</td></tr>
+    </tbody>
+  </table>
+
+  <p>The plant's numbers explain why the tiers exist. At the <code>LV-MSB</code> bus the
+  prospective short-circuit current is about <strong>38.5&nbsp;kA</strong> with one transformer,
+  and roughly <strong>77&nbsp;kA</strong> in the abnormal case where the bus-tie is closed with
+  both transformers in parallel — a duty only an ACB or a heavy MCCB class can face. Two floors
+  of cable later, at a 230&nbsp;V lighting board, the same network can only deliver a few kA,
+  and a 6&nbsp;kA MCB is honest equipment. Matching breaker tier to the <em>local</em> fault
+  level, not the worst one in the plant, is what keeps the switchboard affordable — and getting
+  that local level right is precisely the job of
+  <a href="#c-shortcircuit">the short-circuit study</a>.</p>
+
+  <div class="note">The LV system basis for everything in this section: <strong>400/230&nbsp;V,
+  60&nbsp;Hz, TN-S</strong> earthing, fed by 2&nbsp;&times;&nbsp;1600&nbsp;kVA transformers
+  (LV FLC 2309&nbsp;A each, Z&nbsp;=&nbsp;6&nbsp;%) onto a split bus with a normally-open tie.
+  All values indicative per the Rev 3 plant basis; the formal studies govern.</div>
+
+  <div class="key">Key takeaway: ACBs guard the bus and survive faults long enough to let others
+  trip first; MCCBs clear feeder and motor faults hard and fast; MCBs mop up final circuits
+  where the network can no longer deliver a big fault. One plant, three tiers, one selectivity
+  story.</div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       2. ACB FAMILIES
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-lvcb-acb">Air Circuit Breakers — the Families for LV-MSB</h3>
+
+  <p>Three ACB families dominate the Gulf market, one per major vendor, and they are close
+  functional equivalents: all are IEC 60947-2 category&nbsp;B breakers with electronic trip
+  units, available fixed or withdrawable, in three or four physical frame sizes that between
+  them span roughly 800 to 6300&nbsp;A. A specification written in IEC parameter language will
+  draw compliant offers from all three. Typical indicative ranges at 400&nbsp;V:</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Family</th><th>Vendor</th><th>Frame range (typ.)</th>
+          <th>I<sub>cu</sub> classes at 400&nbsp;V (typ.)</th>
+          <th>I<sub>cw</sub> 1&nbsp;s (typ.)</th><th>Notes for this plant</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Emax 2</strong></td><td>ABB</td>
+          <td>~800&ndash;6300&nbsp;A over four frames (E1.2&ndash;E6.2 class sizes)</td>
+          <td>~42 / 66 / 100 / up to ~150&nbsp;kA depending on frame and performance level</td>
+          <td>~42&ndash;100&nbsp;kA by frame/level</td>
+          <td>Ekip trip-unit family with built-in metering and an embedded power-controller
+          option; wide Saudi installed base. A 2500&ndash;3200&nbsp;A frame at the
+          85&ndash;100&nbsp;kA performance level covers the incomer duty here.</td></tr>
+      <tr><td><strong>Masterpact MTZ</strong></td><td>Schneider Electric</td>
+          <td>~800&ndash;6300&nbsp;A over three frames (MTZ1 / MTZ2 / MTZ3 class sizes)</td>
+          <td>~42 / 50 / 66 / 100 / up to ~150&nbsp;kA by performance level (N/H grades)</td>
+          <td>~42&ndash;100&nbsp;kA by frame/level</td>
+          <td>Micrologic&nbsp;X control unit, strong diagnostics/comms ecosystem; natural pairing
+          with ComPacT NSX downstream for cascading/selectivity tables.</td></tr>
+      <tr><td><strong>3WA</strong></td><td>Siemens</td>
+          <td>~630&ndash;6300&nbsp;A over three frames</td>
+          <td>~55 / 66 / 85 / up to ~130&nbsp;kA by performance level</td>
+          <td>~50&ndash;100&nbsp;kA by frame/level</td>
+          <td>ETU trip units with optional IEC 61850/Modbus comms modules; successor to the
+          long-serving 3WL family you will still meet in existing Saudi boards.</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Withdrawable versus fixed</h4>
+
+  <p>ACBs are offered in <strong>fixed</strong> and <strong>withdrawable</strong> (cassette)
+  versions. The withdrawable version racks between <em>connected</em>, <em>test</em> and
+  <em>disconnected</em> positions exactly like its MV cousin: you gain visible isolation,
+  secondary-injection testing in the test position, and breaker exchange in minutes — which on
+  a two-incomer board like <code>LV-MSB</code> means one transformer's incomer can be swapped
+  while the other half of the bus keeps the plant alive. The price is a deeper panel and a few
+  percent on cost. For the three big breakers in this plant (two incomers and the bus-tie),
+  specify withdrawable; for large outgoing ACB feeders, fixed is acceptable if the maintenance
+  philosophy tolerates a dead-board exchange.</p>
+
+  <h4>What actually differentiates the families</h4>
+
+  <ul>
+    <li><strong>Trip-unit ecosystem</strong> — metering accuracy, protection options (LSIG and
+    beyond), communications and diagnostics; this is where the brands genuinely diverge (see
+    <a href="#cat-lvcb-tripunits">the trip-unit section</a>).</li>
+    <li><strong>I<sub>cw</sub> at the frame you need</strong> — the short-time withstand that
+    underwrites time-graded selectivity; compare at <em>your</em> frame and performance level,
+    not the brochure maximum.</li>
+    <li><strong>Service in the Kingdom</strong> — spare trip units, racking accessories, local
+    retrofit programmes; an ACB lives 25&ndash;30 years, far longer than its electronics.</li>
+    <li><strong>Selectivity and cascading tables</strong> — vendor-published, type-tested
+    pairings with their own downstream MCCBs; mixing brands sacrifices these tables and pushes
+    you back onto first-principles coordination.</li>
+  </ul>
+
+  <div class="tip">Catalogue frame names rarely equal current ratings: a "2500 frame" houses
+  rating plugs or sensor sizes from roughly 1000 to 2500&nbsp;A. Specify the <strong>sensor /
+  rating-plug current I<sub>n</sub></strong> and the <strong>frame I<sub>u</sub></strong>
+  separately, and leave sensor headroom for the 50&nbsp;&deg;C derating discussed in
+  <a href="#cat-lvcb-datasheet">the datasheet section</a>.</div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       3. MCCB FAMILIES
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-lvcb-mccb">Moulded-Case Circuit Breakers — Feeder and Motor Workhorses</h3>
+
+  <p>If the ACB is the board's anchor, the MCCB is its workhorse: every feeder from
+  <code>LV-MSB</code> to an MCC, every MCC incomer, every large motor and the <code>PFC</code>
+  bank connection is an MCCB decision. Four families cover most of the Saudi market. Each is
+  built as a short ladder of physical frames, and each frame is sold in several
+  <strong>breaking-capacity tiers</strong> — the same box with progressively stronger
+  interrupting internals, typically stepping ~25&nbsp;/ 36&nbsp;/ 50&nbsp;/ 70&nbsp;/
+  100&nbsp;kA (some to 150&nbsp;kA+) at 400&nbsp;V. Typical indicative ranges:</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Family</th><th>Vendor</th><th>Frame range (typ.)</th>
+          <th>I<sub>cu</sub> tiers at 400&nbsp;V (typ.)</th><th>Trip technology</th>
+          <th>Notes for this plant</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Tmax XT</strong></td><td>ABB</td>
+          <td>~16&ndash;1600&nbsp;A across several frame sizes</td>
+          <td>~25&ndash;70&nbsp;kA standard tiers; high tiers to ~120&ndash;150&nbsp;kA</td>
+          <td>Thermal-magnetic (TMD/TMA) small frames; Ekip electronic from mid frames up</td>
+          <td>Shares the Ekip trip-unit language with Emax 2 — one engineering tool and one
+          spares philosophy across the whole board.</td></tr>
+      <tr><td><strong>ComPacT NSX</strong></td><td>Schneider Electric</td>
+          <td>~16&ndash;630&nbsp;A (NSX); larger duties to ~1600&nbsp;A in the companion
+          PowerPacT/ComPacT NS class</td>
+          <td>~25 / 36 / 50 / 70 / 100&nbsp;kA tiers (F/N/H/S/L-style grades)</td>
+          <td>Thermal-magnetic or Micrologic electronic</td>
+          <td>Extensive published cascading/selectivity tables under Masterpact MTZ —
+          the classic single-vendor LV package.</td></tr>
+      <tr><td><strong>3VA</strong></td><td>Siemens</td>
+          <td>~16&ndash;1000&nbsp;A (3VA1/3VA2 classes); larger in companion families</td>
+          <td>~25&ndash;55&nbsp;kA standard; ~70&ndash;110&nbsp;kA high tiers</td>
+          <td>Thermal-magnetic or ETU electronic</td>
+          <td>ETU options mirror the 3WA ACB units; good 60&nbsp;Hz documentation.</td></tr>
+      <tr><td><strong>NZM</strong></td><td>Eaton</td>
+          <td>~16&ndash;1600&nbsp;A over four frames (NZM1&ndash;NZM4)</td>
+          <td>~25 / 36 / 50 / 100 / 150&nbsp;kA tiers (B/C/N/H grades)</td>
+          <td>Thermal-magnetic or electronic</td>
+          <td>Strong motor-protection variants; common in packaged MCCs and OEM skids
+          arriving on site.</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Thermal-magnetic versus electronic</h4>
+
+  <p>A <strong>thermal-magnetic</strong> MCCB trips on heat (a bimetal bends — long-time
+  overload) and on magnetics (a solenoid snaps — instantaneous short-circuit). It is cheap,
+  immune to electronics failure, and adjustable only coarsely (thermal pickup, sometimes the
+  magnetic threshold). An <strong>electronic</strong> MCCB measures current with built-in
+  sensors and a microprocessor: full LSIG adjustability, settable short-time delay for
+  selectivity, metering and communications. The practical split for this plant: electronic
+  trip units on the <code>LV-MSB</code> outgoing feeders and MCC incomers (where selectivity
+  against the ACBs must be engineered — <a href="#c-breaker">see the LSIG study</a>), and
+  thermal-magnetic is acceptable for small, deep-downstream feeders where an instantaneous
+  trip is fine. Note one honest limitation: a thermal element calibrated at 40&nbsp;&deg;C
+  reads the hot switchboard air as load — another reason the 50&nbsp;&deg;C question in
+  <a href="#cat-lvcb-saudi">the Saudi notes</a> matters.</p>
+
+  <h4>Current limitation — the MCCB's party trick</h4>
+
+  <p>Many MCCBs are <strong>current-limiting</strong>: their contacts blow apart
+  electrodynamically within the first quarter-cycle and the arc voltage chokes the fault before
+  it ever reaches its prospective peak. A current-limiting MCCB facing a prospective
+  38.5&nbsp;kA may let through the energy of only a fraction of that — which is what makes
+  vendor <strong>cascading (back-up) tables</strong> possible: a downstream breaker of modest
+  I<sub>cu</sub> certified, by type test, to be protected by the current-limiting breaker above
+  it. Cascading saves real money in MCCs, but only within one vendor's published tables — it is
+  a type-tested combination, never a calculation you may improvise.</p>
+
+  <div class="key">Key takeaway: pick the MCCB frame for the load current, the breaking-capacity
+  tier for the <em>local</em> fault level, and the trip technology for the selectivity job the
+  breaker has to do. Frame, tier and trip unit are three separate decisions hiding in one
+  catalogue number.</div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       4. ELECTRONIC TRIP UNITS
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-lvcb-tripunits">Electronic Trip Units — the Intelligence in the Breaker</h3>
+
+  <p>On an MV board the breaker is dumb muscle and the protection lives in a separate relay.
+  On an LV board the two are fused into one product: the <strong>electronic trip unit</strong>
+  bolted to the breaker face is simultaneously the protection relay, the meter and the
+  communications gateway. When you compare ACB or MCCB offers, you are mostly comparing trip
+  units. Each vendor has one trip-unit language spanning its range:</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Trip-unit family</th><th>Vendor / breakers</th><th>Protection (typ.)</th>
+          <th>Metering (typ.)</th><th>Comms (typ.)</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Ekip</strong> (Touch/Hi-Touch class)</td>
+          <td>ABB — Emax 2 ACBs, Tmax XT MCCBs</td>
+          <td>LSIG standard; options for directional, residual/earth-leakage, dual settings
+          (e.g. a DG operating mode), embedded load-shedding/power-control logic</td>
+          <td>Class-1-grade power and energy metering on the better units; waveform capture
+          on top grades</td>
+          <td>Modbus RTU/TCP modules; IEC 61850 via native module or gateway; ZSI terminals
+          standard on ACB units</td></tr>
+      <tr><td><strong>Micrologic X</strong> (and Micrologic 5/6/7 on NSX)</td>
+          <td>Schneider — Masterpact MTZ ACBs, ComPacT NSX MCCBs</td>
+          <td>LSIG per unit class (suffix G = earth fault, 7-class = earth leakage); dual
+          settings option; per-pole display, advanced diagnostics modules</td>
+          <td>Energy/power metering built in; accuracy grade rises with unit class
+          (~Class 1 typical on the better units)</td>
+          <td>Modbus; IEC 61850 through a communications gateway; ZSI on MTZ; Bluetooth/NFC
+          field apps for settings read-out</td></tr>
+      <tr><td><strong>ETU</strong> series</td>
+          <td>Siemens — 3WA ACBs, 3VA MCCBs</td>
+          <td>LSI / LSIG by ETU grade; neutral protection settable; dual parameter sets on
+          higher grades</td>
+          <td>Current metering on basic units, full power/energy on higher ETUs</td>
+          <td>Modbus RTU/TCP modules, PROFINET/PROFIBUS heritage, IEC 61850 via comms module;
+          ZSI supported on ACB grades</td></tr>
+    </tbody>
+  </table>
+
+  <h4>LSIG — the four letters that define the unit</h4>
+
+  <p>Every trip unit is described by which of the four classic protection elements it carries —
+  <strong>L</strong> (long-time, the overload element), <strong>S</strong> (short-time, the
+  delayed short-circuit element that buys selectivity), <strong>I</strong> (instantaneous) and
+  <strong>G</strong> (earth fault). An "LSI" unit has no earth-fault element; an "LI" unit
+  cannot be time-graded. The full theory — what each pickup and delay means, how the curves
+  are set for this plant's breakers, and the worked grading between MCC, feeder MCCB, incomer
+  ACB and the transformer's MV protection — lives in
+  <a href="#c-breaker">the circuit-breaker section of Part 2</a>; the catalogue task is simply
+  to buy units that <em>have</em> the elements the study needs. For this plant: incomers,
+  bus-tie and LV-MSB outgoing feeders need full <strong>LSIG</strong>; on a 400/230&nbsp;V
+  TN-S system the G element is your low-level earth-fault detection, and it must be ordered —
+  it cannot be retrofitted into a unit that lacks the sensing.</p>
+
+  <h4>Zone-selective interlocking (ZSI)</h4>
+
+  <p>Time grading has a cruel price: the breaker nearest the source — facing the biggest fault
+  — waits longest, and every added tenth of a second multiplies the arc energy at the main
+  board. <strong>ZSI</strong> is the cure: a hard-wired pilot pair between trip units. When a
+  downstream unit sees the fault, it sends a restraint signal upstream ("I have it — hold to
+  your set delay"); when the upstream unit sees a fault and <em>no</em> restraint arrives, the
+  fault must be in its own zone and it trips at minimum time instead of its grading delay. You
+  keep full selectivity and lose the waiting. All three ACB trip-unit families support ZSI on
+  their S and G elements; specify the interlocking wiring between the two incomers, the
+  bus-tie and the major outgoing feeders, and demand the scheme be tested at FAT.</p>
+
+  <h4>Metering and communications</h4>
+
+  <p>Because every major breaker already measures its own current and voltage, the trip units
+  double as the LV system's metering layer: per-feeder kW, kvar, energy and basic power
+  quality, reported over <strong>Modbus</strong> (native on all families) or
+  <strong>IEC&nbsp;61850</strong> (native module or external gateway, by family) to the plant
+  DCS/PMS. Practical specification points: state the metering accuracy class you need
+  (energy metering to ~Class&nbsp;1 is a typical ask for incomers), order the comms module
+  with the breaker rather than retrofitting, and remember the trip unit's protection function
+  is self-powered from its current sensors but its display, metering and comms need the
+  external 24&nbsp;V&nbsp;DC auxiliary supply — feed it from a supervised source, and alarm
+  its failure.</p>
+
+  <div class="tip">Standardise one vendor's trip-unit language per switchboard. A board whose
+  incomers speak Ekip, feeders speak Micrologic and motor breakers speak ETU needs three
+  engineering tools, three spares stocks and three training courses — a real cost no
+  catalogue page will show you.</div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       5. HOW TO READ A BREAKER DATASHEET
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-lvcb-datasheet">How to Read a Breaker Datasheet</h3>
+
+  <p>An LV breaker datasheet is a dense grid of IEC 60947-2 symbols, and three of them —
+  I<sub>cu</sub>, I<sub>cs</sub>, I<sub>cw</sub> — look interchangeable and are not. Misreading
+  them is the most common LV specification error after the frame/rating confusion. Decode the
+  page line by line:</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Symbol</th><th>Name</th><th>What it really means</th><th>What to check for this plant</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>I<sub>cu</sub></strong></td><td>Ultimate breaking capacity</td>
+          <td>The biggest fault the breaker can interrupt <em>once</em> and survive in a
+          legally defined but possibly degraded state (test sequence O&ndash;CO). It is a
+          never-exceed number, not a service rating.</td>
+          <td>&ge; the worst prospective fault at the breaker's terminals — 38.5&nbsp;kA at
+          the bus normally, ~77&nbsp;kA if tie-closed operation is credible
+          (<a href="#cat-lvcb-selection">selection below</a>).</td></tr>
+      <tr><td><strong>I<sub>cs</sub></strong></td><td>Service breaking capacity</td>
+          <td>The fault level the breaker can interrupt and <em>remain serviceable</em>
+          (sequence O&ndash;CO&ndash;CO). Quoted as a percentage of I<sub>cu</sub>: 50, 75 or
+          100&nbsp;%. A breaker with I<sub>cs</sub>&nbsp;=&nbsp;100&nbsp;%&nbsp;I<sub>cu</sub>
+          goes back to work after the fault; at 50&nbsp;% it survives the test but should be
+          inspected/replaced.</td>
+          <td>Prefer I<sub>cs</sub>&nbsp;=&nbsp;100&nbsp;%&nbsp;I<sub>cu</sub> for incomers and
+          critical feeders; never compare one vendor's I<sub>cu</sub> against another's
+          I<sub>cs</sub>.</td></tr>
+      <tr><td><strong>I<sub>cw</sub></strong></td><td>Short-time withstand current</td>
+          <td>The fault current the breaker can <em>carry without tripping or welding</em> for
+          a stated time — 1&nbsp;s or 3&nbsp;s. This is what lets an ACB hold on through its
+          short-time delay while a downstream MCCB clears. Only category&nbsp;B breakers have
+          a meaningful I<sub>cw</sub>.</td>
+          <td>I<sub>cw</sub> must exceed the bus fault current for longer than the slowest set
+          S-delay; this plant targets I<sub>cw</sub>&nbsp;&ge;&nbsp;65&nbsp;kA/1&nbsp;s on the
+          main ACBs.</td></tr>
+      <tr><td><strong>Category A / B</strong></td><td>Utilisation category</td>
+          <td><strong>B</strong> = rated for short-time withstand (designed to be time-graded;
+          ACBs and large MCCBs). <strong>A</strong> = no rated I<sub>cw</sub>; trips without
+          intentional delay (most MCCBs).</td>
+          <td>Incomers and bus-tie must be category&nbsp;B; downstream MCCBs are normally
+          category&nbsp;A and grade by current and energy instead of time.</td></tr>
+      <tr><td><strong>I<sub>n</sub> vs I<sub>u</sub></strong></td><td>Rating vs frame</td>
+          <td>I<sub>u</sub> is the frame's maximum continuous current; I<sub>n</sub> is the
+          installed sensor or rating plug. One physical frame covers many I<sub>n</sub>
+          values; trip settings are multiples of I<sub>n</sub>.</td>
+          <td>Quote both: e.g. "3200&nbsp;A frame, I<sub>n</sub>&nbsp;=&nbsp;2500&nbsp;A
+          sensors" for the incomer leaves a clean upgrade path.</td></tr>
+      <tr><td><strong>U<sub>e</sub> / U<sub>imp</sub></strong></td><td>Rated operational /
+          impulse withstand voltage</td>
+          <td>U<sub>e</sub> is the voltage the ratings are declared at — and breaking capacity
+          falls as U<sub>e</sub> rises, so a breaker is "65&nbsp;kA at 400&nbsp;V" but perhaps
+          "35&nbsp;kA at 690&nbsp;V". U<sub>imp</sub> (typically 8&ndash;12&nbsp;kV) sets
+          surge robustness and clearances.</td>
+          <td>Read every kA figure in the 400&nbsp;V column — quoting the 690&nbsp;V column
+          undersells the breaker, quoting a 240&nbsp;V column oversells it.</td></tr>
+    </tbody>
+  </table>
+
+  <h4>The reference-temperature trap — derating at 50&nbsp;&deg;C</h4>
+
+  <p>Continuous ratings are declared at a reference ambient — and "ambient" here means the air
+  <em>around the breaker inside the switchboard</em>, which runs 10&ndash;15&nbsp;K above the
+  room. Catalogues publish derating tables per frame: as a typical indicative guide, expect a
+  usable <strong>0.8&ndash;0.9 factor</strong> on I<sub>n</sub> by the time a 50&nbsp;&deg;C
+  Saudi room plus internal switchboard heating is accounted for — but this varies with frame,
+  connection style and enclosure, so <strong>always verify against the vendor's own derating
+  table</strong>; never apply a generic factor to a real purchase. Thermal-magnetic MCCBs
+  derate inherently (the bimetal feels the heat); electronic units are compensated but the
+  copper and insulation behind them are not, so the tables still apply. The room HVAC question
+  in <a href="#cat-lvcb-saudi">the Saudi notes</a> is the other half of this answer.</p>
+
+  <h4>60 Hz applicability</h4>
+
+  <p>IEC 60947-2 breakers from the major vendors are dual-rated 50/60&nbsp;Hz and the 60&nbsp;Hz
+  point matters less than it does for MV gear — but it is not nothing: a few ratings shift
+  slightly at 60&nbsp;Hz (iron losses in sensors, marginal derating on some large frames), and
+  the peak-withstand arithmetic upstream of the breaker uses the 60&nbsp;Hz asymmetry factor.
+  The discipline is the same as everywhere in this manual: require the datasheet and routine
+  tests to state <strong>60&nbsp;Hz</strong> explicitly rather than assuming the 50&nbsp;Hz
+  figures carry over.</p>
+
+  <div class="warning">The classic datasheet con: a headline "100&nbsp;kA breaker" that turns
+  out to be 100&nbsp;kA I<sub>cu</sub> at 240&nbsp;V, with 50&nbsp;%&nbsp;I<sub>cs</sub>, in
+  the smallest frame only. Always read the kA number with its three qualifiers: at which
+  voltage, I<sub>cu</sub> or I<sub>cs</sub>, and for which frame.</div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       6. SELECTION FOR THIS PLANT
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-lvcb-selection">Selection for This Plant — From Plant Data Card to Breaker Schedule</h3>
+
+  <p>Now apply the datasheet vocabulary to the Rev 3 plant numbers. The driving figures: each
+  1600&nbsp;kVA transformer delivers an LV full-load current of <strong>2309&nbsp;A</strong>;
+  the prospective short circuit at <code>LV-MSB</code> is about <strong>38.5&nbsp;kA</strong>
+  from one transformer and roughly <strong>77&nbsp;kA</strong> if the bus-tie were closed with
+  both transformers in parallel (see <a href="#c-shortcircuit">the short-circuit study</a> for
+  the derivation). All results indicative; the formal study and vendor derating tables
+  govern.</p>
+
+  <div class="worked">
+    <h4>Worked selection — LV-MSB incomer ACB</h4>
+    <p><strong>Step 1 — frame for the load.</strong> Transformer LV full-load current:</p>
+    <code class="formula">I_FLC = S / (√3 × U) = 1,600,000 VA / (1.732 × 400 V) ≈ 2309 A</code>
+    <p>The next standard ACB sensor rating above 2309&nbsp;A is <strong>2500&nbsp;A</strong> —
+    a comfortable 8&nbsp;% margin at catalogue conditions.</p>
+    <p><strong>Step 2 — check the 50&nbsp;&deg;C derating.</strong> Apply a typical indicative
+    in-board derating factor of 0.85 (vendor table governs):</p>
+    <code class="formula">I_usable = 0.85 × 2500 A ≈ 2125 A &lt; 2309 A ✗ — fails hot</code>
+    <p>A 2500&nbsp;A frame that is adequate at 40&nbsp;&deg;C can be inadequate in a hot Saudi
+    switchboard. Move up one frame and re-check:</p>
+    <code class="formula">I_usable = 0.85 × 3200 A ≈ 2720 A &gt; 2309 A ✓ (≈ 18 % margin)</code>
+    <p>So the incomer is specified as a <strong>3200&nbsp;A-frame ACB with
+    I<sub>n</sub>&nbsp;=&nbsp;2500&nbsp;A sensors</strong> (or the vendor's certified
+    50&nbsp;&deg;C solution on a 2500&nbsp;A frame, if their table proves it — an HVAC-held
+    room changes this arithmetic; get the vendor statement in writing either way).</p>
+    <p><strong>Step 3 — breaking capacity.</strong> Normal duty is one transformer per bus
+    section: 38.5&nbsp;kA. But if operations can ever close the bus-tie with both transformers
+    live — even briefly, for a no-break changeover — the bus sees:</p>
+    <code class="formula">I_sc,tie-closed ≈ 2 × 38.5 kA ≈ 77 kA</code>
+    <p>A 50&nbsp;kA breaker is then under-rated the moment the tie closes. Select the
+    <strong>85&ndash;100&nbsp;kA performance level</strong> (all three ACB families offer it),
+    with I<sub>cs</sub>&nbsp;=&nbsp;100&nbsp;%&nbsp;I<sub>cu</sub>:</p>
+    <code class="formula">I_cu ≥ 85 kA &gt; 77 kA ✓</code>
+    <p><strong>Step 4 — short-time withstand for selectivity.</strong> The incomer must hold on
+    through its S-delay while a downstream MCCB clears. Target:</p>
+    <code class="formula">I_cw ≥ 65 kA / 1 s &gt; 38.5 kA single-TX duty ✓ (≈ 1.7× margin)</code>
+    <p>which also keeps honest margin for grading studies at the tie-closed level when ZSI is
+    active. Note the constraint this creates: at tie-closed duty the prospective fault
+    (≈&nbsp;77&nbsp;kA) <em>exceeds</em> I<sub>cw</sub>&nbsp;65&nbsp;kA/1&nbsp;s, so at that duty
+    the breakers must clear via ZSI/instantaneous rather than ride out a full short-time delay —
+    only the single-transformer 38.5&nbsp;kA duty may be time-graded within I<sub>cw</sub>.
+    <strong>Sanity check:</strong> 3200&nbsp;A-frame ACBs at the high performance level
+    typically carry I<sub>cw</sub> of 65&ndash;85&nbsp;kA/1&nbsp;s — the requirement sits
+    inside every family's range, so this is a selection, not an exotic special.</p>
+  </div>
+
+  <p>The same logic, condensed into the indicative breaker schedule:</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Position</th><th>Type</th><th>Frame / I<sub>n</sub> (indicative)</th>
+          <th>I<sub>cu</sub> at 400&nbsp;V</th><th>I<sub>cw</sub></th><th>Trip unit</th><th>Notes</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>LV-MSB incomers (×2, from TX-1/TX-2)</td><td>ACB, withdrawable, cat.&nbsp;B</td>
+          <td>3200&nbsp;A frame, I<sub>n</sub> 2500&nbsp;A (50&nbsp;&deg;C check above)</td>
+          <td>&ge;&nbsp;85&nbsp;kA (covers ~77&nbsp;kA tie-closed)</td>
+          <td>&ge;&nbsp;65&nbsp;kA / 1&nbsp;s</td>
+          <td>LSIG electronic, ZSI, Modbus/IEC&nbsp;61850</td>
+          <td>I<sub>cs</sub> = 100&nbsp;% I<sub>cu</sub>; castell/electrical interlock with
+          bus-tie (2-of-3 logic).</td></tr>
+      <tr><td>LV-MSB bus-tie (normally open)</td><td>ACB, withdrawable, cat.&nbsp;B</td>
+          <td>3200&nbsp;A frame, I<sub>n</sub> 2500&nbsp;A (full transfer capability)</td>
+          <td>&ge;&nbsp;85&nbsp;kA</td><td>&ge;&nbsp;65&nbsp;kA / 1&nbsp;s</td>
+          <td>LSIG electronic, ZSI</td>
+          <td>Same rating as the incomers — it can stand in for either; interlocked to
+          prevent uncontrolled paralleling.</td></tr>
+      <tr><td>LV-MSB outgoing feeders to MCC-1..n</td><td>MCCB, electronic</td>
+          <td>~250&ndash;630&nbsp;A frames per feeder schedule</td>
+          <td>&ge;&nbsp;50&nbsp;kA tier (margin over 38.5&nbsp;kA at the bus)</td>
+          <td>Category&nbsp;A (current/energy grading)</td>
+          <td>LSI(G) electronic for grading under the ACBs</td>
+          <td>Earth-fault element per the TN-S protection plan.</td></tr>
+      <tr><td>PFC bank feeder</td><td>MCCB, electronic</td>
+          <td>Sized ~1.35&ndash;1.5&nbsp;&times; bank current (≈&nbsp;580&nbsp;kvar detuned
+          bank → ~840&nbsp;A bank current → ~1250&nbsp;A frame class)</td>
+          <td>&ge;&nbsp;50&nbsp;kA tier</td><td>—</td><td>LSI electronic</td>
+          <td>Overrating absorbs harmonic and tolerance current in the detuned bank;
+          confirm with the PFC vendor.</td></tr>
+      <tr><td>MCC incomers / large motor feeders</td><td>MCCB</td>
+          <td>Per MCC load list (~160&ndash;630&nbsp;A typical)</td>
+          <td>Per the <em>local</em> calculated fault level — typically 36&ndash;50&nbsp;kA
+          tiers after cable impedance</td>
+          <td>—</td><td>Electronic on incomers; thermal-magnetic or motor-class on starters</td>
+          <td>Cascading tables may permit lower tiers under a current-limiting upstream
+          MCCB — same vendor only.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note"><strong>The cheaper alternative — and its price.</strong> If operating
+  procedures <em>guarantee</em> the tie is only ever closed dead (break-before-make via the
+  interlock), the duty never exceeds 38.5&nbsp;kA and a 50&ndash;65&nbsp;kA breaker class
+  suffices — consistent with the plant basis of an LV-MSB rated 50&ndash;65&nbsp;kA with the
+  tie normally open. The 85&ndash;100&nbsp;kA selection above buys the freedom to make
+  no-break transfers and forgives an interlock failure. That is an operations-philosophy
+  decision to make consciously and record — not a default to inherit silently from either the
+  cost sheet or the catalogue.</div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       7. SAUDI-SPECIFIC PRACTICE
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-lvcb-saudi">Saudi-Specific Practice — Heat, Dust, Paperwork and Spares</h3>
+
+  <h4>SASO/SABER conformity</h4>
+
+  <p>LV breakers are regulated imports: they enter the Kingdom through the
+  <strong>SABER</strong> platform with certificates of conformity against the SASO-adopted IEC
+  standards (IEC 60947-2 for ACBs/MCCBs, IEC 60898-1 for MCBs). Make the supplier contractually
+  responsible for SABER product and shipment certificates, type-test reports from a recognised
+  laboratory, and country-of-origin documents — and check that the certificate covers the
+  <em>exact</em> frame, performance level and trip-unit combination being shipped, because
+  "family" certificates with the high-kA variants excluded are a known trap. As elsewhere in
+  this manual: missing paperwork strands switchboards in port far more often than technical
+  faults do.</p>
+
+  <h4>SEC acceptance and SBC 401</h4>
+
+  <p>The LV breakers themselves are inside the plant fence, so SEC's interest is lighter than
+  at the MV intake — but not zero. SEC and the Saudi Building Code (<strong>SBC&nbsp;401</strong>,
+  the Kingdom's adoption of the electrical code) shape the LV installation rules: TN-S earthing
+  practice, discrimination requirements for safety-services supplies, and the acceptance of the
+  metering arrangement where SEC tariff metering touches the LV system. Where the
+  <code>DG</code>/<code>ATS</code> standby scheme interfaces the SEC supply, the changeover
+  breakers and their interlocks are part of what the inspector walks down — keep the approved
+  single-line and interlock schedule in the switchroom dossier.</p>
+
+  <h4>Heat: the switchroom is part of the breaker</h4>
+
+  <p>Everything in <a href="#cat-lvcb-datasheet">the derating discussion</a> lands here. The
+  workable Saudi pattern is an <strong>HVAC-conditioned LV switchroom held at or below
+  40&nbsp;&deg;C</strong>, which restores catalogue ratings — with the derated 50&nbsp;&deg;C
+  figures held in reserve as the documented answer to "what happens when the HVAC fails on an
+  August afternoon". Specify: room over-temperature alarm to the DCS, the vendor's written
+  derating statement for every frame at 50&nbsp;&deg;C, and temperature-rise type-test evidence
+  for the assembled switchboard (IEC 61439-2), not just the loose breakers — the board
+  manufacturer's form factor and busbar design move heat around in ways the breaker catalogue
+  cannot see.</p>
+
+  <h4>Dust and IP</h4>
+
+  <p>Desert dust plus morning humidity is mildly conductive, and it settles on arc-chute
+  louvres, trip-unit electronics and racking mechanisms. Indoors, specify switchboard
+  enclosures at <strong>IP4X minimum</strong> (IP54 where the room quality is doubtful, noting
+  the thermal price of sealing); any breaker outdoors or in unconditioned space lives in an
+  IP54-minimum enclosure per the plant basis. Keep the switchroom positively pressurised with
+  filtered intake, and put insulation-surface and arc-chute inspection on the maintenance
+  plan — a dust film inside an ACB arc chute is the LV cousin of the MV internal-arc
+  precursor.</p>
+
+  <h4>Spares and vendor presence in the Kingdom</h4>
+
+  <p>An ACB mechanism lives 25&ndash;30 years; its electronics will not. Plan accordingly:</p>
+
+  <ul>
+    <li><strong>Spare trip units</strong> — at least one of each LSIG type used, pre-loaded
+    with the approved settings file; a failed trip unit otherwise immobilises an incomer for
+    months of lead time.</li>
+    <li><strong>One complete spare ACB</strong> of the common frame (or at minimum a spare
+    breaker element for the withdrawable cassettes) — the classic justification for making
+    incomers and bus-tie identical, as the <a href="#cat-lvcb-selection">schedule above</a>
+    does.</li>
+    <li><strong>MCCB spares by tier</strong> — a small stock of each frame/tier/trip
+    combination actually installed; resist "equivalent" substitutions that silently break the
+    cascading and selectivity tables.</li>
+    <li><strong>Local service</strong> — ABB, Schneider, Siemens and Eaton all maintain Saudi
+    service organisations; weight the bid evaluation toward proven in-Kingdom retrofit and
+    spares history, and ask for the named local service centre, not the regional one.</li>
+    <li><strong>Settings custody</strong> — trip-unit setting files are protection settings;
+    store them with the relay settings under the same change control, and verify them by
+    secondary injection at FAT and at commissioning.</li>
+  </ul>
+
+  <div class="key">Key takeaway: in Saudi service the breaker's environment — room temperature,
+  dust, the SABER dossier and the spares shelf — decides its real reliability at least as much
+  as the kA numbers on the datasheet. Specify the environment and the paperwork with the same
+  rigour as the ratings.</div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       8. PROCUREMENT REVIEW CHECKLIST
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-lvcb-checklist">Breaker Procurement Review — Checklist</h3>
+
+  <ul class="checklist">
+    <li>Confirm every breaking-capacity figure as I<sub>cu</sub> <em>and</em> I<sub>cs</sub> at 400&nbsp;V, 60&nbsp;Hz, for the exact frame offered — incomers/tie sized for the tie-closed duty (~77&nbsp;kA → 85&ndash;100&nbsp;kA class) or a documented dead-tie operating restriction in place.</li>
+    <li>Verify incomers and bus-tie are utilisation category&nbsp;B with I<sub>cw</sub> &ge; 65&nbsp;kA/1&nbsp;s, matching the grading delays in the approved LSIG study (<a href="#c-breaker">Part 2</a>).</li>
+    <li>Check frame and sensor sizing against the vendor's 50&nbsp;&deg;C / in-board derating table (typical 0.8&ndash;0.9 factor) — 2309&nbsp;A incomer duty cleared with margin, in writing.</li>
+    <li>Confirm trip-unit scope: full LSIG where the study requires it, ZSI wiring between incomers/tie/major feeders, metering class and Modbus/IEC&nbsp;61850 comms modules ordered with the breakers.</li>
+    <li>Verify mixed-brand coordination is avoided, or every cascading/selectivity claim is backed by the vendor's published type-tested tables for the exact pairings offered.</li>
+    <li>Check SABER/SASO certificates cover the exact frame, performance level and trip-unit variants shipped; type-test reports and 60&nbsp;Hz declarations in the dossier.</li>
+    <li>Confirm the spares package: spare LSIG trip units, common spare ACB element, MCCB stock by frame/tier, named in-Kingdom service centre, and settings files under change control.</li>
+  </ul>
+
+  <div class="note"><strong>Closing the loop.</strong> Everything in this section is indicative
+  training data. The binding chain for the real purchase is: formal short-circuit study
+  (<a href="#c-shortcircuit">Part 2</a>) and protection coordination study
+  (<a href="#c-breaker">LSIG settings</a>) &rarr; approved breaker schedule and switchboard
+  data sheets &rarr; vendor certified data sheets, derating tables and type tests &rarr;
+  IEC 61439-2 assembly verification and FAT with secondary injection &rarr; site settings
+  verification. The catalogue's job — here as throughout
+  <a href="#cat-intro">Part 6</a> — is only to make you fluent for that conversation.</div>
+
+</section>

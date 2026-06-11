@@ -1,0 +1,1250 @@
+<!-- ============================================================
+     §C-MOTORS + §C-PFC  Motors & starting / Power-factor correction
+     Rev 3 (Saudi/SEC edition) — 13.8 kV / 400-230 V / 60 Hz / 50 °C
+     Deep-dive tutorials. Expand the original §5 and §7 seeds into
+     the full eight-heading pedagogy pattern. All numbers indicative;
+     SASO-adopted IEC, SEC Distribution Code and the formal plant
+     studies govern.
+============================================================ -->
+<section id="c-motors" data-title="Motor FLC and Starting Methods" data-part="Part 2 — Calculations">
+
+  <h2>5 — Motor FLC, Starting Methods &amp; LV/MV Feed Threshold <span style="font-size:0.65em; font-weight:normal; background:#f5f0e8; border:1px solid #c8b88a; border-radius:3px; padding:1px 5px; color:#6b5a1e;">Reference</span></h2>
+
+  <p><strong>Goal:</strong> understand why motor starting — not motor running — is the
+  event the whole LV system must be designed around, calculate the full-load and
+  direct-on-line starting current of a representative 160 kW pump motor, work the
+  voltage dip that a DOL start imposes on a 1600 kVA transformer, and from that choose
+  between DOL, star-delta, soft starter and VFD with open eyes.</p>
+
+  <p>This section leans on the full-load current method of
+  <a href="#c-flc">§3 — Full-Load Currents</a>, hands its answer onward to
+  <a href="#c-cables">§6 — Cable Sizing</a> and
+  <a href="#c-protection">§10 — Protection Coordination</a>, and borrows the
+  transformer impedance from <a href="#c-transformer">§2</a>. The harmonic
+  consequences of the VFDs it recommends are settled next door in
+  <a href="#c-pfc">§7 — Power-Factor Correction</a>.</p>
+
+  <div class="note">
+    <strong>Indicative data.</strong> Every numeric value in this section is indicative
+    and chosen for teaching on the Rev 3 plant basis: SEC 13.8 kV, 60 Hz supply;
+    2 &times; 1600 kVA, Z = 6 % transformers; 400/230 V TN-S LV system; 50 &deg;C
+    design ambient; 4-pole motors at 1800 rpm synchronous. The motor schedule, the
+    plant's motor-starting study and the SASO-adopted IEC standards (IEC 60034 series,
+    IEC 60947-4-1), read together with the SEC Distribution Code and SBC 401, govern.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       1. WHY THIS EXISTS
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-motors-why">Seventy Per Cent of the Plant Is Spinning</h3>
+
+  <h4>Why this exists</h4>
+
+  <p>Add up the motor schedule of almost any process plant and you will find that
+  motors take roughly <strong>70 % of the electrical load</strong>. On the Rev 3 plant
+  that is on the order of 1.4 MW of the 2.0 MW total: pumps, fans, compressors,
+  agitators, conveyors. The transformers exist to feed them, the cables exist to reach
+  them, and most of the protection in the MCCs exists to save them from themselves.
+  If you understand motors, you understand most of the plant's electrical behaviour;
+  if you do not, every other calculation in Part 2 is an abstraction.</p>
+
+  <p>Running motors are easy. A loaded induction motor draws a steady, predictable
+  current at a reasonable power factor and turns electricity into torque with
+  93&ndash;96 % efficiency. The system barely notices it. The event that the whole
+  LV design must tolerate is the <strong>start</strong> — and the start is violent.
+  At the instant a direct-on-line (DOL) contactor closes, the stationary rotor looks
+  to the network almost like a short-circuited transformer secondary: the motor draws
+  roughly <strong>six times its full-load current</strong>, and it draws it at a
+  power factor of about <strong>0.2</strong> — nearly pure reactive current, the kind
+  that drags bus voltage down hardest (the X&middot;sin&phi; effect met in
+  <a href="#c-transformer">§2</a>). That current persists not for a cycle but for the
+  whole acceleration — seconds for a pump, tens of seconds for a high-inertia fan.</p>
+
+  <p>So one event must be tolerated by everything at once: the <strong>cable</strong>
+  must carry 6&times; current without tripping its protection
+  (<a href="#c-protection">§10</a>), the <strong>transformer</strong> must source the
+  starting kVA without letting the bus voltage collapse, the <strong>bus
+  voltage</strong> must stay high enough that other running motors, contactors and
+  drives ride through, and the <strong>protection</strong> must tell this legitimate
+  6&times; surge apart from a genuine fault. The calculations in this section exist
+  to prove, before the contactor ever closes, that all four will hold.</p>
+
+  <div class="key">
+    Motors are ~70 % of plant load, and the start is the design event: ~6&times;
+    rated current at a power factor near 0.2, sustained for the whole run-up. Cables,
+    transformers, voltage stability and protection settings are all sized around the
+    start, not the run.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       2. WHAT GOES WRONG WITHOUT IT
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-motors-failure">A Failure Story: One Pushbutton, Whole-Plant Trip</h3>
+
+  <h4>What goes wrong without it</h4>
+
+  <p>The story is fictional; every mechanism in it is routine. A plant much like this
+  one added a large transfer pump late in a project — 160 kW, the biggest single
+  drive on site. The mechanical contractor wanted it running before commissioning
+  week; the cheapest, fastest starter is a DOL contactor, and the MCC had a spare
+  starter cubicle. Nobody ran a starting study, because "it's only one more pump".</p>
+
+  <p>What nobody checked was the state of the bus. The plant was running on
+  <strong>one transformer</strong> that week — the other was out for an oil-free
+  cast-resin retrofit — so the full plant load and the new start would share a single
+  1600 kVA unit, already at about 85 % load. When the operator pressed START, the
+  pump demanded its ~1.2 MVA of starting kVA at power factor 0.2 from a transformer
+  with 6 % impedance that was already working hard. The 400 V bus dipped about
+  <strong>12 %</strong> — to roughly 352 V — and stayed there for the six seconds the
+  pump took to accelerate.</p>
+
+  <p>Twelve per cent does not sound apocalyptic. But contactor coils are
+  electromagnets holding against a spring: most are only guaranteed to hold above
+  about 85 % voltage, and at 80 % many let go within a couple of cycles. Across the
+  plant, a scatter of small DOL starters <strong>dropped out</strong> — not tripped,
+  just released — and their motors coasted. The VFDs were worse: their DC buses
+  sagged, and one after another they tripped on <strong>undervoltage</strong>,
+  exactly as their default settings told them to. The process did not see an
+  electrical event; it saw cooling water stop, air flow die and a reactor feed pump
+  vanish, all inside ten seconds. The interlocks did what interlocks do, and the
+  plant tripped to a safe state — three hours of restart, one batch lost, from one
+  pushbutton.</p>
+
+  <p>The post-incident fix cost a fraction of the lost batch: a soft starter for the
+  new pump, a documented voltage-dip study for every motor above ~30 kW, and
+  ride-through settings reviewed on every VFD. That is precisely the content of the
+  rest of this section.</p>
+
+  <div class="warning">
+    The victims of a bad start are rarely the starting motor or its feeder — they are
+    <em>everything else on the bus</em>: contactor coils dropping out below ~80&ndash;85 %
+    voltage, VFDs tripping on DC-bus undervoltage, instruments browning out. A
+    starting study is plant-wide protection, not a single-feeder formality.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       3. FEEL FOR THE NUMBERS
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-motors-flc">Feel for the Numbers: 280 A All Day, 1 680 A for Six Seconds</h3>
+
+  <h4>Feel for the numbers</h4>
+
+  <p>Start with speed, because at 60 Hz it surprises engineers trained on 50 Hz
+  plants. An induction motor's stator creates a magnetic field rotating at
+  <strong>synchronous speed</strong> n<sub>s</sub> = 120&middot;f / p (p = number of
+  poles). On the SEC 60 Hz grid:</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Poles</th><th>Synchronous speed at 60 Hz</th><th>Typical full-load speed (with slip)</th><th>Typical use</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>2</td><td>3 600 rpm</td><td>&asymp; 3 550 rpm</td><td>High-speed pumps, compressors</td></tr>
+      <tr><td>4</td><td>1 800 rpm</td><td>&asymp; 1 780 rpm</td><td>The workhorse — most process pumps</td></tr>
+      <tr><td>6</td><td>1 200 rpm</td><td>&asymp; 1 185 rpm</td><td>Fans, agitators, larger slow drives</td></tr>
+    </tbody>
+  </table>
+
+  <p>Everything runs <strong>20 % faster</strong> than the same machine on 50 Hz —
+  which is why a 50 Hz pump curve cannot simply be reused here, and why direct-replacement
+  spares must be 60 Hz machines.</p>
+
+  <p>Now the representative machine used through this section: a <strong>160 kW,
+  4-pole pump motor</strong> at 400 V, pf 0.85, efficiency 0.95. Its full-load
+  current, by the formula from <a href="#c-flc">§3</a>:</p>
+
+  <div class="worked">
+    <h4>Quick estimate — 160 kW motor FLC</h4>
+    <code class="formula">I_fl = P / (√3 × V × pf × η)</code>
+    <code class="formula">I_fl = 160 000 / (1.732 × 400 × 0.85 × 0.95) = 160 000 / 559.4 ≈ 286 A</code>
+    <p>Call it <strong>&asymp; 280 A</strong> (nameplate values vary a few per cent
+    with the actual pf and &eta; of the machine offered; we carry the round 280 A
+    through the starting study). Sanity check by the LV rule of thumb from
+    <a href="#c-flc">§3</a> — roughly 1.7&ndash;1.8 A per kW at 400 V:
+    160 &times; 1.75 &asymp; 280 A. &#10003;</p>
+    <p><strong>DOL starting current (&asymp; 6 × FLC):</strong></p>
+    <code class="formula">I_start ≈ 6 × 280 = 1 680 A   at pf ≈ 0.2</code>
+  </div>
+
+  <p>Hold those two numbers side by side. 280 A is what the feeder carries for years.
+  <strong>1 680 A</strong> is what it carries every time someone presses START —
+  nearly three-quarters of the entire transformer's 2 309 A full-load current
+  (<a href="#c-transformer">§2</a>), demanded by one machine, at a power factor so
+  poor that almost all of it is voltage-depressing reactive current.</p>
+
+  <p>Now the energy view, because it explains a rule that otherwise looks arbitrary.
+  Accelerating the pump set means pouring kinetic energy into the rotating mass:
+  E = &frac12;&middot;J&middot;&omega;&sup2;. For the 160 kW set (motor rotor plus
+  impeller, J &asymp; 4 kg&middot;m&sup2;) at 1 800 rpm (&omega; &asymp; 188 rad/s):
+  E &asymp; &frac12; &times; 4 &times; 188&sup2; &asymp; <strong>71 kJ</strong> —
+  about the kinetic energy of a 1.5-tonne car at 35 km/h. Here is the brutal part of
+  induction-machine physics: during a DOL start of an inertia-dominated load, the
+  rotor cage dissipates as heat <em>approximately the same energy that ends up as
+  kinetic energy</em>. Every start therefore dumps ~70 kJ into a few kilograms of
+  aluminium bars in a handful of seconds — a 2 kW kettle's output for 35 seconds,
+  concentrated into parts with no time to cool.</p>
+
+  <p>That is why motor datasheets carry a <strong>starts-per-hour limit</strong>
+  (often 2&ndash;4 cold starts, fewer when hot, for machines this size): the limit is
+  not bureaucratic, it is the time the rotor needs to shed ~70 kJ per start before
+  the next one stacks more heat on top. An operator who jogs a big motor repeatedly
+  to "clear" a process problem is performing slow rotor murder.</p>
+
+  <div class="key">
+    160 kW pump at 400 V: ~280 A running, ~1 680 A starting at pf 0.2. Each DOL start
+    stores ~70 kJ in the spinning mass and burns roughly the same again as heat in the
+    rotor cage — which is the real reason starts-per-hour limits exist.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       4. WORKED CALCULATION
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-motors-dip">Worked Calculation: DOL Voltage Dip on One 1600 kVA Transformer</h3>
+
+  <h4>Worked calculation</h4>
+
+  <p>The flagship question: <em>if the 160 kW pump is started DOL while the plant is
+  on a single transformer, how far does the 400 V bus dip — and is that acceptable?</em>
+  We work it by hand with one stated approximation, exactly as a field engineer can
+  redo it on a phone.</p>
+
+  <div class="worked">
+    <h4>Step 1 — Starting apparent power</h4>
+    <p>The motor draws 1 680 A at 400 V (the bus voltage will sag, which slightly
+    reduces the current — we conservatively ignore that relief):</p>
+    <code class="formula">S_start = √3 × V × I_start = 1.732 × 400 × 1 680 ≈ 1 164 kVA</code>
+    <p>One machine, starting, demands <strong>~1 164 kVA</strong> — nearly
+    three-quarters of the transformer's 1 600 kVA rating.</p>
+
+    <h4>Step 2 — Split it into watts and vars</h4>
+    <p>At starting pf &asymp; 0.2: cos&phi; = 0.20, so sin&phi; = &radic;(1 &minus; 0.2&sup2;) = 0.98.</p>
+    <code class="formula">P_start = 1 164 × 0.20 ≈ 233 kW</code>
+    <code class="formula">Q_start = 1 164 × 0.98 ≈ 1 141 kvar</code>
+    <p>The start is <strong>reactive-dominant</strong>: 98 % of the starting current
+    is vars. That licenses the simplification in Step 3.</p>
+
+    <h4>Step 3 — Voltage dip across the transformer reactance</h4>
+    <p><strong>Stated approximation:</strong> because the start is almost purely
+    reactive and the transformer impedance is almost purely reactive
+    (Z = 6 %, X/R &asymp; 5 &rarr; X &asymp; 0.059 pu on 1 600 kVA — see
+    <a href="#c-transformer">§2</a>), the dip is dominated by the X&middot;Q term.
+    The reactive-dominant per-unit estimate is:</p>
+    <code class="formula">ΔV ≈ X_tx × Q_start / S_tx</code>
+    <code class="formula">ΔV ≈ 0.059 × (1 164 × 0.98) / 1 600 = 0.059 × 1 141 / 1 600 ≈ 0.042 → 4.2 %</code>
+    <p>The 400 V bus dips to roughly <strong>0.958 &times; 400 &asymp; 383 V</strong>
+    for the duration of the start.</p>
+
+    <h4>Step 4 — Add the source behind the transformer</h4>
+    <p>The 13.8 kV SEC source is not infinitely stiff. At the 25 kA design fault
+    level, S<sub>sc</sub> &asymp; &radic;3 &times; 13.8 &times; 25 &asymp; 597 MVA, so
+    the grid reactance on the 1 600 kVA base is only 1.6 / 597 &asymp; 0.003 pu —
+    adding about <strong>0.2 %</strong> of dip. Total &asymp; <strong>4.4 %</strong>.
+    The transformer dominates, as it should on any utility-fed LV start.</p>
+
+    <h4>Step 5 — Check against the limit</h4>
+    <p>A common acceptance limit for motor-starting dip on a healthy bus is
+    <strong>&le; 10 %</strong> (project specifications vary; some allow 15 % at the
+    starting motor's own terminals). 4.4 % &lt; 10 % — <strong>acceptable on an
+    unloaded transformer</strong>. But note what the failure story showed: the dip
+    <em>adds</em> to the regulation already present from existing load. On a
+    transformer already ~85 % loaded at 0.85 pf (~3.5 % regulation,
+    <a href="#c-transformer">§2</a>), the bus is already low before the start, and
+    the total excursion approaches the contactor drop-out region. <strong>Sanity
+    check:</strong> dip scales with starting kVA over transformer kVA times X —
+    (1 164/1 600) &times; 0.059 &times; 0.98 &asymp; 4.2 %, consistent. &#10003;</p>
+  </div>
+
+  <div class="note">
+    <strong>Honest limits of the hand method.</strong> This is a first-cut screening
+    calculation: it ignores cable impedance to the motor (which adds dip at the motor
+    terminals but slightly relieves the bus), current reduction as voltage sags, and
+    other motors' response (running motors briefly act as generators, then draw more
+    current at lower voltage). The plant's formal motor-starting study models all of
+    this. The hand method is for the field question: <em>is this start obviously fine,
+    obviously dangerous, or worth a study?</em>
+  </div>
+
+  <h3 id="c-motors-starting">Worked Calculation (continued): Comparing the Four Starting Methods</h3>
+
+  <p>The dip calculation makes the starting-method comparison quantitative instead of
+  doctrinal. Each method trades starting current against starting <em>torque</em> —
+  and torque is the part people forget: the motor still has to accelerate the pump.</p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Method</th>
+        <th>Start current</th>
+        <th>Start torque</th>
+        <th>Bus dip (160 kW example)</th>
+        <th>Character</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>DOL</td>
+        <td>&asymp; 6 × FLC (1 680 A)</td>
+        <td>100 % of motor's natural curve</td>
+        <td>&asymp; 4.2 %</td>
+        <td>Brutal and simple; one contactor; full mechanical shock</td>
+      </tr>
+      <tr>
+        <td>Star-delta</td>
+        <td>&asymp; 2 × FLC (560 A) in star</td>
+        <td>&asymp; 33 % — may stall high-torque loads</td>
+        <td>&asymp; 1.4 % in star — <em>but see transition spike</em></td>
+        <td>Three contactors + timer; open-transition spike can approach DOL current for a few cycles</td>
+      </tr>
+      <tr>
+        <td>Soft starter</td>
+        <td>&asymp; 3 × FLC (840 A), settable</td>
+        <td>Reduced &prop; V&sup2;; current-ramped</td>
+        <td>&asymp; 2.1 %</td>
+        <td>Thyristor voltage ramp; smooth; bypassed when up to speed</td>
+      </tr>
+      <tr>
+        <td>VFD</td>
+        <td>&asymp; 1.0–1.1 × FLC (&le; ~310 A)</td>
+        <td>Full rated torque from near-zero speed</td>
+        <td>&lt; 0.5 % (negligible)</td>
+        <td>Full speed control, energy saving — and harmonics (<a href="#c-pfc">§7</a>)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="worked">
+    <h4>Reworking the dip for a VFD start</h4>
+    <p>A VFD never connects the stalled motor to the bus. Its rectifier draws from
+    the network only the <em>power</em> being delivered (plus losses), ramping from
+    zero; the violent magnetising surge happens on the drive's output side, managed
+    by the inverter. Worst case during acceleration, the line current approaches the
+    drive's current limit at a good displacement power factor (&asymp; 0.95 for a
+    6-pulse rectifier):</p>
+    <code class="formula">S_start,VFD ≤ √3 × 400 × 310 ≈ 215 kVA,  mostly active power</code>
+    <code class="formula">ΔV ≈ X×Q/S + R×P/S ≈ 0.059 × (215×0.31)/1600 + 0.012 × (215×0.95)/1600 ≈ 0.4 %</code>
+    <p>Under half a per cent — <strong>an order of magnitude below DOL</strong>. On a
+    weak bus (single transformer, or the 1 250 kVA standby DG, where the generator's
+    transient reactance of ~20 % makes DOL dips several times worse), the VFD or soft
+    starter is not a luxury; it is what makes the start possible at all.</p>
+  </div>
+
+  <div class="warning">
+    <strong>Star-delta's dirty secret:</strong> at the star-to-delta changeover the
+    motor is briefly disconnected; it slips back, and re-closing in delta can draw a
+    transient close to full DOL current — so the bus still sees a (short) DOL-class
+    event, and the contactors take a beating. With 33 % torque it suits machines that
+    start nearly unloaded. For pumps started against a closed valve it can work; for
+    anything with real breakaway torque, prefer a soft starter or VFD.
+  </div>
+
+  <div class="key">
+    DOL = 6× current, 100 % torque, ~4 % dip per 160 kW on one 1 600 kVA transformer.
+    Star-delta trades torque away and bites back at transition. A soft starter halves
+    the dip; a VFD removes the event entirely (&lt; 0.5 %) and adds speed control —
+    at the price of harmonics, which is §7's problem.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       5. EQUIPMENT SETTINGS
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-motors-settings">Settings: Telling a Start From a Fault From a Slow Death</h3>
+
+  <h4>Equipment settings</h4>
+
+  <p>Motor protection has a uniquely awkward brief: it must allow a 6&times; current
+  surge every legitimate start, yet trip for a 6&times; current that means the rotor
+  is jammed, and also catch the slow 15 % overload that cooks the insulation over
+  hours. The settings below (indicative; the coordination study and relay setting
+  sheets govern — <a href="#c-protection">§10</a>) are how those three duties are
+  separated.</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Function</th><th>Indicative setting (160 kW pump)</th><th>What it is for</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Thermal overload (49), pickup</td>
+        <td>1.0–1.05 × FLC (set to nameplate 280 A)</td>
+        <td>Models winding temperature; trips on sustained overload</td>
+      </tr>
+      <tr>
+        <td>Overload trip class</td>
+        <td>Class 10 (normal starts); Class 20/30 for heavy/long starts</td>
+        <td>Class number &asymp; max seconds to trip at 7.2 × I<sub>e</sub> (IEC 60947-4-1) — must exceed actual start time with margin</td>
+      </tr>
+      <tr>
+        <td>Locked rotor / stall (48/51LR)</td>
+        <td>Pickup &asymp; 4 × FLC, delay = start time + 2–3 s (e.g. 8–9 s for a 6 s start)</td>
+        <td>Current still at starting level after the motor should be up to speed &rarr; rotor jammed; trip before the cage melts</td>
+      </tr>
+      <tr>
+        <td>Starts-per-hour / restart inhibit</td>
+        <td>Per datasheet, typically 2–3 cold / 1–2 hot, with lockout timer</td>
+        <td>Enforces the ~70 kJ-per-start rotor thermal budget</td>
+      </tr>
+      <tr>
+        <td>Undervoltage (27)</td>
+        <td>Alarm ~0.9 V<sub>n</sub>; trip ~0.8 V<sub>n</sub> delayed 2–5 s</td>
+        <td>Delay rides through starts and SEC dips; only sustained collapse trips</td>
+      </tr>
+      <tr>
+        <td>Instantaneous short-circuit (50)</td>
+        <td>&asymp; 10–12 × FLC (above asymmetric inrush peak)</td>
+        <td>Genuine faults only; must not see the first-cycle inrush asymmetry</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>For VFD-fed motors, the protection moves substantially into the drive's
+  parameters, and three of them matter most:</p>
+
+  <ul>
+    <li><strong>Acceleration ramp</strong> — typically 10&ndash;30 s for pumps. Too
+    short and the drive sits at its current limit (re-creating a mild start event);
+    too long on a high-friction load and the motor crawls at high current and low
+    cooling.</li>
+    <li><strong>Current limit</strong> — typically 110&ndash;150 % of motor FLC. This
+    is the parameter that <em>guarantees</em> the negligible bus dip calculated
+    above: the drive physically cannot draw the 6&times; surge.</li>
+    <li><strong>Undervoltage ride-through</strong> — DC-bus trip level and ride-through
+    strategy (kinetic back-up / controlled deceleration). Left at factory defaults,
+    drives are often the first equipment to trip in the 4&ndash;12 % dips this
+    section is about. Set deliberately, they ride through everything short of a real
+    outage.</li>
+  </ul>
+
+  <div class="tip">
+    Field check worth gold: compare the overload <em>class</em> with the measured
+    start time on the longest start (often the first start after maintenance, with a
+    flooded line). A Class 10 relay on a 12-second start trips randomly "for no
+    reason"; the fix is Class 20, not a bigger pickup — raising the pickup destroys
+    the running-overload protection.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       6. EQUIPMENT TECHNOLOGY
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-motors-technology">Technology: Slip, Heat at 50 °C, and What a VFD Really Is</h3>
+
+  <h4>Equipment technology</h4>
+
+  <p><strong>The induction motor in plain words.</strong> The stator windings, fed at
+  60 Hz, create a magnetic field rotating at synchronous speed (1 800 rpm for 4
+  poles). The rotor — a cage of aluminium or copper bars — is dragged around by that
+  field, but it can only produce torque if the field <em>moves relative to the
+  bars</em> (a moving field induces the rotor currents that make the torque). So the
+  rotor always runs slightly slower than the field; the difference is the
+  <strong>slip</strong>, about 1&ndash;2 % at full load (1 780 vs 1 800 rpm). At
+  standstill the slip is 100 %: the field sweeps past the bars at full speed,
+  inducing enormous currents — which is exactly the 6&times; starting current seen
+  from the supply. The machine has no brushes, no permanent magnets, essentially one
+  wearing part (bearings). That is why it owns the industrial world.</p>
+
+  <p><strong>Efficiency classes and the 50 °C problem.</strong> IEC 60034-30-1
+  efficiency classes run IE1&ndash;IE4; IE3 is the practical minimum for new
+  machines here, IE4 where the duty justifies it (a 160 kW IE3 machine is ~96 %
+  efficient — its losses, ~6&ndash;7 kW, are a roomful of fan heaters running whenever
+  the pump runs). Standard ratings assume 40 &deg;C ambient; at the Rev 3 design
+  ambient of <strong>50 &deg;C</strong> the permissible output derates typically to
+  ~92&ndash;95 % of nameplate, or the motor must be specified with class H insulation /
+  class B temperature-rise margin. A motor "exactly sized" from a 40 &deg;C catalogue
+  is undersized in a Saudi summer.</p>
+
+  <p><strong>Enclosure and cooling.</strong> For the dust and sand environment:
+  minimum <strong>IP55</strong> (IP54 absolute floor outdoors), cooling
+  <strong>IC411</strong> — the standard totally-enclosed fan-cooled (TEFC)
+  arrangement: an external shaft-driven fan blowing over a finned frame, no exchange
+  of internal and external air. Two field consequences: a dust blanket on the fins is
+  thermal insulation on a machine already derated for 50 &deg;C; and below ~50 %
+  speed on a VFD the shaft fan loses effectiveness — slow-running VFD duty needs
+  either oversizing or a separately driven fan (IC416).</p>
+
+  <p><strong>The starter electronics.</strong> A <em>star-delta</em> starter is pure
+  electromechanics: three contactors and a timer reconnect the windings from star
+  (each phase sees V/&radic;3, current and torque drop to 1/3) to delta. A
+  <em>soft starter</em> is two antiparallel thyristors per phase, firing later or
+  earlier in each half-cycle to ramp the effective voltage — current control without
+  frequency control, usually with a bypass contactor once at speed. A
+  <em>VFD</em> is the complete power-electronic decoupling of motor from grid:
+  <strong>rectifier &rarr; DC bus &rarr; inverter</strong>. The input rectifier
+  (six diodes in the common 6-pulse drive) charges a DC-bus capacitor bank; the
+  output inverter (six IGBTs) chops that DC into a <strong>PWM</strong> pattern —
+  thousands of voltage pulses per second whose <em>average</em> is a sine wave of
+  whatever voltage and frequency the motor needs. Constant V/f keeps the magnetic
+  flux right; vector control adds torque control down to zero speed.</p>
+
+  <p>Three side effects of that elegance, all of which appear elsewhere in this
+  manual:</p>
+
+  <ul>
+    <li><strong>Harmonics.</strong> The 6-pulse rectifier draws current in gulps,
+    rich in 5th and 7th harmonics — <strong>300 Hz and 420 Hz on the 60 Hz
+    system</strong>. Multiply by a plant-full of drives and you have the harmonic
+    environment that forces the detuned PFC bank design in
+    <a href="#c-pfc">§7</a>.</li>
+    <li><strong>dV/dt and motor cables.</strong> Each PWM edge is a steep voltage
+    front; travelling down the motor cable it reflects at the motor terminals and
+    can nearly double, stressing the first turns of the winding. Hence
+    inverter-duty insulation (IEC 60034-25), screened symmetrical motor cables, kept
+    short (typically &lt; 50&ndash;100 m without filters), and dV/dt or sine filters
+    on long runs — see <a href="#c-cables">§6</a> for the cable side.</li>
+    <li><strong>Bearing currents.</strong> The PWM common-mode voltage couples
+    capacitively through the airgap and discharges through the bearings, machining
+    fluting patterns into the races. Standard mitigations above ~100 kW: insulated
+    non-drive-end bearing and/or a shaft grounding ring, plus the 360&deg; screen
+    termination of the motor cable.</li>
+  </ul>
+
+  <div class="note">
+    Indicative product families for starters, MCC components and drives live in the
+    Part 6 catalogues — see <a href="#cat-mcc">MCC components</a> and
+    <a href="#cat-vfd">VFDs &amp; soft starters</a>.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       7. CONTROL
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-motors-control">Control: From Contactor-and-Overload to the Intelligent MCC</h3>
+
+  <h4>Control</h4>
+
+  <p>Every LV motor on this plant lives in a <strong>motor control centre</strong> —
+  a switchboard of standardised starter cubicles. Two control philosophies coexist,
+  often in the same lineup:</p>
+
+  <p><strong>Conventional starter:</strong> fuse or MCCB + contactor + thermal
+  overload relay, with hard-wired START/STOP, a local/remote selector, and a few
+  digital signals to the DCS (run, trip, available). Cheap, transparent, fixable
+  with a screwdriver — and informationally blind: when it trips, all the control
+  room knows is "trip".</p>
+
+  <p><strong>Intelligent MCC:</strong> each cubicle carries an electronic motor
+  protection/management relay instead of a bimetal overload. It measures the three
+  phase currents (often voltage too), runs a genuine thermal model of the motor,
+  provides all the protection functions in the settings table above, counts starts
+  and operating hours, time-stamps every event, and talks to the DCS/PMS over a
+  <strong>fieldbus</strong> (Profibus/Profinet/Modbus — and IEC 61850 at the
+  switchboard level). The first trip now arrives with its cause, the current
+  waveform and the thermal state attached. For troubleshooting a 3 a.m. trip, that
+  difference is the difference between minutes and shifts.</p>
+
+  <p>Above the MCC, three control-system interactions matter for this section:</p>
+
+  <ul>
+    <li><strong>Start interlocks (DCS).</strong> Process permissives (suction valve
+    open, level healthy) plus <em>electrical</em> permissives: the restart-inhibit
+    timer from the starts-per-hour budget, and — on well-engineered plants — a PMS
+    check that the bus can afford the start (e.g. blocking a DOL start of the
+    largest motor while on single-transformer or DG supply, exactly the failure
+    story's missing barrier).</li>
+    <li><strong>Load shedding (PMS).</strong> Motors are the load-shedding currency:
+    on loss of one transformer, the PMS sheds the non-essential motor list to bring
+    the survivor below its N-1 limit (<a href="#c-transformer">§2</a>). The shed
+    list and the motor schedule must be the <em>same document</em>; an out-of-date
+    shed list is a latent plant trip.</li>
+    <li><strong>VFDs on the bus.</strong> Drives take their setpoints (speed,
+    torque limits) and give their diagnostics over the same fieldbus; their
+    ride-through and auto-restart behaviour after dips must be coordinated
+    plant-wide, not left per-drive — a plant where half the drives auto-restart and
+    half latch out after the same dip is a process upset generator.</li>
+  </ul>
+
+  <div class="tip">
+    Quick assessment question for any MCC: "show me how you would find out why this
+    motor tripped last Tuesday". If the answer is a paper logbook and a bimetal
+    overload with no memory, the plant is running on folklore. If the answer is an
+    event record with the thermal image at trip time, the control philosophy is
+    doing its job.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       8. SIZING METHOD
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-motors-sizing">Sizing Method: the Motor Feeder Design Chain</h3>
+
+  <h4>Sizing method</h4>
+
+  <p>Sizing a motor feeder is a chain, and the order matters because each link's
+  output is the next link's input:</p>
+
+  <ol>
+    <li><strong>Motor rating and FLC.</strong> From the driven-load power (plus
+    mechanical margin, typically 10&ndash;15 % for pumps), pick the next standard
+    motor rating, confirmed for 50 &deg;C ambient (derate or specify class H — see
+    technology above). Compute FLC per <a href="#c-flc">§3</a>; then use the
+    <em>nameplate</em> FLC of the actual machine for everything downstream.</li>
+    <li><strong>Cable.</strong> Size per the four-step method of
+    <a href="#c-cables">§6</a>: design current = FLC, apply the Rev 3 derating set
+    (air at 50 &deg;C &asymp; 0.82, grouping), check voltage drop run-length
+    (&le; 5 % running, and at the motor terminals during start typically
+    &le; 10&ndash;15 %), and verify short-circuit withstand. For VFD feeders, use
+    screened symmetrical motor cable and the drive maker's length limits.</li>
+    <li><strong>Protection and starter components.</strong> Per
+    <a href="#c-protection">§10</a> and IEC 60947-4-1 type-2 coordination: the
+    fuse/MCCB, contactor (AC-3 duty at motor FLC) and overload must be a proven
+    combination that survives a fault without welding the contactor. Overload class
+    from the measured/estimated start time.</li>
+    <li><strong>Starting method — by dip study, not habit.</strong> Run the §
+    <a href="#c-motors">c-motors</a> dip estimate for the start on the <em>weakest
+    credible source</em> (single transformer; DG supply if the motor is on the
+    essential bus). Indicative outcomes: &le; ~30 kW DOL is invisible;
+    30&ndash;75 kW DOL usually fine on a healthy bus, check when on DG;
+    75&ndash;200 kW soft starter or VFD; speed-controllable loads (pumps, fans) —
+    VFD on energy grounds alone (affinity laws: 20 % speed reduction &asymp; 50 %
+    power reduction).</li>
+    <li><strong>VFD sizing, where chosen.</strong> Rules: drive continuous current
+    &ge; motor nameplate FLC (size by <em>current</em>, not kW — a low-pf motor
+    fools the kW rating); overload duty matched to the load (110 %/60 s variable
+    torque for pumps/fans, 150 %/60 s constant torque); <strong>derate for
+    50 &deg;C</strong> per the maker's tables (drives are commonly rated at 40
+    &deg;C; expect one frame size up or a stated current derate, plus switching-
+    frequency derating); altitude derating is not applicable on this coastal site.
+    Add input chokes or low-harmonic front ends per the harmonic budget in
+    <a href="#c-pfc">§7</a>.</li>
+    <li><strong>Close the loop.</strong> Feed the final motor list back into the
+    load estimate, the transformer N-1 shed list (<a href="#c-transformer">§2</a>)
+    and the short-circuit study (<a href="#c-shortcircuit">§4</a> — running motors
+    contribute fault current too).</li>
+  </ol>
+
+  <h3 id="c-motors-mvthreshold">The LV-to-MV Feed Threshold</h3>
+
+  <p>The chain above eventually defeats itself: above roughly
+  <strong>150&ndash;200 kW</strong> per motor, LV currents (&asymp; 280&ndash;350 A
+  running, ~2 000 A starting) drive cable, starter and switchboard costs up steeply,
+  and the dip study starts failing. Such machines are more economically fed at MV
+  (3.3 / 6.6 kV) from a dedicated MV starter — at which point they leave the 400 V
+  MCC world entirely. On a ~2 MW plant the largest drives sit <em>near</em> this
+  boundary, almost never beyond it: expect the answer here to be "soft starter or
+  VFD at 400 V", but check the motor schedule rather than assuming.</p>
+
+  <h3 id="c-motors-assess">What to Check on Site — Self-Check</h3>
+
+  <ul class="checklist">
+    <li>Obtain the motor schedule; confirm motors &gt; ~75 kW have soft start or VFD,
+    and that any DOL machine above ~30 kW has a documented dip check (single-TX and
+    DG cases).</li>
+    <li>Largest motor: read nameplate FLC, starting method, overload class; compare
+    class against the actual measured start time.</li>
+    <li>Confirm 60 Hz nameplates throughout — a 50 Hz spare motor installed "because
+    it fits" runs 20 % fast on its pump curve and overloads.</li>
+    <li>Check IC411 fans and fins for dust blanket; confirm 50 &deg;C ambient was in
+    the motor datasheet (temperature rise class vs insulation class margin).</li>
+    <li>VFDs: record current limit, ramp times, undervoltage ride-through settings
+    and auto-restart philosophy; confirm screened motor cable, length within the
+    maker's limit, and shaft-grounding/insulated bearing on large machines.</li>
+    <li>Confirm restart-inhibit (starts-per-hour) is actually configured, not just
+    in the datasheet.</li>
+    <li>Self-check — Reconstruct without notes: 160 kW &rarr; ~280 A FLC &rarr;
+    1 680 A DOL &rarr; ~1 164 kVA &rarr; 4.2 % dip on one 1 600 kVA TX. Which single
+    number would change if the plant ran tie-closed on two transformers? (S<sub>tx</sub>
+    effectively doubles &rarr; dip roughly halves — but <a href="#c-shortcircuit">§4</a>
+    forbids tie-closed operation for fault-level reasons.)</li>
+    <li>Self-check — Why does a star-delta starter still threaten the bus despite its
+    2&times; starting current? (Open-transition re-closing spike approaching DOL
+    magnitude.)</li>
+    <li>Self-check — Why is each start "worth" ~70 kJ of rotor heat, and what rule on
+    the relay enforces that budget? (Inertia-start rotor loss &asymp; stored kinetic
+    energy; starts-per-hour / restart-inhibit.)</li>
+  </ul>
+
+  <div class="key">
+    The motor feeder design chain — FLC &rarr; cable &rarr; protection &rarr; starter
+    by dip study &rarr; VFD sized by current and derated for 50 &deg;C — exists
+    because one pushbutton can otherwise trip a plant. Size for the start; the run
+    takes care of itself.
+  </div>
+
+</section>
+
+
+<!-- ============================================================
+     §C-PFC  Power-factor correction — deep dive
+============================================================ -->
+<section id="c-pfc" data-title="Power-Factor Correction Sizing" data-part="Part 2 — Calculations">
+
+  <h2>7 — Power-Factor Correction (PFC) <span style="font-size:0.65em; font-weight:normal; background:#f5f0e8; border:1px solid #c8b88a; border-radius:3px; padding:1px 5px; color:#6b5a1e;">Reference</span></h2>
+
+  <p><strong>Goal:</strong> understand what reactive power physically is and why SEC
+  bills for it, size the automatic capacitor bank that raises the plant from 0.85 to
+  0.95 power factor, quantify the transformer capacity and losses that the bank buys
+  back, and learn why — on a VFD-heavy plant — the bank must be detuned or it will
+  destroy itself.</p>
+
+  <p>This section is the twin of <a href="#c-motors">§5 — Motors</a>: the motors
+  create the reactive demand and (via their VFDs) the harmonics; this section cleans
+  up after both. It uses the transformer ratings from
+  <a href="#c-transformer">§2</a> and the fault level from
+  <a href="#c-shortcircuit">§4</a>.</p>
+
+  <div class="note">
+    <strong>Indicative data.</strong> All values are indicative on the Rev 3 basis:
+    2.0 MW at pf 0.85 &rarr; 2 353 kVA; PFC target 0.95 &rarr; &asymp; 580 kvar,
+    detuned 7 %; 400/230 V, 60 Hz (so the 5th and 7th harmonics are
+    <strong>300 Hz and 420 Hz</strong>); LV fault level &asymp; 38.5 kA on one
+    transformer. SEC tariff treatment of reactive energy is indicative — confirm the
+    current SEC tariff structure and the SEC Distribution Code requirements for the
+    actual connection agreement. Standards: SASO-adopted IEC 60831 (LV capacitors),
+    IEC 61921 (capacitor banks), with SBC 401.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       1. WHY THIS EXISTS
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-pfc-why">Current That Does No Work but Heats Every Conductor</h3>
+
+  <h4>Why this exists</h4>
+
+  <p>Every induction motor, transformer and reactor on the plant needs a magnetic
+  field to function, and on AC that field must be built and collapsed
+  <strong>120 times a second</strong> (twice per 60 Hz cycle). The energy that builds
+  the field is not consumed — it sloshes back to the source each half-cycle — but the
+  <em>current</em> that carries it back and forth is real current in every conductor
+  along the way. That oscillating, non-working flow is <strong>reactive power</strong>
+  (Q, in var); the working flow is <strong>active power</strong> (P, in W); their
+  vector total — what cables, transformers and generators must actually be sized for
+  — is <strong>apparent power</strong> (S, in VA), with pf = P/S.</p>
+
+  <p>The popular analogy is the beer glass: the liquid is kW, the foam is kvar, and
+  you pay for a full glass. It is memorable but it undersells the problem, because
+  foam is weightless and harmless. The better picture: reactive current is a
+  <strong>delivery truck that drives the route fully laden in both directions and
+  never delivers anything</strong>. It burns fuel (I&sup2;R loss in every cable and
+  winding), occupies road space (thermal capacity of cables and transformers), and
+  wears out the fleet — while doing zero useful work. At pf 0.85, about 53 % extra
+  "non-delivering" current is on the road compared with the same plant at unity; the
+  conductors cannot tell the difference and heat up just the same.</p>
+
+  <p>Utilities can tell the difference, and bill for it. <strong>SEC penalises
+  consumers whose power factor falls below 0.9</strong> (indicative — the reactive
+  charge mechanism and threshold are set by the SEC tariff in force and the
+  connection agreement; verify the current figures). The economic logic is honest:
+  the customer's kvar occupies SEC generator, line and transformer capacity exactly
+  as kW does. Power-factor correction is therefore one of the very few electrical
+  investments with a direct, recurring, line-item payback on the utility invoice —
+  plus the hidden payback inside the fence: freed transformer capacity and lower
+  cable losses, both quantified below.</p>
+
+  <p>The fix exploits a symmetry: an inductor borrows energy for a quarter-cycle and
+  returns it; a <strong>capacitor</strong> does the same in antiphase. Put a
+  capacitor next to an inductive load and the energy sloshes <em>locally between
+  them</em> instead of travelling to the SEC grid and back. The supply sees only the
+  working current. Nothing in the load changes — the trucks just stop driving the
+  whole route.</p>
+
+  <div class="key">
+    Reactive power is current that delivers no energy yet heats and occupies every
+    conductor between the source and the load. SEC bills for it below pf 0.9
+    (indicative). Capacitors fix it by closing the energy loop locally — the same
+    sloshing energy, a much shorter route.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       2. WHAT GOES WRONG WITHOUT IT
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-pfc-failure">A Failure Story: "Full" Transformers Carrying 1.25 MW</h3>
+
+  <h4>What goes wrong without it</h4>
+
+  <p>A plant much like this one ran for two years at a power factor of
+  <strong>0.78</strong> — nobody had commissioned the capacitor bank properly after a
+  controller fault, and the pf meter on the LV-MSB had been reading a failed CT phase
+  for months. Three slow-burning consequences, none of them dramatic enough to force
+  action on any given day:</p>
+
+  <p><strong>First, the capacity illusion.</strong> Operations wanted to add a 250 kW
+  crusher. The PMS trends said the 1 600 kVA transformer was at 100 % — "the plant is
+  full". But 1 600 kVA at 0.78 pf is only 1 600 &times; 0.78 = <strong>1 248 kW of
+  actual work</strong>. The transformer was thermally full while delivering 1.25 MW;
+  at 0.95 pf the same iron would have carried 1 520 kW. The plant was about to spend
+  serious money on "reinforcement" to buy back capacity it already owned — the
+  missing 270 kW was being spent hauling vars.</p>
+
+  <p><strong>Second, the letters.</strong> SEC's metering integrates reactive energy
+  whether or not the plant's own pf meter works. The monthly invoices carried
+  power-factor penalty charges — individually modest, collectively the price of the
+  entire capacitor bank every year or two. The letters were filed by accounts, who
+  had no reason to know what a kvar was; the feedback loop from invoice to
+  switchroom did not exist.</p>
+
+  <p><strong>Third, the soft bus at the far end.</strong> Voltage drop in cables and
+  transformers is driven hardest by reactive current through reactance (the
+  X&middot;sin&phi; term — the same physics as the motor-starting dip in
+  <a href="#c-motors">§5</a>). At 0.78 pf the running voltage at the most distant
+  MCC sagged 2&ndash;3 % lower than it needed to be; motors there ran measurably
+  hotter, and the marginal contactors that drop out during motor starts dropped out
+  a little more often. Nobody connected the nuisance trips at MCC-D to the power
+  factor; they blamed the contactor brand.</p>
+
+  <p>The audit that finally caught it took one afternoon: a clamp power meter on the
+  incomer, an invoice, and the arithmetic in the next two sub-sections. The repaired
+  and re-commissioned bank paid for its repair in under a year — and the crusher
+  connected to the existing transformer.</p>
+
+  <div class="warning">
+    Low power factor never announces itself. It hides as "full" transformers,
+    unexplained penalty lines on invoices nobody technical reads, and a chronically
+    soft bus at the far MCCs. If the plant pf meter and the SEC invoice disagree,
+    believe the invoice.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       3. FEEL FOR THE NUMBERS
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-pfc-feel">Feel for the Numbers: 0.62 Mvar Riding Along with Every Megawatt</h3>
+
+  <h4>Feel for the numbers</h4>
+
+  <p>Power factor numbers feel abstract until you convert them to "extra freight".
+  The conversion is tan&phi;: for every megawatt of useful power, the plant also
+  hauls P&middot;tan&phi; of circulating reactive power.</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Power factor</th><th>tan &phi;</th><th>kvar hauled per 1 000 kW</th><th>Extra current vs unity pf</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1.00</td><td>0.000</td><td>0</td><td>—</td></tr>
+      <tr><td>0.95</td><td>0.329</td><td>329</td><td>+5 %</td></tr>
+      <tr><td>0.85</td><td>0.620</td><td>620</td><td>+18 %</td></tr>
+      <tr><td>0.78</td><td>0.802</td><td>802</td><td>+28 %</td></tr>
+      <tr><td>0.70</td><td>1.020</td><td>1 020</td><td>+43 %</td></tr>
+    </tbody>
+  </table>
+
+  <p>Read the 0.85 row, because it is this plant: <strong>for every 1 MW of work,
+  0.62 Mvar rides along</strong>. The vars and the watts add vectorially, so the
+  current is "only" 18 % higher than it needs to be — but cable heating goes as
+  current <em>squared</em>, so the I&sup2;R losses in every feeder are
+  1.18&sup2; &asymp; <strong>1.39&times;</strong> what the same delivered power
+  would cost at unity pf. The transformers, cables and busbars are utterly
+  indifferent to pf as a concept; they see only the full <strong>kVA</strong>, and
+  every one of them was bought, sized and derated (at 50 &deg;C!) for that kVA.</p>
+
+  <p>Now the corrective hardware. A capacitor is a <strong>stored-energy
+  device</strong>: E = &frac12;CV&sup2;. How much energy does the whole ~600 kvar
+  bank actually hold? For an AC bank the stored energy at peak is Q/&omega;:</p>
+
+  <div class="worked">
+    <h4>Quick estimate — energy stored in the full 600 kvar bank</h4>
+    <code class="formula">E ≈ Q / ω = 600 000 / (2π × 60) = 600 000 / 377 ≈ 1.6 kJ</code>
+    <p>About the energy of a small battery — trivial as energy. The danger is the
+    <strong>release time</strong>: a charged capacitor closed onto the bus (or onto
+    another charged step) equalises in <em>microseconds</em>. 1.6 kJ in 100 &micro;s
+    is an instantaneous power of ~16 MW — hence inrush transients of kiloamps at
+    kilohertz when steps switch carelessly. Every "boring" requirement in the
+    settings section (discharge resistors, reclose delays, capacitor-duty
+    contactors) exists to tame this microsecond physics.</p>
+  </div>
+
+  <p>One more intuition: the bank is roughly the reactive mirror of the motors. The
+  ~1.4 MW of motors at pf ~0.85 generate most of the plant's ~1.24 Mvar demand
+  (2 000 kW &times; 0.62); the bank hands back ~0.6 Mvar of it locally, leaving the
+  pf at the SEC meter at 0.95. Capacitors do not <em>make</em> power — they make the
+  motors' magnetising energy commute locally instead of to the SEC grid.</p>
+
+  <div class="key">
+    At 0.85 pf, every megawatt drags 0.62 Mvar with it; conductors see the full kVA
+    and losses rise with current squared. The fix stores only ~1.6 kJ — but a
+    capacitor releases its energy in microseconds, which is why switching it is an
+    engineering discipline of its own.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       4. WORKED CALCULATION
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-pfc-formula">Worked Calculation: Sizing the Bank from 0.85 to 0.95</h3>
+
+  <h4>Worked calculation</h4>
+
+  <p>The sizing formula is pure trigonometry: the load's watts are fixed; correction
+  only shrinks the var leg of the power triangle from P&middot;tan&phi;<sub>1</sub>
+  to P&middot;tan&phi;<sub>2</sub>. The capacitor must supply the difference.</p>
+
+  <div class="worked">
+    <h4>Step 1 — Required compensation</h4>
+    <code class="formula">Q_c = P × (tan φ1 − tan φ2)</code>
+    <p>pf<sub>1</sub> = 0.85 &rarr; &phi;<sub>1</sub> = 31.8&deg; &rarr; tan&phi;<sub>1</sub> = 0.620</p>
+    <p>pf<sub>2</sub> = 0.95 &rarr; &phi;<sub>2</sub> = 18.2&deg; &rarr; tan&phi;<sub>2</sub> = 0.329</p>
+    <code class="formula">Q_c = 2 000 kW × (0.620 − 0.329) = 2 000 × 0.291 ≈ 582 kvar</code>
+
+    <h4>Step 2 — Choose a standard bank and its step structure</h4>
+    <p>Select a <strong>600 kvar automatic bank</strong>, switched in steps — e.g.
+    <strong>6 &times; 100 kvar</strong> or, better for a plant whose load swings,
+    <strong>12 &times; 50 kvar</strong>. Step size matters in both directions:</p>
+    <ul>
+      <li>Steps too <em>coarse</em>: at light load (say weekend, 400 kW) a single
+      100 kvar step is 25 % of the load's entire var demand — the controller hunts,
+      or worse, the last step pushes the plant <strong>leading</strong>
+      (over-compensated). A leading plant raises its own bus voltage, stresses the
+      capacitors, and can interact badly with the standby generator's AVR — DG sets
+      tolerate leading pf very poorly.</li>
+      <li>Steps too <em>fine</em>: more contactors, fuses and reactors to buy and
+      maintain. 50 kvar steps are a sensible LV compromise at this scale.</li>
+    </ul>
+
+    <h4>Step 3 — Transformer capacity released</h4>
+    <p>Before: S<sub>1</sub> = 2 000 / 0.85 = <strong>2 353 kVA</strong>.
+    After: S<sub>2</sub> = 2 000 / 0.95 = <strong>2 105 kVA</strong>.</p>
+    <code class="formula">ΔS = 2 353 − 2 105 = 248 kVA released</code>
+    <p>The same 2 &times; 1600 kVA transformers now carry the plant at
+    2 105 / 3 200 &asymp; 66 % instead of 73.5 % — margin that improves the N-1 case
+    in <a href="#c-transformer">§2</a> and is, in effect, ~250 kVA of free
+    transformer bought with capacitors.</p>
+
+    <h4>Step 4 — Loss reduction in everything upstream of the bank</h4>
+    <p>Conduction losses scale with current squared, and current scales with kVA at
+    fixed voltage:</p>
+    <code class="formula">I2 / I1 = S2 / S1 = 2 105 / 2 353 = 0.894</code>
+    <code class="formula">Loss ratio = (I2 / I1)² = 0.894² ≈ 0.80</code>
+    <p>A <strong>20 % cut in the I&sup2;R losses</strong> of the transformers and
+    every cable upstream of the correction point — continuously, for the life of the
+    plant. (Only the <em>variable</em> I&sup2;R losses scale this way; transformer
+    iron loss is voltage-driven and unaffected.)</p>
+
+    <h4>Step 5 — Sanity checks</h4>
+    <p>(i) Result matches the Plant Data Card (&asymp; 580 kvar &rarr; 600 kvar
+    standard). &#10003; (ii) Rule of thumb: correcting 0.85 &rarr; 0.95 needs
+    &asymp; 0.29 kvar per kW; 0.29 &times; 2 000 = 580 kvar. &#10003;
+    (iii) The bank (600 kvar) is comfortably below the plant's total var demand
+    (1 240 kvar at 0.85), so full-load over-compensation is impossible; the leading
+    risk exists only at light load, which the step structure and controller manage.
+    &#10003;</p>
+  </div>
+
+  <div class="note">
+    Why target 0.95 and not 1.00? The last vars are the most expensive (tan&phi;
+    flattens near unity: 0.95 &rarr; 1.00 costs another 660 kvar — more than the
+    whole bank so far, for a 5 % kVA gain), unity operation leaves zero margin
+    before the plant swings leading on every load dip, and SEC's threshold is 0.9
+    (indicative) — 0.95 clears it with margin. Diminishing returns, increasing risk.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       5. EQUIPMENT SETTINGS
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-pfc-settings">Settings: Target, Thresholds and the Discharge Interlock</h3>
+
+  <h4>Equipment settings</h4>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Parameter</th><th>Indicative setting</th><th>Why</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Controller target pf</td>
+        <td>0.95 inductive (some sites: 0.95 day / 0.92 night)</td>
+        <td>Clears the SEC 0.9 threshold (indicative) with margin; avoids the
+        leading region</td>
+      </tr>
+      <tr>
+        <td>Switching threshold (C/k)</td>
+        <td>&asymp; 65–75 % of smallest step's current; modern controllers
+        auto-set from the measured step response</td>
+        <td>Steps switch only when the var error exceeds ~2/3 of a step — the
+        classic anti-hunting rule</td>
+      </tr>
+      <tr>
+        <td>Switching delay between operations</td>
+        <td>30–60 s</td>
+        <td>Rides through motor starts and short load swings without cycling
+        contactors</td>
+      </tr>
+      <tr>
+        <td>Reconnection (discharge) delay per step</td>
+        <td>&ge; 60 s for LV capacitors with standard discharge resistors</td>
+        <td>IEC 60831 requires discharge to &le; 75 V before re-energisation;
+        closing onto a charged capacitor in antiphase can drive a transient
+        approaching twice-voltage and kiloamp inrush</td>
+      </tr>
+      <tr>
+        <td>Step monitoring / alarm</td>
+        <td>Alarm on step current deviation &gt; ~10–15 % from expected</td>
+        <td>Detects blown element fuses or capacitance loss before the bank
+        quietly shrinks (the failure-story mechanism)</td>
+      </tr>
+      <tr>
+        <td>Overtemperature</td>
+        <td>Panel fan thermostat ~35 °C; trip ~55 °C cubicle</td>
+        <td>Capacitor life halves roughly every 7 °C; reactors add real heat;
+        50 °C ambient leaves little headroom</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 id="c-pfc-detuning">Detuning: 7 % Reactors and the 227 Hz Question</h3>
+
+  <p>The single most important "setting" is chosen at purchase: the bank's
+  <strong>detuning factor</strong> p — the series reactor's impedance as a fraction
+  of the capacitor's. With a reactor in series, each step is no longer a pure
+  capacitor but a series L-C circuit with its own resonant frequency:</p>
+
+  <div class="worked">
+    <h4>Worked check — where does a 7 % detuned step resonate on a 60 Hz system?</h4>
+    <code class="formula">n = 1 / √p = 1 / √0.07 ≈ 3.78   (resonance order, multiple of mains frequency)</code>
+    <code class="formula">f_res = 60 Hz × 3.78 ≈ 227 Hz</code>
+    <p>Below 227 Hz the step behaves capacitively; <strong>above 227 Hz it behaves
+    like an inductor</strong> — it cannot resonate with, or sink, any harmonic above
+    that frequency. The plant's dominant VFD harmonics are the 5th and 7th —
+    <strong>300 Hz and 420 Hz at 60 Hz</strong> — both safely above 227 Hz.
+    Sanity check: the familiar catalogue figure "189 Hz" for 7 % reactors is the
+    <em>50 Hz-system</em> value (50 &times; 3.78); on the SEC 60 Hz grid the same
+    7 % hardware tunes to 227 Hz. Same order, different hertz — quote the right
+    one in specifications. &#10003;</p>
+  </div>
+
+  <p>Two consequences to specify, not discover: the reactor raises the fundamental
+  voltage across the capacitor by &asymp; 1/(1&minus;p) = 1.075&times;, so detuned
+  banks use capacitors rated ~480 V on the 400 V network; and the reactors
+  dissipate real heat, which the cubicle ventilation at 50 &deg;C ambient must be
+  designed for. Why detuning matters at all — the resonance mechanism it defuses —
+  is explained under <em>Equipment technology</em> below.</p>
+
+  <div class="tip">
+    On site, the discharge interlock is testable without instruments: after the
+    controller drops a step, time how long before it is allowed back. If steps
+    re-close within seconds of dropping out, the reconnection delay has been
+    "tuned out" by someone chasing pf responsiveness — and every re-close is a
+    micro-lightning strike inside the panel.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       6. EQUIPMENT TECHNOLOGY
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-pfc-technology">Technology: Self-Healing Film, Brutal Contactors and the Resonance Trap</h3>
+
+  <h4>Equipment technology</h4>
+
+  <p><strong>The capacitor element.</strong> Modern LV power capacitors are
+  <strong>MPP — metallised polypropylene</strong>: a polypropylene film a few
+  micrometres thick carrying a vacuum-deposited metal layer thinner still, wound
+  into cylindrical elements. The metallisation is so thin that a local dielectric
+  breakdown vaporises the metal around the fault point and the capacitor
+  <strong>self-heals</strong> — it loses a microscopic patch of capacitance instead
+  of failing short. Elements are dry or resin-filled, grouped in cans with internal
+  fuses and an <strong>overpressure disconnector</strong>: if end-of-life gassing
+  swells the can, the expansion physically tears the internal connection before the
+  can ruptures. A bulged capacitor can is therefore not "still working" — it is a
+  fired safety device awaiting replacement.</p>
+
+  <p><strong>Detuning reactors</strong> are iron-cored series inductors, one
+  three-phase unit per step, sized to the p = 7 % rule above. Their iron must stay
+  <strong>linear</strong> (no saturation) up to ~1.7&ndash;1.8&times; rated current,
+  because a saturating reactor loses inductance exactly when harmonic current is
+  highest — silently un-detuning the bank.</p>
+
+  <p><strong>Switching the steps.</strong> An uncharged capacitor looks, for the
+  first microseconds, like a short circuit; the §<a href="#c-pfc">feel</a>
+  arithmetic (1.6 kJ in microseconds) becomes a multi-kA, multi-kHz inrush.
+  Two technologies tame it:</p>
+  <ul>
+    <li><strong>Capacitor-duty contactors with pre-insertion resistors:</strong>
+    auxiliary contacts close first through small resistors that take the sting out
+    of the inrush, then the main contacts shunt them milliseconds later. Cheap,
+    robust, the LV default — but electromechanical, so 30&ndash;60 s response.</li>
+    <li><strong>Thyristor-switched steps:</strong> semiconductors close at the exact
+    instant the bus voltage equals the capacitor's residual voltage — essentially
+    zero transient, response within a cycle, no moving parts. Chosen where loads
+    swing fast (welders, crushers, hoists) — at a price.</li>
+  </ul>
+
+  <p><strong>Beyond capacitors</strong>, for completeness: <strong>active
+  filters</strong> are power-electronic converters that measure the harmonic and/or
+  reactive current and inject the exact antiphase current, and a
+  <strong>STATCOM</strong> is the transmission-class cousin providing continuously
+  variable vars. On a plant this size they appear only where harmonics, flicker or
+  very fast var swings defeat the conventional bank.</p>
+
+  <p><strong>And the trap that makes detuning non-optional.</strong> Seen from the
+  400 V bus, a <em>plain</em> capacitor bank in parallel with the inductance of the
+  supply (transformer + grid) forms a parallel resonant circuit. Near its resonant
+  frequency, the L and C exchange current between themselves many times larger than
+  the current that excites them — a tuning fork that any harmonic near its note
+  will ring. The resonant order is estimated simply:</p>
+
+  <div class="worked">
+    <h4>Worked check — where would a plain (un-detuned) 600 kvar bank resonate?</h4>
+    <code class="formula">n_res ≈ √(S_sc / Q_c)</code>
+    <p>S<sub>sc</sub> at the LV bus, one transformer &asymp; &radic;3 &times; 400 &times; 38 500 &asymp; 26.7 MVA
+    (<a href="#c-shortcircuit">§4</a>):</p>
+    <code class="formula">n_res ≈ √(26 700 / 600) = √44.5 ≈ 6.7  →  f_res ≈ 6.7 × 60 ≈ 400 Hz</code>
+    <p>400 Hz sits between the 5th (300 Hz) and 7th (420 Hz) — <em>dangerously close
+    to the 7th</em>, and the resonant point <em>moves</em> with every step switched
+    and every change of source impedance (single-TX operation, DG supply). Somewhere
+    in the bank's operating range it <strong>will</strong> land on a harmonic the
+    VFDs generate. The result is amplified harmonic current circulating through the
+    capacitors (which overheat, bulge and blow fuses) and amplified harmonic voltage
+    distorting the whole bus. The 7 % reactor breaks the trap by making every step
+    inductive above 227 Hz: there is simply no capacitive branch left for the 5th or
+    7th to resonate with. &#10003;</p>
+  </div>
+
+  <div class="warning">
+    A plain capacitor bank on a VFD-heavy plant is a resonance experiment running in
+    production. The classic post-mortem sequence — blown step fuses, bulged cans,
+    "the bank never lasts a summer" — is parallel resonance, not bad luck. With the
+    plant's VFD share, only detuned (or thyristor-switched detuned) banks are
+    acceptable; see also the drive-side mitigation in <a href="#cat-vfd">the VFD
+    catalogue</a>.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       7. CONTROL
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-pfc-control">Control: the Controller Is Only as Honest as Its CT</h3>
+
+  <h4>Control</h4>
+
+  <p>The <strong>automatic power-factor controller</strong> is a small relay on the
+  bank's door: it measures the bus voltage and one current, computes the var error
+  against the target pf, and switches steps in and out, respecting the C/k
+  threshold, the switching delay and the discharge interlock from the settings
+  table. Modern units also rotate duty among equal steps ("wear levelling", so one
+  contactor does not die first), count operations per step, measure THD, and expose
+  everything over Modbus to the PMS.</p>
+
+  <p><strong>The classic commissioning error is the CT location, and it is worth a
+  diagram in words.</strong> The controller's CT must measure the
+  <strong>total plant current including the capacitor bank</strong> — i.e. it
+  belongs on the incomer, <em>upstream</em> of the point where the bank tees off.
+  Put the CT downstream of that point (seeing load only) and the controller can
+  never observe the effect of its own switching: it sees a low pf, switches steps
+  in, sees <em>no change</em>, switches more in, and parks the whole bank connected
+  — over-compensating the real plant while reporting failure. The mirror error (CT
+  seeing only the bank) is even more decorative. After any switchboard
+  modification near the incomer, re-verify the CT position and polarity before
+  trusting the pf reading.</p>
+
+  <p><strong>Monitoring through the PMS</strong> closes the loop the failure story
+  lacked:</p>
+  <ul>
+    <li>Trend the pf <em>at the SEC metering point</em> and compare monthly with
+    the SEC invoice's reactive charges — the invoice is the ground truth.</li>
+    <li>Alarm on <strong>step failure</strong>: the controller's step-current
+    deviation alarm, or simply "demanded steps &ne; achieved kvar". A bank
+    typically dies one step at a time, invisibly, over years.</li>
+    <li>Alarm on sustained <strong>leading</strong> pf at light load — the
+    signature of a stuck contactor or a mis-set target.</li>
+  </ul>
+
+  <p><strong>Capacitor protection</strong> is layered: per-element internal fuses
+  and the overpressure disconnector (inside the can), per-step fuses or MCCBs
+  rated &asymp; 1.35&ndash;1.5 &times; step current (to live with harmonics and
+  tolerance, per IEC 60831), bank overcurrent at the feeder, and — on larger or MV
+  banks built as double-star — an <strong>unbalance relay</strong> measuring the
+  current in the star-point bridge: healthy halves balance to zero, and a few
+  failed elements anywhere tip the bridge measurably long before anything smokes.
+  On this LV bank, the step-monitoring alarm plays that early-warning role.</p>
+
+  <div class="tip">
+    Five-minute field test of the whole control chain: note the pf and connected
+    steps, start a large motor (vars jump), and watch the controller respond after
+    its delay; then remove the load and confirm steps drop out and respect the
+    60 s reconnection lockout. One observed cycle verifies CT, controller,
+    contactors and interlocks together.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       8. SIZING METHOD
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-pfc-sizing">Sizing Method: from Measured Profile to Verified Bank</h3>
+
+  <h4>Sizing method</h4>
+
+  <ol>
+    <li><strong>Measure, do not assume.</strong> Log P, Q, pf and THD at the
+    incomer for at least a representative week (PMS historian or a portable power
+    logger). The design case is the <em>var profile</em>, not a single pf number:
+    note the minimum load (sets the smallest useful step) and the maximum var
+    demand (sets the bank total). Cross-check against twelve months of SEC
+    invoices.</li>
+    <li><strong>Fix the target:</strong> 0.95 at the SEC metering point —
+    comfortably above the 0.9 penalty threshold (indicative), comfortably below
+    the leading region.</li>
+    <li><strong>Compute the kvar:</strong> Q<sub>c</sub> = P &times;
+    (tan&phi;<sub>1</sub> &minus; tan&phi;<sub>2</sub>) at the maximum-demand
+    case — here 2 000 &times; 0.291 &asymp; 582 kvar &rarr; 600 kvar standard.</li>
+    <li><strong>Harmonic survey before topology.</strong> If the measured THD and
+    the drive inventory show significant non-linear load (as on this plant: VFD
+    share well above the ~15&ndash;20 % rule-of-thumb threshold), the bank
+    <em>must</em> be detuned — 7 % standard, tuned at 227 Hz on 60 Hz; choose 14 %
+    (n &asymp; 2.7) only where 3rd-harmonic problems exist. Plain banks are
+    acceptable only on demonstrably linear plants.</li>
+    <li><strong>Choose the step granularity</strong> from the load profile:
+    smallest step &lesssim; the var swing of normal load variation
+    (12 &times; 50 kvar here); thyristor switching only if vars swing faster than
+    a contactor bank's 30&ndash;60 s response.</li>
+    <li><strong>Locate the bank.</strong> Central at the <code>LV-MSB</code> (one
+    bank, one controller, easy maintenance — the usual answer, and this plant's) or
+    distributed at MCCs / fixed at large motors (also relieves the feeder cables,
+    but multiplies equipment and risks self-excitation if a fixed capacitor rides
+    on a motor feeder that gets disconnected with the motor). Never downstream of a
+    VFD — the drive's rectifier sees it as a fault.</li>
+    <li><strong>Verify three numbers before ordering:</strong>
+      <ul>
+        <li><em>Resonance:</em> n<sub>res</sub> = &radic;(S<sub>sc</sub>/Q<sub>c</sub>)
+        for the plain-bank check (&asymp; 6.7 here — fails &rarr; detune), and the
+        detuned 227 Hz placement below the 5th.</li>
+        <li><em>Voltage rise:</em> &Delta;V &asymp; Q/S<sub>sc</sub>. Full bank on
+        one transformer: 0.6 / 26.7 &asymp; 2.2 % bus rise at no-load; per
+        50 kvar step &asymp; 0.2 % — comfortable. The same check on the 1 250 kVA
+        DG (much higher source impedance) is one reason the bank is normally
+        <em>off</em> on generator supply.</li>
+        <li><em>Protection and cabling:</em> step and bank protection at
+        1.35&ndash;1.5 &times; rated current, cables likewise
+        (<a href="#c-cables">§6</a>), and the feeder breaker coordinated per
+        <a href="#c-protection">§10</a>.</li>
+      </ul>
+    </li>
+    <li><strong>Commission honestly:</strong> CT location/polarity proven, target
+    and delays set, step currents measured and recorded as the baseline for the
+    step-failure alarm.</li>
+  </ol>
+
+  <h3 id="c-pfc-assess">What to Record on Site — Self-Check</h3>
+
+  <ul class="checklist">
+    <li>Bank nameplate: total kvar (&asymp; 600), step structure, capacitor voltage
+    rating (&asymp; 480 V for 7 % detuned on 400 V), reactor detuning factor.</li>
+    <li>Detuning reactors physically present on <em>every</em> step (banks get
+    extended; extensions get ordered plain), and no bulged cans, blown step fuses
+    or browned terminations behind the door.</li>
+    <li>pf at the LV-MSB &ge; 0.93 with the bank in auto; compare with the SEC
+    invoice's reactive charges for the last 12 months.</li>
+    <li>Controller: target pf, switching delay, reconnection (discharge) lockout
+    &ge; 60 s observed working; step duty-rotation enabled; step-failure alarm
+    configured and routed to the PMS, not a local LED.</li>
+    <li>Controller CT upstream of the bank tee-off, polarity verified after any
+    incomer modification.</li>
+    <li>Cubicle ventilation working — reactors run hot, the room is 50 &deg;C, and
+    capacitor life halves every ~7 &deg;C.</li>
+    <li>Bank interlock/practice on DG supply documented (normally off on the
+    1 250 kVA generator).</li>
+    <li>Self-check — Reconstruct without notes: 2 000 kW, 0.85 &rarr; 0.95 &rArr;
+    Q<sub>c</sub> = 2 000 &times; (0.620 &minus; 0.329) &asymp; 582 kvar; S falls
+    2 353 &rarr; 2 105 kVA (248 kVA freed); upstream I&sup2;R losses fall to
+    0.894&sup2; &asymp; 80 %.</li>
+    <li>Self-check — Why 227 Hz and not 189 Hz on this plant? (n = 1/&radic;0.07
+    &asymp; 3.78 is a <em>multiple of mains frequency</em>: 60 &times; 3.78
+    &asymp; 227 Hz; 189 Hz is the 50 Hz-system figure.)</li>
+    <li>Self-check — A colleague proposes correcting to unity "while we're at it".
+    Give the three reasons to refuse. (660 extra kvar for 5 % kVA gain; zero margin
+    before leading at every load dip; leading pf risks with capacitors, voltage and
+    the DG's AVR.)</li>
+    <li>Self-check — Explain parallel resonance to an operator in two sentences,
+    using the plain-bank number n &asymp; 6.7 (&asymp; 400 Hz, between the 5th at
+    300 Hz and 7th at 420 Hz).</li>
+  </ul>
+
+  <div class="key">
+    600 kvar of detuned capacitors turn a 0.85 plant into a 0.95 plant: ~250 kVA of
+    transformer bought back, 20 % of upstream I&sup2;R losses removed, SEC penalties
+    gone. The bank's enemies are microseconds (switching transients) and hertz
+    (resonance at 227 vs 300 Hz); respect both and it is the quietest, highest-yield
+    cabinet in the switchroom.
+  </div>
+
+</section>
+

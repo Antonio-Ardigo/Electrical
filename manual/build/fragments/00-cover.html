@@ -4,13 +4,15 @@
       Field Manual<br>Electrical Assessments, SPOF Analysis &amp; Recommendations<br>for MV/LV Process Plants
     </h1>
     <p class="subtitle" style="font-family:system-ui,-apple-system,Arial,sans-serif; font-size:1.05rem; color:#4a5260; margin-bottom:1.5rem;">
+      Rev 3 — Saudi (SEC) Edition<br>
       Medium-Voltage / Low-Voltage Industrial Plant — Indicative ~2 MW Demand
     </p>
 
     <div style="display:flex; gap:1.5rem; justify-content:center; flex-wrap:wrap; font-family:system-ui,Arial,sans-serif; font-size:0.82rem; color:#9aa0ad; border-top:1px solid #e2e4e9; border-bottom:1px solid #e2e4e9; padding:0.7rem 0; margin:0 auto 1.5rem; max-width:540px;">
-      <span>Standard: <strong>IEC</strong></span>
-      <span>Voltage: <strong>11 kV MV / 400–415 V LV</strong></span>
-      <span>Frequency: <strong>50 Hz</strong></span>
+      <span>Standards: <strong>SASO-adopted IEC / SEC / SBC 401</strong></span>
+      <span>Voltage: <strong>13.8 kV MV / 400–230 V LV (TN-S)</strong></span>
+      <span>Frequency: <strong>60 Hz</strong></span>
+      <span>Ambient: <strong>50 &deg;C design</strong></span>
       <span>Demand: <strong>~2 MW / ~2.35 MVA</strong></span>
     </div>
 
@@ -62,12 +64,14 @@
   </p>
 
   <table class="form">
-    <tr><td>Supply</td><td>11 kV utility incomer, metered at MV level</td></tr>
-    <tr><td>MV switchgear</td><td>11 kV ring-main unit (RMU) with protection relay</td></tr>
-    <tr><td>Transformers</td><td>2 × 1600 kVA, Dyn11, 11 kV / 415 V (TX-1 and TX-2)</td></tr>
-    <tr><td>LV main switchboard</td><td>Split-bus, 415 V, with normally-open bus-tie (LV-MSB)</td></tr>
-    <tr><td>Motor control</td><td>Multiple MCCs fed from LV-MSB sections</td></tr>
-    <tr><td>Standby generation</td><td>Diesel generator (DG) with automatic transfer switch (ATS)</td></tr>
+    <tr><td>Supply</td><td>13.8 kV SEC incomer, 60 Hz, metered at MV level</td></tr>
+    <tr><td>MV switchgear</td><td>13.8 kV switchgear (17.5 kV class) with numerical protection relays</td></tr>
+    <tr><td>Transformers</td><td>2 × 1600 kVA, Dyn11, 13.8 kV / 0.4 kV, Z = 6 % (TX-1 and TX-2)</td></tr>
+    <tr><td>LV main switchboard</td><td>Split-bus, 400/230 V TN-S, with normally-open bus-tie (LV-MSB)</td></tr>
+    <tr><td>Motor control</td><td>Multiple MCCs fed from LV-MSB sections; 4-pole motors at 1800 rpm</td></tr>
+    <tr><td>Standby generation</td><td>Diesel generator 1250 kVA ESP (DG) with automatic transfer switch (ATS)</td></tr>
+    <tr><td>Earthing</td><td>MV resistance-earthed via NER (400 A, 19.9 Ω); LV TN-S</td></tr>
+    <tr><td>Environment</td><td>50 °C design ambient, dust-laden desert site (Saudi Arabia)</td></tr>
     <tr><td>Total demand</td><td>~2 MW (indicative); apparent power ~2.35 MVA at pf 0.85</td></tr>
   </table>
 
@@ -75,4 +79,44 @@
     Refer to the master single-line diagram (SLD) throughout for equipment locations and tag
     references.
   </p>
+
+  <h3 id="cover-whats-new">What's New in Rev 3</h3>
+
+  <ul>
+    <li><strong>Saudi (SEC) localization</strong> — electrical basis changed to 13.8 kV MV,
+      400/230 V LV (TN-S), 60 Hz, 50 °C design ambient; standards cited as SASO-adopted IEC
+      plus SEC Distribution Code, Saudi Grid Code and SBC 401.</li>
+    <li><strong>Part 2 rewritten as deep-dive tutorials</strong> — every calculation topic now
+      follows an eight-step teaching pattern (why it exists → failure example → feel for the
+      numbers → worked calculation → settings → technology → control → sizing), with new
+      topics: per-unit, breakers, arc flash, lightning/SPD, UPS and ATS.</li>
+    <li><strong>NEW Part 6 — Equipment Catalogues</strong> — commercial vendor families
+      (switchgear, transformers, breakers, MCC/VFD, UPS/DC, gensets/ATS, relays and
+      auxiliaries) with "how to read the datasheet" guides and selections for this plant.
+      All catalogue data is indicative; no part numbers.</li>
+    <li><strong>New orientation sections</strong> — the Saudi electrical context (SEC, SASO,
+      SABER, SBC 401) and designing for 50 °C and dust.</li>
+    <li><strong>Concepts companion</strong> — a separate self-contained file
+      (<code>concepts-rev3.html</code>) explaining the core concepts behind each calculation.</li>
+  </ul>
+
+  <h3 id="cover-revision">Revision History</h3>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Rev</th><th>Date</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>2026-05</td><td>Initial field manual (assessment, calculations, SPOF).</td></tr>
+      <tr><td>2</td><td>2026-05</td><td>Expanded edition: orientation, philosophies, field tools, case study.</td></tr>
+      <tr><td>3</td><td>2026-06</td><td>Saudi (SEC) edition: 13.8 kV / 400 V / 60 Hz / 50 °C basis,
+        4× expansion — Part 2 deep-dive rewrite, NEW Part 6 equipment catalogues, Saudi orientation,
+        concepts companion file.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="warning"><strong>Drawing basis.</strong> The SVG single-line diagrams in this
+    manual were drawn for the original 11 kV / 415 V / 50 Hz reference design and have not been
+    re-rendered. A note under each diagram explains the conversion: read 11 kV as 13.8 kV,
+    415 V as 400 V and 50 Hz as 60 Hz. Topology, tags and protection philosophy are unchanged.</div>
 </section>

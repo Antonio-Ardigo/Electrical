@@ -1,0 +1,111 @@
+<article class="concept" id="concept-earthing">
+  <h2>7. Earthing &amp; the NER</h2>
+  <p class="backlink">Manual deep-dive: <a href="manual-rev3.html#c-earthing">open the full section</a></p>
+
+  <h3>The Problem</h3>
+  <p>Most faults are not the clean three-phase short of Ch. 2. The overwhelming majority — cable insulation failing against an armour, a motor winding breaking down to the frame — involve <strong>one phase and earth</strong>. How much current flows then is not decided by the transformer impedance alone; it is decided by a choice the designer made at the star point of the winding: <em>how is the neutral connected to earth?</em></p>
+  <p>Both extremes fail, in opposite ways. <strong>Bolt the neutral solidly to earth</strong> at 13.8 kV, and a single cable fault to a steel tray drives thousands of amperes through that tray, through the soil, through whatever path it finds: massive iron-burning damage at the fault point, and the local ground around the fault rises to a potential that can kill someone standing nearby — the soil itself becomes a resistor with kilovolts across it. <strong>Leave the neutral isolated</strong>, and the first earth fault drives almost no current at all — nothing trips, the plant keeps running — but the two healthy phases now sit at full line-to-line voltage to earth (a 73 % overstress on all insulation), transient overvoltages from the arcing fault can reach several times normal, and the <em>second</em> fault, on another phase somewhere else, is a violent phase-to-phase short through the whole earthing system.</p>
+  <p>The problem, then, is a dial, not a switch: earth-fault current must be <em>large enough to detect and trip reliably, small enough to neither destroy the fault point nor endanger the people standing on the soil above it</em>. The component that sets the dial in our plant is the <strong>NER — the Neutral Earthing Resistor</strong>: 19.9 Ω of deliberately inserted resistance between the transformer star point and earth, sized to cap any MV earth fault at 400 A.</p>
+  <h3>Core Principles</h3>
+  <h4>Principle 1: The driving voltage of an earth fault is the phase voltage</h4>
+  <p><strong>Statement:</strong> when one phase touches earth, the voltage pushing current around the loop is the line-to-neutral (phase) voltage: <code>V_ph = V_LL / √3 = 13 800 / 1.732 = 7 967 V ≈ 7.97 kV</code>. Whatever impedance sits in the neutral-to-earth connection is in series with that loop — which is exactly why putting a resistor there controls the current.</p>
+
+  <h4>Principle 2: The neutral impedance is a current dial</h4>
+  <p><strong>Statement:</strong> with a resistor R in the star point, the worst-case (bolted, zero-impedance) earth fault current is simply <code>I_ef ≈ V_ph / R</code> — the resistor dominates everything else in the loop. Choose R and you have chosen the maximum earth-fault current anywhere on that MV system. Our 19.9 Ω caps it at 400 A: about 6 × MV full-load current — easily seen by every earth-fault relay, yet 60-odd times smaller than a solidly-earthed fault would be.</p>
+
+  <h4>Principle 3: Touch and step voltage — the soil is part of the circuit</h4>
+  <p><strong>Statement:</strong> earth-fault current returning through the ground grid raises the station earth potential by <code>V_rise = I_ef × R_grid</code> (grid resistance to remote earth). A person touching a faulted structure spans a fraction of that rise (<em>touch voltage</em>); a person walking spans the gradient between their feet (<em>step voltage</em>). Both scale directly with I_ef — so capping the current at 400 A caps, at the source, the voltage a human body can be asked to bridge. With a typical ~1 Ω grid: 400 A × 1 Ω = 400 V of grid rise to manage, instead of several kilovolts in the solidly-earthed case.</p>
+
+  <h4>Principle 4: Different levels, different answers — and that is correct</h4>
+  <p><strong>Statement:</strong> the LV system (400/230 V, <strong>TN-S</strong>) is <em>solidly</em> earthed, with separate neutral (N) and protective earth (PE) conductors. This is not an inconsistency: at 230 V to earth, a solid earth fault is a big, fast-clearing current with modest touch-voltage consequences, and 230 V loads <em>need</em> a stable neutral. At 13.8 kV the same philosophy would be destructive — hence the NER. Earthing design is per-voltage-level optimisation, with one common plant earth grid binding it together.</p>
+
+  <h3>Key Innovations</h3>
+  <h4>Resistance earthing of MV systems (industrial practice, early-mid 20th century)</h4>
+  <p><strong>What:</strong> inserting an engineered resistor — metal grid elements in a ventilated enclosure, ours rated 7.97 kV, 400 A for 10 s — between star point and earth, with current chosen to suit protection (hundreds of amperes, "low-resistance earthing") rather than the thousands the system could deliver.</p>
+  <p><strong>Why it mattered:</strong> it ended the false choice between "destructive but detectable" (solid) and "gentle but treacherous" (isolated). 400 A is detectable by simple, sensitive earth-fault relays (core-balance CTs see it easily, set far below 400 A), limits burning damage at the fault point to repairable scale, keeps healthy-phase voltage rise within the insulation's short-duration capability, and contains transient overvoltages that plague isolated systems.</p>
+  <h4>The time-rated resistor + standby earth-fault relay pair</h4>
+  <p><strong>What:</strong> the NER is rated to carry its 400 A for a declared <em>time</em> (10 s), not forever; a "standby earth fault" relay on the NER current, graded slower than all feeder earth-fault relays, guarantees the fault is cleared (by tripping the incomer if necessary) well inside that window.</p>
+  <p><strong>Why it mattered:</strong> it makes the resistor small, affordable and honest: it is an energy-absorbing fuse-of-last-resort with a calculated heat budget (worked below), protected by its own dedicated relay. The 10 s rating is a contract between the resistor's thermal mass and the protection scheme's slowest clearance — both sides of which can be verified in the field.</p>
+  <h3>Worked Example</h3>
+  <p><strong>Scenario:</strong> size-check the plant NER from first principles — current limit, resistance, thermal duty — and read off the touch-voltage consequence. <strong>Given:</strong> system 13.8 kV, 60 Hz; design earth-fault limit 400 A; rated time 10 s; assume station earth-grid resistance ≈ 1 Ω (indicative — the earthing study measures the real value).</p>
+  <div class="worked">
+    <p><strong>Step 1 — Driving voltage seen by the resistor.</strong></p>
+    <code class="formula">V_ph = V_LL / √3 = 13 800 V / 1.732 = 7 967 V ≈ 7.97 kV</code>
+    <p><em>Why:</em> a bolted single-phase-to-earth fault puts the full phase voltage across the neutral path; this is the NER's rated voltage on its nameplate.</p>
+    <p><strong>Step 2 — Resistance for a 400 A limit.</strong></p>
+    <code class="formula">R = V_ph / I_ef = 7 967 V / 400 A = 19.9 Ω</code>
+    <p><em>Why:</em> the resistor is sized assuming it alone limits the current (cable and transformer zero-sequence impedances only reduce it further — conservative by construction). This is the Plant Data Card's 19.9 Ω.</p>
+    <p><strong>Step 3 — Heat the resistor must absorb in its rated 10 s.</strong></p>
+    <code class="formula">E = I² × R × t = 400² × 19.9 × 10</code>
+    <code class="formula">E = 160 000 × 19.9 × 10 = 31 840 000 J ≈ 32 MJ</code>
+    <p><em>Why:</em> during the fault, essentially the whole 7.97 kV × 400 A ≈ 3.2 MW sits on the resistor — one and a half times the entire plant's electrical demand, concentrated in one steel-grid cabinet. Over 10 s that is 32 MJ: enough heat to take roughly <strong>95 litres of water from 20 °C to boiling</strong> (32×10⁶ / (4 186 × 80) ≈ 96 kg). The resistor survives by mass and short time, not by dissipation — its elements simply heat up (adiabatic), which is why the 10 s limit is real and why repeated closely-spaced faults are forbidden until it cools.</p>
+    <p><strong>Step 4 — Grid potential rise and touch-voltage logic.</strong></p>
+    <code class="formula">V_rise = I_ef × R_grid ≈ 400 A × 1 Ω = 400 V</code>
+    <p><em>Why:</em> compare the solid-earthing alternative: if the same system delivered, say, 8 kA to earth, the rise would be ≈8 kV. Touch and step voltages are fractions of the rise, compared against IEC 60479-based body-current limits for the clearing time; capping I_ef at 400 A is what makes those criteria achievable with an ordinary buried grid in dry Saudi soil conditions (high resistivity — measured, not assumed).</p>
+    <p><strong>Step 5 — Protection consistency check.</strong></p>
+    <code class="formula">Feeder EF relays: pickup ~10–20 % of 400 A, trip &lt; 1 s</code>
+    <code class="formula">Standby EF on NER: graded above all feeders, trips incomer ≪ 10 s ✓</code>
+    <p><strong>Sanity check:</strong> 7 967 / 19.9 = 400.4 A ✓; 400 A ≈ 6 × MV FLC (66.9 A) — well above load unbalance leakage, well below damage-scale current; 32 MJ matches typical NER nameplate energy class for 400 A/10 s units ✓.</p>
+  </div>
+  <div class="warning">
+    <p><strong>Field rule:</strong> the NER is live plant, not passive copper. A broken NER (open-circuited element, corroded connection) silently converts the MV system to <em>isolated</em> neutral — every consequence of the isolated case returns, with no alarm unless the NER monitoring relay is healthy. Its continuity monitoring and the standby EF relay deserve the same test discipline as any feeder protection.</p>
+  </div>
+
+  <h3>Intuitive Formalization</h3>
+  <p>Symbols: <code>V_ph</code> = phase-to-earth voltage (V); <code>R</code> = NER resistance (Ω); <code>I_ef</code> = earth-fault current (A); <code>t</code> = rated time (s); <code>R_grid</code> = earth-grid resistance to remote earth (Ω).</p>
+  <div class="worked">
+    <code class="formula">I_ef ≈ V_ph / R                — the dial: choose R, choose the fault current</code>
+    <code class="formula">E = I_ef² × R × t              — the resistor's heat bill (adiabatic, ~32 MJ)</code>
+    <code class="formula">V_rise = I_ef × R_grid         — what the soil does with the current you allowed</code>
+    <code class="formula">Design window: detectable ≪ I_ef ≪ destructive   (400 A sits in the middle)</code>
+  </div>
+  <p>Physical meaning: the first line says earth-fault severity is a <em>policy decision</em> implemented in 19.9 Ω of steel. The second prices the policy in joules and explains the 10 s contract. The third connects amperes in the neutral to volts across a human stride. The window in the last line is the entire philosophy: enough current to be seen by relays every time, too little to dig craters or electrify the ground people stand on.</p>
+
+  <h3>CTQ Mapping</h3>
+  <table class="tbl">
+    <thead><tr><th>Critical-to-quality requirement</th><th>How the concept delivers it</th><th>What to check in the field</th></tr></thead>
+    <tbody>
+      <tr><td>Every MV earth fault detected and tripped, first time</td><td>400 A limit is ~6 × FLC — far above relay pickups (core-balance CTs at tens of amperes)</td><td>EF relay pickups/timing per study; secondary injection tests current; standby EF on the NER proven to trip the incomer</td></tr>
+      <tr><td>People near a fault are not exposed to lethal touch/step voltages</td><td>Capping I_ef caps grid rise (≈400 V vs kilovolts solid-earthed)</td><td>Earthing study with measured soil resistivity; grid resistance test results; bonding of trays/structures intact</td></tr>
+      <tr><td>NER survives its worst duty</td><td>I²Rt budget (≈32 MJ/10 s) matched to slowest clearance with margin</td><td>NER nameplate 7.97 kV / 400 A / 10 s / 19.9 Ω; ventilation clear at 50 °C; no repeat fault before cool-down</td></tr>
+      <tr><td>System never silently becomes isolated-neutral</td><td>The resistor only works if it is connected — continuity is a protection function</td><td>NER open-circuit/monitoring relay alarmed to the control room and tested; star-point connection inspected</td></tr>
+      <tr><td>LV TN-S integrity preserved</td><td>Solid LV earthing + separate PE gives fast LV fault clearing and a stable 230 V neutral</td><td>N–PE separation maintained (no downstream bridges); single N–PE link at the source only; PE continuity test records</td></tr>
+    </tbody>
+  </table>
+  <h3>Conceptual Map</h3>
+  <pre>
+                    EARTHING &amp; THE NER (core)
+              "earth-fault current is a design choice"
+                              |
+        +---------------------+----------------------+
+        | rests on            | rests on             | rests on
+        v                     v                      v
+  [Phase voltage       [Neutral impedance      [Soil is a resistor:
+   drives the fault:    is a current dial:      V_rise = I_ef × R_grid
+   7.97 kV]             I_ef ≈ V_ph / R]        → touch/step voltage]
+        |                     |                      |
+        |          +----------+----------+           |
+        |          v                     v           |
+        |   [Solid earth:          [Isolated:        |
+        |    kA, craters,           no trip, 73 %    |
+        |    kV ground rise]        overvoltage,     |
+        |        X                  2nd-fault bomb]  |
+        |                X both rejected X           |
+        |                     |                      |
+        +---------- led to ---+----------------------+
+                              v
+              [NER: 19.9 Ω → 400 A / 10 s / ≈32 MJ]
+                 detectable ≪ 400 A ≪ destructive
+                              |
+              +---------------+----------------+
+              | enables       | enables        | contrasts with
+              v               v                v
+       [Sensitive EF     [Standby EF      [LV TN-S: SOLIDLY
+        relays, core-     relay guards     earthed, N+PE split —
+        balance CTs]      the 10 s         right answer at 230 V]
+                          contract]
+  </pre>
+  <div class="note">
+    <p>All values are <strong>indicative</strong> on the Rev 3 basis (SEC 13.8 kV, 60 Hz, 50 °C, high-resistivity desert soil); the project earthing study (measured soil resistivity, grid design, touch/step verification per IEC) governs.</p>
+  </div>
+</article>

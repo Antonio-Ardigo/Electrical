@@ -1,0 +1,1166 @@
+<!-- ============================================================
+     §C-BREAKER  Circuit breakers — settings, technology & sizing
+     Rev 3 (Saudi/SEC edition) — 13.8 kV / 400-230 V / 60 Hz / 50 °C
+     Deep-dive tutorial supplementing §4 (short circuit) and §10
+     (protection coordination). All numbers indicative.
+============================================================ -->
+<section id="c-breaker" data-title="Circuit Breakers — Settings, Technology &amp; Sizing" data-part="Part 2 — Calculations">
+
+  <h2>14 — Circuit Breakers — Settings, Technology &amp; Sizing <span style="font-size:0.65em; font-weight:normal; background:#e8f4fd; border:1px solid #aad4f5; border-radius:3px; padding:1px 5px; color:#1a6fa0;">Core</span></h2>
+
+  <p><strong>Goal:</strong> understand what a circuit breaker actually does during a fault,
+  set the LSIG trip unit of the <code>LV-MSB</code> incomer ACB from first principles,
+  read a breaker nameplate without guessing (I<sub>cu</sub>, I<sub>cs</sub>, I<sub>cw</sub>,
+  I<sub>cm</sub>), and select a breaker step by step for the Rev 3 plant basis
+  (13.8 kV / 400-230 V, 60 Hz, 50&nbsp;&deg;C design ambient, 38.5 kA LV fault level).</p>
+
+  <p>This section is the deep dive behind two earlier ones: the fault currents come from
+  <a href="#c-shortcircuit">§4 — Short-Circuit Current &amp; Switchgear Withstand</a>, and
+  the grading philosophy comes from <a href="#c-protection">§10 — Protection Coordination
+  &amp; Selectivity</a>. Here we go inside the device itself.</p>
+
+  <div class="note">
+    <strong>Indicative data.</strong> Every numeric value in this section — settings,
+    clearing times, derating factors, fault magnitudes — is indicative and chosen for
+    teaching on the Rev 3 plant basis. The plant's formal short-circuit, coordination and
+    arc-flash studies govern. Standards cited are the SASO-adopted editions of
+    IEC&nbsp;60947-2 (LV circuit breakers) and IEC&nbsp;62271-100 (MV AC circuit breakers),
+    applied together with SBC&nbsp;401 and the SEC Distribution Code.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       1. WHY THIS EXISTS
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-breaker-concept">The Contract Between Brains and Muscle</h3>
+
+  <h4>Why this exists</h4>
+
+  <p>Almost every component in the plant is designed to do one thing well under normal
+  conditions: a cable carries current, a transformer changes voltage, a busbar distributes
+  power. The circuit breaker is the only device in the entire installation with a
+  contradictory job description. For years at a time it must behave like a near-perfect
+  conductor — carrying 2 309 A through the <code>LV-MSB</code> incomer with contact
+  resistance measured in micro-ohms, generating almost no heat, asking for nothing. Then,
+  perhaps once in its whole service life, it must do the opposite: <strong>deliberately
+  destroy a current</strong> seventeen times larger than anything it has ever carried,
+  inside a few hundredths of a second, and survive to tell the protection relay it has
+  done so.</p>
+
+  <p>No other device can do this. A fuse can interrupt a fault, but only once, and it
+  cannot be told <em>when</em>. A contactor can switch load current thousands of times,
+  but ask it to break 38.5 kA and it will weld shut or explode. An isolator can carry
+  fault current but must never attempt to break even load current. The circuit breaker is
+  the unique combination: it <strong>carries</strong>, it <strong>makes</strong> (closes
+  onto), and it <strong>breaks</strong> both load and fault current, repeatedly, on
+  command.</p>
+
+  <p>That phrase "on command" is the heart of this section. A modern protection scheme is
+  a partnership between two very different things:</p>
+
+  <ul>
+    <li><strong>The brains</strong> — protection relays and electronic trip units
+    (<a href="#c-protection">§10</a>, <a href="#cat-relays">relay catalogue</a>). They
+    measure, compare, time, and decide. They handle milliamps and microjoules. A relay
+    deciding to trip is an event of almost no physical consequence — a transistor changes
+    state, an output contact closes.</li>
+    <li><strong>The muscle</strong> — the circuit breaker. It does no thinking at all.
+    When the trip command arrives, springs holding tens of kilograms of stored energy are
+    released, contacts part at several metres per second, and an electric arc burning at
+    thousands of kelvin is stretched, split, cooled and extinguished — all in roughly the
+    time it takes a camera flash to fire.</li>
+  </ul>
+
+  <p>The contract between them is brutally simple: <em>the brains promise to ask only for
+  what the muscle can deliver, and the muscle promises to deliver every time it is
+  asked.</em> Every calculation in this section serves one side of that contract or the
+  other. The LSIG setting study (<a href="#c-breaker-lsig">worked calculation below</a>)
+  makes sure the brains ask at the right current and the right time. The rating checks
+  (I<sub>cu</sub> &ge; 38.5 kA, I<sub>cw</sub> through the short-time delay) make sure the
+  muscle can physically honour the request. A coordination study that assumes a breaker
+  clears in 50 ms is worthless if the breaker's mechanism is seized; a perfectly maintained
+  breaker is equally worthless if its trip unit is set so high it never receives the
+  command.</p>
+
+  <div class="key">
+    A circuit breaker is the plant's only device designed to both <em>carry</em> a fault
+    current and <em>deliberately destroy</em> it. Protection settings are a promise made
+    on the breaker's behalf — every pickup and delay you choose assumes the mechanism
+    underneath will actually operate. Set the brains and verify the muscle; one without
+    the other is a paper protection scheme.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       2. WHAT GOES WRONG WITHOUT IT
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-breaker-failure">A Failure Story: the Breaker That Couldn't</h3>
+
+  <h4>What goes wrong without it</h4>
+
+  <p>The following narrative is fictional but assembled from real failure modes reported
+  across the industry. Every number is consistent with the Rev 3 plant basis. Read it
+  once for the drama, then a second time noting how many separate defences had already
+  failed before the fault ever happened.</p>
+
+  <p><strong>The setup.</strong> It is a Tuesday afternoon in August, 48&nbsp;&deg;C in the
+  shade. The plant has run for nine years. The <code>LV-MSB</code> incomer ACB from
+  <code>TX-1</code> has not been exercised — opened and closed — in four years; "it works,
+  don't touch it." Its lubricant has hardened in the heat and dust. Last year, during a
+  transformer changeover, an operator closed the bus-tie <code>BT</code> and never
+  reopened it, so both 1 600 kVA transformers have been feeding the bus in parallel for
+  eleven months. Nobody noticed, because everything <em>works</em> — in parallel the bus
+  simply runs stiffer and happier. The switchboard is rated 50 kA. The prospective fault
+  level with the tie closed is &asymp; 77 kA (<a href="#c-shortcircuit">§4</a>).</p>
+
+  <p><strong>The fault.</strong> A 25-year-old cable termination on an outgoing way,
+  cooked by years of 50&nbsp;&deg;C ambient plus load heating, finally tracks across its
+  degraded insulation. A phase-to-phase arc strikes inside the cable compartment, a few
+  hundred millimetres from the main busbars.</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Time</th><th>What is happening</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>t = 0 ms</td>
+        <td>The arc strikes. Current climbs toward the prospective value within the first
+        quarter-cycle. Because two transformers feed the bus, the driving impedance is
+        half the design assumption: the fault current heads for &asymp; 70+ kA
+        symmetrical, not 38.5 kA.</td>
+      </tr>
+      <tr>
+        <td>t &asymp; 4 ms</td>
+        <td>First asymmetrical peak: with a typical X/R the peak approaches
+        2.1 &times; 70 kA &asymp; <strong>150 kA</strong>. Electromagnetic force between
+        adjacent busbars spikes to tens of kilonewtons per metre — the bars try to tear
+        free of their supports. The bracing was type-tested for a 50 kA board; it holds,
+        barely, deforming.</td>
+      </tr>
+      <tr>
+        <td>t &asymp; 8 ms</td>
+        <td>The feeder breaker's trip unit has already decided — the current is far above
+        its instantaneous pickup. The trip command fires. But the fault is on the supply
+        side of the feeder breaker's terminals: opening it changes nothing. The fault
+        belongs to the <strong>incomer</strong> zone.</td>
+      </tr>
+      <tr>
+        <td>t &asymp; 15 ms</td>
+        <td>Both incomer trip units (current sharing through the closed tie) see well
+        above their 25 kA instantaneous pickups and fire their actuators. In incomer 1,
+        the trip coil pushes the latch. The latch, riding on grease that has turned to
+        varnish, moves 2 mm and stops. <strong>The mechanism does not unlatch.</strong>
+        Incomer 2's mechanism does operate — its contacts part at t &asymp; 45 ms.</td>
+      </tr>
+      <tr>
+        <td>t &asymp; 60 ms</td>
+        <td>Incomer 2 attempts to interrupt. But it is breaking a current near or beyond
+        its 50 kA ultimate rating (its share of a 77 kA bus fault plus asymmetry). The arc
+        in its chutes does not extinguish at the first current zero, nor the second. Arc
+        chute plates erode; metal vapour fills the interrupter. At t &asymp; 80 ms it
+        finally clears — at its design limit, this breaker is now scrap
+        (that is what "I<sub>cu</sub>, ultimate" means — see
+        <a href="#c-breaker-tech">ratings decoded</a>). Half the fault current is gone.
+        The other half, through the stuck incomer 1, keeps flowing.</td>
+      </tr>
+      <tr>
+        <td>t = 100–500 ms</td>
+        <td>The arc, fed now at &asymp; 38 kA through the stuck breaker, burns freely in
+        the cable compartment at around 9 MW (<a href="#c-breaker-numbers">next
+        sub-section</a> shows where this number comes from). It vaporises copper —
+        1 cm&sup3; of copper becomes roughly 60 000 cm&sup3; of conductive vapour — which
+        the pressure wave drives along the busbar chamber, turning a single-compartment
+        fault into a whole-board fault. The compartment doors, never designed as
+        arc-rated, bulge.</td>
+      </tr>
+      <tr>
+        <td>t &asymp; 500 ms</td>
+        <td>Upstream, the MV transformer-feeder relay [52-T] on <code>MV-SWGR</code> —
+        the backup brains, graded at 0.5 s per the <a href="#c-protection">§10
+        ladder</a> — times out and trips the MV vacuum breaker. That breaker, maintained
+        and healthy, clears in &asymp; 60 ms.</td>
+      </tr>
+      <tr>
+        <td>t &asymp; 560 ms</td>
+        <td>Current stops. Total arc energy delivered: on the order of
+        <strong>4–5 MJ</strong> — the energy of roughly a kilogram of TNT, released as
+        heat, light, pressure and molten metal inside a sheet-steel enclosure. The
+        <code>LV-MSB</code> is destroyed end to end. Replacement switchboard lead time:
+        months. If anyone was standing at the board, the story is far worse — see
+        <a href="#c-arcflash">§11 — Arc Flash</a>.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>Count the failed defences: a bus-tie left closed (fault level doubled past the board
+  rating), a breaker mechanism seized through lack of exercise, and a healthy breaker
+  asked to interrupt beyond its rating. The protection relays — the brains — performed
+  flawlessly throughout. <strong>Every trip command was issued correctly and on time.</strong>
+  The catastrophe happened entirely on the muscle side of the contract.</p>
+
+  <div class="warning">
+    The two breaker failure modes that matter most are invisible in normal operation:
+    a mechanism that will not open (no trip despite a healthy trip command), and a
+    breaker applied above its interrupting rating (trips, but fails to clear). Neither
+    announces itself until the one moment that matters. This is why breaker exercise,
+    secondary-injection testing of trip units, and fault-level verification
+    (<a href="#c-shortcircuit">§4</a>) appear in every assessment checklist.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       3. FEEL FOR THE NUMBERS
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-breaker-numbers">The Physics in Plain Numbers</h3>
+
+  <h4>Feel for the numbers</h4>
+
+  <p>Before setting a single pickup, build an honest physical feel for what a breaker
+  is asked to control. Four estimates, each one you can redo on a phone calculator.
+  Basis: 400 V bus, prospective bolted fault 38.5 kA (one transformer,
+  <a href="#c-shortcircuit">§4</a>), 60 Hz, so one cycle = 1/60 s &asymp;
+  <strong>16.7 ms</strong>.</p>
+
+  <div class="worked">
+    <h4>Estimate 1 — Power and energy of the arc</h4>
+    <p>A <em>bolted</em> fault dissipates little energy at the fault point itself (the
+    voltage across a solid metallic short is near zero — the energy burns in the
+    transformer and cables upstream). The dangerous case at the fault location is the
+    <em>arcing</em> fault. Two honest, typical figures for a 400 V arc in air:
+    arcing current &asymp; 60 % of bolted (the arc adds impedance), and arc voltage
+    &asymp; 130 V per phase:</p>
+    <code class="formula">I<sub>arc</sub> &asymp; 0.6 &times; 38 500 A &asymp; 23 000 A</code>
+    <code class="formula">P<sub>arc</sub> &asymp; 3 &times; V<sub>arc</sub> &times; I<sub>arc</sub> = 3 &times; 130 V &times; 23 000 A &asymp; 9.0 MW</code>
+    <p>Nine megawatts — about four and a half times the entire plant's 2 MW demand —
+    concentrated in a plasma column a few centimetres long. Now the energy for two
+    different clearing times:</p>
+    <code class="formula">One cycle (16.7 ms):&nbsp;&nbsp; E = 9.0 MW &times; 0.0167 s &asymp; 150 kJ</code>
+    <code class="formula">Slow backup (0.3 s):&nbsp;&nbsp; E = 9.0 MW &times; 0.3 s &asymp; 2.7 MJ</code>
+    <p><strong>Sanity check &amp; comparison:</strong> 150 kJ is the kinetic energy of a
+    1.2-tonne car at 57 km/h (&frac12; &times; 1 200 &times; 15.8&sup2; &asymp; 150 kJ)
+    — a serious crash, absorbed by the switchboard internals, but survivable for the
+    equipment. 2.7 MJ is eighteen times that: the heat of a 2 kW kettle running for
+    22 minutes released in a third of a second, or the energy of roughly
+    <strong>0.6 kg of TNT</strong> (TNT &asymp; 4.6 MJ/kg). The difference between those
+    two outcomes is nothing but <em>clearing time</em> — which is why
+    <a href="#c-arcflash">§11</a> calls clearing time "the lever", and why every
+    intentional delay we add in the LSIG study below has to buy something worth its
+    cost in energy.</p>
+  </div>
+
+  <div class="worked">
+    <h4>Estimate 2 — Thermal let-through, I&sup2;t</h4>
+    <p>For the conductors carrying the fault (not the arc itself), the damage currency is
+    I&sup2;t — amp-squared-seconds — because conductor heating during a fault is
+    adiabatic (no time to cool). At the full bolted current:</p>
+    <code class="formula">I&sup2;t (1 cycle) = (38 500)&sup2; &times; 0.0167 &asymp; 2.5 &times; 10&sup7; A&sup2;s</code>
+    <code class="formula">I&sup2;t (0.3 s)&nbsp;&nbsp; = (38 500)&sup2; &times; 0.3 &asymp; 4.4 &times; 10&sup8; A&sup2;s</code>
+    <p>Convert that to copper using the adiabatic equation from
+    <a href="#c-cables">§6 — Cable Sizing</a> (k &asymp; 143 for XLPE/copper):</p>
+    <code class="formula">A<sub>min</sub> (1 cycle) = &radic;(2.5 &times; 10&sup7;) / 143 &asymp; 4 980 / 143 &asymp; 35 mm&sup2;</code>
+    <code class="formula">A<sub>min</sub> (0.3 s)&nbsp;&nbsp; = &radic;(4.4 &times; 10&sup8;) / 143 &asymp; 21 100 / 143 &asymp; 148 mm&sup2;</code>
+    <p><strong>Sanity check:</strong> a fault cleared in one cycle can be survived by a
+    35 mm&sup2; copper conductor; the same fault held for 0.3 s needs 148 mm&sup2; —
+    more than four times the cross-section — just to avoid melting its insulation. Every
+    tenth of a second of intentional delay is paid for in copper somewhere downstream.
+    This is the quantitative reason fast, current-limiting breakers allow smaller cables
+    and why the short-time delay on an incomer is kept as short as grading permits.</p>
+  </div>
+
+  <div class="worked">
+    <h4>Estimate 3 — Mechanical force on the conductors</h4>
+    <p>Parallel conductors carrying current in opposite directions repel. The first
+    asymmetrical peak at 60 Hz is about 2.1 &times; the symmetrical RMS value
+    (typical LV X/R):</p>
+    <code class="formula">i<sub>peak</sub> &asymp; 2.1 &times; 38.5 kA &asymp; 81 kA</code>
+    <p>Force per metre between two busbars spaced d = 60 mm apart:</p>
+    <code class="formula">F/L = 2 &times; 10&#8315;&#8311; &times; i&sup2; / d = 2 &times; 10&#8315;&#8311; &times; (81 000)&sup2; / 0.06 &asymp; 21 900 N/m &asymp; 22 kN per metre</code>
+    <p><strong>Sanity check &amp; comparison:</strong> 22 kN/m is equivalent to hanging a
+    <strong>2.2-tonne SUV from every metre of busbar</strong> — applied not gradually but
+    in 4 milliseconds, and reversing direction 120 times per second. (Using
+    2 &times; 10&#8315;&#8311; as &mu;&#8320;/2&pi; in SI units.) This is what the busbar
+    bracing withstand and the breaker's own through-fault rating protect against, and why
+    the breaker contact system needs the special geometry described under
+    <a href="#c-breaker-tech">technology</a> just to stay closed while carrying a fault
+    it has been told <em>not</em> to interrupt yet.</p>
+  </div>
+
+  <div class="worked">
+    <h4>Estimate 4 — Why interrupting in &lt; 50 ms is remarkable</h4>
+    <p>List what must happen, in series, for an ACB to clear a 38.5 kA fault
+    "instantaneously":</p>
+    <code class="formula">sense &amp; decide (&asymp; 10 ms) + unlatch &amp; part contacts (&asymp; 25–40 ms) + arc to current zero (&asymp; 8–17 ms)</code>
+    <p>The trip unit must sample the current wave long enough to be sure (about half a
+    cycle), fire an actuator, release spring energy that accelerates a contact assembly
+    of around a kilogram to several metres per second, draw an arc whose core temperature
+    reaches the order of 10 000–20 000 K (hotter than the surface of the sun at
+    &asymp; 5 800 K), drive that arc into a chute that stretches and splits it until its
+    voltage exceeds the 400 V driving it, and then — at a current zero, which at 60 Hz
+    arrives every 8.3 ms — win a microsecond-scale race between the recovering dielectric
+    strength of the contact gap and the recovering system voltage trying to restrike the
+    arc. Total: roughly <strong>40–80 ms</strong>, all of it inside one human eye-blink
+    (100–150 ms).</p>
+    <p><strong>Sanity check:</strong> the breaker controls, in two cycles, an instantaneous
+    power (9 MW arc) that the plant's entire generation contract cannot match, using
+    stored spring energy of only a few hundred joules. It wins not by overpowering the
+    arc but by out-engineering it — raising arc voltage and exploiting natural current
+    zeros. That is why the interrupting medium and contact geometry
+    (<a href="#c-breaker-tech">technology section</a>) matter as much as the settings.</p>
+  </div>
+
+  <div class="key">
+    One number to carry in your head: at this plant's LV fault level, every additional
+    0.1 s of arcing adds roughly <strong>0.9 MJ</strong> — a quarter-stick of dynamite —
+    to the energy released in the switchboard. Settings buy selectivity with time;
+    time costs energy. The whole LSIG study below is the management of that trade.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       4. WORKED CALCULATION — LSIG STUDY
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-breaker-lsig">Worked LSIG Setting Study — LV-MSB Incomer ACB</h3>
+
+  <h4>Worked calculation</h4>
+
+  <p>We now set, from first principles, the four protection elements — <strong>L</strong>ong-time,
+  <strong>S</strong>hort-time, <strong>I</strong>nstantaneous, <strong>G</strong>round-fault
+  — of the electronic trip unit on the <code>LV-MSB</code> incomer ACB. Every choice is
+  tested against the things that must <em>not</em> trip it (load, motor re-acceleration)
+  and the things that <em>must</em> (overload, bus faults), and against the downstream
+  devices it must not race.</p>
+
+  <figure class="fig">
+    <div class="svg-embed" data-src="diagrams/svg/sld-master-2MW.svg"></div>
+    <figcaption>Fig — Plant single-line diagram: the LSIG study concerns the LV-MSB
+    incomer ACB and its coordination with one outgoing feeder MCCB and one MCC outgoing
+    motor MCCB.</figcaption>
+  </figure>
+  <div class="warning drawing-basis"><strong>Drawing basis note.</strong> This diagram was
+  drawn for the original 11 kV / 415 V / 50 Hz reference design and has not been re-rendered.
+  For this Saudi (SEC) Rev 3 edition read 11 kV as 13.8 kV, 415 V as 400 V and 50 Hz as 60 Hz.
+  Topology, tags and protection philosophy are unchanged.</div>
+
+  <p><strong>The cast (indicative ratings):</strong></p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Device</th><th>Location</th><th>Frame / In</th><th>Trip unit</th><th>Carries</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Incomer ACB</td>
+        <td><code>LV-MSB</code> incomer from <code>TX-1</code></td>
+        <td>3 200 A frame, sensor/rating plug I<sub>n</sub> = 2 500 A</td>
+        <td>Electronic LSIG</td>
+        <td>Transformer LV FLC = 2 309 A</td>
+      </tr>
+      <tr>
+        <td>Feeder MCCB</td>
+        <td><code>LV-MSB</code> outgoing to MCC-A</td>
+        <td>400 A, electronic LSI</td>
+        <td>L + S + I</td>
+        <td>MCC running load &asymp; 300 A</td>
+      </tr>
+      <tr>
+        <td>MCC outgoing MCCB</td>
+        <td>MCC-A, largest motor starter</td>
+        <td>160 A, thermal-magnetic</td>
+        <td>Thermal + fixed magnetic</td>
+        <td>75 kW motor, FLC &asymp; 135 A</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Known fault levels</strong> (from <a href="#c-shortcircuit">§4</a> plus one
+  cable-impedance estimate we make below): 38.5 kA bolted at the <code>LV-MSB</code> bus;
+  &asymp; 20 kA at the MCC-A bus; &asymp; 5 kA at the 75 kW motor terminals (long motor
+  cable). Bus-tie normally open, so 38.5 kA is the design case.</p>
+
+  <div class="worked">
+    <h4>Step 0 — Fault current at the MCC bus (needed for the I-pickup check)</h4>
+    <p>Source impedance per phase seen at the 400 V bus, from the 38.5 kA bolted level:</p>
+    <code class="formula">Z<sub>source</sub> = U / (&radic;3 &times; I<sub>sc</sub>) = 400 / (1.732 &times; 38 500) &asymp; 6.0 m&Omega; (mostly reactive; take R &asymp; 0.6, X &asymp; 6.0)</code>
+    <p>Feeder cable to MCC-A, indicative: 100 m of 2 &times; 185 mm&sup2; Cu/XLPE per
+    phase (sized per <a href="#c-cables">§6</a> with the 0.82 air-derating at
+    50&nbsp;&deg;C):</p>
+    <code class="formula">R<sub>cable</sub> &asymp; 0.099 &Omega;/km &times; 0.1 km / 2 &asymp; 5.0 m&Omega;;&nbsp;&nbsp; X<sub>cable</sub> &asymp; 0.08 &Omega;/km &times; 0.1 km / 2 &asymp; 4.0 m&Omega;</code>
+    <code class="formula">Z<sub>total</sub> = &radic;((0.6+5.0)&sup2; + (6.0+4.0)&sup2;) = &radic;(5.6&sup2; + 10&sup2;) &asymp; 11.5 m&Omega;</code>
+    <code class="formula">I<sub>sc,MCC</sub> = 231 V / 0.0115 &Omega; &asymp; 20 kA</code>
+    <p><strong>Sanity check:</strong> 100 m of LV cable roughly doubled the impedance and
+    halved the fault current (38.5 &rarr; 20 kA) — typical of LV systems, where cable
+    impedance dominates within tens of metres. This number decides whether the incomer's
+    instantaneous element can "see into" the feeder's zone.</p>
+  </div>
+
+  <div class="worked">
+    <h4>Step 1 — L (long-time) pickup I<sub>r</sub> and band</h4>
+    <p>The L element is the thermal guardian of the transformer and busbar. It must sit
+    just above the legitimate full-load current and below the conductor capability.</p>
+    <code class="formula">I<sub>r</sub> = 0.95 &times; I<sub>n</sub> = 0.95 &times; 2 500 = 2 375 A</code>
+    <code class="formula">Check vs load:&nbsp; I<sub>r</sub> / I<sub>FLC</sub> = 2 375 / 2 309 = 1.03 &rarr; 3 % margin above transformer FLC ✓</code>
+    <p><em>Why 0.95 and not 1.0?</em> At 1.0 &times; (2 500 A) the breaker would permit
+    an 8 % continuous overload of the 1 600 kVA transformer before responding. 0.95 gives
+    close overload protection while the 3 % margin absorbs metering tolerance and normal
+    load variation without nuisance alarms. (The transformer's own protections and the
+    N-1 philosophy are covered in §2.)</p>
+    <p><strong>Long-time band:</strong> set t<sub>r</sub> = 12 s at 6 &times; I<sub>r</sub>
+    on an I&sup2;t curve. Two checks:</p>
+    <code class="formula">Moderate overload 1.5 &times; I<sub>r</sub>: t &asymp; 12 &times; (6/1.5)&sup2; = 192 s &asymp; 3.2 min</code>
+    <code class="formula">Re-acceleration 2.4 &times; I<sub>r</sub> (see below): t &asymp; 12 &times; (6/2.4)&sup2; = 75 s</code>
+    <p><strong>Sanity checks:</strong> (a) ~3 minutes at 150 % is comfortably inside a
+    distribution transformer's short-time overload tolerance, so the breaker protects the
+    transformer rather than the other way round. (b) <em>Inrush:</em> note carefully —
+    the LV incomer never sees <strong>transformer</strong> inrush; that flows through the
+    MV breaker when the transformer is energised and is the MV relay's problem
+    (<a href="#c-protection">§10</a>). What the LV incomer does see is <strong>motor
+    re-acceleration</strong>: after a voltage dip or an ATS retransfer, every running
+    motor draws starting-level current simultaneously. Estimate bus current &asymp; 2.5
+    &times; FLC &asymp; 5 800 A &asymp; 2.4 &times; I<sub>r</sub> for up to ~5 s. The L
+    curve gives 75 s at that level — a 15&times; margin over the 5 s event. No nuisance
+    trip. ✓</p>
+  </div>
+
+  <div class="worked">
+    <h4>Step 2 — S (short-time) pickup I<sub>sd</sub> and delay t<sub>sd</sub></h4>
+    <p>The S element is the <em>selectivity tool</em>: high enough to ignore anything that
+    is not a fault, delayed enough to let downstream devices clear their own faults first,
+    yet fast enough to limit energy when it must act as backup.</p>
+    <code class="formula">I<sub>sd</sub> = 4 &times; I<sub>r</sub> = 4 &times; 2 375 = 9 500 A;&nbsp;&nbsp; t<sub>sd</sub> = 0.3 s, definite time (I&sup2;t OFF)</code>
+    <p><em>Pickup checks — must NOT operate for:</em></p>
+    <code class="formula">Worst legitimate surge = re-acceleration &asymp; 5 800 A &rarr; margin 9 500 / 5 800 = 1.6 ✓</code>
+    <code class="formula">Full load + largest DOL start = 2 309 + (6 &times; 135) &asymp; 3 100 A &lt;&lt; 9 500 A ✓</code>
+    <p><em>Pickup check — MUST operate for:</em> the smallest fault it is meant to back
+    up is a fault at the MCC bus, &asymp; 20 kA = 2.1 &times; pickup ✓ (solid
+    detection even with &plusmn;10 % trip-unit tolerance).</p>
+    <p><em>Delay check:</em> the downstream 400 A feeder MCCB clears its zone faults in
+    &le; 0.1 s (its own S delay) or &lt; 0.05 s (its instantaneous). Grading margin:</p>
+    <code class="formula">&Delta;t = 0.3 &minus; 0.1 = 0.2 s &ge; breaker clearing (&asymp; 0.08 s) + tolerances (&asymp; 0.06 s) + safety ✓</code>
+    <p><strong>Why not longer than 0.3 s?</strong> Two reasons. Energy: from
+    <a href="#c-breaker-numbers">Estimate 1</a>, every extra 0.1 s of bus-fault arcing
+    adds &asymp; 0.9 MJ. Grading headroom: the MV transformer-feeder relay [52-T] must
+    still sit a full margin above the LV incomer. With t<sub>sd</sub> = 0.3 s, [52-T]
+    grades at &asymp; 0.6 s and the MV incomer at &asymp; 0.9 s. (§10's IDMT illustration
+    lands at &asymp; 0.38 s for the LV incomer at the same 38.5 kA bus fault — slower
+    than this study's definite-time 0.30 s because an inverse curve must also ride
+    through load-side surges; the schemes differ, not the philosophy.
+    Both are indicative; the plant's formal coordination study reconciles the full chain.)</p>
+    <p><strong>I&sup2;t OFF (definite time)?</strong> Yes here: the downstream device is an
+    electronic-trip MCCB with its own definite-time S band, so flat-over-flat grading is
+    clean and predictable. I&sup2;t ON would be chosen instead if grading over fuses or
+    thermal-magnetic curves that bend — see <a href="#c-breaker-settings">settings</a>.</p>
+  </div>
+
+  <div class="worked">
+    <h4>Step 3 — I (instantaneous) pickup I<sub>i</sub></h4>
+    <code class="formula">I<sub>i</sub> = 10 &times; I<sub>n</sub> = 10 &times; 2 500 = 25 000 A = 25 kA</code>
+    <p><em>The reasoning, in both directions:</em></p>
+    <code class="formula">Must see a genuine bus fault: 25 kA &lt; 38.5 kA &rarr; bus-zone fault trips with no intentional delay ✓</code>
+    <code class="formula">Must NOT see feeder-zone faults: 25 kA &gt; 20 kA (MCC bus fault, Step 0) &rarr; no overreach ✓</code>
+    <p>This is the elegant trick of an incomer instantaneous: cable impedance guarantees
+    that only faults <em>electrically close to the busbar itself</em> can exceed 25 kA.
+    Anything beyond the first metres of an outgoing cable is attenuated below pickup and
+    is left to the feeder breaker (with the 0.3 s S element as backup). So genuine bus
+    faults — the highest-energy, highest-arc-flash events — are cleared in
+    &asymp; 50–80 ms instead of 0.3 s, cutting their energy by a factor of four to six
+    (<a href="#c-arcflash">§11</a>), at zero cost to selectivity.</p>
+    <p><strong>Tolerance sanity check:</strong> with &minus;10 % pickup tolerance the
+    element could operate from 22.5 kA; the MCC-bus fault is 20 kA, so margin remains
+    (22.5 / 20 = 1.13) — adequate, but flag it: if the final study shortens the feeder
+    cable or fattens its conductors, recheck this margin. If it erodes, raise
+    I<sub>i</sub> to 12 &times; or rely on ZSI instead
+    (<a href="#c-breaker-settings">settings</a>).</p>
+    <p><em>Motor contribution check:</em> for an upstream (transformer-side) fault, the
+    plant's running motors back-feed briefly through the incomer at roughly 4 &times;
+    their combined FLC — a few kA, decaying within 1–2 cycles — well below 25 kA. No
+    spurious operation. ✓</p>
+  </div>
+
+  <div class="worked">
+    <h4>Step 4 — G (ground fault) pickup I<sub>g</sub> and delay</h4>
+    <code class="formula">I<sub>g</sub> = 0.2 &times; I<sub>n</sub> = 0.2 &times; 2 500 = 500 A;&nbsp;&nbsp; t<sub>g</sub> = 0.2 s (I&sup2;t OFF), ZSI-enabled</code>
+    <p>The LV system is solidly earthed TN-S, so a bolted earth fault is large — but the
+    faults that kill switchboards are <em>arcing</em> earth faults at a few hundred amps:
+    too small for S or I, and small enough for L to tolerate for minutes while they burn.
+    The G element (vector sum of the three phase CTs plus neutral CT) catches exactly
+    this gap. 500 A is &asymp; 22 % of FLC — far below any phase element, far above
+    normal unbalance leakage. It grades over the feeder MCCB's own G element (set
+    &asymp; 120 A / 0.1 s, indicative) with the same 0.2 s logic as Step 2. (The MV-side
+    earth-fault story — the 400 A NER — is separate and lives in §12.)</p>
+  </div>
+
+  <p><strong>Settings summary — incomer ACB (indicative, study governs):</strong></p>
+
+  <table class="form">
+    <tr><td>L — long-time pickup I<sub>r</sub></td><td>0.95 &times; I<sub>n</sub> = 2 375 A, band t<sub>r</sub> = 12 s @ 6 &times; I<sub>r</sub> (I&sup2;t)</td></tr>
+    <tr><td>S — short-time pickup I<sub>sd</sub></td><td>4 &times; I<sub>r</sub> = 9 500 A, t<sub>sd</sub> = 0.3 s, I&sup2;t OFF, ZSI</td></tr>
+    <tr><td>I — instantaneous I<sub>i</sub></td><td>10 &times; I<sub>n</sub> = 25 kA</td></tr>
+    <tr><td>G — ground fault I<sub>g</sub></td><td>0.2 &times; I<sub>n</sub> = 500 A, t<sub>g</sub> = 0.2 s, I&sup2;t OFF, ZSI</td></tr>
+  </table>
+
+  <h4 id="c-breaker-ladder-h4">The coordination ladder — a TCC in words</h4>
+
+  <p>A time-current coordination (TCC) chart plots every device's tripping band on
+  log-log axes of current and time; selectivity means the bands never cross. The table
+  below is that chart rendered as text: three fault scenarios, read across to see what
+  each device does, who clears, and how long the fault lasts.</p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Scenario (current through the chain)</th>
+        <th>MCC outgoing MCCB<br>(160 A TM; thermal 135 A, magnetic &asymp; 1.6 kA)</th>
+        <th>Feeder MCCB 400 A<br>(I<sub>r</sub> 400 A; I<sub>sd</sub> 1.6 kA @ 0.1 s; I<sub>i</sub> 8 kA)</th>
+        <th>Incomer ACB, 3 200 A frame / 2 500 A sensor<br>(I<sub>r</sub> 2 375 A; I<sub>sd</sub> 9.5 kA @ 0.3 s; I<sub>i</sub> 25 kA)</th>
+        <th>Who clears, and when</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Sustained overload, 1.2 &times;</strong> motor FLC (&asymp; 162 A) —
+        e.g. jammed conveyor</td>
+        <td>Thermal element picks up (162 &gt; 135 A); trips in minutes (thermal curve,
+        &asymp; 2–10 min at 1.2 &times;)</td>
+        <td>Sees 162 A within &asymp; 300 A MCC load — below I<sub>r</sub> = 400 A:
+        <em>no pickup, ever</em></td>
+        <td>Bus total &asymp; 2 340 A &lt; 2 375 A: <em>no pickup</em></td>
+        <td><strong>MCC outgoing only</strong>, after minutes. One motor lost; MCC,
+        board and plant stay up.</td>
+      </tr>
+      <tr>
+        <td><strong>5 kA fault</strong> at the 75 kW motor terminals (end of its
+        cable run)</td>
+        <td>Magnetic element (1.6 kA) operates: clears in <strong>&lt; 0.03 s</strong>
+        (TM MCCB, part current-limiting)</td>
+        <td>S picks up (5 &gt; 1.6 kA) and starts its 0.1 s timer — but the fault is gone
+        at 0.03 s: timer resets. Backup only.</td>
+        <td>5 kA = 2.1 &times; I<sub>r</sub>: only the L curve sees it
+        (&asymp; 98 s notional). Deep backup.</td>
+        <td><strong>MCC outgoing, &lt; 0.03 s.</strong> Two graded backups armed behind
+        it. Only the motor circuit is lost.</td>
+      </tr>
+      <tr>
+        <td><strong>38.5 kA bolted fault</strong> on the <code>LV-MSB</code> busbar
+        itself</td>
+        <td>No through-current (fault is upstream of it) — brief motor back-feed only</td>
+        <td>No through-current — brief motor back-feed only</td>
+        <td>38.5 &gt; 25 kA: <strong>instantaneous</strong> element fires; total clearing
+        &asymp; 0.05–0.08 s</td>
+        <td><strong>Incomer ACB, &asymp; 0.06 s.</strong> Whole board lost (necessarily
+        — it is the faulted zone), but energy held to &asymp; 150 kJ-class, not MJ-class.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>And the intermediate case worked in Step 0 — a <strong>20 kA fault at the MCC-A
+  bus</strong> — completes the picture: the feeder MCCB's instantaneous (8 kA) clears it
+  in &lt; 0.05 s; the incomer's S element (9.5 kA pickup, 0.3 s) is picked up and timing
+  as backup but is beaten by 0.25 s; the incomer's I element (25 kA) correctly never sees
+  it. Every rung of the ladder has exactly one primary device and at least one timed
+  backup.</p>
+
+  <div class="key">
+    Read the ladder bottom-up and it says one thing: <em>the closer the fault, the smaller
+    the blackout and the faster the clearance</em> — overloads cost one motor after
+    minutes; cable faults cost one feeder after milliseconds; only a genuine busbar fault
+    takes the board, and even then in under a tenth of a second. That property is not an
+    accident of the hardware; it was constructed, number by number, in Steps 1–4.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       5. EQUIPMENT SETTINGS
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-breaker-settings">What the Knobs Actually Do</h3>
+
+  <h4>Equipment settings</h4>
+
+  <p>The study above used L, S, I and G as given. Here is what each element physically
+  is, and what the secondary switches (time bands, I&sup2;t, ZSI, maintenance mode)
+  change.</p>
+
+  <p><strong>L — long time (ANSI 49, overload).</strong> A thermal <em>model</em> of the
+  protected conductor, computed in software: the trip unit integrates I&sup2; over time,
+  mimicking how the transformer winding or busbar actually heats, including cooling
+  between overloads (thermal memory). It is the electronic descendant of the bimetal
+  strip. Its two knobs are the pickup I<sub>r</sub> (where heating starts to count) and
+  the band t<sub>r</sub> (how much thermal inertia the model assumes). Slow by design —
+  seconds to hours.</p>
+
+  <p><strong>S — short time (ANSI 51, delayed short-circuit).</strong> A definite-time or
+  inverse-time element whose entire purpose is <em>selectivity</em>: it recognises a
+  fault immediately but deliberately waits (here 0.3 s) to give downstream devices first
+  refusal. The breaker must <em>carry</em> the full fault current, fully closed, during
+  this wait — which is exactly what the I<sub>cw</sub> short-time withstand rating
+  certifies (see <a href="#c-breaker-tech">ratings decoded</a>). An incomer without
+  adequate I<sub>cw</sub> physically cannot offer a short-time delay.</p>
+
+  <p><strong>I — instantaneous (ANSI 50).</strong> No intentional delay: pickup, fire.
+  Reserved for currents so large they can only be a fault inside the breaker's own zone
+  (Step 3's logic). It also serves as the breaker's self-preservation reflex — many
+  MCCBs add a fixed, non-adjustable override above the settable range so the device
+  always protects itself near its interrupting limit.</p>
+
+  <p><strong>G — ground fault (ANSI 51N/50N).</strong> Operates on the vector sum of the
+  phase (and neutral, in TN-S) currents, which is zero unless current is leaking to earth.
+  Catches the low-current arcing earth faults invisible to L, S and I. Pickup is set as a
+  fraction of I<sub>n</sub> (here 0.2 &times;), with its own short delay for grading.</p>
+
+  <p><strong>Time bands and I&sup2;t in/out.</strong> Each delayed element offers a family
+  of curves. With <em>I&sup2;t OFF</em> the S element is a flat shelf — same delay at any
+  current above pickup — ideal for grading electronic device over electronic device, as
+  in our study. With <em>I&sup2;t ON</em> the shelf tilts into a slope (trip time falls as
+  current rises), shaped to nest above the bending curves of fuses and thermal-magnetic
+  MCCBs without crossing them. Rule of thumb: flat over flat, slope over curve.</p>
+
+  <p><strong>ZSI — zone-selective interlocking.</strong> The cleverest setting on the
+  unit, and the answer to the painful trade in Step 2 (delay buys selectivity but costs
+  energy). A pilot wire runs from each downstream trip unit to its upstream neighbour.
+  When a downstream device picks up, it sends a <em>restraint</em> signal upstream:
+  "this fault is in my zone — hold your full delay as backup." If the upstream device
+  picks up and receives <em>no</em> restraint, the fault must be in its own zone — and it
+  trips at a minimum delay (&asymp; 0.05–0.08 s) regardless of its set t<sub>sd</sub>.
+  Result: busbar faults clear near-instantaneously at <em>every</em> level of the board,
+  while feeder faults still enjoy fully graded backup. Fail-safe: a cut pilot wire means
+  no restraint is ever received — devices simply revert to their set delays, losing speed
+  but never selectivity. ZSI on the S and G elements of the incomer and feeders is cheap
+  insurance and a major arc-flash lever (<a href="#c-arcflash">§11</a>).</p>
+
+  <p><strong>Anatomy of a trip — where the milliseconds go.</strong> "Clearing time" on a
+  TCC is the sum of three distinct physical stages:</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Stage</th><th>What happens</th><th>Typical ACB (indicative)</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1. Decision</td>
+        <td>Trip unit samples the wave, confirms pickup, fires the trip actuator</td>
+        <td>&asymp; 10 ms (instantaneous element)</td>
+      </tr>
+      <tr>
+        <td>2. Opening</td>
+        <td>Actuator strikes the latch; spring energy releases; contacts accelerate apart</td>
+        <td>&asymp; 25–40 ms</td>
+      </tr>
+      <tr>
+        <td>3. Arcing</td>
+        <td>Arc drawn, driven into the chute, extinguished at a current zero
+        (zeros every 8.3 ms at 60 Hz)</td>
+        <td>&asymp; 8–17 ms</td>
+      </tr>
+      <tr>
+        <td><strong>Total clearing</strong></td>
+        <td>Fault inception to current zero</td>
+        <td><strong>&asymp; 40–80 ms</strong> on instantaneous</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>Add any intentional delay (t<sub>sd</sub>, t<sub>g</sub>) <em>before</em> stage 2.
+  This anatomy is why grading margins are &asymp; 0.2–0.3 s, not 0.05 s: the upstream
+  device must outwait the downstream device's <em>total clearing</em>, plus both devices'
+  tolerances, plus a safety allowance (<a href="#c-protection">§10</a>).</p>
+
+  <p><strong>Maintenance mode / arc-flash reduction switch.</strong> Modern trip units
+  provide a switchable alternate setting group — often a dedicated padlockable switch with
+  a pilot light — that temporarily drops the instantaneous pickup (e.g. to
+  &asymp; 2 &times; I<sub>n</sub>, no delay) while personnel work near the energised
+  board. Selectivity is knowingly sacrificed for those hours; in exchange, any fault
+  clears in stage-1+2+3 time only, collapsing incident energy by a factor of four or more
+  exactly as computed in <a href="#c-arcflash">§11 — the clearing-time lever</a>. The
+  discipline is procedural: switch in before the work, <em>switch out after</em> — an
+  assessment should check both that the feature exists and that there is a procedure
+  governing it.</p>
+
+  <div class="tip">
+    Field habit: photograph the trip-unit setting screen/dials of every ACB and outgoing
+    MCCB during an assessment, and compare against the coordination study table. Settings
+    drift — a night-shift "temporary" change to stop a nuisance trip becomes permanent —
+    and a photo is the fastest honest record.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       6. EQUIPMENT TECHNOLOGY
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-breaker-tech">How the Hardware Kills an Arc</h3>
+
+  <h4>Equipment technology</h4>
+
+  <p>Every breaker faces the same physics problem: once contacts part under load, the
+  current does not stop — it leaps the gap as an arc, a self-sustaining plasma at
+  5 000–20 000 K that is, inconveniently, a rather good conductor. AC offers one gift:
+  the current passes through zero twice per cycle (every 8.3 ms at 60 Hz). At each zero
+  the arc momentarily dies; whether it stays dead is a race between the gap's recovering
+  dielectric strength and the system's recovering voltage. Every interrupting technology
+  is a different strategy for winning that race — or, at LV, for not even waiting for it.</p>
+
+  <p><strong>Air — the LV workhorse (ACB arc chutes).</strong> An LV breaker can do
+  something its MV cousins cannot: <em>beat the arc with voltage</em>. An arc in air drops
+  roughly 20–30 V at each anode and cathode surface it touches. The ACB's arc chute is a
+  stack of steel splitter plates; magnetic forces (from the arc's own current, shaped by
+  the runner geometry) drive the arc up into the stack, where it is sliced into a dozen
+  or more short arcs in series. A dozen arcs &times; &asymp; 25 V each, plus the
+  lengthened arc column, pushes the total arc voltage above the 400 V driving the fault.
+  The source can no longer sustain the current: it is forced down toward zero ahead of the
+  natural zero, and at the zero the cool, fragmented gap wins the recovery race easily.
+  The same principle in miniature lives inside every MCCB.</p>
+
+  <p><strong>Current limiting — refusing to carry the blow.</strong> A current-limiting
+  MCCB goes further: its contact arms are shaped as opposed parallel loops, so fault
+  current itself generates an electrodynamic repulsion that blows the contacts open
+  within the first few milliseconds — <em>before the trip unit has even finished
+  deciding</em>. The fast-rising arc voltage caps the current below its prospective peak
+  (the "cut-off" current) and chops the I&sup2;t let-through to a fraction. Recall
+  Estimate 2: let-through I&sup2;t is the damage currency for every cable and busbar
+  downstream — current limiting is why a well-chosen MCCB can protect a cable smaller
+  than the prospective fault would otherwise demand, and the basis of cascade/backup
+  arrangements (IEC 60947-2 Annex A) where an upstream limiter lets a downstream breaker
+  be applied above its stand-alone rating, per the manufacturer's tested tables only.</p>
+
+  <p><strong>Vacuum — the MV standard.</strong> At 13.8 kV the arc voltage trick fails —
+  no practical chute reaches kilovolts of arc drop — so MV breakers must win the
+  current-zero race instead, and nothing recovers like a vacuum. The contacts sit inside
+  a sealed ceramic bottle at &asymp; 10&#8315;&#8309; Pa; a contact gap of only
+  6–20 mm suffices for 17.5 kV class. With no gas to ionise, the arc burns in metal
+  vapour boiled off the contacts themselves; at current zero that vapour condenses back
+  onto the contact surfaces within microseconds, and dielectric strength rebounds at
+  kilovolts per microsecond — faster than any transient recovery voltage the system can
+  produce. Contact faces use spiral or axial-magnetic-field geometries to keep the arc
+  diffuse and spinning so it never anchors and craters one spot. One genuine vice:
+  <em>current chopping</em>. The vacuum arc is so eager to die that it can snap off at
+  2–5 A <em>before</em> the natural zero; interrupting an inductive circuit, the trapped
+  L&middot;(di/dt) reappears as an overvoltage spike. Modern CuCr contact alloys chop
+  low, but switching motors and unloaded transformers still warrants surge arresters or
+  RC snubbers at the load — a standard checklist item on the <code>MV-SWGR</code>
+  transformer feeders (<a href="#cat-mv-swgr">MV switchgear catalogue</a>).</p>
+
+  <p><strong>SF&#8326; — brilliant and banished.</strong> Sulphur hexafluoride is a
+  near-perfect interrupting medium: &asymp; 3 &times; the dielectric strength of air,
+  electronegative (it hoovers up free electrons at current zero), self-healing,
+  arc-quenching. Puffer designs compress the gas with a piston stroke and blast it axially
+  through the arc at current zero; rotating-arc and self-blast designs use the arc's own
+  energy to drive the flow. For decades it owned MV/HV switchgear. The problem is
+  environmental: SF&#8326; is the most potent greenhouse gas formally assessed —
+  global-warming potential on the order of 23 500 &times; CO&#8322; over 100 years, with
+  an atmospheric lifetime measured in millennia — so a single leaked kilogram equals
+  about 23 tonnes of CO&#8322;. Regulation (notably the EU F-gas regime, echoed in
+  procurement specifications worldwide, including increasingly in GCC utility practice)
+  is phasing it out of new switchgear. Replacements at MV: vacuum interrupters housed in
+  dry-air / "clean-air" insulated enclosures, and fluoronitrile (C4-FN) gas mixtures. For
+  this plant's 13.8 kV switchgear the practical guidance is simple: <strong>specify
+  vacuum interruption with air or SF&#8326;-free gas insulation</strong>; treat any
+  legacy SF&#8326; gear as a managed asset with leak monitoring and certified end-of-life
+  gas handling.</p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>&nbsp;</th>
+        <th>Air (LV ACB/MCCB)</th>
+        <th>Vacuum (MV)</th>
+        <th>SF&#8326; (MV, legacy)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Typical application</td>
+        <td>&le; 690 V; ACBs to 6 300 A, MCCBs to 1 600 A</td>
+        <td>3.6–40.5 kV switchgear — today's MV default</td>
+        <td>MV/HV; being phased out of new MV gear</td>
+      </tr>
+      <tr>
+        <td>How it kills the arc</td>
+        <td>Splitter plates raise arc voltage above system voltage; forces current down</td>
+        <td>Metal-vapour arc; near-instant dielectric recovery at current zero</td>
+        <td>Gas blast de-ionises arc path at current zero</td>
+      </tr>
+      <tr>
+        <td>Strengths</td>
+        <td>Cheap, visible, current-limiting variants, easy inspection</td>
+        <td>Sealed for life, ~30 000+ operations, no fire load, minimal maintenance</td>
+        <td>Compact, excellent dielectric, high ratings per break</td>
+      </tr>
+      <tr>
+        <td>Weaknesses</td>
+        <td>Arc chute erosion, larger size, open-air arc products</td>
+        <td>Current chopping overvoltages (mitigate with arresters/RC); bottle is
+        non-repairable</td>
+        <td>GWP &asymp; 23 500 &times; CO&#8322;; leak monitoring and end-of-life gas
+        handling obligations</td>
+      </tr>
+      <tr>
+        <td>Field checks</td>
+        <td>Chute condition, contact wear indicators, mechanism lubrication</td>
+        <td>Vacuum integrity (hi-pot test), contact erosion gauge, mechanism travel/time</td>
+        <td>Gas density/pressure gauge and alarm, leak records</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p><strong>MCCB trip technologies — thermal-magnetic vs electronic.</strong> The
+  thermal-magnetic (TM) MCCB is honest clockwork: a bimetal strip heated by load current
+  bends and unlatches (the L function, fixed by physics), and a magnetic armature attracts
+  at &asymp; 5–12 &times; rating and unlatches instantly (the I function, sometimes
+  adjustable). Cheap, robust, immune to electronics failure — and inflexible: curves are
+  what they are, accuracy is modest, and at 60 Hz versus 50 Hz the magnetic pickup of
+  some designs shifts a few percent (a Rev 3 detail worth checking on imported gear). The
+  electronic-trip MCCB and every modern ACB instead measure through internal CTs or
+  Rogowski coils into a microprocessor: full LSIG, fine adjustment, tight tolerance,
+  thermal memory, ZSI, metering and communications. The study in this section presumes
+  electronic trip on the incomer and the 400 A feeder, TM on the small motor circuit —
+  the typical cost-optimal split.</p>
+
+  <p><strong>Ratings decoded — the nameplate, line by line (IEC 60947-2).</strong></p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Symbol</th><th>Name</th><th>What it really tells you</th><th>Rev 3 check</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>I<sub>cu</sub></td>
+        <td>Ultimate breaking capacity</td>
+        <td>The largest fault the breaker can interrupt <em>once</em> and remain safe —
+        after the O-CO test sequence it may be unfit for further service. The absolute
+        ceiling.</td>
+        <td>&ge; 38.5 kA at 400 V; board philosophy 50–65 kA (<a href="#c-shortcircuit">§4</a>)</td>
+      </tr>
+      <tr>
+        <td>I<sub>cs</sub></td>
+        <td>Service breaking capacity</td>
+        <td>Stated as % of I<sub>cu</sub> (25/50/75/100). The fault level it can interrupt
+        (O-CO-CO sequence) and <em>stay in service</em>. The difference between "the plant
+        restarts after the fault" and "the plant waits for a new breaker".</td>
+        <td>Prefer I<sub>cs</sub> = 100 % I<sub>cu</sub> for incomers and critical feeders</td>
+      </tr>
+      <tr>
+        <td>I<sub>cw</sub></td>
+        <td>Short-time withstand</td>
+        <td>The current the <em>closed</em> breaker can carry for 0.5/1/3 s without
+        damage. This is what physically permits a short-time delay: our incomer holds
+        38.5 kA, fully closed, for its 0.3 s S delay. ACBs have high I<sub>cw</sub>;
+        small MCCBs effectively none — hence their fixed instantaneous override.</td>
+        <td>&ge; 38.5 kA / 1 s for the incomer and bus-tie</td>
+      </tr>
+      <tr>
+        <td>I<sub>cm</sub></td>
+        <td>Making capacity (peak)</td>
+        <td>The asymmetrical <em>peak</em> the breaker can close onto without welding or
+        bursting — the nightmare case of closing onto a forgotten earth or a standing
+        fault. IEC ties it to I<sub>cu</sub> by a factor n (2.1 at this class; 2.2 above
+        50 kA): a 65 kA breaker must make onto &asymp; 143 kA peak.</td>
+        <td>Covered automatically when I<sub>cu</sub> is properly selected to standard</td>
+      </tr>
+      <tr>
+        <td>U<sub>e</sub> / U<sub>i</sub> / U<sub>imp</sub></td>
+        <td>Operational / insulation / impulse voltage</td>
+        <td>U<sub>e</sub>: the voltage at which the current ratings are valid (often 690 V
+        — check the 400 V column, where I<sub>cu</sub> is typically <em>higher</em>).
+        U<sub>i</sub>: insulation design voltage. U<sub>imp</sub>: lightning-impulse
+        withstand (8 or 12 kV), matching installation overvoltage category.</td>
+        <td>U<sub>e</sub> &ge; 400 V (ratings read at 400/415 V column);
+        U<sub>imp</sub> = 12 kV for main boards</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="warning">
+    The classic nameplate trap: a breaker advertised "65 kA" may be
+    I<sub>cu</sub> = 65 kA at 415 V with I<sub>cs</sub> = 50 % — meaning that after one
+    full-level fault it is not warranted for continued service — and an I<sub>cw</sub>
+    too low to support any short-time delay. Three different "65 kA questions", three
+    different answers. Always read all three lines, at the correct voltage column,
+    before declaring a breaker adequate for the 38.5 kA duty.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       7. CONTROL
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-breaker-control">Who Tells the Breaker What to Do</h3>
+
+  <h4>Control</h4>
+
+  <p>A breaker has exactly three things anyone can ask of it — open, close, report
+  status — but the plumbing behind those three requests is worth knowing cold, because
+  it is where field troubleshooting actually happens.</p>
+
+  <p><strong>LV: the brains live inside.</strong> On ACBs and electronic MCCBs the
+  protection intelligence is the integral trip unit — microprocessor families such as
+  ABB <em>Ekip</em>, Schneider Electric <em>MicroLogic</em> and Siemens <em>ETU</em>
+  (indicative product families only; see <a href="#cat-lv-breakers">the LV breaker
+  catalogue</a> — no part numbers in this manual). Crucially, the trip unit is
+  <em>self-powered</em> from the breaker's own internal CTs: protection works with every
+  external supply dead, because the fault current itself powers the decision to clear it.
+  External power (24 V DC or the comms module) adds the luxuries — display, metering,
+  event logs, ZSI, communications — but never carries the core protection.</p>
+
+  <p><strong>MV: the brains live outside.</strong> The 13.8 kV vacuum breakers in
+  <code>MV-SWGR</code> are deliberately dumb muscle. Numerical protection relays
+  (<a href="#cat-relays">relay catalogue</a>, settings philosophy in
+  <a href="#c-protection">§10</a>) watch dedicated CTs and VTs and operate the breaker
+  electrically:</p>
+
+  <ul>
+    <li><strong>Shunt trip coil</strong> — energised by the relay's output contact to
+    release the opening latch. Often duplicated (trip coil 1 / trip coil 2) for
+    redundancy on critical breakers.</li>
+    <li><strong>Closing coil</strong> — releases the closing spring on command (local
+    pushbutton, SCADA, or auto-transfer logic).</li>
+    <li><strong>Spring-charging motor</strong> — rewinds the closing spring after each
+    close (a few seconds of motor run). Opening energy is always held charged whenever
+    the breaker is closed, so a <em>trip never depends on the motor</em> — only the
+    speed of the next reclose does.</li>
+    <li><strong>Anti-pumping relay</strong> — ensures one close command gives exactly one
+    closing attempt, so a maintained close signal cannot hammer the breaker repeatedly
+    onto a standing fault.</li>
+  </ul>
+
+  <p><strong>The 110 V DC backbone.</strong> All of this control plumbing runs from the
+  station battery via the <code>DCDB</code> (110 V DC, per the plant basis), not from AC.
+  The logic is unforgiving: the moment you most need a breaker to trip is precisely the
+  moment the AC system is collapsing in a fault. Battery-backed DC makes tripping
+  independent of the disturbance being cleared. Two field consequences: DC earth-fault
+  and undervoltage alarms on the DCDB are <em>protection-critical</em> findings, not
+  electrical housekeeping; and <strong>trip-circuit supervision (TCS)</strong> — the
+  small relay that continuously proves continuity through the trip coil and its wiring —
+  deserves a place on every inspection because a broken trip wire is otherwise invisible
+  until the breaker fails to clear a real fault (re-read
+  <a href="#c-breaker-failure">the failure story</a>).</p>
+
+  <p><strong>Status: 52a, 52b and friends.</strong> In ANSI device numbering the breaker
+  is device 52; its auxiliary switch stack provides <strong>52a</strong> contacts (follow
+  the breaker: closed when closed) and <strong>52b</strong> contacts (opposite: closed
+  when open). These drive everything that needs truth about breaker position —
+  interlocking (the bus-tie/incomer interlock of <a href="#c-shortcircuit">§4</a> is
+  built from them), indication lamps (red = closed, green = open by the convention used
+  here), relay logic, and SCADA/PMS telemetry. Withdrawable breakers add position
+  switches (service / test / withdrawn) and a ready-to-close interlock chain (springs
+  charged, no trip command standing, truck in position).</p>
+
+  <p><strong>Communications.</strong> Modern trip units and relays expose measurements,
+  settings and events over fieldbus — commonly Modbus RTU/TCP at this plant scale, with
+  IEC 61850 (including GOOSE peer-to-peer messaging for interlocking and breaker-failure
+  schemes) the standard at utility and larger-industrial scale. Two practice notes:
+  treat the communications path as <em>monitoring, never protection</em> (protection
+  stays hardwired: CT &rarr; relay &rarr; trip coil); and remember that remote
+  operation plus remote racking is itself an arc-flash control — the best place to stand
+  during a breaker operation is a different room (<a href="#c-arcflash">§11</a>).</p>
+
+  <div class="tip">
+    Five-minute control health check at any breaker: spring-charged flag visible;
+    TCS healthy lamp lit; DC supply healthy at the panel; 52a/52b indication consistent
+    with the mimic; last trip-test date on the record card. Five observations, and you
+    have audited the entire trip chain short of an actual injection test.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       8. SIZING METHOD
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-breaker-sizing">Selecting a Breaker, Step by Step</h3>
+
+  <h4>Sizing method</h4>
+
+  <p>Settings can be changed in the field in minutes; the breaker itself cannot. The
+  selection below is therefore the load-bearing engineering decision. The procedure is
+  eight ordered checks — current, frame, breaking, service, withstand, voltage/frequency,
+  temperature, features — illustrated throughout with the <code>LV-MSB</code> incomer.</p>
+
+  <div class="worked">
+    <h4>Worked selection — LV-MSB incomer ACB</h4>
+
+    <p><strong>Step 1 — Rated current: I<sub>n</sub> &ge; FLC with margin.</strong></p>
+    <code class="formula">I<sub>FLC</sub> = 2 309 A (one 1 600 kVA transformer at 400 V) &rarr; next frame: I<sub>n</sub> = 2 500 A</code>
+    <code class="formula">Margin = 2 500 / 2 309 = 1.08 &rarr; 8 % headroom for the L pickup to live in ✓</code>
+    <p>Sanity check: a 2 000 A frame (margin 0.87) fails immediately; a 3 200 A frame
+    works but wastes money and — worse — pushes the minimum L pickup above what protects
+    the transformer. Right-size, don't super-size.</p>
+
+    <p><strong>Step 2 — Frame size and rating plug.</strong> The frame fixes the
+    physical capability (contacts, chutes, I<sub>cw</sub>); the plug or sensor rating
+    fixes I<sub>n</sub> within it. Choosing the 2 500 A plug in a frame that accepts up to
+    3 200 A buys future load growth for the cost of a plug, not a switchboard
+    modification. Record both on the data sheet.</p>
+
+    <p><strong>Step 3 — Breaking capacity: I<sub>cu</sub> &ge; bus fault level.</strong></p>
+    <code class="formula">Duty (tie open, design case) = 38.5 kA &rarr; select I<sub>cu</sub> = 65 kA at 400 V (margin 1.7) ✓</code>
+    <p><em>The 38.5 vs 77 kA philosophy question, answered explicitly:</em> with the
+    bus-tie normally open and interlocked (one incomer + tie closed, never both incomers
+    onto one section — <a href="#c-shortcircuit">§4</a>), 38.5 kA is the legitimate
+    design duty and 50–65 kA equipment carries honest margin. Rating everything for
+    77 kA "just in case" roughly doubles switchboard cost and is the wrong fix for an
+    operational discipline problem. But the decision must be <em>conscious and
+    documented</em>: if the operating philosophy ever changes to closed-tie or
+    closed-transition transfer (even for seconds during changeover), the fault duty in
+    those seconds is 77 kA and the entire board — breakers <em>and</em> busbar bracing —
+    must be rated for it. Interlock hardware, not procedure alone, should enforce
+    whichever philosophy is chosen.</p>
+
+    <p><strong>Step 4 — Service capacity: prefer I<sub>cs</sub> = 100 % I<sub>cu</sub>.</strong>
+    For an incomer whose failure idles the whole plant, specify
+    I<sub>cs</sub> = 100 %: the breaker is warranted to clear the full fault and return
+    to service. Accepting 50 % on a main incomer silently converts every major fault into
+    a procurement lead time.</p>
+
+    <p><strong>Step 5 — Short-time withstand: I<sub>cw</sub> for incomers.</strong></p>
+    <code class="formula">Required: carry 38.5 kA, closed, for t<sub>sd</sub> = 0.3 s &rarr; specify I<sub>cw</sub> &ge; 38.5 kA / 1 s (select 50 kA / 1 s class)</code>
+    <p>Sanity check: without this rating the S delay set in the
+    <a href="#c-breaker-lsig">LSIG study</a> is physically unsupported — the breaker
+    would need an instantaneous override below 38.5 kA and selectivity at the bus level
+    would evaporate. I<sub>cw</sub> is the rating that <em>buys</em> the right to grade.
+    Match the busbar bracing to the same figure.</p>
+
+    <p><strong>Step 6 — Voltage class and frequency.</strong>
+    U<sub>e</sub> &ge; 400 V (standard 690 V-class gear; read I<sub>cu</sub> at the
+    400/415 V column, where it is typically at its highest);
+    U<sub>imp</sub> = 12 kV for a main board. Confirm <strong>60 Hz</strong> explicitly
+    on the data sheet: electronic trip units handle 50/60 Hz transparently, but some
+    thermal-magnetic curves and, importantly, motorised accessories and undervoltage
+    releases are frequency-specific. (Recall also that IEC peak factors differ:
+    asymmetrical making peaks are slightly higher in 60 Hz practice — 2.6 &times; vs
+    2.5 &times; at MV.)</p>
+
+    <p><strong>Step 7 — Temperature derating at 50&nbsp;&deg;C ambient.</strong> Most LV
+    breakers are rated at a 40&nbsp;&deg;C (some 50&nbsp;&deg;C) reference <em>around the
+    breaker</em> — and the air inside a closed, loaded switchboard in a 50&nbsp;&deg;C
+    Saudi switchroom can run 10–15 K hotter still. Check the manufacturer's derating
+    table at the realistic internal temperature, e.g. (indicative) a 2 500 A frame
+    derated to 0.95 at 55&nbsp;&deg;C internal:</p>
+    <code class="formula">I<sub>n,55&deg;C</sub> = 0.95 &times; 2 500 = 2 375 A &ge; 2 309 A ✓ — but margin is now only 3 %</code>
+    <p>Sanity check: the comfortable 8 % margin of Step 1 quietly shrank to 3 % at
+    temperature. If the table gave 0.9 (2 250 A &lt; 2 309 A) the selection would
+    <em>fail</em> and force the 3 200 A frame. This is the single most common
+    sizing error in hot climates: a breaker selected from the 40&nbsp;&deg;C catalogue
+    page for a 50&nbsp;&deg;C plant. Always state the switchroom design temperature on
+    the data sheet and demand the vendor's derating curve in the bid — and remember the
+    HVAC failure case: at elevated switchroom temperatures the L element will (correctly)
+    trip below nameplate load.</p>
+
+    <p><strong>Step 8 — Trip unit and accessories.</strong> For this incomer: electronic
+    <strong>LSIG</strong> (G is required — TN-S incomer, Step 4 of the LSIG study);
+    <strong>ZSI</strong> on S and G; maintenance-mode/arc-flash-reduction setting group
+    with door switch; metering class current/energy measurement; Modbus communications;
+    dual shunt trips fed from the 110 V DC <code>DCDB</code>; 52a/52b stack sized for
+    interlocking plus SCADA; withdrawable execution with safety shutters;
+    <strong>4-pole</strong> switching, because with the standby DG and ATS the neutral
+    must transfer with the phases to keep TN-S earthing integrity between sources.</p>
+  </div>
+
+  <p><strong>The same eight steps as a portable checklist:</strong></p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>#</th><th>Check</th><th>Criterion</th><th>Incomer result</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>Rated current</td><td>I<sub>n</sub> &ge; FLC, modest margin</td><td>2 500 A &ge; 2 309 A</td></tr>
+      <tr><td>2</td><td>Frame / plug</td><td>Frame for growth; plug for today</td><td>2 500 A plug</td></tr>
+      <tr><td>3</td><td>Breaking</td><td>I<sub>cu</sub> &ge; bus fault (philosophy documented)</td><td>65 &ge; 38.5 kA</td></tr>
+      <tr><td>4</td><td>Service</td><td>I<sub>cs</sub> = 100 % I<sub>cu</sub> preferred</td><td>100 %</td></tr>
+      <tr><td>5</td><td>Withstand</td><td>I<sub>cw</sub> &ge; fault / 1 s (incomers, ties)</td><td>50 kA / 1 s</td></tr>
+      <tr><td>6</td><td>Voltage / frequency</td><td>U<sub>e</sub>, U<sub>imp</sub>, 60 Hz stated</td><td>690 V class / 12 kV / 60 Hz</td></tr>
+      <tr><td>7</td><td>Temperature</td><td>Derated I<sub>n</sub> at real internal temp &ge; FLC</td><td>2 375 A &ge; 2 309 A (verify vendor table)</td></tr>
+      <tr><td>8</td><td>Trip unit / accessories</td><td>LSIG, ZSI, maint. mode, comms, poles, DC trips</td><td>As specified above</td></tr>
+    </tbody>
+  </table>
+
+  <h3 id="c-breaker-mv">MV Note — Vacuum Breakers for the 13.8 kV Switchgear</h3>
+
+  <p>The same eight-step logic applies at MV with IEC 62271-100 vocabulary, and on this
+  plant it produces an instructive result: <strong>every rating is dictated by the
+  system, none by the load.</strong></p>
+
+  <div class="worked">
+    <h4>Worked sizing note — transformer-feeder breaker in MV-SWGR</h4>
+    <code class="formula">Load: transformer MV FLC = 66.9 A &rarr; smallest standard frame, 630 A (margin &asymp; 9&times;!)</code>
+    <code class="formula">Voltage: 13.8 kV system &rarr; rated voltage 17.5 kV class (next standard above 13.8 kV)</code>
+    <code class="formula">Breaking: SEC fault level 25 kA design (state SEC range 25–40 kA) &rarr; rated I<sub>sc</sub> = 31.5 kA</code>
+    <code class="formula">Withstand: 31.5 kA / 3 s;&nbsp;&nbsp; Making peak at 60 Hz = 2.6 &times; 31.5 &asymp; 82 kA</code>
+    <p>Sanity checks: the 630 A bus minimum (plant basis allows 630–1 250 A) is set by
+    standardisation, not by the 66.9 A load — at MV you buy the smallest gear made, and
+    it is still enormous relative to duty. Breaking capacity 31.5 kA covers the 25 kA
+    design assumption with margin, <em>but</em> the SEC-quoted upper range is 40 kA:
+    confirm the actual utility fault contribution in writing at the connection
+    application stage, because if it is 40 kA the entire switchboard moves to a 40 kA
+    rating — a procurement decision, impossible to retrofit. Note the 60 Hz detail:
+    IEC's peak/making factor is 2.6 at 60 Hz (vs 2.5 at 50 Hz), a small but real reason
+    never to buy MV gear from a 50 Hz data sheet unverified.</p>
+  </div>
+
+  <p>Technology selection per <a href="#c-breaker-tech">above</a>: vacuum interrupters,
+  air- or SF&#8326;-free-gas insulated panels, endurance class E2/M2 (suited to the rare
+  switching duty of transformer feeders), surge arresters on the transformer feeders to
+  manage chopping overvoltages, relay-operated per
+  <a href="#c-breaker-control">Control</a> with dual trip coils and TCS from the 110 V DC
+  system. Details and indicative vendor families: <a href="#cat-mv-swgr">MV switchgear
+  catalogue</a>.</p>
+
+  <div class="key">
+    Selection in one sentence per voltage level. <strong>LV:</strong> the load sets
+    I<sub>n</sub>, the fault level sets I<sub>cu</sub>/I<sub>cs</sub>/I<sub>cw</sub>, and
+    the 50&nbsp;&deg;C ambient quietly attacks your margins — check the derating table or
+    it will check you. <strong>MV:</strong> the system sets everything
+    (17.5 kV / 31.5 kA / 630 A minimums) and the load is almost irrelevant — your real
+    decisions are the utility fault level (25 vs 40 kA, in writing) and SF&#8326;-free
+    technology.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       SELF-CHECK
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-breaker-selfcheck">Self-Check</h3>
+
+  <p>Work these from memory, then verify against the section. Settings questions use the
+  study values; treat all as indicative.</p>
+
+  <ul class="checklist">
+    <li>State the breaker/protection "contract" in one sentence, and name one failure on
+    each side of it from the failure story.</li>
+    <li>One 60 Hz cycle is 16.7 ms. Recompute the arc energy at the LV-MSB for a 1-cycle
+    clearance and for 0.3 s (use I<sub>arc</sub> &asymp; 23 kA, V<sub>arc</sub> &asymp;
+    130 V/phase) and give the everyday comparison for each.</li>
+    <li>Why does the LV incomer ACB never see transformer inrush, and what legitimate
+    surge does its S pickup actually have to ride through? At what margin (study
+    values)?</li>
+    <li>The incomer instantaneous is 25 kA and the MCC-bus fault is &asymp; 20 kA.
+    Explain, using cable impedance, why this combination gives bus-zone speed without
+    feeder-zone overreach — and what change on site would force a re-check.</li>
+    <li>A 5 kA fault occurs at the 75 kW motor terminals. Walk the coordination ladder:
+    which three devices see it, which elements pick up, who clears, and in what time?</li>
+    <li>Define I<sub>cu</sub>, I<sub>cs</sub>, I<sub>cw</sub> and I<sub>cm</sub> in one
+    line each, and explain which one physically entitles the incomer to its 0.3 s
+    short-time delay.</li>
+    <li>Explain ZSI in two sentences, including what happens when the pilot wire is cut.</li>
+    <li>Break a 60 ms "instantaneous" clearing time into its three stages and give the
+    approximate duration of each.</li>
+    <li>Why is breaker control power 110 V DC from the DCDB rather than 230 V AC, and
+    what does trip-circuit supervision protect against?</li>
+    <li>Why is vacuum the default MV interrupting medium today, what is its one notable
+    vice on motor/transformer circuits, and what is the standard mitigation?</li>
+    <li>A 2 500 A breaker from a 40&nbsp;&deg;C catalogue page is proposed for this
+    plant. Walk Step 7: what do you check, with what numbers, and what outcome would
+    force the next frame size?</li>
+    <li>The bus-tie is found closed during normal operation. Using §4 and this section,
+    state the fault duty, compare it with typical board ratings here, and classify the
+    finding.</li>
+  </ul>
+
+  <div class="note">
+    <strong>On the forms &rarr;</strong><br>
+    (a) <em>Document inventory / recommendations register:</em> for each ACB and main
+    MCCB record frame/I<sub>n</sub>, I<sub>cu</sub>/I<sub>cs</sub>/I<sub>cw</sub> at
+    400 V, trip unit type and as-found LSIG settings vs study values, ZSI and
+    maintenance-mode status, last secondary-injection and mechanism-exercise dates.<br>
+    (b) <em>AS-FOUND site data required:</em> nameplate photos (ratings at the 400 V
+    column), trip-unit setting photos, derating basis used at design (switchroom design
+    temperature), DCDB voltage and alarms, TCS status, MV breaker rated voltage /
+    I<sub>sc</sub> / making current and SF&#8326; content if any (with gas log).
+  </div>
+
+  <div class="key">
+    The breaker is where every calculation in Part 2 becomes physical: §4's fault current
+    is what it must survive and destroy, §10's grading is the timetable it must keep,
+    §11's incident energy is the price of its delays, and §6's cables live or die by its
+    let-through. Set the brains carefully — then go and verify the muscle: ratings read
+    at the right voltage and temperature, mechanism exercised, trip circuit supervised,
+    DC healthy. A breaker that cannot trip is not protection; it is scenery.
+  </div>
+
+</section>

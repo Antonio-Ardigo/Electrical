@@ -1,0 +1,1185 @@
+<!-- ============================================================
+     §C-PROTECTION  Protection coordination & selectivity
+     Rev 3 (Saudi/SEC edition) — 13.8 kV / 400-230 V / 60 Hz / 50 °C
+     Deep-dive tutorial replacing the seed §10 in 30-part2.html.
+     Builds on §4 (short circuit) and §14 (circuit breakers).
+     All numbers indicative — the formal coordination study governs.
+============================================================ -->
+<section id="c-protection" data-title="Protection Coordination and Selectivity" data-part="Part 2 — Calculations">
+
+  <h2>10 — Protection Coordination &amp; Selectivity <span style="font-size:0.65em; font-weight:normal; background:#e8f4fd; border:1px solid #aad4f5; border-radius:3px; padding:1px 5px; color:#1a6fa0;">Core</span></h2>
+
+  <p><strong>Goal:</strong> understand protection as the plant's nervous system —
+  <em>detect, decide, disconnect</em> — and learn to set it so that the device
+  <em>closest to the fault always trips first</em> (selectivity), while every fault is
+  still cleared fast enough to limit damage. The centrepiece is a complete IDMT grading
+  study across three levels of the Rev 3 plant: an MCC feeder MCCB, the
+  <code>LV-MSB</code> incomer ACB, and the MV transformer-feeder relay [52-T] in
+  <code>MV-SWGR</code>.</p>
+
+  <p>This section supplies the <em>brains</em> side of the brains-and-muscle contract
+  introduced in <a href="#c-breaker">§14 — Circuit Breakers</a>. The fault currents we
+  grade against come from <a href="#c-shortcircuit">§4 — Short-Circuit Current &amp;
+  Switchgear Withstand</a>; the consequence of slow clearing on personnel safety is
+  quantified in <a href="#c-arcflash">§11 — Arc-Flash</a>; the relay hardware itself is
+  catalogued in <a href="#cat-relays">Part 6 — Protection Relays</a>.</p>
+
+  <div class="note">
+    <strong>Indicative data.</strong> Every numeric value in this section — pickups, time
+    multipliers, fault currents, clearing times — is indicative, chosen for teaching on
+    the Rev 3 plant basis (SEC 13.8 kV, 60 Hz; 2 × 1600 kVA Dyn11 transformers;
+    400/230 V TN-S; 50&nbsp;°C design ambient). The plant's formal protection
+    coordination study governs. Standards cited are the SASO-adopted editions of
+    IEC&nbsp;60255 (measuring relays), IEC&nbsp;61869 (instrument transformers) and
+    IEC&nbsp;60909 (fault calculation), applied with SBC&nbsp;401, the SEC Distribution
+    Code and the Saudi Grid Code.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       1. WHY THIS EXISTS
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-prot-chain">The Plant's Nervous System: Detect, Decide, Disconnect</h3>
+
+  <h4>Why this exists</h4>
+
+  <p>Touch a hot pan and your hand pulls back before you have consciously registered
+  pain. Nerve endings detect, the spinal cord decides, muscles disconnect your hand from
+  the hazard — all in a few tens of milliseconds, without involving the brain's slow
+  deliberate reasoning at all. A power system needs exactly the same reflex, for exactly
+  the same reason: by the time a human could react to a short circuit, the damage would
+  be long done. Protection is that reflex, and like the body's, it has three distinct
+  jobs that are easy to conflate and vital to keep separate:</p>
+
+  <ul>
+    <li><strong>Detect.</strong> Current transformers (CTs) and voltage transformers
+    (VTs) are the nerve endings. They continuously report a scaled-down, safe replica of
+    what is happening on the primary conductors — 1 A or 5 A secondary images of currents
+    that may reach tens of kiloamps.</li>
+    <li><strong>Decide.</strong> The protection relay is the spinal cord. It compares the
+    measured quantities against settings — <em>is this current larger than anything
+    normal operation can produce? For how long has it been there?</em> — and when the
+    answer crosses a threshold, it closes an output contact. The decision itself is
+    physically trivial: milliamps through a contact, microjoules of energy.</li>
+    <li><strong>Disconnect.</strong> The circuit breaker is the muscle
+    (<a href="#c-breaker">§14</a>). It receives the trip command on the 110 V DC trip
+    circuit and physically interrupts the fault current — the only violent, energetic
+    step in the whole chain.</li>
+  </ul>
+
+  <p>If detection-decision-disconnection were the whole story, protection would be easy:
+  put one enormous relay at the SEC intake, set it sensitive and fast, and let it trip
+  for everything. The plant would be perfectly protected — and perfectly useless, because
+  every cable nick on a 5.5 kW pump feeder would black out two megawatts of process. The
+  hard part of protection engineering is not making it trip; it is making <strong>the
+  right device</strong> trip, and <strong>only</strong> that device.</p>
+
+  <p>This property is called <strong>selectivity</strong> (or <em>discrimination</em>):
+  for any fault, the protective device immediately upstream of the fault clears it, and
+  every device further upstream sees the disturbance pass and stands down. The faulted
+  branch dies; everything else lives. In the Rev 3 plant the chain from a process motor
+  up to the utility looks like this:</p>
+
+  <p><strong>Motor starter / MCCB (in <code>MCC-1</code>) &rarr; MCC incomer &rarr;
+  LV outgoing MCCB (<code>LV-MSB</code>) &rarr; LV incomer ACB (<code>LV-MSB</code>)
+  &rarr; MV transformer-feeder relay [52-T] (<code>MV-SWGR</code>) &rarr;
+  MV incomer relay [52-I] &rarr; SEC network protection</strong></p>
+
+  <p>Seven layers of protection stand between a motor terminal fault and the SEC grid.
+  Selectivity means a fault at the motor is cleared by layer one and seen — but not acted
+  on — by layers two through seven. Each upstream layer is the <strong>backup</strong>
+  for the one below it: if the motor MCCB jams, the MCC incomer clears the fault a few
+  tenths of a second later. Backup costs you a wider outage and more fault damage, which
+  is exactly why it must be slower — it should act only when the primary protection has
+  demonstrably failed.</p>
+
+  <p>So protection design is a permanent three-way negotiation:</p>
+
+  <ul>
+    <li><strong>Sensitivity</strong> — pick up for every genuine fault, even a
+    high-resistance earth fault limited to a few tens of amps by the NER, yet ride
+    through every legitimate event: full load at 50&nbsp;°C, motor starting at six times
+    rated current, transformer inrush at ten times, PFC capacitor switching transients.</li>
+    <li><strong>Speed</strong> — clear faults before conductors anneal, busbars buckle
+    and an arc becomes an explosion (<a href="#c-arcflash">§11</a>).</li>
+    <li><strong>Selectivity</strong> — lose the smallest possible zone, which requires
+    deliberately <em>slowing down</em> upstream devices so downstream ones win the
+    race.</li>
+  </ul>
+
+  <p>Speed and selectivity pull in opposite directions, and the rest of this section is
+  essentially the engineering of that compromise: how much time to give each layer, where
+  to take the time back with unit schemes like the 87T transformer differential that
+  don't need to wait, and how to prove on paper — before the fault — that the race will
+  be won by the right runner.</p>
+
+  <div class="key">
+    Protection has one purpose with two halves: clear every fault (dependability) and
+    clear it with the <em>nearest</em> device (selectivity). A scheme that trips too much
+    is almost as costly as one that trips too little — and both failures are invisible
+    until the day of the fault, which is why grading is calculated and tested, never
+    assumed.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       2. WHAT GOES WRONG WITHOUT IT
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-prot-failure">A Failure Story: One Motor Fault, Whole Plant Black</h3>
+
+  <h4>What goes wrong without it</h4>
+
+  <p>The following narrative is fictional but assembled from real coordination failures
+  reported across the industry. Every number is consistent with the Rev 3 plant basis.
+  Notice that nothing in this story is broken in the usual sense — every relay measures
+  correctly, every breaker operates perfectly. The only defect is in the
+  <em>settings</em>.</p>
+
+  <p><strong>The setup.</strong> Two years ago, during commissioning, the MV relay
+  settings were left at values copied from a "similar project". The MV transformer-feeder
+  relay [52-T] got a sensitive pickup and a low time multiplier — fast, on the theory
+  that fast is safe. The LV incomer ACB trip unit was left at factory defaults, with a
+  generous short-time delay "to avoid nuisance trips". Nobody ran a coordination study;
+  the commissioning schedule was tight, the plant started, and for two years every relay
+  sat silently confirming nothing — because there was no fault to reveal the error.</p>
+
+  <p><strong>The fault.</strong> On a Wednesday morning a 90 kW process-water pump motor
+  fed from <code>MCC-1</code> fails: a winding-to-winding short evolves within a cycle
+  into a three-phase fault at the motor terminals. Through the motor cable, the fault
+  pulls roughly 20 kA at the MCC — well above every pickup in the chain. Now four devices
+  see the same event simultaneously and start their private races:</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Device</th><th>What it sees</th><th>What its (bad) settings tell it</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Motor feeder MCCB (MCC-1)</td>
+        <td>&asymp; 20 kA — far above its instantaneous pickup</td>
+        <td>Trip now. It begins to operate; contacts will be parting within
+        &asymp; 20 ms, fully clear in &asymp; 50–70 ms.</td>
+      </tr>
+      <tr>
+        <td>LV incomer ACB (LV-MSB)</td>
+        <td>&asymp; 20 kA flowing through it toward the MCC</td>
+        <td>Short-time delay 0.4 s — it starts timing, comfortably slow. (This one,
+        ironically, is graded fine.)</td>
+      </tr>
+      <tr>
+        <td>MV feeder relay [52-T]</td>
+        <td>20 kA at 400 V referred to 13.8 kV &asymp; 0.58 kA on the MV side —
+        about 8.7 &times; transformer FLC</td>
+        <td>Pickup 80 A, time multiplier 0.05: its standard-inverse curve says
+        <strong>operate in &asymp; 0.15 s</strong>.</td>
+      </tr>
+      <tr>
+        <td>MV incomer relay [52-I]</td>
+        <td>The same 0.58 kA</td>
+        <td>Copied settings, slightly slower: &asymp; 0.4 s. Still timing.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p><strong>The race.</strong> The motor MCCB needs about 60 ms in total. The MV relay
+  [52-T] needs about 150 ms. On paper the MCCB wins — but watch what actually happens.
+  The MCCB unlatches at 20 ms and begins stretching the arc. During those same
+  milliseconds the MV relay's induction-disc emulation has been integrating; numerical
+  relays do not reset instantly when current disappears, and this one has
+  <strong>overshoot</strong>: having reached 90 % of its travel, it coasts the rest of
+  the way even as the current collapses. At t &asymp; 160 ms, with the motor fault
+  already dead and buried, relay [52-T] closes its trip contact. The MV breaker for
+  <code>TX-1</code> opens flawlessly 60 ms later.</p>
+
+  <p><strong>The result.</strong> Half the LV board goes dark. The bus-tie <code>BT</code>
+  is open (as designed), so <code>LV-MSB</code> section A is dead: half the MCCs, half
+  the process. The DG starts for the essential bus, the UPS carries the control system —
+  and the operators, seeing half the plant down and an MV breaker open, reasonably
+  conclude there has been a transformer fault. They spend four hours testing a perfectly
+  healthy <code>TX-1</code> (<a href="#c-transformer">§3</a>) before anyone thinks to
+  check the trip flags on a motor feeder in <code>MCC-1</code>. Total production loss:
+  one shift. Actual faulted equipment: one 90 kW motor worth perhaps an hour of
+  changeover work.</p>
+
+  <p><strong>The post-mortem.</strong> Three lessons, all general:</p>
+
+  <ul>
+    <li><strong>Both relays saw the fault; the upstream one was faster.</strong> This is
+    the textbook definition of a grading failure. Selectivity is not a property a relay
+    <em>has</em> — it is a relationship <em>between</em> relays, and it only exists if
+    someone calculated it. Each relay here did exactly what its settings demanded.</li>
+    <li><strong>Overshoot ate the apparent margin.</strong> Even though the MCCB
+    technically cleared first, 150 ms minus 60 ms was nowhere near enough separation. The
+    grading margin (0.3–0.4 s, derived in the <a href="#c-prot-numbers">next
+    sub-section</a>) exists precisely to absorb breaker clearing time, relay overshoot
+    and measurement errors. "Faster on paper" is not selectivity.</li>
+    <li><strong>Mis-grading multiplies every fault.</strong> The plant did not lose a
+    pump; it lost half a switchboard, plus four hours of misdirected troubleshooting,
+    because the trip pattern lied about where the fault was. A correct grading scheme is
+    also a <em>diagnostic</em> tool: when only the motor MCCB trips, the fault location
+    is announced by the trip itself.</li>
+  </ul>
+
+  <div class="warning">
+    The most dangerous property of a mis-graded plant is that it works perfectly until
+    the first fault. No alarm, no symptom, no degraded performance — settings errors
+    are invisible in normal operation. The only ways to find them are (a) a coordination
+    study checked against as-found settings, or (b) the hard way, as above. Note also the
+    inverse failure: if [52-T] had been set too <em>slow</em> and the motor MCCB had
+    failed to clear, the fault would have burned for seconds. Grading errors in either
+    direction are findings.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       3. FEEL FOR THE NUMBERS
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-prot-numbers">Milliseconds and Megajoules</h3>
+
+  <h4>Feel for the numbers</h4>
+
+  <p>Protection lives on two scales humans have no intuition for: time measured in
+  milliseconds and energy measured in megajoules. Before setting a single relay, calibrate
+  your gut on both.</p>
+
+  <p><strong>The time scale.</strong> The plant's heartbeat is the 60 Hz cycle:
+  <strong>one cycle = 1/60 s = 16.7 ms</strong> — about half the duration of a camera
+  flash, or one-twentieth of an eye blink (&asymp; 300 ms). Everything in protection is
+  conveniently counted in these cycles:</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Event</th><th>Typical duration</th><th>In 60 Hz cycles</th><th>Everyday anchor</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>One power-frequency cycle</td><td>16.7 ms</td><td>1</td>
+      <td>Camera flash &asymp; 30 ms; this is half of it</td></tr>
+      <tr><td>Numerical relay measures + decides (instantaneous element)</td>
+      <td>20–40 ms</td><td>1.5–2.5</td>
+      <td>The relay needs about one full cycle of waveform to trust its measurement,
+      plus output-contact time</td></tr>
+      <tr><td>Circuit breaker opens and clears</td><td>&asymp; 50–80 ms</td><td>3–5</td>
+      <td>Springs release, contacts part, arc extinguished at a current zero
+      (<a href="#c-breaker">§14</a>)</td></tr>
+      <tr><td>Fastest realistic fault clearing (relay + breaker)</td>
+      <td>&asymp; 80–100 ms</td><td>5–6</td>
+      <td>One-third of an eye blink — and the fault still lived through 5 peaks
+      of current</td></tr>
+      <tr><td>One grading margin</td><td>0.3–0.4 s</td><td>18–24</td>
+      <td>A long syllable of speech</td></tr>
+      <tr><td>Backup clearing two levels up</td><td>&asymp; 0.7–1.0 s</td><td>40–60</td>
+      <td>A full spoken word — an eternity; busbars are being damaged</td></tr>
+    </tbody>
+  </table>
+
+  <p><strong>Where the 0.3–0.4 s grading margin comes from.</strong> The margin between
+  two graded time-overcurrent devices is not a tradition — it is a budget, and every line
+  item is a physical delay or error that must be paid for:</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Component of margin</th><th>Indicative allowance</th><th>Why</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Downstream breaker total clearing time</td><td>0.05–0.08 s</td>
+      <td>The upstream relay keeps seeing fault current until the downstream breaker has
+      actually interrupted — not merely been told to.</td></tr>
+      <tr><td>Upstream relay overshoot</td><td>0.03–0.05 s</td>
+      <td>Timing elements coast briefly after current vanishes (disc inertia in
+      electromechanical relays; algorithm reset time in numerical IEDs).</td></tr>
+      <tr><td>Relay timing errors (both relays)</td><td>&asymp; 0.05–0.10 s</td>
+      <td>IEC 60255 allows class errors on operating time; CT errors shift the measured
+      current and hence the point on the curve.</td></tr>
+      <tr><td>Safety margin</td><td>&asymp; 0.10 s</td>
+      <td>For everything unmodelled: setting tolerances, drift, temperature.</td></tr>
+      <tr><td><strong>Total</strong></td><td><strong>&asymp; 0.25–0.33 s &rarr; use 0.3–0.4 s</strong></td>
+      <td>0.3 s is acceptable between numerical IEDs; use 0.4 s where an
+      electromechanical relay is upstream (more overshoot, wider errors).</td></tr>
+    </tbody>
+  </table>
+
+  <p><strong>The energy scale.</strong> Why fight for every tenth of a second? Because
+  fault damage is governed by <strong>I&sup2;t</strong> — energy delivered grows linearly
+  with time at a given fault current, and the current is enormous. Two honest
+  comparisons on the Rev 3 numbers:</p>
+
+  <div class="worked">
+    <h4>Feel-for-it calculation — what one extra second of arcing costs</h4>
+
+    <p><strong>(a) Arc energy at the LV-MSB.</strong> A bus fault arcs at roughly
+    I<sub>arc</sub> &asymp; 0.58 &times; 38.5 &asymp; 22 kA
+    (<a href="#c-arcflash">§11</a>), with a total arc-voltage drop of very roughly
+    300 V (the round number used in §11):</p>
+
+    <code class="formula">P_arc &asymp; V_arc &times; I_arc = 300 V &times; 22 000 A &asymp; 6.6 MW</code>
+    <code class="formula">Cleared in 0.1 s:  E = 6.6 MW &times; 0.1 s &asymp; 0.66 MJ</code>
+    <code class="formula">Cleared in 1.0 s:  E = 6.6 MW &times; 1.0 s &asymp; 6.6 MJ</code>
+
+    <p>0.66 MJ is a 2 kW kettle running for about five minutes — released inside a
+    cubicle in a tenth of a second. It wrecks the compartment. 6.6 MJ is roughly the
+    energy of <strong>1.4 kg of TNT</strong> (&asymp; 4.6 MJ/kg), or a 1.5-tonne car
+    striking a wall at about 340 km/h. It does not wreck a compartment; it removes the
+    switchboard from the plant's asset register and endangers everyone in the room.
+    Same fault, same current — the only difference is the clearing time your settings
+    chose.</p>
+
+    <p><strong>(b) Cable withstand (adiabatic I&sup2;t).</strong> A 300 mm&sup2; XLPE
+    copper cable can absorb, adiabatically, k&sup2;S&sup2; with k &asymp; 143:</p>
+
+    <code class="formula">I&sup2;t_max = (k &times; S)&sup2; = (143 &times; 300)&sup2; = (42 900)&sup2; &asymp; 1.84 &times; 10&sup9; A&sup2;s</code>
+    <code class="formula">At 38.5 kA: t_max = 1.84&times;10&sup9; / (38 500)&sup2; = 1.84&times;10&sup9; / 1.48&times;10&sup9; &asymp; 1.24 s</code>
+
+    <p>Clearing in 0.1 s uses about 8 % of the cable's thermal life-budget for that
+    event; clearing in 1.0 s uses about 80 % — one breaker hesitation away from cooked
+    insulation along the entire route. <em>Sanity check:</em> this is the same k&sup2;S&sup2;
+    check used for earth conductors in <a href="#c-earthing">§12</a>, and the 1.24 s
+    figure is comfortably above our slowest intended backup clearing (&asymp; 0.7 s,
+    next sub-section) — the coordination plan and the cable thermal limit are
+    consistent.</p>
+  </div>
+
+  <p>Hold these two scales together and the whole philosophy of grading falls out: the
+  <em>first</em> device gets to be fast (50–100 ms) because selectivity costs it nothing.
+  Every backup layer pays one grading margin (&asymp; 0.3 s) for the privilege of being
+  selective, and the energy table above is the price list that tells you why you cannot
+  afford many layers — by the third, you are at 0.7–1.0 s and flirting with the cable's
+  thermal limit and intolerable arc energy. This is exactly why unit protections (87T
+  differential) and zone-selective interlocking exist: they buy back speed without
+  giving up selectivity, by <em>knowing</em> where the fault is instead of waiting to
+  infer it.</p>
+
+  <div class="key">
+    One 60 Hz cycle is 16.7 ms; relay plus breaker can clear in &asymp; 5 cycles; each
+    layer of time-graded backup adds &asymp; 0.3–0.4 s; and fault energy is proportional
+    to clearing time. Grading is therefore the art of spending milliseconds like money —
+    and the budget at the LV bus runs out at roughly one second.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       4. WORKED CALCULATION — IDMT GRADING STUDY
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-prot-grading">Worked IDMT Grading Study — MCC Feeder to MV Relay</h3>
+
+  <h4>Worked calculation</h4>
+
+  <p>We now grade three levels of the Rev 3 plant for phase faults, bottom-up, exactly as
+  a protection engineer would. The chain (bus-tie <code>BT</code> open, one transformer
+  per bus section):</p>
+
+  <p><strong>Level 1:</strong> <code>LV-MSB</code> outgoing MCCB feeding
+  <code>MCC-1</code> (indicative 400 A frame, electronic trip) &rarr;
+  <strong>Level 2:</strong> <code>LV-MSB</code> incomer ACB from <code>TX-1</code>
+  (electronic trip unit, IEC standard-inverse mode) &rarr;
+  <strong>Level 3:</strong> MV transformer-feeder relay [52-T] in <code>MV-SWGR</code>
+  (numerical IED, ANSI 51, CT 100/1).</p>
+
+  <p>The timing engine for Levels 2 and 3 is the <strong>IEC 60255 standard-inverse
+  (SI) IDMT curve</strong> — "inverse definite minimum time": the bigger the current,
+  the faster the trip, scaled by a time-multiplier setting (TMS):</p>
+
+  <code class="formula">t = TMS &times; 0.14 / ((I/Is)^0.02 &minus; 1)&nbsp;&nbsp;&nbsp;[s]&nbsp;&nbsp;&nbsp;where Is = pickup current, I = fault current</code>
+
+  <p>Two settings per device, then: the <strong>pickup Is</strong> (where the curve
+  starts — chosen from load current) and the <strong>TMS</strong> (which slides the whole
+  curve up or down in time — chosen to create the grading margins).</p>
+
+  <div class="worked">
+    <h4>Step 0 — Assemble the study data (from §4 and the plant data card)</h4>
+
+    <table class="tbl">
+      <thead>
+        <tr><th>Quantity</th><th>Value (indicative)</th><th>Source</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>TX-1 rating / impedance</td><td>1600 kVA, 13.8/0.4 kV, Dyn11, Z = 6 %</td>
+        <td><a href="#c-transformer">§3</a></td></tr>
+        <tr><td>LV full-load current (one TX)</td><td>2309 A</td><td>Plant data card</td></tr>
+        <tr><td>MV full-load current (one TX)</td><td>66.9 A</td><td>Plant data card</td></tr>
+        <tr><td>LV bus fault, one TX feeding</td><td>38.5 kA</td>
+        <td><a href="#c-shortcircuit">§4</a></td></tr>
+        <tr><td>Fault at MCC-1 bus (after feeder cable)</td><td>&asymp; 20 kA</td>
+        <td>Indicative, cable impedance included</td></tr>
+        <tr><td>MV-side fault at TX primary terminals</td><td>&asymp; 25 kA</td>
+        <td>SEC design fault level (state range 25–40 kA)</td></tr>
+        <tr><td>MV feeder CT</td><td>100/1, class 5P20</td><td><a href="#cat-mv-swgr">MV switchgear catalogue</a></td></tr>
+        <tr><td>Grading margin adopted</td><td>0.3 s (numerical/electronic devices)</td>
+        <td>Margin budget, <a href="#c-prot-numbers">above</a></td></tr>
+      </tbody>
+    </table>
+
+    <p><strong>The common reference fault</strong> for grading Levels 2&rarr;3 is a
+    three-phase fault on the LV-MSB busbar: 38.5 kA at 400 V. The MV relay sees this same
+    fault through the transformer, scaled by the voltage ratio:</p>
+
+    <code class="formula">I_MV = I_LV &times; (V_LV / V_MV) = 38 500 &times; (400 / 13 800) = 38 500 &times; 0.029 = 1 116 A &asymp; 1.12 kA</code>
+
+    <p><em>Sanity check:</em> a fault limited only by the transformer's 6 % impedance
+    draws 1/0.06 = 16.7 times FLC: 16.7 &times; 66.9 A = 1 115 A on the MV side. Same
+    answer by two independent routes — the referral is right. Note how <em>small</em>
+    1.12 kA is at MV: barely 17 &times; transformer full load, and only 4.5 % of the
+    25 kA the MV bus can deliver. The transformer impedance hides LV faults from the MV
+    relay — this single fact shapes the whole MV setting.</p>
+  </div>
+
+  <div class="worked">
+    <h4>Step 1 — Level 1: MCC-1 feeder MCCB (the fast end of the chain)</h4>
+
+    <p>The device nearest the fault zone needs no upward grading below it (the MCC's own
+    starters grade beneath it, but they are current-limited and fast). Indicative
+    settings for a 400 A electronic-trip MCCB:</p>
+
+    <code class="formula">Long-time pickup: Ir = 400 A (matches MCC-1 group demand, cable rating governs)</code>
+    <code class="formula">Short-time pickup: Isd = 8 &times; Ir = 3 200 A, delay 0.05 s</code>
+    <code class="formula">Total clearing at 20 kA fault: 0.05 s delay + &asymp; 0.02 s interruption &asymp; 0.07 s</code>
+
+    <p><em>Sanity check:</em> the largest motor in MCC-1 (&asymp; 90 kW, FLC &asymp;
+    160 A) starts DOL at &asymp; 6 &times; FLC &asymp; 960 A — well below the 3 200 A
+    short-time pickup, so motor starting cannot trip the feeder. A fault at the MCC bus
+    (&asymp; 20 kA) is 6 times the short-time pickup — detection is certain. Both ends
+    verified: rides through the biggest legitimate current, sees the smallest fault.</p>
+  </div>
+
+  <div class="worked">
+    <h4>Step 2 — Level 2: LV incomer ACB, pickup then TMS</h4>
+
+    <p><strong>(a) Choose the pickup Is.</strong> The incomer must carry one
+    transformer's full output continuously (2 309 A) without nuisance tripping, with a
+    little headroom for measurement error and brief excursions, while staying far below
+    the smallest fault it must detect:</p>
+
+    <code class="formula">Is = 1.1 &times; FLC = 1.1 &times; 2 309 A = 2 540 A</code>
+
+    <p><em>Sanity check (sensitivity):</em> the minimum realistic bus fault — a
+    phase-to-phase fault — is &asymp; 0.87 &times; 38.5 = 33.5 kA, which is 13 times the
+    pickup. Detection is never in doubt. <em>Sanity check (stability):</em> 2 540 A
+    &gt; 2 309 A maximum continuous current — no trip at full load, even at 50&nbsp;°C
+    with the trip unit reading 5 % high. Note that this is an alternative, IDMT-based
+    illustration: the manual's reference LSIG setting study for the same incomer
+    (<a href="#c-breaker-lsig">the breakers chapter</a>) sets I<sub>r</sub> = 2 375 A —
+    the pickups differ because the schemes differ, not because one is wrong.</p>
+
+    <p><strong>(b) Compute the curve time at the reference fault, TMS = 1.</strong>
+    At the LV bus fault, I = 38.5 kA through the incomer:</p>
+
+    <code class="formula">I/Is = 38 500 / 2 540 = 15.2</code>
+    <code class="formula">(I/Is)^0.02 = 15.2^0.02 = 1.056&nbsp;&nbsp;&rarr;&nbsp;&nbsp;denominator = 1.056 &minus; 1 = 0.056</code>
+    <code class="formula">t(TMS=1) = 0.14 / 0.056 = 2.50 s</code>
+
+    <p><strong>(c) Choose TMS for a 0.3 s margin over Level 1.</strong> The feeder MCCB
+    below is fully clear in &asymp; 0.07 s, so the incomer must not operate before
+    0.07 + 0.30 = 0.37 s at any current both devices can see:</p>
+
+    <code class="formula">TMS_required = t_target / t(TMS=1) = 0.37 / 2.50 = 0.148&nbsp;&nbsp;&rarr;&nbsp;&nbsp;set TMS = 0.15</code>
+    <code class="formula">Operating time: t = 0.15 &times; 2.50 = 0.38 s at 38.5 kA</code>
+
+    <p><em>Sanity check:</em> we graded at 38.5 kA — the worst case, because the inverse
+    curve is <em>fastest</em> at the highest current. For the more realistic fault at the
+    MCC bus (20 kA), I/Is = 7.9, t(TMS=1) = 0.14/(7.9^0.02 &minus; 1) = 0.14/0.042 =
+    3.32 s, so t = 0.15 &times; 3.32 = <strong>0.50 s</strong> — margin over the feeder
+    grows to 0.43 s. If the margin holds at maximum current, it holds everywhere below.
+    Also check load-side stability: at twice pickup (a brief reacceleration surge,
+    5 080 A), t = 0.15 &times; 0.14/(2^0.02 &minus; 1) = 0.15 &times; 10.0 = 1.5 s —
+    long enough to ride through transient overloads.</p>
+  </div>
+
+  <div class="worked">
+    <h4>Step 3 — Level 3: MV transformer-feeder relay [52-T], pickup then TMS</h4>
+
+    <p><strong>(a) Choose the pickup Is.</strong> Transformer MV full-load current is
+    66.9 A. Allow 20 % margin for sustained full output plus measurement error, and
+    express it on the 100/1 CT:</p>
+
+    <code class="formula">Is = 1.2 &times; FLC = 1.2 &times; 66.9 A = 80.3 A&nbsp;&nbsp;&rarr;&nbsp;&nbsp;set 80 A primary = 0.80 &times; In on the 100/1 CT</code>
+
+    <p><em>Sanity check (sensitivity):</em> the smallest fault this relay must back up is
+    the LV bus fault seen through the transformer: 1 120 A = <strong>14 times
+    pickup</strong> — comfortably detected (a common rule asks for at least 1.3 &times;
+    pickup at the minimum fault; we have ten times that). <em>Sanity check
+    (stability):</em> transformer energisation inrush peaks around 8–12 &times; FLC
+    (&asymp; 540–800 A) but decays within a few cycles; on the SI curve at 669 A
+    (I/Is = 8.4) the relay would need 0.28 &times; 0.14/(8.4^0.02&minus;1) &asymp; 0.9 s
+    of <em>sustained</em> current to trip — inrush is gone long before that. The IDMT
+    curve itself rides through inrush.</p>
+
+    <p><strong>(b) Compute the curve time at the reference fault, TMS = 1.</strong>
+    The common fault is the LV bus fault = 1.12 kA seen at MV:</p>
+
+    <code class="formula">I/Is = 1 120 / 80 = 14.0</code>
+    <code class="formula">(I/Is)^0.02 = 14.0^0.02 = 1.054&nbsp;&nbsp;&rarr;&nbsp;&nbsp;denominator = 1.054 &minus; 1 = 0.054</code>
+    <code class="formula">t(TMS=1) = 0.14 / 0.054 = 2.58 s</code>
+
+    <p><strong>(c) Choose TMS for a 0.3 s margin over Level 2.</strong> The LV incomer
+    operates in 0.38 s at this same fault, so [52-T] must wait until at least
+    0.38 + 0.30 = 0.68 s:</p>
+
+    <code class="formula">TMS_required = 0.68 / 2.58 = 0.264&nbsp;&nbsp;&rarr;&nbsp;&nbsp;set TMS = 0.28 (next available step, with headroom)</code>
+    <code class="formula">Operating time: t = 0.28 &times; 2.58 = 0.72 s at 1.12 kA&nbsp;&nbsp;&rarr;&nbsp;&nbsp;margin = 0.72 &minus; 0.38 = 0.34 s &ge; 0.3 s ✓</code>
+
+    <p><em>Sanity check (equipment withstand):</em> if the LV incomer ever fails and
+    [52-T] does the clearing, the fault persists 0.72 s + MV breaker &asymp; 0.06 s
+    &asymp; 0.78 s. The transformer's through-fault withstand (IEC 60076-5) is 2 s at
+    full through-fault current — OK. The LV cable I&sup2;t limit computed
+    <a href="#c-prot-numbers">earlier</a> was 1.24 s at 38.5 kA — OK, with margin.
+    The grading plan fits inside every thermal limit it relies on.</p>
+
+    <p><strong>(d) Add the high-set instantaneous (ANSI 50) — speed where selectivity is
+    free.</strong> Here is the elegant trick: the MV relay can never see more than
+    1.12 kA <em>through</em> the transformer, because the 6 % impedance caps it. Any
+    current above that must be a fault on the MV side — the cable or the transformer
+    primary itself, squarely in [52-T]'s own zone. So an instantaneous element set above
+    the maximum through-fault needs no grading at all:</p>
+
+    <code class="formula">I&gt;&gt; = 1.3 &times; 1 120 A &asymp; 1 460 A&nbsp;&nbsp;&rarr;&nbsp;&nbsp;set 1 500 A primary (15 &times; In CT), t = 0.00 s (instantaneous)</code>
+
+    <p>An MV cable fault (&asymp; 25 kA, far above 1.5 kA) now clears in relay
+    &asymp; 0.03 s + breaker &asymp; 0.06 s &asymp; <strong>0.1 s</strong> instead of
+    riding the 51 curve. <em>Sanity check (inrush):</em> 1 500 A is roughly twice the
+    worst inrush (&asymp; 800 A), and a numerical IED additionally filters the DC offset
+    and harmonics of inrush — the 50 element will not false-trip on energisation. The
+    1.3 factor covers asymmetry and CT transient error at the through-fault boundary.</p>
+  </div>
+
+  <div class="worked">
+    <h4>Step 4 — Grading summary table and verification sweep</h4>
+
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>Level</th>
+          <th>Device</th>
+          <th>Pickup Is</th>
+          <th>Curve / element</th>
+          <th>TMS / delay</th>
+          <th>t at LV-bus reference fault<br>(38.5 kA LV = 1.12 kA MV)</th>
+          <th>Margin to level below</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>MCC-1 feeder MCCB (LV-MSB outgoing)</td>
+          <td>Ir 400 A; Isd 3 200 A</td>
+          <td>Long-time + short-time (definite)</td>
+          <td>tsd = 0.05 s</td>
+          <td>&asymp; 0.07 s total clearing (at its own zone fault)</td>
+          <td>— (fastest; nearest the fault)</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>LV incomer ACB (LV-MSB, from TX-1)</td>
+          <td>2 540 A (1.1 &times; 2 309 A)</td>
+          <td>IEC SI (IDMT)</td>
+          <td>TMS 0.15</td>
+          <td>0.38 s</td>
+          <td>0.31 s over Level 1 ✓</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>MV TX-feeder relay [52-T], ANSI 51</td>
+          <td>80 A primary (0.80 In, CT 100/1)</td>
+          <td>IEC SI (IDMT)</td>
+          <td>TMS 0.28</td>
+          <td>0.72 s</td>
+          <td>0.34 s over Level 2 ✓</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>[52-T] high-set, ANSI 50</td>
+          <td>1 500 A primary (15 In)</td>
+          <td>Instantaneous</td>
+          <td>0 s</td>
+          <td>Cannot operate (max through-fault 1.12 kA &lt; 1.5 kA) — by design</td>
+          <td>Not required: cannot see past TX</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p><strong>Verification at a second current</strong> — a real study checks the
+    margins at every current the pair can share, normally by overlaying the curves on a
+    log-log time-current (TCC) plot. Spot-check at the MCC-bus fault (20 kA LV =
+    0.58 kA MV):</p>
+
+    <code class="formula">Level 1: clears in &asymp; 0.07 s (above its short-time pickup)</code>
+    <code class="formula">Level 2: I/Is = 20 000/2 540 = 7.9 &rarr; t = 0.15 &times; 0.14/0.042 = 0.50 s &rarr; margin 0.43 s ✓</code>
+    <code class="formula">Level 3: I/Is = 580/80 = 7.25 &rarr; t = 0.28 &times; 0.14/0.0404 = 0.97 s &rarr; margin 0.47 s ✓</code>
+
+    <p><em>Sanity check:</em> margins <em>grow</em> as fault current falls — the expected
+    behaviour when graded IDMT devices use the same curve family and the pickups step up
+    the chain. The tight point is always the maximum common fault, which is exactly where
+    we set the margins. The study closes.</p>
+  </div>
+
+  <p><strong>What sits above Level 3.</strong> The MV incomer relay [52-I] backs up
+  [52-T] and must grade 0.3 s above the slowest [52-T] response it can witness —
+  indicatively &asymp; 1.0 s at the through-fault level — and above <em>that</em> sits
+  SEC's own network protection. This is where the time budget meets its ceiling: the
+  Saudi Grid Code and the SEC Distribution Code set expectations for fault clearance at
+  the intake, and SEC reviews and approves the consumer's incomer settings at connection.
+  If the plant's ladder is too slow at the top, the cure is not a faster top relay — it
+  is removing a layer from the ladder, or replacing time grading with unit schemes (87T,
+  bus differential, zone-selective interlocking) that clear in &asymp; 0.1 s without any
+  margin at all. For the arc-flash consequences of these choices see
+  <a href="#c-arcflash">§11</a>.</p>
+
+  <div class="key">
+    The whole grading study is two decisions per device, made bottom-up: <strong>pickup
+    from load</strong> (above the maximum legitimate current, far below the minimum
+    fault) and <strong>TMS from the margin</strong> (0.3 s above the device below, at the
+    maximum fault both can see). Then verify the margins hold across the current range,
+    and verify the slowest backup clearing still fits inside every cable and transformer
+    withstand limit. Indicative here; the plant's formal TCC study governs.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       5. EQUIPMENT SETTINGS
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-protection-settings">What Gets Set, and the Language It's Set In</h3>
+
+  <h4>Equipment settings</h4>
+
+  <p>Open a relay setting file and you meet a numeric code language a century old: the
+  <strong>ANSI/IEEE device numbers</strong> (C37.2), used side by side with IEC symbols
+  (I&gt;, I&gt;&gt;, I<sub>E</sub>&gt;). Learn a dozen numbers and every protection
+  drawing in the plant becomes readable:</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>ANSI no.</th><th>IEC symbol</th><th>Function</th><th>Where in the Rev 3 plant / why</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>50</td><td>I&gt;&gt;</td><td>Instantaneous overcurrent</td>
+      <td>[52-T] high-set (1.5 kA) — clears MV-zone faults in &asymp; 0.1 s because the
+      TX impedance guarantees it cannot see LV faults.</td></tr>
+      <tr><td>51</td><td>I&gt; (t)</td><td>Time-overcurrent (IDMT or definite time)</td>
+      <td>The workhorse of the grading study above — [52-T], [52-I], and the IDMT mode of
+      LV trip units.</td></tr>
+      <tr><td>50N / 51N</td><td>I<sub>E</sub>&gt;&gt; / I<sub>E</sub>&gt;</td>
+      <td>Earth-fault overcurrent (instantaneous / timed), measured residually or via
+      core-balance CT</td>
+      <td>MV feeders and incomer; pickup set as a fraction of the NER limit — see
+      below.</td></tr>
+      <tr><td>87T</td><td>&Delta;I</td><td>Transformer differential (unit protection)</td>
+      <td>Optional on 1600 kVA — see discussion below. Trips both sides instantly for
+      in-zone faults.</td></tr>
+      <tr><td>27 / 59</td><td>U&lt; / U&gt;</td><td>Under- / overvoltage</td>
+      <td>MV incomer and LV boards: detect loss of SEC supply (starts the ATS/DG
+      sequence), protect against sustained overvoltage.</td></tr>
+      <tr><td>81U / 81O</td><td>f&lt; / f&gt;</td><td>Under- / overfrequency</td>
+      <td>SEC interface and DG: islanding detection and generator protection; settings
+      coordinated with Saudi Grid Code frequency bands.</td></tr>
+      <tr><td>86</td><td>—</td><td>Lockout (master trip) relay</td>
+      <td>Latches after serious trips (87T, Buchholz): the breaker cannot be reclosed
+      until a human physically resets the 86 — re-energising a faulted transformer must
+      never be one button-press away.</td></tr>
+      <tr><td>49 / 50BF</td><td>&theta;&gt; / —</td><td>Thermal overload / breaker
+      failure</td>
+      <td>49 on transformers and motors; 50BF as the modern backup scheme
+      (<a href="#c-protection-control">Control, below</a>).</td></tr>
+    </tbody>
+  </table>
+
+  <p><strong>Definite-time or IDMT?</strong> Every timed element offers both shapes, and
+  the choice is not cosmetic:</p>
+
+  <ul>
+    <li><strong>Definite time (DT)</strong> — trips a fixed delay after pickup,
+    regardless of how large the current is. Predictable, easy to grade by simple ladders
+    (0.1 / 0.4 / 0.7 s), ideal where fault current barely varies with location — which
+    is exactly the case for <strong>NER-limited earth faults</strong>, where every fault
+    draws roughly the same current wherever it is.</li>
+    <li><strong>IDMT</strong> — faster at higher current, following the IEC 60255 curve
+    families (standard inverse as used above; very inverse 13.5/(M &minus; 1) and
+    extremely inverse 80/(M&sup2; &minus; 1) where heavier discrimination near the source
+    or fuse coordination is needed). Ideal for phase faults, where current falls with
+    distance from the source: nearby (high-current) faults clear fast, remote faults —
+    which the downstream device should be clearing anyway — get more time
+    automatically.</li>
+  </ul>
+
+  <p><strong>Earth-fault settings and the NER.</strong> The 13.8 kV system neutral is
+  earthed through the NER — 7.97 kV, <strong>400 A for 10 s</strong> (19.9 &Omega;) —
+  so no MV earth fault anywhere in the plant can exceed &asymp; 400 A
+  (<a href="#c-earthing">§12</a>). That changes the settings logic completely:</p>
+
+  <ul>
+    <li><strong>Pickup:</strong> phase-CT residual connections suffer from spill current
+    (CT mismatch during through-faults and inrush), so earth-fault pickups sit at
+    <strong>10–20 % of the NER limit: 40–80 A primary</strong>. On the 100/1 feeder CTs
+    that is 0.4–0.8 &times; In residually, or lower with a core-balance CT, which
+    measures the true sum flux and allows pickups down to a few amps.</li>
+    <li><strong>Curve:</strong> definite time, because the NER makes every earth fault
+    look the same size — IDMT would gain nothing. Indicative ladder: feeder 51N
+    &asymp; 0.3 s, incomer 51N &asymp; 0.6 s.</li>
+    <li><strong>Standby earth fault (51G):</strong> a CT in the NER neutral connection
+    itself sees <em>every</em> earth fault on the system — the last resort. Set
+    &asymp; 0.9–1.0 s (above the incomer 51N), and verify the whole ladder clears well
+    inside the NER's 10 s thermal rating. <em>Sanity check:</em> slowest clearing
+    &asymp; 1.0 s + breaker &asymp; 1.1 s &Lt; 10 s ✓ — the resistor survives even a
+    full backup sequence with a roughly ninefold margin.</li>
+  </ul>
+
+  <p><strong>The 87T question at 1600 kVA.</strong> Transformer differential compares
+  current entering the MV side with current leaving the LV side, scaled and
+  vector-corrected for the Dyn11 group; any imbalance above the bias characteristic means
+  an in-zone fault, tripped <em>instantaneously on both sides</em> with no grading
+  margin needed — unit protection at its purest. The honest engineering position for this
+  plant:</p>
+
+  <ul>
+    <li><strong>When it is justified:</strong> 87T is standard above &asymp; 5 MVA. At
+    1600 kVA it is a judgement call — justified where the transformer is critical to
+    production (N-1 only works if the failed unit is repairable), where MV cable runs are
+    included in the zone, or where the arc-flash study wants faster TX-zone clearing
+    than the 51 ladder can give. Otherwise the 50/51 + 49 package, plus the transformer's
+    own devices (Buchholz/pressure for oil units, winding temperature for cast resin —
+    <a href="#c-transformer">§3</a>), is a defensible scheme at this size.</li>
+    <li><strong>Stabilisation against inrush:</strong> energising the transformer draws
+    inrush on the MV side with <em>nothing</em> leaving the LV side — to a naive
+    differential that is a perfect internal fault. The classic cure: inrush current is
+    rich in <strong>second harmonic</strong> (typically 15–40 %), which genuine fault
+    current is not, so the relay <strong>restrains when the 2nd-harmonic content exceeds
+    &asymp; 15–20 %</strong> of fundamental. Modern IEDs add waveform-gap recognition and
+    CT-saturation discriminators on top.</li>
+    <li><strong>The supporting cast:</strong> a percentage-bias slope (to tolerate CT
+    errors and off-nominal tap positions), an unrestrained high-set differential for
+    massive internal faults, and matched CT performance on both sides
+    (<a href="#c-protection-tech">next sub-section</a>). An 87T operation always drives
+    the <strong>86 lockout</strong>.</li>
+  </ul>
+
+  <p><strong>The SEC interface.</strong> At the intake, settings stop being a private
+  matter. The SEC Distribution Code and Saudi Grid Code require the consumer's protection
+  to clear plant faults within defined times so they never stress the utility network,
+  and SEC reviews the incomer relay settings (50/51, 50N/51N, 27/59, 81U/O) at
+  connection approval and after changes. Practically: the [52-I] settings and the
+  grading study behind them are submittal documents, the revenue-metering CTs/VTs at
+  <code>MV-MET</code> are sealed SEC property, and any re-grading that slows the top of
+  the ladder needs SEC concurrence. Treat the utility boundary as a fixed ceiling the
+  whole ladder must fit under.</p>
+
+  <div class="tip">
+    Reading a setting file cold? Translate it first: every line is one device number +
+    pickup + curve + time setting. Rebuild the ladder on paper (pickup and operating time
+    at the common fault, level by level, exactly as in the worked study) before judging
+    any single value. A pickup is never right or wrong alone — only relative to the load
+    below it and the relay above it.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       6. EQUIPMENT TECHNOLOGY
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-protection-tech">From Spinning Discs to IEDs — and the CTs That Feed Them</h3>
+
+  <h4>Equipment technology</h4>
+
+  <p><strong>Three generations of "decide".</strong> The relay's job has never changed;
+  the physics doing the deciding has been revolutionised twice:</p>
+
+  <ul>
+    <li><strong>Electromechanical (1900s–1980s).</strong> The IDMT curve was originally a
+    physical object: an aluminium <strong>induction disc</strong>, spun by the torque of
+    fault current through a coil, against a spring, toward a trip contact. More current,
+    more torque, faster travel — the inverse curve is literally the mechanics of the
+    disc, and the constants of the IEC standard-inverse formula were chosen to fit it.
+    The time-multiplier dial physically moved the contact closer. Rugged and trusted,
+    but: one function per case, accuracy drifting with friction and age, overshoot from
+    disc inertia (hence the fatter 0.4 s margins of that era), and no memory of what
+    happened. Plenty are still in service worldwide; treat their settings and test
+    records with respect and suspicion in equal measure.</li>
+    <li><strong>Static / solid-state (1970s–1990s).</strong> The disc replaced by analogue
+    electronics — comparators, RC timing circuits. Faster, no moving parts, tighter
+    tolerances, but still one box per function and famously sensitive to heat — a real
+    concern at 50&nbsp;&deg;C switchroom design ambient.</li>
+    <li><strong>Numerical IEDs (1990s–today).</strong> The current generation, and what
+    <code>MV-PROT</code> specifies: a processor samples the CT/VT waveforms (typically
+    16–32 samples per cycle), filters them digitally, and runs <em>every</em> protection
+    function of this section — 50/51, 50N/51N, 87T, 27/59, 81, 49, 50BF — as software in
+    one box, an <strong>Intelligent Electronic Device</strong>. With them come the
+    game-changers: settings in files (versionable, checkable against the study),
+    <strong>event records and oscillography</strong> (the fault's flight recorder),
+    self-supervision (a failed relay announces itself instead of being discovered at the
+    next fault), multiple setting groups (one command to switch the grading when
+    <code>BT</code> closes and fault levels double), and communications
+    (<a href="#c-protection-control">Control, below</a>). The relay families in use are
+    catalogued in <a href="#cat-relays">Part 6</a>.</li>
+  </ul>
+
+  <p><strong>The nerve endings: CTs and VTs (SASO-adopted IEC 61869).</strong> The finest
+  IED is blind without honest instrument transformers, and they are specified by four
+  numbers every field engineer should be able to parse. Take the [52-T] feeder CT,
+  <strong>100/1 A, 5P20, 5 VA</strong>:</p>
+
+  <ul>
+    <li><strong>Ratio 100/1:</strong> 100 A primary becomes 1 A secondary. Chosen just
+    above the circuit's load (66.9 A FLC &rarr; 67 % of ratio — healthy; a CT loafing at
+    10 % of ratio measures poorly, one at 120 % overheats).</li>
+    <li><strong>Class 5P20:</strong> a <em>protection</em> class CT — 5 % maximum
+    composite error, guaranteed up to 20 times rated current (the <strong>accuracy limit
+    factor</strong>, ALF), <em>at rated burden</em>. Protection CTs are deliberately
+    built to stay roughly linear far beyond rating; metering CTs (class 0.5, as in
+    <code>MV-MET</code>) do the opposite — they saturate early to protect the meters.
+    Never interchange them.</li>
+    <li><strong>Burden 5 VA:</strong> the load (relay + lead resistance) the CT can drive
+    at rated current while honouring its class.</li>
+    <li><strong>Knee point (for class PX / differential duty):</strong> the point on the
+    magnetising curve where the core gives up — 10 % more voltage buys 50 % more
+    magnetising current. Differential schemes specify CTs by knee-point voltage
+    (V<sub>k</sub> &ge; K &times; I<sub>f,sec</sub> &times; (R<sub>ct</sub> +
+    2R<sub>lead</sub> + R<sub>relay</sub>)) so both sides of the 87T saturate equally —
+    or not at all — during through-faults.</li>
+  </ul>
+
+  <div class="worked">
+    <h4>Worked mini-calculation — is the 100/1, 5P20, 5 VA CT good enough?</h4>
+
+    <p><strong>Step 1 — actual burden.</strong> A numerical IED is a feather-light load
+    (&asymp; 0.1 VA). The leads dominate: say 30 m of 2.5 mm&sup2; copper each way
+    (&rho; &asymp; 0.0175 &Omega;&middot;mm&sup2;/m):</p>
+    <code class="formula">R_leads = 0.0175 &times; (2 &times; 30) / 2.5 = 0.42 &Omega;  &rarr;  at 1 A rated: 0.42 VA</code>
+    <code class="formula">Actual burden &asymp; 0.42 + 0.1 &asymp; 0.5 VA   (vs 5 VA rated)</code>
+
+    <p><strong>Step 2 — effective accuracy limit.</strong> A CT running below rated
+    burden stays linear to a <em>higher</em> multiple than its nameplate ALF. With CT
+    internal resistance R<sub>ct</sub> &asymp; 0.4 &Omega; (= 0.4 VA at 1 A):</p>
+    <code class="formula">ALF_eff &asymp; ALF &times; (S_rated + S_internal) / (S_actual + S_internal) = 20 &times; (5 + 0.4) / (0.5 + 0.4) = 20 &times; 6.0 = 120</code>
+    <code class="formula">CT stays accurate up to &asymp; 120 &times; 100 A = 12 kA primary</code>
+
+    <p><strong>Step 3 — compare with duty.</strong> The 51 element's maximum measured
+    current is the through-fault, 1.12 kA = 11.2 &times; In — the CT is linear with a
+    factor-of-ten margin ✓. But an MV-side fault reaches &asymp; 25 kA =
+    <strong>250 &times; In</strong>, double the effective limit — the CT
+    <strong>saturates</strong> for the very faults the 50 element exists to clear.</p>
+
+    <p><strong>Result and sanity check:</strong> the CT is comfortably adequate for the
+    graded 51/51N duty (the duty that actually needs timing accuracy), and the
+    saturation at 25 kA is acceptable <em>only because</em> the 50 element is set at
+    15 &times; In: the CT reproduces the rising edge faithfully for the first few
+    milliseconds before saturating, and a numerical 50 element latches its decision in
+    that window. This is the standard outcome for feeder CTs on a stiff bus — adequate by
+    calculated margin, not by nameplate alone — and exactly the check the formal study
+    must document.</p>
+  </div>
+
+  <p><strong>Why CT saturation matters so much for instantaneous elements.</strong> When
+  the core saturates, the secondary current collapses into narrow spikes — the relay may
+  see a fraction of the true RMS value. Three practical consequences. First, an
+  instantaneous element set high (for grading reasons) might be slowed or, with an old
+  electromechanical relay, fail to operate at all on a heavily saturated waveform —
+  modern IEDs use peak detection and saturation detectors to ride through. Second, the
+  <strong>DC offset</strong> of an asymmetrical fault (<a href="#c-shortcircuit">§4</a>)
+  drives the core toward saturation far faster than the symmetric value suggests —
+  transient performance, not just steady-state ALF, decides. Third, <em>unequal</em>
+  saturation between the two CT sets of an 87T creates false differential current during
+  external through-faults — the precise reason differential CTs are specified by knee
+  point and the relay carries a bias slope. A protection study that never checked its
+  CTs has only studied half the chain.</p>
+
+  <p><strong>VTs in brief.</strong> Voltage transformers (or low-power capacitive
+  dividers in modern switchgear) feed the 27/59/81 elements and any directional
+  functions: 13 800/&radic;3 : 110/&radic;3 V typical, protection class 3P, with fuses
+  or MCBs on the secondary whose failure must alarm — a dead VT looks like a dead bus to
+  a 27 element, and can start an unwanted DG transfer sequence.</p>
+
+  <div class="key">
+    The relay can only be as honest as its CT. Check the chain in this order: ratio vs
+    load, class vs function (P-class for protection; metering class never), actual burden
+    vs rated, effective ALF vs maximum fault — and knee-point matching for any
+    differential. A twenty-minute CT calculation prevents the ugliest protection
+    failures: the ones where the relay was right and its eyes were lying.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       7. CONTROL
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-protection-control">The Trip Circuit, the DC Rail, and the Control Room</h3>
+
+  <h4>Control</h4>
+
+  <p>A protection decision is worthless until it physically reaches a trip coil, and the
+  path it travels is a system in its own right — with its own failure modes and its own
+  supervision.</p>
+
+  <p><strong>The 110 V DC backbone.</strong> Every trip in <code>MV-SWGR</code> runs on
+  the <strong>110 V DC system</strong> from the <code>DCDB</code> battery and charger —
+  never on AC. The logic is brutal: the moment protection is needed most is a bolted
+  fault, which is precisely the moment the AC voltage collapses. The battery makes the
+  trip supply <em>independent of the fault</em>. Consequences worth internalising: the
+  DCDB is arguably the most safety-critical auxiliary in the plant (a dead battery
+  silently disarms every MV protection at once); chargers, battery autonomy and DC
+  earth-fault monitoring deserve the same inspection rigour as the relays themselves; and
+  the IEDs, trip coils, closing coils and 86 lockouts draw from segregated, fused DC
+  circuits so one wiring fault cannot disarm a whole board.</p>
+
+  <p><strong>Trip-circuit supervision (TCS).</strong> The trip wire from relay contact to
+  breaker coil can be broken — a loose terminal, a corroded breaker auxiliary switch, a
+  blown DC fuse — and nothing visible changes until the relay one day trips into an open
+  circuit. TCS fixes the invisibility: a few milliamps are passed continuously through
+  the trip-coil path (in both breaker positions, in the two-resistor scheme), and any
+  interruption raises an alarm <em>today</em> instead of a failure-to-trip on fault day.
+  On a plant audit, the "trip circuit healthy" indications and their alarm routing are a
+  two-minute check with outsized value.</p>
+
+  <p><strong>Breaker failure (50BF) — backup without the time penalty.</strong> Classic
+  time grading backs up a <em>stuck breaker</em> by waiting a full grading margin at the
+  next level up. The modern alternative is explicit: when a relay issues a trip, a 50BF
+  timer starts; if current is still flowing after &asymp; 150–200 ms (the trip should
+  have cleared it in &asymp; 80 ms), the scheme declares the breaker failed and
+  direct-trips the <em>adjacent</em> breakers — for [52-T] that means tripping [52-I] —
+  without riding any IDMT curve. It is faster than the graded backup, and it
+  distinguishes "breaker stuck" from "relay graded slow", which the time ladder alone
+  cannot.</p>
+
+  <p><strong>The IED as a station citizen.</strong> Numerical relays are also the
+  substation's data layer:</p>
+
+  <ul>
+    <li><strong>SCADA / PMS integration:</strong> breaker states, measurements, alarms
+    and trip flags stream to the plant power-management system over
+    <strong>IEC 61850</strong> (station bus; GOOSE peer-to-peer messages can replace
+    hardwired interlocking and 50BF wiring) or, in simpler installations,
+    <strong>Modbus</strong> to the DCS. Remote open/close commands pass the other way,
+    under interlock.</li>
+    <li><strong>Event records and oscillography:</strong> every pickup, trip and reset is
+    time-stamped to the millisecond; disturbance records capture the actual current and
+    voltage waveforms through the fault. After any trip, the first investigative act is
+    pulling these records — they distinguish a genuine fault from a mis-grading in
+    minutes (recall the four lost hours in the <a href="#c-prot-failure">failure
+    story</a>). Time synchronisation (SNTP / IRIG-B) across IEDs is what makes
+    multi-relay records line up into one story.</li>
+    <li><strong>Setting management:</strong> the as-running configuration file is the
+    legal twin of the coordination study. Version it, and diff it after every vendor
+    visit.</li>
+  </ul>
+
+  <p><strong>Testing — proving the reflex still works.</strong> Protection is the
+  plant's least-exercised system: it may wait years between operations, and every part of
+  it is a dormant failure in waiting. The discipline is <strong>secondary
+  injection</strong>: a test set injects synthetic currents and voltages into the relay's
+  terminals (CT circuits isolated via the test block), and the tester verifies pickup
+  values, curve timing at several multiples — does the SI curve at TMS 0.28 really give
+  0.72 s at 14 &times; pickup? — and, crucially, the whole chain through to the breaker
+  mechanism actually tripping. Primary injection (real current through the CT primary)
+  confirms ratios and wiring at commissioning. Indicative intervals: MV numerical relays
+  every 2–3 years (self-supervision watches the electronics; the test watches what
+  self-supervision cannot — settings, wiring, the breaker); LV trip units &asymp; every
+  5 years; always after any setting change.</p>
+
+  <div class="warning">
+    A protection scheme has a silent dependency chain: battery &rarr; DC distribution
+    &rarr; trip wiring &rarr; trip coil &rarr; mechanism — and the relay supervises only
+    part of it. The three cheap defences are TCS (watches the wiring), battery
+    supervision (watches the energy), and periodic injection testing with a real breaker
+    trip (watches everything at once). A plant that skips all three has protection on
+    paper only.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       8. SIZING METHOD
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-protection-sizing">Running a Protection Study, Step by Step</h3>
+
+  <h4>Sizing method</h4>
+
+  <p>"Sizing" protection means producing — or auditing — a coordination study. The
+  procedure below is the standard sequence; the worked study earlier in this section is
+  steps 5–7 executed on one slice of the plant.</p>
+
+  <ol>
+    <li><strong>Assemble the data.</strong> Single-line diagram with every protective
+    device; equipment ratings and impedances (transformers, cables, motors); CT/VT
+    ratios and classes; existing settings; SEC intake data — fault level (25 kA design;
+    state the SEC 25–40 kA range), upstream protection settings and required clearance
+    times at the boundary.</li>
+    <li><strong>Run the fault study.</strong> Maximum and minimum short-circuit currents
+    at every bus per <a href="#c-shortcircuit">§4</a> (IEC 60909): maximum (e.g. 77 kA
+    with <code>BT</code> closed) tests withstand and sets the tight grading point;
+    minimum (one TX, phase-to-phase, remote faults) tests that every pickup is still
+    reached. Earth-fault levels per the NER.</li>
+    <li><strong>Select the schemes per equipment class.</strong> Which device numbers
+    protect what — the <a href="#c-protection-schemes">scheme table below</a> is the
+    template. Decide here whether unit protections (87T, bus differential, ZSI) are
+    justified, because they remove layers from the time ladder.</li>
+    <li><strong>Size the measuring chain.</strong> CT ratios from load, classes from
+    function, burden/ALF checks as in the
+    <a href="#c-protection-tech">mini-calculation</a>, knee-point specifications for
+    differential sets; VT ratios and classes. Do this <em>before</em> the settings —
+    settings promised on saturating CTs are fiction.</li>
+    <li><strong>Calculate settings bottom-up.</strong> For each level: pickup from
+    maximum load (with a minimum-fault sensitivity check), curve type, then TMS/delay for
+    the margin over the level below at the maximum common fault — exactly the worked
+    study's Steps 1–3. Add instantaneous elements wherever an impedance (a transformer)
+    guarantees zone separation for free.</li>
+    <li><strong>Verify by TCC overlay.</strong> Plot every device of each chain on one
+    log-log time-current diagram, LV and MV referred to a common voltage base. Check:
+    margins &ge; 0.3 s at every shared current; no curve crossings; every damage curve
+    (cable I&sup2;t, transformer through-fault per IEC 60076-5, motor stall) sits
+    <em>above</em> its protecting device's curve; every inrush and starting point sits
+    <em>below</em>. Repeat for the abnormal configurations: bus-tie closed (77 kA — a
+    second setting group?), DG island (fault level a small fraction of SEC's — do the
+    pickups still see faults?).</li>
+    <li><strong>Implement and prove on site.</strong> Load the setting files;
+    secondary-injection test against the study values (not against the previous
+    settings); primary-inject the CT circuits at commissioning; trip the real breakers;
+    file the test records with the study revision. Submit the intake settings to SEC
+    where required.</li>
+  </ol>
+
+  <p><strong>Re-study triggers.</strong> A coordination study is a snapshot of one
+  network configuration. Re-verify whenever: SEC advises a changed fault level or
+  changed upstream settings; a transformer or generator is added or replaced (fault
+  levels move); the bus-tie operating philosophy changes; a major feeder, MCC or large
+  motor/VFD is added; any protective device is replaced by a different model; or an
+  unexplained or unselective trip occurs. And on a fixed clock — every 5 years is a
+  common contractual and insurance expectation — because undocumented plant drift is
+  itself a trigger that nobody reports.</p>
+
+  <h3 id="c-protection-schemes">Protection Schemes by Equipment Class</h3>
+
+  <p>The indicative scheme map for the Rev 3 plant — what a complete study should cover,
+  equipment by equipment (device numbers per the table in
+  <a href="#c-protection-settings">Equipment settings</a>):</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Equipment</th><th>Core protection</th><th>Also expected</th><th>Notes</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>MV incomer [52-I] (<code>MV-SWGR</code>)</td>
+        <td>50/51, 50N/51N</td>
+        <td>27/59, 81U/O; 50BF; synch-check if ever paralleled</td>
+        <td>Settings coordinated with — and approved by — SEC; top of the time
+        ladder.</td>
+      </tr>
+      <tr>
+        <td>Transformer feeders [52-T] (TX-1 / TX-2)</td>
+        <td>50/51, 51N (graded as in the worked study)</td>
+        <td>87T + 86 where justified; 49; Buchholz / pressure / winding-temperature
+        trips wired to the 86</td>
+        <td>50 high-set above through-fault (1.5 kA) — instantaneous for MV-zone
+        faults.</td>
+      </tr>
+      <tr>
+        <td>LV incomers (ACB, <code>LV-MSB</code>)</td>
+        <td>LSIG trip unit: L = 2 540 A, S in IDMT/SI mode (TMS 0.15), G element</td>
+        <td>ZSI with outgoing feeders; interlocking with <code>BT</code></td>
+        <td>Full LSIG anatomy in <a href="#c-breaker">§14</a>.</td>
+      </tr>
+      <tr>
+        <td>Bus-tie <code>BT</code> (normally open)</td>
+        <td>LSIG, graded between incomer and feeders for tie-closed operation</td>
+        <td>Closing interlock; second setting group for the 77 kA tie-closed case</td>
+        <td>A closed tie doubles fault current and breaks the grading plan — the study
+        must cover both states.</td>
+      </tr>
+      <tr>
+        <td>MCC feeders (LV-MSB &rarr; <code>MCC-1..n</code>)</td>
+        <td>MCCB long-time + short-time (400 A / 3 200 A / 0.05 s as worked)</td>
+        <td>Earth-fault element; cable I&sup2;t check on the TCC</td>
+        <td>Level 1 of the worked ladder.</td>
+      </tr>
+      <tr>
+        <td>Motors (in the MCCs)</td>
+        <td>Overload (49), short-circuit (50, via MCCB or fuse), earth fault</td>
+        <td>Stall / locked rotor (48/51LR), unbalance (46), undervoltage restart
+        control; dedicated motor-protection relay on larger drives</td>
+        <td>Pickup must ride DOL starting (&asymp; 6 &times; FLC for seconds) yet catch
+        a stalled rotor — thermal-model relays earn their keep here.</td>
+      </tr>
+      <tr>
+        <td>Generator <code>DG</code> (1250 kVA)</td>
+        <td>51V (voltage-restrained overcurrent), 51N</td>
+        <td>32 reverse power, 40 loss of excitation, 27/59, 81U/O, 49</td>
+        <td>Island fault levels are far below SEC's — verify every downstream pickup
+        still operates on DG supply.</td>
+      </tr>
+      <tr>
+        <td>Capacitor bank <code>PFC</code> (&asymp; 580 kvar, detuned 7 %)</td>
+        <td>50/51 sized for capacitor current</td>
+        <td>59 (voltage rise), unbalance / neutral-shift detection between sections</td>
+        <td>Pickup must tolerate switching inrush (limited by the detuning reactors);
+        fuses or MCCB per step.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ────────────────────────────────────────────────────────────
+       ASSESSMENT + SELF-CHECK
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-prot-assess">Assessment: What to Verify, and Self-Check</h3>
+
+  <p>On a site assessment, protection coordination is mostly a <em>documents and
+  evidence</em> exercise — the hardware tells you almost nothing by inspection:</p>
+
+  <ul class="checklist">
+    <li>Request the protection coordination study and its TCC overlays. If none exists,
+    or it predates the last network change, raise as a high-priority finding.</li>
+    <li>Export the as-running IED setting files and diff them against the study values —
+    every mismatch is a finding (recall: both relays in the failure story were
+    "healthy").</li>
+    <li>Verify pickup logic on a sample: LV incomer Is above the 2 309 A FLC; MV [52-T]
+    pickup above 66.9 A FLC and far below the 1.12 kA through-fault; margins &ge; 0.3 s
+    at the maximum common fault.</li>
+    <li>Check earth-fault settings against the NER (400 A / 10 s): pickups in the
+    40–80 A range, ladder clearing well inside 10 s, standby earth-fault (51G) present
+    on the neutral CT.</li>
+    <li>Confirm CT ratios, classes and burdens match the study (nameplates vs setting
+    files), and that any 87T has its knee-point / CT-matching calculation on record.</li>
+    <li>Confirm the 87T (if fitted) is in service, 2nd-harmonic restraint enabled, and
+    its 86 lockout functional, with resets logged.</li>
+    <li>Sight the secondary-injection test records: MV relays within 2–3 years, LV trip
+    units within 5 years, and a retest after every setting change.</li>
+    <li>Verify DCDB health (battery test records, charger alarms, DC earth-fault
+    monitoring) and that trip-circuit supervision is fitted and its alarms reach a
+    manned location.</li>
+    <li>Confirm the bus-tie interlock / setting-group arrangement covers the 77 kA
+    tie-closed case, and that DG-island sensitivity was checked.</li>
+    <li>Confirm the SEC intake settings on record match the SEC-approved submittal.</li>
+  </ul>
+
+  <p><strong>Self-check questions</strong> — everything needed is in this section and
+  <a href="#c-shortcircuit">§4</a>:</p>
+
+  <ul class="checklist">
+    <li>State the three jobs of a protection system and which physical component performs
+    each. Why must the "decide" step be deliberately slowed at upstream levels?</li>
+    <li>A grading margin of 0.3 s is specified between two numerical relays. List the
+    four budget items it pays for, with rough magnitudes.</li>
+    <li>Recompute the LV incomer operating time at a 10 kA fault (Is = 2 540 A,
+    TMS = 0.15, SI curve) and confirm it still grades over a feeder clearing in 0.07 s.
+    (Expected: I/Is &asymp; 3.9, t &asymp; 0.76 s — the margin grows as current
+    falls.)</li>
+    <li>Why can [52-T]'s instantaneous element be set with no grading margin at all? What
+    plant parameter creates that freedom, and what is the numeric boundary here?</li>
+    <li>Why are the MV earth-fault elements graded with definite time rather than IDMT in
+    this plant? Which single component makes every earth fault "the same size"?</li>
+    <li>The 87T must not trip on transformer energisation. Name the phenomenon, its
+    electrical signature, and the relay feature that exploits it.</li>
+    <li>Your 100/1, 5P20, 5 VA CT now feeds 80 m of 1.5 mm&sup2; leads instead of 30 m of
+    2.5 mm&sup2;. Rework the burden and effective ALF — is the 50 element's decision
+    window still defensible?</li>
+    <li>The plant closes <code>BT</code> permanently "for reliability". List every line
+    of the grading study that must be revisited — and name the withstand check that comes
+    before any of them.</li>
+  </ul>
+
+  <div class="note">
+    <strong>On the forms &rarr;</strong><br>
+    (a) <em>Document inventory / recommendations register:</em> record whether a
+    coordination study (with TCC overlays) exists, its date and revision; note the LV
+    incomer pickup/TMS and the MV [52-T] pickup/TMS/high-set as found; flag every device
+    whose as-found setting differs from the study, every missing relay test record, and
+    the DCDB / trip-circuit-supervision status.<br>
+    (b) <em>AS-FOUND site data required:</em> IED setting exports for [52-I], [52-T] and
+    any 87T; ACB/MCCB trip-unit settings (L, S, I, G bands in amps and seconds); CT
+    nameplate data (ratio, class, burden) per MV feeder; NER nameplate and 51G setting;
+    last secondary-injection test date and result per relay; SEC settings-approval
+    correspondence for the intake.
+  </div>
+
+  <div class="key">
+    A coordination study is the only proof that, for a fault between any two devices, the
+    downstream one wins the race — by a margin that survives breaker time, overshoot and
+    measurement error. Without that study, verified against as-found settings and backed
+    by test records, selectivity is a hope, not a property. The next fault will audit the
+    plant whether or not anyone else has.
+  </div>
+
+</section>

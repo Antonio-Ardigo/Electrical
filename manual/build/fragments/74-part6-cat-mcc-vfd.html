@@ -1,0 +1,662 @@
+<!-- ============================================================
+     §CAT-MCC / §CAT-VFD  Motor Control Centres & Variable
+     Frequency Drives Catalogue (tags MCC-1..n, VFD)
+     Rev 3 (Saudi/SEC edition) — 13.8 kV / 400-230 V / 60 Hz / 50 °C
+     Part 6 — Equipment Catalogues. How to read, compare and select
+     LV motor control centres (IEC 61439-2) and variable frequency
+     drives (IEC 61800) for a 2 MW process plant on SEC supply.
+     All data indicative; certified manufacturer data sheets and
+     SASO/SEC acceptance status govern.
+============================================================ -->
+<section id="cat-mcc" data-title="Motor Control Centres" data-part="Part 6 — Equipment Catalogues">
+
+  <h2>Motor Control Centres</h2>
+
+  <div class="warning"><strong>Indicative catalogue data.</strong> Product families and typical
+parameters are listed for training and familiarisation only, are approximate, and change with
+manufacturer revisions. No part numbers are given; always obtain current certified data sheets
+and SASO/SEC acceptance status from the manufacturer.</div>
+
+  <p><strong>Goal:</strong> learn to read a motor control centre catalogue the way a
+  specifying engineer reads it — starting from what the plant's motor population actually
+  needs (tags <code>MCC-1..n</code>, fed from <code>LV-MSB</code> at 400&nbsp;V,
+  60&nbsp;Hz), translating each need into the IEC 61439-2 parameter that answers it, and
+  finishing with a worked sizing for this plant. The vendor families compared here
+  (Rockwell CENTERLINE 2500, ABB MNS, Siemens SIVACON S8, Schneider Okken/BlokSeT) are
+  the ones you will most often meet on Saudi industrial sites. For the motor theory behind
+  the starters, lean on <a href="#c-motors">the motors section</a>; for how Part 6
+  catalogue sections are meant to be used, see <a href="#cat-intro">the catalogue
+  introduction</a>.</p>
+
+  <!-- ────────────────────────────────────────────────────────────
+       1. ROLE OF THE MCC IN THIS PLANT
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-mcc-overview">What the MCC Does in This Plant</h3>
+
+  <p>A motor control centre is a switchboard that has specialised in one job: starting,
+  protecting and stopping motors, dozens of them, packed into standardised compartments
+  ("buckets") that a technician can exchange in minutes. Where the <code>LV-MSB</code>
+  is a distribution board — a few large breakers feeding sub-boards — an MCC is a
+  <em>density</em> product: a 2&nbsp;m-wide column may hold ten or fifteen motor
+  starters, each with its own short-circuit protection, contactor, overload device,
+  control terminals and door-mounted controls, all plugged onto a common vertical bus.</p>
+
+  <p>In this plant the MCCs (tags <code>MCC-1..n</code>) hang off the two sections of
+  the <code>LV-MSB</code> at <strong>400/230&nbsp;V, 60&nbsp;Hz, TN-S</strong>. They
+  carry the process motor population — pumps, fans, compressors, agitators — with three
+  starter technologies side by side in the same line-up (the trade-offs between them are
+  developed in <a href="#c-motors">the motors section</a>):</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Starter type</th><th>Typical use here (indicative)</th><th>What sits in the bucket</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>DOL</strong> (direct-on-line)</td>
+          <td>Small motors, roughly up to 15&ndash;22&nbsp;kW, where the ~6&times;
+          starting inrush is tolerable on the bus.</td>
+          <td>MCCB or fuse-switch + contactor + overload relay (thermal or
+          electronic).</td></tr>
+      <tr><td><strong>Star-delta</strong></td>
+          <td>Mid-size motors on low-inertia loads where a reduced-voltage start is
+          enough and speed control is not needed.</td>
+          <td>Protection device + three contactors + timer; six motor leads instead of
+          three.</td></tr>
+      <tr><td><strong>VFD-fed</strong></td>
+          <td>Pumps and fans where flow control saves energy, and the largest machines
+          (up to the plant's largest motor, ~160&nbsp;kW typical) where a soft,
+          current-limited start protects the bus and the process.</td>
+          <td>Either the VFD itself in an oversized bucket, or — common for larger
+          drives — a feeder bucket in the MCC supplying a wall- or floor-mounted drive
+          (see <a href="#cat-vfd">the VFD catalogue section</a>).</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Intelligent versus conventional MCCs</h4>
+
+  <p>A <strong>conventional MCC</strong> wires each starter's control circuit in copper:
+  start/stop commands, run/trip status, maybe an analogue ammeter signal, all marshalled
+  to terminal strips and multicore cables back to the control system. It is simple,
+  field-repairable with a screwdriver, and every signal you did not cable at design time
+  is a site modification later.</p>
+
+  <p>An <strong>intelligent MCC</strong> (iMCC) replaces the simple overload relay with a
+  communicating motor-protection unit per bucket (Rockwell E300, ABB UMC100, Siemens
+  SIMOCODE, Schneider TeSys&nbsp;T are the typical families) and replaces the multicore
+  with a network drop — PROFINET, EtherNet/IP or Modbus&nbsp;TCP. Each bucket then
+  reports current, thermal capacity, earth-fault leakage, starts-per-hour and trip
+  diagnostics to the DCS/PMS, and accepts commands over the same link. The price is
+  roughly 10&ndash;20&nbsp;% on the MCC and a network engineering effort; the return is
+  condition data that turns motor maintenance from calendar-based to evidence-based, and
+  commissioning loops that take minutes instead of hours. For a plant of this size the
+  practical recommendation is an iMCC for process-critical motors and conventional
+  starters for trivial ones — but choose <em>one</em> philosophy per MCC; mixed boards
+  confuse both technicians and the control system.</p>
+
+  <div class="note"><strong>Hardwired trip rule.</strong> Even in a fully intelligent
+  MCC, safety functions — emergency stops, process interlocks that protect people or
+  machines — stay hardwired to the contactor coil circuit. The network carries
+  information and convenience commands; it must never be the only path for a protective
+  stop.</div>
+
+  <div class="key">Key takeaway: an MCC is bought as a system (bus, form of separation,
+  bucket standardisation, communications philosophy), not as a pile of starters. Decide
+  intelligent vs conventional, starter technology bands, and spare-bucket policy
+  <em>before</em> opening any vendor catalogue.</div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       2. VENDOR FAMILIES
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-mcc-families">The Vendor Families You Will Meet</h3>
+
+  <p>Four LV switchboard/MCC families dominate the Gulf industrial market. All are
+  type-tested assemblies to IEC 61439-2, all offer withdrawable motor-starter buckets
+  and Form&nbsp;4 separation, and all can be built conventional or intelligent. As with
+  MV switchgear, a specification written in standard parameters — not brand names — will
+  draw compliant offers from every one of them. Typical indicative class ranges:</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Family</th><th>Vendor</th><th>Main bus (typ.)</th><th>Icw (typ.)</th>
+          <th>Separation</th><th>Buckets</th><th>Arc-fault containment</th><th>Comms</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>CENTERLINE 2500</strong> (IEC version)</td><td>Rockwell Automation</td>
+          <td>up to ~3200&nbsp;A</td><td>up to ~65&nbsp;kA / 1&nbsp;s</td>
+          <td>Form 4 (typ. 4b)</td>
+          <td>Withdrawable units, sizes standardised per starter rating</td>
+          <td>Arc-resistant variants and arc-containment options available</td>
+          <td>EtherNet/IP native (IntelliCENTER), E300 electronic overloads</td></tr>
+      <tr><td><strong>MNS</strong></td><td>ABB</td>
+          <td>up to ~6300&nbsp;A</td><td>up to ~100&nbsp;kA / 1&nbsp;s</td>
+          <td>Form 4 (typ. 4b)</td>
+          <td>Withdrawable modules from fractional sizes; very high packing density</td>
+          <td>Arc-tested designs per IEC TR 61641; MNS Digital condition monitoring</td>
+          <td>PROFINET / Modbus TCP / IEC 61850 options, UMC100 motor controllers</td></tr>
+      <tr><td><strong>SIVACON S8</strong></td><td>Siemens</td>
+          <td>up to ~7000&nbsp;A</td><td>up to ~100&nbsp;kA / 1&nbsp;s</td>
+          <td>Form 4 (typ. 4b)</td>
+          <td>Withdrawable, plug-in or fixed units in the same line-up</td>
+          <td>Internal-arc tested per IEC TR 61641, optional arc-quenching device</td>
+          <td>PROFINET native, SIMOCODE pro per starter</td></tr>
+      <tr><td><strong>Okken</strong> (process) / <strong>BlokSeT</strong></td><td>Schneider Electric</td>
+          <td>up to ~7300&nbsp;A (Okken)</td><td>up to ~100&nbsp;kA / 1&nbsp;s</td>
+          <td>Form 4 (typ. 4b)</td>
+          <td>Withdrawable drawers; BlokSeT as the lighter general-purpose line</td>
+          <td>Arc-tested per IEC TR 61641 options</td>
+          <td>Modbus TCP / Ethernet, TeSys T / TeSys island motor management</td></tr>
+    </tbody>
+  </table>
+
+  <p>Read the table the right way round, exactly as for the MV board: this plant's MCC
+  duty (bus around 800&ndash;1600&nbsp;A per MCC, fault duty around 30&nbsp;kA at the
+  MCC bus — derived in <a href="#cat-mcc-selection">the selection sub-section</a>) sits
+  in the <em>lower half</em> of every family's range. The decision between brands is
+  therefore won on: integration with the chosen control system (a Rockwell DCS pulls
+  CENTERLINE, a Siemens DCS pulls SIVACON), local panel-builder and service presence in
+  the Kingdom, bucket standardisation and spares commonality with the rest of the site,
+  delivery time, and the quality of the vendor's 50&nbsp;&deg;C derating answer.</p>
+
+  <h4>What "withdrawable bucket" buys you</h4>
+
+  <p>A withdrawable starter unit plugs onto the vertical bus through shuttered contacts
+  and carries its load and control connections on plugs. Racking it out isolates the
+  unit with a visible, padlockable break — and a failed starter is exchanged for the
+  shelf spare in minutes, live bus, no outage to the neighbours. Fixed and plug-in
+  construction is cheaper and acceptable for feeders that rarely change, but for process
+  motor starters the withdrawable pattern is what keeps a Saudi plant running between
+  maintenance windows. Insist that bucket sizes are standardised so that one spare of
+  each size covers the board, and order 10&ndash;20&nbsp;% equipped spare buckets plus
+  empty space for future ones.</p>
+
+  <div class="tip">When comparing offers, ask each bidder for the same three drawings:
+  a typical DOL bucket schematic, the bucket-size table for your motor list, and the
+  vertical-section arrangement showing forms of separation. Brochure adjectives differ;
+  these three drawings make the products directly comparable.</div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       3. READING THE MCC DOCUMENTS
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-mcc-datasheet">How to Read MCC Catalogue Data — IEC 61439-2 Parameters</h3>
+
+  <p>An MCC data sheet speaks IEC 61439-2. Six parameters carry almost all of the
+  engineering content; learn to find them on the first page of any offer.</p>
+
+  <h4>Rated current of the assembly (I<sub>nA</sub>) and of each circuit (I<sub>nc</sub>)</h4>
+
+  <p>The main horizontal bus rating (I<sub>nA</sub>) and the rating of each vertical bus
+  and outgoing unit (I<sub>nc</sub>) are <em>verified</em> values — proven by
+  temperature-rise test on the assembled board, not by adding up component nameplates.
+  Crucially, they are declared at a reference ambient (35&nbsp;&deg;C daily average,
+  40&nbsp;&deg;C peak, per the standard's normal service conditions). Every ampere
+  figure in the catalogue silently assumes that room; see the derating discussion
+  below.</p>
+
+  <h4>Short-time withstand current (I<sub>cw</sub>) and peak (I<sub>pk</sub>)</h4>
+
+  <p>I<sub>cw</sub> is what the bus structure survives, braced and bolted, for the rated
+  time (usually 1&nbsp;s) while upstream protection clears a fault. It must exceed the
+  prospective fault current at the MCC bus — calculated <em>after</em> the incoming
+  cable impedance, which is why the MCC can legitimately carry a lower withstand class
+  than the 38.5&nbsp;kA (one transformer) duty at the <code>LV-MSB</code>. The peak
+  rating I<sub>pk</sub> covers the first asymmetric loop; the catalogue applies the
+  standard factor (n&nbsp;=&nbsp;2.1 for I<sub>cw</sub>&nbsp;&gt;&nbsp;50&nbsp;kA,
+  less below). Some buckets are alternatively protected by current-limiting devices and
+  declared with a conditional rating (I<sub>cc</sub>) — acceptable, but then the
+  protective device is part of the type test and cannot be substituted at will.</p>
+
+  <h4>Form of separation — why this plant says Form 4b</h4>
+
+  <p>IEC 61439-2 grades how thoroughly the assembly's interior is partitioned, from
+  Form&nbsp;1 (no internal separation) to Form&nbsp;4 (busbars, each functional unit,
+  <em>and each unit's terminals</em> all separated from one another). The sub-letter
+  matters: <strong>Form&nbsp;4b</strong> puts each unit's outgoing terminals in their
+  own compartment, not in a shared cable alley. The practical meaning for a field
+  technician: with Form&nbsp;4b you can open one starter's terminal compartment to
+  re-terminate a motor cable while every other circuit on the board stays energised
+  behind earthed metal. On a process plant where the MCC can never be fully shut down,
+  Form&nbsp;4b is the standard specification; Form&nbsp;3b is the cost-down compromise
+  you will be offered, and the difference appears precisely at 02:00 when a motor cable
+  must be changed live-board.</p>
+
+  <h4>Internal arc — IEC TR 61641</h4>
+
+  <p>Arc containment in LV assemblies is a <em>technical report</em> option, not a core
+  type test like the MV IAC rating — so it must be explicitly requested. Ask for
+  arc-fault containment tested to IEC&nbsp;TR&nbsp;61641 at the board's fault level and
+  protection clearing time, and state whether persons-protection (criteria 1&ndash;5) or
+  also equipment-protection (criteria 6&ndash;7) is required. Active arc-quenching
+  devices and arc-detection relays tripping the incomer are catalogue options that buy
+  clearing times in tens of milliseconds.</p>
+
+  <h4>IP rating for a dusty site</h4>
+
+  <p>For an indoor, HVAC-conditioned Saudi switchroom specify <strong>IP42</strong> as a
+  practical minimum (protected against dripping water and &gt;1&nbsp;mm objects);
+  <strong>IP54</strong> if the room cannot be guaranteed clean — but beware: sealing a
+  board to IP54 traps its own heat, and the catalogue will show a current derating of
+  typically 5&ndash;15&nbsp;% for the higher IP class. Dust is the enemy twice over —
+  as a tracking film on insulation and as a thermal blanket on components — so filtered,
+  positively pressurised rooms beat hermetic boards.</p>
+
+  <h4>The 50 &deg;C question, bucket by bucket</h4>
+
+  <p>The components inside a bucket — contactors, overload relays, MCCBs, and above all
+  VFDs — are themselves rated at 40&nbsp;&deg;C (many contactors at 55&ndash;60&nbsp;&deg;C,
+  MCCBs at 40&ndash;50&nbsp;&deg;C with derating tables). The air <em>inside</em> a
+  loaded MCC column runs 10&ndash;15&nbsp;K above the room. At a 50&nbsp;&deg;C design
+  ambient the in-board air can reach 60&ndash;65&nbsp;&deg;C, and component catalogues
+  answer with derating curves: an MCCB that carries 100&nbsp;A at 40&nbsp;&deg;C may be
+  good for only ~85&ndash;90&nbsp;A at 60&nbsp;&deg;C. The clean solutions, in order of
+  preference: condition the room to &le;40&nbsp;&deg;C and treat the HVAC as electrical
+  infrastructure; size starters one frame generously; and require the vendor to certify
+  the whole assembly's ratings at 50&nbsp;&deg;C room ambient in writing. Never accept
+  "components per manufacturer data" as the answer — the assembly temperature-rise
+  verification is exactly the vendor's job under IEC 61439.</p>
+
+  <div class="warning">The classic Gulf MCC failure is thermal, not electrical: a
+  fully-loaded DOL bucket in an unconditioned room trips on overload every afternoon in
+  August and is "fixed" by winding the overload setting up — defeating the motor's
+  protection. If afternoon nuisance trips appear, measure the in-board temperature
+  before touching any setting (see <a href="#c-motors">motor protection</a>).</div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       4. SELECTION FOR THIS PLANT
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-mcc-selection">Selection for This Plant — Worked Sizing</h3>
+
+  <p>Take a representative board, <code>MCC-1</code>, fed by cable from one section of
+  the <code>LV-MSB</code>. All figures indicative and to be confirmed by the load list
+  and the formal short-circuit study.</p>
+
+  <div class="worked">
+    <h4>Worked calculation — MCC bus rating with diversity</h4>
+    <p>Assume MCC-1 carries a connected motor group totalling ~700&nbsp;kW of mixed
+    pumps and fans, including the plant's largest motor (~160&nbsp;kW). Connected
+    full-load current at 400&nbsp;V, taking an aggregate pf&nbsp;&times;&nbsp;efficiency
+    of ~0.80:</p>
+    <code class="formula">I_connected = P / (√3 × U × pf × η) = 700 000 / (1.732 × 400 × 0.80) ≈ 1263 A</code>
+    <p>Not all motors run at once, nor at full load. With a demand/diversity factor of
+    0.7 from the load list:</p>
+    <code class="formula">I_demand = 0.7 × 1263 A ≈ 884 A</code>
+    <p>Add a 20&nbsp;% growth margin and allow for the 50&nbsp;&deg;C room (target
+    &le;80&nbsp;% utilisation of the verified rating):</p>
+    <code class="formula">I_bus ≥ 884 × 1.2 / 0.8 ≈ 1326 A → select 1600 A main bus</code>
+    <p><strong>Sanity check:</strong> 1600&nbsp;A at 400&nbsp;V is ~1.1&nbsp;MVA of
+    bus capacity for a board demanding ~0.6&nbsp;MVA — generous but normal for an MCC,
+    where bucket count and future space, not amperes, usually fill the board first.
+    The incomer from <code>LV-MSB</code> is then a 1600&nbsp;A frame ACB or switch.</p>
+  </div>
+
+  <div class="worked">
+    <h4>Worked calculation — fault level at the MCC bus after the cable</h4>
+    <p>The Plant Data Card gives I<sub>sc</sub>&nbsp;&asymp;&nbsp;38.5&nbsp;kA at the
+    <code>LV-MSB</code> with one transformer (bus-tie normally open). Equivalent source
+    impedance, treated as mostly reactive:</p>
+    <code class="formula">Z_source = U / (√3 × I_sc) = 400 / (1.732 × 38 500) ≈ 6.0 mΩ</code>
+    <p>Feeder to MCC-1: 2 parallel runs of 3&times;1c&nbsp;240&nbsp;mm&sup2; Cu XLPE,
+    40&nbsp;m. Per run R&nbsp;&asymp;&nbsp;3.2&nbsp;m&Omega;, X&nbsp;&asymp;&nbsp;3.2&nbsp;m&Omega;;
+    two in parallel:</p>
+    <code class="formula">Z_cable ≈ (1.6 + j1.6) mΩ</code>
+    <code class="formula">Z_total ≈ |1.6 + j(6.0 + 1.6)| = |1.6 + j7.6| ≈ 7.8 mΩ</code>
+    <code class="formula">I_sc,MCC = 400 / (1.732 × 0.0078) ≈ 29.6 kA → say ≈ 30 kA</code>
+    <p><strong>Sanity check:</strong> 40&nbsp;m of LV cable knocks the fault level from
+    38.5&nbsp;kA to ~30&nbsp;kA — cable impedance dominates fast at 400&nbsp;V, which
+    is exactly why the MCC may be specified one withstand class below the MSB. Specify
+    <strong>I<sub>cw</sub>&nbsp;=&nbsp;50&nbsp;kA&nbsp;/&nbsp;1&nbsp;s</strong> anyway:
+    it is a standard class in every family, gives ~65&nbsp;% margin, and stays valid if
+    the MCC is ever re-fed by a shorter cable. All values indicative; the formal study
+    governs.</p>
+  </div>
+
+  <h4>The specification card</h4>
+
+  <table class="form">
+    <tr><td>Tag / service</td><td>MCC-1 — process motor control centre, fed from LV-MSB section 1</td></tr>
+    <tr><td>Standard</td><td>SASO-adopted IEC 61439-1/-2 (motor starters IEC 60947-4-1); SBC 401</td></tr>
+    <tr><td>System</td><td>400/230 V, 60 Hz, TN-S, 3P+N+PE</td></tr>
+    <tr><td>Main bus / incomer</td><td>1600 A verified at 50 &deg;C room ambient (or HVAC-conditioned room declared)</td></tr>
+    <tr><td>Withstand</td><td>I<sub>cw</sub> 50 kA / 1 s; peak per IEC 61439-1</td></tr>
+    <tr><td>Separation / construction</td><td>Form 4b, withdrawable motor starter units, standardised bucket sizes</td></tr>
+    <tr><td>Arc fault</td><td>Containment tested to IEC TR 61641 at 50 kA, persons-protection criteria minimum</td></tr>
+    <tr><td>Starters</td><td>DOL ≤ ~22 kW; star-delta or VFD above; largest motor ~160 kW (typical) VFD-fed</td></tr>
+    <tr><td>Motor management</td><td>Intelligent MCC: communicating motor protection per bucket, Ethernet-based fieldbus to DCS/PMS; E-stops hardwired</td></tr>
+    <tr><td>Enclosure / environment</td><td>IP42 (IP54 if room unconditioned, with derating declared); 50 &deg;C design ambient; space heaters</td></tr>
+    <tr><td>Spares</td><td>≥15 % equipped spare buckets, one shelf spare per bucket size, 20 % empty space</td></tr>
+    <tr><td>Documents with bid</td><td>IEC 61439-2 design-verification evidence, 50 &deg;C rating statement, bucket-size table, SASO/SABER status</td></tr>
+  </table>
+
+  <div class="key">Key takeaway: the MCC is specified by four numbers and one letter —
+  1600&nbsp;A bus, 50&nbsp;kA/1&nbsp;s, IP42, 50&nbsp;&deg;C certified, Form&nbsp;4b —
+  plus the intelligent-MCC decision. Everything else is bucket engineering against the
+  motor list.</div>
+
+</section>
+
+<section id="cat-vfd" data-title="Variable Frequency Drives" data-part="Part 6 — Equipment Catalogues">
+
+  <h2>Variable Frequency Drives</h2>
+
+  <div class="warning"><strong>Indicative catalogue data.</strong> Product families and typical
+parameters are listed for training and familiarisation only, are approximate, and change with
+manufacturer revisions. No part numbers are given; always obtain current certified data sheets
+and SASO/SEC acceptance status from the manufacturer.</div>
+
+  <p><strong>Goal:</strong> learn to read a variable frequency drive catalogue — the
+  most footnote-dense document in the LV equipment world — and come out with a correct
+  frame size for a real machine at a real Saudi ambient. The families compared (ABB
+  ACS580/ACS880, Danfoss VLT FC302, Siemens SINAMICS G120/G150, Rockwell PowerFlex 755)
+  cover most of what you will meet on site. The motor-side physics lives in
+  <a href="#c-motors">the motors section</a>; the harmonics interaction with the
+  capacitor bank in <a href="#c-pfc">the power factor correction section</a>; the
+  method of Part 6 in <a href="#cat-intro">the catalogue introduction</a>.</p>
+
+  <!-- ────────────────────────────────────────────────────────────
+       1. WHY VFDS IN THIS PLANT
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-vfd-overview">Why VFDs Here — Energy, Soft Starting and the Harmonics Bill</h3>
+
+  <p>A VFD rectifies the 400&nbsp;V, 60&nbsp;Hz supply to DC and re-synthesises a
+  variable-voltage, variable-frequency output, so the motor runs at exactly the speed
+  the process needs. For the centrifugal pumps and fans that dominate this plant's load,
+  the affinity laws make this lucrative: shaft power scales with the <em>cube</em> of
+  speed, so running a pump at 80&nbsp;% speed takes roughly half the power
+  (0.8&sup3;&nbsp;&asymp;&nbsp;0.51) that throttling the same flow with a valve would
+  leave you paying. Across a motor population running thousands of hours a year, the
+  drive typically repays itself in one to three years of energy alone.</p>
+
+  <p>The second benefit is electrical: a VFD starts a motor at a programmed current
+  limit, typically 100&ndash;150&nbsp;% of rated current, instead of the ~6&times;
+  inrush of a DOL start. For the plant's largest motor (~160&nbsp;kW, ~280&nbsp;A full
+  load), that is the difference between a ~1700&nbsp;A inrush sagging the 400&nbsp;V
+  bus and a start the neighbours never notice. Mechanically, the soft ramp spares
+  couplings, belts and the pump's check valves.</p>
+
+  <h4>The price: harmonics — 6-pulse versus AFE</h4>
+
+  <p>The standard, cheapest VFD front end is a <strong>6-pulse diode rectifier</strong>.
+  It draws current from the supply in two pulses per half-cycle, rich in 5th, 7th, 11th
+  and 13th harmonics — at 60&nbsp;Hz, that is 300, 420, 660 and 780&nbsp;Hz currents
+  circulating in the plant. A 6-pulse drive without any choke can show a total harmonic
+  current distortion (THDi) of 80&ndash;100&nbsp;%; with the DC-link or AC line chokes
+  most reputable drives now build in, 30&ndash;45&nbsp;% is typical. The cures, in
+  rising order of cost: line/DC chokes (built in or added), passive harmonic filters,
+  12-pulse arrangements (phase-shifting transformer), and the <strong>active front end
+  (AFE)</strong> — an IGBT rectifier that draws near-sinusoidal current
+  (THDi&nbsp;&asymp;&nbsp;3&ndash;5&nbsp;%), at unity or even controllable power factor,
+  and can regenerate braking energy to the supply. AFE costs roughly 1.5&ndash;2&times;
+  the 6-pulse drive and a few percent of efficiency; on this plant it is justified
+  case-by-case, not by default.</p>
+
+  <p>Harmonics are also why the plant's PFC bank is <strong>detuned at 7&nbsp;%</strong>
+  (tuning frequency &asymp;&nbsp;227&nbsp;Hz at 60&nbsp;Hz — safely below the 5th
+  harmonic at 300&nbsp;Hz): plain capacitors on a VFD-loaded bus would resonate near the
+  5th/7th harmonics and cook themselves. The full story, including why 227&nbsp;Hz, is
+  in <a href="#c-pfc">the PFC section</a> — read it before buying either the drives or
+  the capacitors, because the two purchases interact.</p>
+
+  <div class="note"><strong>Where the VFD lives.</strong> Smaller drives mount in MCC
+  buckets (one to two frame sizes larger than the equivalent DOL bucket, for heat);
+  large drives such as the 160&nbsp;kW machine's are floor- or wall-mounted in the
+  switchroom and fed from an MCC feeder bucket — see
+  <a href="#cat-mcc-selection">the MCC selection sub-section</a>.</div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       2. VENDOR FAMILIES
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-vfd-families">The Vendor Families You Will Meet</h3>
+
+  <p>Every major vendor splits its range into a <em>general-purpose</em> line (pumps,
+  fans, V/f or open-loop vector, wall/bucket mount) and a <em>high-performance</em>
+  line (full vector control, options for AFE, regenerative and cabinet builds). The
+  table shows the pairs you will most often meet, with indicative 400&nbsp;V-class
+  data:</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Family</th><th>Vendor</th><th>Class</th><th>Power range at 400 V (typ.)</th>
+          <th>Control modes</th><th>Built-in harmonic mitigation</th><th>Enclosure (typ.)</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>ACS580</strong></td><td>ABB</td><td>General purpose</td>
+          <td>~0.75&ndash;500 kW</td>
+          <td>Scalar (V/f) and sensorless vector</td>
+          <td>DC/swinging chokes as standard; integral EMC filter</td>
+          <td>IP21 standard, IP55 option (wall mount)</td></tr>
+      <tr><td><strong>ACS880</strong></td><td>ABB</td><td>High performance / industrial</td>
+          <td>~0.55 kW to multi-MW (module and cabinet builds)</td>
+          <td>Direct torque control (DTC), with or without encoder</td>
+          <td>Chokes standard; 12-pulse, low-harmonic AFE and regenerative variants</td>
+          <td>IP21/IP55 wall; IP42+ cabinet</td></tr>
+      <tr><td><strong>VLT AutomationDrive FC302</strong></td><td>Danfoss</td><td>General/industrial</td>
+          <td>~0.37&ndash;1100 kW</td>
+          <td>V/f, VVC+ voltage vector, flux vector with/without encoder</td>
+          <td>Dual DC-link chokes standard (THDi ~40 % typical); integral RFI filter</td>
+          <td>IP20/IP21 to IP54/IP66 depending on frame; strong high-ambient back-channel cooling options</td></tr>
+      <tr><td><strong>SINAMICS G120</strong> (modular) / <strong>G150</strong> (cabinet)</td><td>Siemens</td><td>General purpose</td>
+          <td>G120 ~0.37&ndash;250 kW; G150 ~75 kW&ndash;multi-MW</td>
+          <td>V/f and sensorless vector; servo-grade control in the S-series relatives</td>
+          <td>Line chokes/filters optional or built in by frame; clean-power AFE in related lines</td>
+          <td>G120 IP20 (cubicle-mount), IP55 variants; G150 cabinet IP20&ndash;IP54</td></tr>
+      <tr><td><strong>PowerFlex 755 / 755TL/TR</strong></td><td>Rockwell Automation</td><td>High performance</td>
+          <td>~7.5 kW&ndash;multi-MW (755T cabinet range)</td>
+          <td>V/f, sensorless and flux vector with encoder options</td>
+          <td>755TL low-harmonic (active front end), 755TR regenerative; EtherNet/IP native</td>
+          <td>IP20 (MCC/cabinet), Flange/IP54 options</td></tr>
+    </tbody>
+  </table>
+
+  <p>As with the MCC, brand selection is mostly an integration question: a Rockwell
+  iMCC argues for PowerFlex in the same line-up; a Siemens DCS for SINAMICS; ABB and
+  Danfoss compete strongly on pump/fan duty and high-ambient data. What matters more
+  than brand is that the <em>plant standardises on one general-purpose family</em>: one
+  set of spares, one programming tool, one set of commissioning habits across twenty
+  drives beats five optimal brands every time.</p>
+
+  <div class="tip">Catalogue power ratings (kW) are marketing shorthand for "fits a
+  typical 4-pole motor of this rating". Always select on <strong>current</strong>, not
+  kilowatts — the motor's nameplate amperes against the drive's rated output amperes at
+  the actual duty class, switching frequency and ambient. The worked selection below
+  shows why.</div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       3. READING A VFD DATA SHEET
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-vfd-datasheet">How to Read a VFD Data Sheet — the Footnotes That Size the Drive</h3>
+
+  <p>A VFD data sheet quotes one headline kilowatt number and then takes most of it
+  back in footnotes. Five footnote families decide whether the drive actually fits the
+  application; check all five, every time.</p>
+
+  <h4>Normal duty versus heavy duty — the same drive, two ratings</h4>
+
+  <p>Every industrial drive carries (at least) two current ratings.
+  <strong>Normal duty</strong> (variable torque) assumes a pump/fan-type load and
+  allows an overload of typically <strong>110&nbsp;% for 60&nbsp;s</strong> every
+  10&nbsp;minutes. <strong>Heavy duty</strong> (constant torque) covers conveyors,
+  crushers, positive-displacement pumps, and allows typically <strong>150&nbsp;% for
+  60&nbsp;s</strong> — at a continuous current some 15&ndash;25&nbsp;% lower from the
+  same hardware. A drive sold as "200&nbsp;kW" is a 200&nbsp;kW <em>normal-duty</em>
+  drive and roughly a 160&nbsp;kW heavy-duty one. Selecting a centrifugal pump drive
+  on the heavy-duty column wastes money; selecting a crusher drive on the normal-duty
+  column burns IGBTs. Decide the duty class first, then read only that column.</p>
+
+  <h4>Switching frequency versus derating</h4>
+
+  <p>The output IGBTs chop the DC link at a switching frequency of typically
+  2&ndash;4&nbsp;kHz (default) up to 8&ndash;16&nbsp;kHz (quiet). Every doubling of
+  switching frequency roughly doubles the inverter's own switching losses, and the data
+  sheet answers with a derating table — commonly 10&ndash;20&nbsp;% current reduction
+  at the higher settings. Motor acoustic noise drops as switching frequency rises, so
+  commissioning engineers love to wind it up; the derating table is why the drive then
+  trips on heatsink temperature in July. Size at the switching frequency you intend to
+  run, and write that frequency on the data sheet.</p>
+
+  <h4>Ambient temperature derating — the Saudi line</h4>
+
+  <p>Drive ratings are referenced to 40&nbsp;&deg;C (some compact frames to
+  45&nbsp;&deg;C, with a 50&nbsp;&deg;C option). Above the reference, catalogues derate
+  output current by typically <strong>1&ndash;1.5&nbsp;% per &deg;C</strong>, usually up
+  to an absolute ceiling of 50&ndash;55&nbsp;&deg;C. At this plant's 50&nbsp;&deg;C
+  design ambient an unconditioned location costs 10&ndash;15&nbsp;% of the drive's
+  current — very often exactly the margin that pushes the selection into the next frame
+  size, as the worked example below shows. Altitude derating (above 1000&nbsp;m) stacks
+  on top; most Saudi coastal and central sites are unaffected, but check.</p>
+
+  <h4>Output side: dv/dt, motor cable length and bearing currents</h4>
+
+  <p>The inverter output is not a sine wave but a train of steep-edged pulses. Each edge
+  (high <em>dv/dt</em>) launches a reflection down the motor cable that can nearly
+  double the voltage at the motor terminals when the cable is long. Data sheets answer
+  with a maximum motor cable length — typically <strong>100&ndash;150&nbsp;m screened
+  without remedy</strong>, extendable to ~300&nbsp;m with output dv/dt or sine-wave
+  filters — and with requirements for symmetrical screened motor cable, 360&deg; gland
+  earthing, and insulated non-drive-end bearings or shaft earthing rings on larger
+  motors (typically &ge;100&nbsp;kW) to stop bearing-current pitting. Check the motor
+  itself is declared per IEC 60034-25 for converter duty; on this plant the 160&nbsp;kW
+  pump motor must be (<a href="#c-motors">motors section</a>).</p>
+
+  <h4>EMC category and the residual checklist</h4>
+
+  <p>IEC 61800-3 sorts built-in RFI filters into categories C1&ndash;C4; for an
+  industrial plant on its own transformer, <strong>category C3</strong> (second
+  environment) is the normal specification — but only with the screened-cable and
+  earthing discipline above. Finally, scan for: input voltage tolerance
+  (&plusmn;10&nbsp;% of 400&nbsp;V) and 60&nbsp;Hz declaration; built-in chokes (or
+  order them); STO (safe torque off) if the safety design uses it; and the protection
+  ratings the drive gives its motor — electronic overload, stall, underload (a dry-running
+  pump shows as underload), and motor thermistor input.</p>
+
+  <div class="key">Key takeaway: a VFD is selected on rated output <em>current</em> at
+  four declared conditions — duty class, switching frequency, ambient temperature,
+  installation altitude — plus a motor-cable and EMC check. The headline kilowatts on
+  the cover are the start of the conversation, not the answer.</div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       4. WORKED SELECTION
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-vfd-selection">Worked Selection — a 160 kW Pump Drive at 50 &deg;C</h3>
+
+  <p>Apply the data-sheet method to the plant's largest machine: a 160&nbsp;kW
+  centrifugal pump, 4-pole motor, base speed <strong>1800&nbsp;rpm at 60&nbsp;Hz</strong>
+  (synchronous; ~1780&nbsp;rpm at full load with slip), installed in a switchroom with a
+  50&nbsp;&deg;C design ambient. All values indicative.</p>
+
+  <div class="worked">
+    <h4>Worked calculation — frame selection with ambient derating</h4>
+    <p><strong>Step 1 — motor current.</strong> Nameplate full-load current of a typical
+    160&nbsp;kW, 400&nbsp;V, 4-pole motor (η&nbsp;&asymp;&nbsp;0.96,
+    pf&nbsp;&asymp;&nbsp;0.86):</p>
+    <code class="formula">I_FLC = P / (√3 × U × pf × η) = 160 000 / (1.732 × 400 × 0.86 × 0.96) ≈ 280 A</code>
+    <p><strong>Step 2 — duty class.</strong> Centrifugal pump → variable torque →
+    <em>normal duty</em> column, 110&nbsp;% / 60&nbsp;s overload. Required continuous
+    drive current: ≥&nbsp;280&nbsp;A.</p>
+    <p><strong>Step 3 — first guess.</strong> A "160&nbsp;kW" 400&nbsp;V drive frame
+    typically offers ~300&ndash;310&nbsp;A normal duty at 40&nbsp;&deg;C and default
+    switching frequency. On paper: 300&nbsp;A &gt; 280&nbsp;A ✓.</p>
+    <p><strong>Step 4 — apply the 50&nbsp;&deg;C derating</strong> (typical
+    1.25&nbsp;%/&deg;C above 40&nbsp;&deg;C, i.e. 12.5&nbsp;% for 10&nbsp;K):</p>
+    <code class="formula">I_50°C = 300 A × (1 − 0.125) ≈ 262 A &lt; 280 A ✗ — frame too small</code>
+    <p><strong>Step 5 — next frame up.</strong> The "200&nbsp;kW" frame typically offers
+    ~370&nbsp;A normal duty at 40&nbsp;&deg;C:</p>
+    <code class="formula">I_50°C = 370 A × 0.875 ≈ 324 A ≥ 280 A ✓ (margin ≈ 16 %)</code>
+    <p><strong>Step 6 — overload check.</strong> Pump starting and transients within
+    110&nbsp;% × 324&nbsp;A&nbsp;≈&nbsp;356&nbsp;A for 60&nbsp;s — ample for a
+    current-limited pump ramp. <strong>Sanity check:</strong> one frame size
+    (~25&nbsp;%) bought back the 12.5&nbsp;% ambient loss plus margin; if the room is
+    instead HVAC-held at &le;40&nbsp;&deg;C, the 160&nbsp;kW frame would suffice — but
+    then the drive's availability hangs on the air-conditioning. For the plant's largest
+    motor, buy the frame, not the HVAC promise. Indicative only; the vendor's selection
+    tool at the declared conditions governs.</p>
+  </div>
+
+  <h4>Input choke versus detuned PFC — make the two purchases talk</h4>
+
+  <p>Specify the drive <strong>with its DC-link or AC input chokes</strong> (3&ndash;5&nbsp;%
+  impedance, built in on most of the families above). The chokes roughly halve the
+  drive's harmonic current injection, which directly offloads the
+  <a href="#c-pfc">detuned PFC bank</a>: the 7&nbsp;% reactors
+  (tuning&nbsp;&asymp;&nbsp;227&nbsp;Hz at 60&nbsp;Hz) keep the ~580&nbsp;kvar bank out
+  of resonance with the 5th harmonic at 300&nbsp;Hz, but every ampere of 5th harmonic
+  the chokes absorb at the drive is an ampere the reactors do not have to swallow as
+  heat. The two specifications must state the same assumptions: if the harmonic study
+  that sized the PFC assumed choked drives, an unchoked substitution at purchase quietly
+  invalidates it. Conversely, never let a vendor "value-engineer" plain capacitors into
+  this plant — on a VFD-loaded bus, detuned is mandatory.</p>
+
+  <h4>Base speed bookkeeping at 60 Hz</h4>
+
+  <p>A 4-pole motor here runs 1800&nbsp;rpm synchronous at 60&nbsp;Hz — not the
+  1500&nbsp;rpm of 50&nbsp;Hz countries. Pump curves, V/f settings and any "percent
+  speed" scaling in the control system must all be built on the 60&nbsp;Hz base:
+  set the drive's motor data from the 60&nbsp;Hz nameplate, field-weakening point at
+  60&nbsp;Hz, and maximum frequency per the pump's mechanical limit. A 50&nbsp;Hz
+  parameter file imported from a sister plant abroad will run the pump 17&nbsp;% slow
+  and the "energy saving" will be an underperforming process.</p>
+
+  <!-- ────────────────────────────────────────────────────────────
+       5. SAUDI-SPECIFIC PRACTICE
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-vfd-saudi">Saudi-Specific Practice — SASO, Dust, Service and Harmonics Limits</h3>
+
+  <h4>SASO/SABER conformity and local service</h4>
+
+  <p>Drives and MCCs imported into the Kingdom clear customs through the
+  <strong>SABER platform</strong> with certificates of conformity against the
+  SASO-adopted IEC standards (IEC 61800 series for drives, IEC 61439 for assemblies).
+  Make the supplier contractually responsible for SABER certification, type-test and
+  routine-test documentation, and country-of-origin papers — paperwork strands
+  equipment in port far more often than technical defects do. Then look past the
+  catalogue to the vendor's <em>in-Kingdom</em> organisation: certified service centre
+  locations, spare-parts stock (fans and DC-link capacitors are the drive consumables),
+  guaranteed response time, and Arabic/English commissioning support. A drive family
+  with a service hub in Dammam or Jubail beats a marginally better one supported from
+  Dubai.</p>
+
+  <h4>Dust and heat at the installation</h4>
+
+  <p>Drive heatsinks are forced-air cooled and desert dust blankets them within months.
+  Practice for this plant: drives indoors in filtered, positively pressurised,
+  HVAC-conditioned rooms wherever possible; replaceable intake <strong>dust filter
+  mats</strong> on cabinet drives, on the maintenance plan with a dated change record;
+  through-panel ("flange" or back-channel) mounting for bucket drives so the heatsink
+  rejects heat outside the enclosure; and heatsink cleaning plus cooling-fan replacement
+  intervals (typically 3&ndash;5 years at high ambient) in the CMMS from day one. If a
+  drive must live outside conditioned space, specify IP54/IP55 variants and apply the
+  full 50&nbsp;&deg;C derating of <a href="#cat-vfd-selection">the worked
+  selection</a> — never both seal a drive <em>and</em> skip the derating.</p>
+
+  <h4>Harmonics limits at the SEC connection</h4>
+
+  <p>SEC connection requirements limit the distortion a customer may inject into the
+  13.8&nbsp;kV network, assessed at the point of common coupling; <strong>IEEE 519</strong>
+  is the common reference framework (THDv typically &le;5&nbsp;% at the PCC, with
+  individual and total current-distortion limits scaled to the ratio of available fault
+  current to load current). The compliance chain for this plant: drive count and front
+  ends from the load list → harmonic study at the PCC → chokes/filters/AFE chosen to
+  meet the limits → detuned PFC per <a href="#c-pfc">the PFC section</a> → measurement
+  campaign at commissioning to close the loop. Keep the study with the SEC connection
+  file; if SEC queries distortion later, the dated commissioning measurements are the
+  evidence. All limits indicative — the SEC-stated values for the actual connection
+  agreement govern.</p>
+
+  <h4>Procurement checklist — MCC and VFD package</h4>
+
+  <ul class="checklist">
+    <li>MCC verified to IEC 61439-2: 1600 A bus and bucket ratings certified at 50 &deg;C room ambient (or conditioned room declared), I<sub>cw</sub> 50 kA/1 s, Form 4b, withdrawable buckets, arc containment per IEC TR 61641.</li>
+    <li>Intelligent-MCC philosophy fixed and consistent: communicating motor protection per bucket, one fieldbus to the DCS/PMS, safety stops hardwired.</li>
+    <li>Spares policy in the purchase order: ≥15 % equipped spare buckets, shelf spare per bucket size, drive spare fans/filters, and 20 % empty space per MCC.</li>
+    <li>Every VFD selected on current at declared conditions — duty class (normal vs heavy), switching frequency, 50 &deg;C ambient derating (1&ndash;1.5 %/&deg;C above 40) — with the 160 kW pump drive sized one frame up per the worked selection.</li>
+    <li>Drive input chokes (3&ndash;5 %) included and stated in the harmonic study; study results compatible with the 580 kvar detuned 7 % PFC bank (227 Hz at 60 Hz) and IEEE 519-based SEC limits at the PCC.</li>
+    <li>Output-side engineering closed: screened symmetrical motor cables within length limits, 360&deg; glands, dv/dt or sine filters where needed, insulated bearings/shaft earthing on motors ≥ ~100 kW, motors converter-rated per IEC 60034-25.</li>
+    <li>SABER/SASO certificates, 60 Hz declarations, 50 &deg;C derating statements and in-Kingdom service/spares commitments delivered with the bid — not after award.</li>
+  </ul>
+
+  <div class="note"><strong>Closing the loop.</strong> Everything here is indicative
+  training data. The binding chain for the real purchase is: load list and motor data
+  sheets → harmonic and short-circuit studies → approved MCC and VFD data sheets →
+  vendor certified drawings and IEC 61439 / IEC 61800 verification evidence → FAT →
+  site measurements at commissioning. The catalogue's job is to make you fluent for
+  that conversation.</div>
+
+</section>

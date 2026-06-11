@@ -1,0 +1,533 @@
+<!-- ============================================================
+     §CAT-TRANSFORMERS  Distribution Transformer Catalogue (TX-1/TX-2)
+     Rev 3 (Saudi/SEC edition) — 13.8 kV / 400-230 V / 60 Hz / 50 °C
+     Part 6 — Equipment Catalogues. How to read, compare and select
+     distribution transformers for the 2 × 1600 kVA plant.
+     All data indicative; SASO-adopted IEC 60076 series and the
+     manufacturer's certified data sheets govern.
+============================================================ -->
+<section id="cat-transformers" data-title="Distribution Transformers" data-part="Part 6 — Equipment Catalogues">
+
+  <h2>Distribution Transformers</h2>
+
+  <div class="warning"><strong>Indicative catalogue data.</strong> Product families and typical
+parameters are listed for training and familiarisation only, are approximate, and change with
+manufacturer revisions. No part numbers are given; always obtain current certified data sheets
+and SASO/SEC acceptance status from the manufacturer.</div>
+
+  <p><strong>Goal:</strong> learn to read a distribution-transformer catalogue the way a
+  specifying engineer reads it — starting from what the plant actually needs (tags
+  <code>TX-1</code> and <code>TX-2</code>: 2&nbsp;&times;&nbsp;1600&nbsp;kVA,
+  13.8/0.4&nbsp;kV, Dyn11, Z&nbsp;=&nbsp;6&nbsp;%), translating each nameplate line into
+  the plant consequence it controls, and finishing with the specification card you would
+  attach to a request for quotation. The families named here (Siemens GEAFOL, Schneider
+  Trihal, the Hitachi Energy dry-type and EcoDry ranges, and the hermetic oil-immersed
+  distribution families) are the ones most often met on Saudi industrial sites. For the
+  electrical reasoning behind the ratings — why 1600&nbsp;kVA, why Dyn11, why 6&nbsp;% —
+  see <a href="#c-transformer">the transformer calculation tutorial</a>; for how Part 6
+  catalogue sections are meant to be used, see
+  <a href="#cat-intro">the catalogue introduction</a>.</p>
+
+  <!-- ────────────────────────────────────────────────────────────
+       1. OVERVIEW
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-tx-overview">What the Plant Needs — the Two 1600 kVA Workhorses</h3>
+
+  <p>Everything between the SEC 13.8&nbsp;kV intake and the plant's 400/230&nbsp;V world
+  passes through two boxes of copper and steel: <code>TX-1</code> and <code>TX-2</code>,
+  each <strong>1600&nbsp;kVA, 13.8/0.4&nbsp;kV, Dyn11, Z&nbsp;=&nbsp;6&nbsp;%</strong>,
+  feeding the two halves of the split LV main switchboard with the bus-tie normally open.
+  Each unit draws an indicative <strong>66.9&nbsp;A</strong> on its MV side at full rating
+  and delivers <strong>2309&nbsp;A</strong> on its LV side. The plant's design demand is
+  2.0&nbsp;MW at 0.85 power factor — <strong>2353&nbsp;kVA</strong> — so the pair runs at
+  roughly 74&nbsp;% in normal split operation and one unit carries about 87.5&nbsp;% of
+  its rating in the N&minus;1 case with non-essential load shed. The impedance, 6&nbsp;%,
+  is the deliberate compromise that holds the LV short-circuit current to about
+  <strong>38.5&nbsp;kA per transformer</strong> while keeping voltage regulation
+  acceptable (the full reasoning lives in
+  <a href="#c-transformer">the transformer tutorial</a>). All values indicative.</p>
+
+  <p>A transformer is the quietest purchase in the plant — no moving parts, no firmware,
+  a forty-year design life — and that is exactly why catalogue mistakes hurt: an error
+  ordered into a transformer is bolted into the plant for decades. The three decisions
+  the catalogue forces on you are <em>technology</em> (cast resin or oil), <em>losses
+  class</em> (you pay for losses every hour for forty years), and <em>thermal basis</em>
+  (a 50&nbsp;&deg;C Saudi ambient is outside the IEC default assumptions and must be
+  engineered, not hoped for).</p>
+
+  <h4>Cast resin or oil-immersed — the first fork in the catalogue</h4>
+
+  <p>Distribution transformers come in two basic technologies, and every vendor's
+  catalogue splits at this fork on page one. In a <strong>cast-resin dry-type</strong>
+  unit the MV windings are vacuum-cast in epoxy and the whole active part is cooled by
+  the surrounding air (AN — air natural; optionally AF with fans). In an
+  <strong>oil-immersed</strong> unit the core and windings sit in a tank of mineral or
+  ester fluid that both insulates and carries heat to the tank wall and radiators
+  (ONAN — oil natural, air natural; hermetically sealed in modern distribution sizes).
+  Neither is "better"; they trade against each other:</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Criterion</th><th>Cast resin (dry, AN/AF)</th><th>Oil-immersed (hermetic ONAN)</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Fire behaviour</td>
+          <td>F1 fire class (self-extinguishing, low smoke); no flammable liquid. The
+          default for <em>indoor</em> substations close to people and process.</td>
+          <td>Tank of flammable fluid (mineral oil fire point ~170&nbsp;&deg;C); needs
+          bunding, separation distances or fire walls per SBC; less-flammable ester fluids
+          (K-class) soften but do not remove the issue.</td></tr>
+      <tr><td>Overload &amp; cooling boost</td>
+          <td>AN rating can typically be boosted ~40&nbsp;% with add-on fans (AF) —
+          attractive for the N&minus;1 case.</td>
+          <td>ONAN is the sealed rating; forced cooling (ONAF) is uncommon and clumsy at
+          1600&nbsp;kVA distribution size.</td></tr>
+      <tr><td>Losses &amp; cost</td>
+          <td>Typically slightly higher load losses and higher purchase price at equal
+          kVA and losses class.</td>
+          <td>Usually the cheapest per kVA and the best loss figures at equal Ecodesign
+          tier; the default for <em>outdoor</em> pad or yard installation.</td></tr>
+      <tr><td>Maintenance &amp; failure mode</td>
+          <td>No fluid to sample, leak or degrade; periodic cleaning of dust from
+          windings is the whole maintenance plan — but that cleaning is <em>mandatory</em>
+          in a dusty country.</td>
+          <td>Hermetic units need almost nothing in service, but a tank breach is an
+          environmental and fire event; oil sampling impossible on fully sealed
+          designs.</td></tr>
+      <tr><td>50&nbsp;&deg;C ambient response</td>
+          <td>Class F or H insulation gives thermal headroom; derate or specify higher
+          insulation class — straightforward (see
+          <a href="#cat-tx-datasheet">datasheet section</a>).</td>
+          <td>Oil top-temperature limits bite earlier; derating per IEC 60076 rules, and
+          sun-exposed outdoor tanks need shading consideration.</td></tr>
+      <tr><td>Environment sensitivity</td>
+          <td>Windings exposed to room air — dust and condensation are the enemies;
+          specify an IP-rated enclosure and a clean room.</td>
+          <td>Active part sealed away from the environment — inherently dust-proof.</td></tr>
+    </tbody>
+  </table>
+
+  <p>For this plant the indicative baseline is <strong>cast-resin units indoors</strong>,
+  in an air-conditioned or at least force-ventilated substation adjoining the LV
+  switchroom: the units sit close to the LV-MSB (short 2309&nbsp;A bus runs), the fire
+  case is benign, and the AF fan option buys cheap N&minus;1 margin. The oil-immersed
+  alternative — two hermetic ONAN units on an outdoor pad — remains legitimate where the
+  building cannot host them; the selection card in
+  <a href="#cat-tx-selection">the selection section</a> works for either.</p>
+
+  <div class="key">Key takeaway: the plant's demand side is fixed before the catalogue
+  opens — 2&nbsp;&times;&nbsp;1600&nbsp;kVA, 13.8/0.4&nbsp;kV, Dyn11, Z&nbsp;=&nbsp;6&nbsp;%,
+  60&nbsp;Hz, 50&nbsp;&deg;C ambient. The catalogue only decides <em>how</em> those
+  numbers are delivered: resin or oil, which losses tier, and what thermal margin. All
+  values indicative; the detailed studies govern.</div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       2. VENDOR FAMILIES
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-tx-families">The Vendor Families You Will Meet</h3>
+
+  <p>The cast-resin market is dominated by three family names you will meet on every
+  Gulf tender list, plus a newer dry-type variant worth knowing; the oil-immersed market
+  is broader but converges on the same hermetic sealed pattern from the same large
+  vendors. All figures below are <em>typical, indicative class ranges</em> — never order
+  from this table; order from the vendor's certified data sheet.</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Family</th><th>Vendor</th><th>Technology</th><th>Typical range</th>
+          <th>Insulation / fluid</th><th>Cooling</th><th>Notes for this plant</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>GEAFOL</strong></td><td>Siemens (Siemens Energy)</td>
+          <td>Cast-resin dry-type</td>
+          <td>~100 kVA to ~40 MVA-class, up to 36&nbsp;kV; 1600&nbsp;kVA at 17.5&nbsp;kV
+          class is mid-range</td>
+          <td>Class F (155&nbsp;&deg;C) typical; F1/E2/C2 environmental classes</td>
+          <td>AN; AF option with cross-flow fans, typically +~40&nbsp;%</td>
+          <td>The archetypal cast-resin family; very widely installed in Saudi industry;
+          well-documented 50&nbsp;&deg;C and 60&nbsp;Hz variants.</td></tr>
+      <tr><td><strong>Trihal</strong></td><td>Schneider Electric</td>
+          <td>Cast-resin dry-type</td>
+          <td>~160 kVA to ~15 MVA-class, up to 36&nbsp;kV</td>
+          <td>Class F typical; F1/E2/C2</td>
+          <td>AN; AF option, typically +~40&nbsp;%</td>
+          <td>Often packaged with Schneider MV (SM6/PIX) and LV boards as a single-vendor
+          substation; same conceptual offering as GEAFOL.</td></tr>
+      <tr><td><strong>Dry-type / RESIBLOC</strong></td><td>Hitachi Energy
+          (ex&nbsp;ABB)</td>
+          <td>Cast-resin / resin-impregnated dry-type</td>
+          <td>Distribution sizes up to tens of MVA, up to 36&nbsp;kV+ in special
+          designs</td>
+          <td>Class F or H available; F1/E2/C2</td>
+          <td>AN; AF option</td>
+          <td>The RESIBLOC winding technique targets harsh-climate and high-mechanical-
+          stress duties; class H option is directly useful at 50&nbsp;&deg;C.</td></tr>
+      <tr><td><strong>EcoDry</strong></td><td>Hitachi Energy</td>
+          <td>Ultra-low-loss dry-type (amorphous-core variants)</td>
+          <td>Distribution sizes ~up to a few MVA</td>
+          <td>Class F/H</td>
+          <td>AN</td>
+          <td>Marketed on no-load-loss reduction — relevant here because both units stay
+          energised 8760&nbsp;h/year regardless of load (see losses discussion
+          below).</td></tr>
+      <tr><td><strong>Hermetic ONAN distribution</strong></td>
+          <td>Hitachi Energy / ABB heritage, and regional licensees</td>
+          <td>Oil-immersed, hermetically sealed, corrugated tank</td>
+          <td>~50 kVA to ~3150 kVA, up to 36&nbsp;kV</td>
+          <td>Mineral oil (ester option); class A (105&nbsp;&deg;C) thermal system</td>
+          <td>ONAN</td>
+          <td>The global default outdoor distribution unit; strong local manufacture in
+          the Kingdom (a SEC procurement advantage).</td></tr>
+      <tr><td><strong>Minera</strong></td><td>Schneider Electric</td>
+          <td>Oil-immersed, hermetic sealed</td>
+          <td>~25 kVA to ~3150 kVA, up to 36&nbsp;kV</td>
+          <td>Mineral oil (ester option)</td>
+          <td>ONAN</td>
+          <td>Schneider's hermetic ONAN family; same role as the Hitachi/ABB hermetic
+          line.</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Losses classes — the Ecodesign tiers as a common yardstick</h4>
+
+  <p>Transformer efficiency is bought at order time, and the industry's clearest
+  yardstick is the <strong>EU Ecodesign regulation (548/2014, "Tier&nbsp;2" since
+  2021)</strong>, which fixes maximum no-load (P<sub>0</sub>) and load (P<sub>k</sub>)
+  losses per size — paralleled by the IEC 60076 loss-class letters (e.g.
+  A<sub>0</sub>A<sub>k</sub>, the lowest-loss combination). Saudi Arabia does not apply
+  the EU regulation as law — SASO efficiency requirements and SEC specifications
+  govern — but quoting "Ecodesign Tier&nbsp;2 compliant" or "A<sub>0</sub>A<sub>k</sub>"
+  in the RFQ is the cleanest way to force comparable loss figures from all bidders.
+  Indicatively, a Tier-2-class 1600&nbsp;kVA cast-resin unit shows a no-load loss of
+  roughly 2.2&ndash;2.8&nbsp;kW and a load loss of roughly 12&ndash;14&nbsp;kW at
+  120&nbsp;&deg;C reference; the oil equivalent is lower on both counts. Remember the
+  asymmetry: no-load loss is paid <em>8760&nbsp;hours a year</em> on both units the
+  moment they are energised; load loss scales with the square of loading. At ~74&nbsp;%
+  split-bus loading both terms matter, which is why a cheap high-loss unit is the most
+  expensive item in this catalogue over a 40-year life.</p>
+
+  <h4>Altitude and ambient basis — read the small print</h4>
+
+  <p>Every figure in the table above is referenced to the IEC 60076 "normal service
+  conditions": altitude &le;&nbsp;1000&nbsp;m and ambient &le;&nbsp;40&nbsp;&deg;C
+  maximum (30&nbsp;&deg;C monthly / 20&nbsp;&deg;C yearly average). Altitude is rarely a
+  problem on Saudi coastal and plateau sites below 1000&nbsp;m — but check it for
+  highland sites (Abha sits above 2000&nbsp;m, where dielectric and cooling corrections
+  both apply). Ambient, by contrast, is <em>always</em> a problem at a 50&nbsp;&deg;C
+  design figure, and it is handled properly in
+  <a href="#cat-tx-datasheet">the datasheet section</a> below.</p>
+
+  <div class="note">As with the switchgear families, the brand comparison is not won on
+  headline ratings — all the families above deliver 1600&nbsp;kVA at 13.8/0.4&nbsp;kV
+  without strain. It is won on certified losses, the written 50&nbsp;&deg;C /
+  60&nbsp;Hz statements, local service and SASO/SEC paperwork, and delivery time.</div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       3. READING THE DATASHEET
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-tx-datasheet">How to Read a Transformer Datasheet</h3>
+
+  <p>A transformer datasheet is a one-page contract: every line is a number the factory
+  promises and a routine test will verify. Walk the nameplate top to bottom, and for each
+  line know <em>which plant problem it controls</em>. The order below is the order the
+  lines usually appear.</p>
+
+  <h4>Rated power — and what "1600 kVA" actually promises</h4>
+
+  <p>Rated power (IEC 60076-1) is the apparent power the unit can deliver
+  <em>continuously</em> at rated voltage and frequency <em>without exceeding the
+  temperature-rise limits of its insulation class, at the standard ambient</em>. It is a
+  thermal promise, not an electrical limit — the copper does not know about kVA, only
+  about heat. Two consequences: first, every kVA figure silently carries its ambient
+  basis (40&nbsp;&deg;C max), which is why the Saudi correction below exists; second,
+  short overloads are a matter of thermal time constants, not of the nameplate — cast
+  resin tolerates cyclic overloads per IEC 60076-12 loading guides, oil per
+  IEC 60076-7.</p>
+
+  <h4>Vector group — Dyn11</h4>
+
+  <p>Read <strong>Dyn11</strong> as three facts: <strong>D</strong> — MV winding in
+  delta; <strong>yn</strong> — LV winding in star with the neutral brought out (the plant
+  TN-S system earths it solidly at the LV-MSB); <strong>11</strong> — the LV line voltage
+  leads the MV by 330&deg; (11 o'clock). The delta primary traps triplen harmonic
+  currents and lets the star secondary serve unbalanced single-phase 230&nbsp;V load; the
+  clock number matters the day anyone parallels the two units through the bus-tie or adds
+  a third source — paralleling units of different vector groups is a dead short. Both
+  plant units must therefore be identical: <strong>Dyn11, same ratio, same
+  impedance</strong>.</p>
+
+  <h4>Impedance voltage — Z = 6 %</h4>
+
+  <p>The impedance voltage is measured, not assumed: the routine short-circuit test
+  applies whatever MV voltage drives rated current through a shorted LV winding, and
+  expresses it as a percentage of rated voltage. Z fixes both ends of a see-saw: fault
+  current down (LV I<sub>sc</sub> &asymp; FLC&nbsp;/&nbsp;Z &asymp;
+  2309&nbsp;A&nbsp;/&nbsp;0.06 &asymp; <strong>38.5&nbsp;kA</strong> per unit — the
+  number the entire LV switchboard withstand rating hangs on) and voltage regulation up.
+  IEC tolerance on Z is &plusmn;10&nbsp;% of the declared value: a unit delivered at
+  5.4&nbsp;% pushes the LV fault duty toward ~42.8&nbsp;kA, which still sits under a
+  50&nbsp;kA board but eats margin — and units to be paralleled must match within the
+  tolerance band or they will not share load. Check the <em>test certificate</em> value,
+  not just the nameplate.</p>
+
+  <h4>No-load and load losses</h4>
+
+  <p>Two numbers, two physical origins, two bills. <strong>No-load loss
+  P<sub>0</sub></strong> is the core (iron) loss — hysteresis and eddy currents in the
+  laminations — present whenever the unit is energised, at any load, 8760&nbsp;h/year.
+  <strong>Load loss P<sub>k</sub></strong> is the winding (copper) I&sup2;R plus stray
+  loss, quoted at rated current and a reference temperature (75&nbsp;&deg;C oil /
+  120&nbsp;&deg;C dry — check which, because comparing a 75&nbsp;&deg;C figure against a
+  120&nbsp;&deg;C figure flatters the wrong bidder). At the plant's ~74&nbsp;% split-bus
+  loading the load loss realised is P<sub>k</sub>&nbsp;&times;&nbsp;0.74&sup2; &asymp;
+  0.55&nbsp;P<sub>k</sub>. Evaluate bids on capitalised losses (a typical owner formula
+  prices each kW of P<sub>0</sub> several times higher than each kW of P<sub>k</sub>),
+  not on purchase price.</p>
+
+  <h4>Insulation class and temperature rise — the 50 &deg;C correction</h4>
+
+  <p>A dry-type insulation system is classed by the temperature it can endure for its
+  design life: class <strong>F</strong> = 155&nbsp;&deg;C, class <strong>H</strong> =
+  180&nbsp;&deg;C. The datasheet pairs the class with a <em>rated winding temperature
+  rise</em> — e.g. "class F, 100&nbsp;K rise" — and the arithmetic only closes at the
+  standard ambient: 40&nbsp;&deg;C ambient + 100&nbsp;K rise + ~15&nbsp;K hot-spot
+  allowance &asymp; 155&nbsp;&deg;C. Put the same unit in a 50&nbsp;&deg;C room and the
+  hot-spot lands ~10&nbsp;K above the class limit; insulation ageing roughly
+  <em>doubles for every 6&ndash;10&nbsp;K</em> of over-temperature, so a forty-year
+  transformer quietly becomes a twenty-year one. IEC 60076-11 gives the corrections, and
+  the buyer has two clean options:</p>
+
+  <ul>
+    <li><strong>Derate:</strong> accept a reduced continuous rating at 50&nbsp;&deg;C —
+    indicatively around 7&ndash;10&nbsp;% off (a "1600&nbsp;kVA" unit certified at
+    roughly 1440&ndash;1490&nbsp;kVA), per the vendor's thermal calculation; or</li>
+    <li><strong>Buy headroom (preferred here):</strong> order a class&nbsp;F system
+    <em>designed for a reduced rise</em> (e.g. 80&nbsp;K), or a class&nbsp;H system run
+    at class-F rise, so the full 1600&nbsp;kVA is certified <em>at 50&nbsp;&deg;C
+    ambient</em> with the ageing budget intact. The cost premium is small against the
+    asset life it protects.</li>
+  </ul>
+
+  <div class="warning">The classic tender failure: the datasheet says "1600&nbsp;kVA,
+  class F" and nobody asks <em>at what ambient</em>. Make "rated power certified at
+  50&nbsp;&deg;C design ambient per IEC 60076-11" a mandatory line in the RFQ — and
+  apply the same question to the AF fan rating and to oil units via IEC 60076-2.</div>
+
+  <h4>Tappings — &plusmn;2 &times; 2.5 %</h4>
+
+  <p>The MV winding carries an <strong>off-circuit tap changer</strong> with five
+  positions: &plusmn;2&nbsp;&times;&nbsp;2.5&nbsp;% around 13.8&nbsp;kV. Its job is to
+  correct a <em>sustained</em> deviation of the SEC supply voltage from nominal so the LV
+  bus sits near 400&nbsp;V — set once at commissioning after measuring the actual MV
+  voltage, then revisited only if the network changes. "Off-circuit" means exactly that:
+  the unit must be de-energised and isolated to move the selector; operating it on load
+  destroys the contacts. Both plant units must always stand on the same tap, or the
+  bus-tie paralleling case circulates current between them.</p>
+
+  <h4>Inrush, sound and the remaining lines</h4>
+
+  <p><strong>Inrush:</strong> energising a 1600&nbsp;kVA unit draws a magnetising inrush
+  with a first peak typically 8&ndash;12&nbsp;&times; rated current (indicatively
+  500&ndash;800&nbsp;A on the 66.9&nbsp;A MV feeder), decaying over tens of cycles. The
+  MV feeder protection must ride through it — the relay's inrush (2nd-harmonic) restraint
+  and the curve choice in the protection study depend on the vendor's declared inrush
+  figure, so ask for it. <strong>Sound power level:</strong> per IEC 60076-10, a
+  1600&nbsp;kVA dry unit typically declares around 65&ndash;75&nbsp;dB(A) sound power —
+  it matters for substations adjoining occupied rooms, and low-noise designs (reduced
+  flux density) trade against no-load loss. Finally, check the <strong>insulation
+  levels</strong> (for a 13.8&nbsp;kV winding, the 17.5&nbsp;kV-class ladder:
+  38&nbsp;kV rms power-frequency / 95&nbsp;kV peak lightning impulse, indicative) and the
+  <strong>rated frequency</strong> line — which deserves its own discussion in
+  <a href="#cat-tx-selection">the selection section</a>.</p>
+
+  <!-- ────────────────────────────────────────────────────────────
+       4. SELECTION FOR THIS PLANT
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-tx-selection">Selection for This Plant — Requirement to Catalogue Parameter</h3>
+
+  <p>The mapping from plant demand to catalogue parameter, worked with the Rev 3 Plant
+  Data Card numbers. Work the table top to bottom — power and impedance first, because a
+  failure there disqualifies a product regardless of the rest.</p>
+
+  <div class="worked">
+    <h4>Worked check — rating, N&minus;1 and fault duty from the Plant Data Card</h4>
+    <p>Demand: 2.0&nbsp;MW at 0.85 power factor.</p>
+    <code class="formula">S = P / pf = 2000 kW / 0.85 = 2353 kVA</code>
+    <p>Two units, split bus, normal operation:</p>
+    <code class="formula">Loading per unit = (2353 / 2) / 1600 = 1176 / 1600 ≈ 74 %</code>
+    <p>N&minus;1 case — one transformer out, bus-tie closed, non-essential load shed so
+    the survivor carries the essential demand:</p>
+    <code class="formula">Loading = 1400 kVA / 1600 kVA = 87.5 %  →  inside rating ✓</code>
+    <p>LV fault current per unit (infinite-bus approximation, see
+    <a href="#c-transformer">the transformer tutorial</a>):</p>
+    <code class="formula">I_FLC,LV = 1600 kVA / (√3 × 0.4 kV) = 2309 A</code>
+    <code class="formula">I_sc,LV ≈ I_FLC / Z = 2309 / 0.06 ≈ 38.5 kA  (tie closed, two units: ≈ 77 kA)</code>
+    <p><strong>Sanity check:</strong> 38.5&nbsp;kA sits under the 50&ndash;65&nbsp;kA
+    LV-MSB rating with margin; the ~77&nbsp;kA paralleled figure is exactly why the
+    bus-tie is normally open and interlocked. If a vendor's unit arrives at the low end
+    of the &plusmn;10&nbsp;% impedance tolerance (5.4&nbsp;%), the single-unit duty rises
+    to ~42.8&nbsp;kA — still inside the board rating, but the margin is consumed; this
+    is why the test-certificate Z value is reviewed before energisation. All figures
+    indicative; the formal short-circuit study governs.</p>
+  </div>
+
+  <h4>The AN / AF decision — buying N&minus;1 margin with fans</h4>
+
+  <p>Cast-resin catalogues quote two ratings per frame: <strong>AN</strong> (natural air)
+  and <strong>AF</strong> (forced air, add-on cross-flow fans), with AF typically
+  <strong>+40&nbsp;%</strong>. Two ways to use it on this plant, both indicative: order
+  1600&nbsp;kVA&nbsp;AN units and treat the AF boost (~2240&nbsp;kVA) as emergency
+  headroom for the N&minus;1 case — the survivor could then carry the <em>full</em>
+  2353&nbsp;kVA demand without load shedding; or use AF to cover future load growth
+  without changing frames. The discipline: the AF rating only exists while the fans, the
+  fan supply and the fan controls work, so a design that <em>depends</em> on AF for the
+  normal case has quietly created a new single point of failure — use AF as margin, not
+  as the basis. Fans are triggered by winding temperature sensors (PT100) via the
+  T-relay; test them at FAT.</p>
+
+  <h4>The 60 Hz note — ordering for the SEC grid</h4>
+
+  <p>The SEC grid is <strong>60&nbsp;Hz</strong>, and the unit must carry a 60&nbsp;Hz
+  nameplate. The physics is forgiving in this direction: core flux is proportional to
+  V/f, so a transformer designed for 50&nbsp;Hz and operated at the same voltage and
+  60&nbsp;Hz runs at <em>lower</em> flux density — no saturation risk, slightly lower
+  no-load loss. A 50&nbsp;Hz-designed unit is therefore generally <em>electromagnetically</em>
+  fine at 60&nbsp;Hz (never the reverse — 60&nbsp;Hz design at 50&nbsp;Hz over-fluxes
+  and saturates). But "generally fine" is not a procurement basis: cooling fans, motor
+  drives in accessories, declared losses, sound level and the routine-test basis all
+  shift with frequency, and SASO/SEC paperwork will ask for the 60&nbsp;Hz declaration.
+  The rule: <strong>always order a 60&nbsp;Hz nameplate, with the routine tests performed
+  and certified at 60&nbsp;Hz</strong>; treat the 50-at-60 tolerance only as comfort that
+  a misdeclared unit is not instantly dangerous, and verify fan and auxiliary ratings
+  explicitly if any 50&nbsp;Hz-basis component appears in the offer.</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Plant requirement</th><th>Catalogue parameter to demand</th>
+          <th>Value to write (indicative)</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>2353 kVA demand, N&minus;1 philosophy</td>
+          <td>Rated power per IEC 60076-1, certified at site ambient</td>
+          <td>2 &times; 1600 kVA AN at 50&nbsp;&deg;C ambient (AF option ~+40 %)</td></tr>
+      <tr><td>SEC 13.8 kV system / 400 V TN-S</td>
+          <td>Rated voltages, insulation levels, vector group</td>
+          <td>13 800 / 400&ndash;230 V; 17.5 kV-class ladder (38 kV rms / 95 kV BIL);
+          Dyn11, both units identical</td></tr>
+      <tr><td>LV board withstand 50&ndash;65 kA</td>
+          <td>Impedance voltage and tolerance, on test certificate</td>
+          <td>Z = 6 % (&plusmn;10 % IEC tolerance; matched pair for paralleling)</td></tr>
+      <tr><td>SEC 60 Hz grid</td>
+          <td>Rated frequency on nameplate and routine tests</td>
+          <td>60 Hz declared and tested</td></tr>
+      <tr><td>Supply-voltage variation</td>
+          <td>Off-circuit tappings on MV winding</td>
+          <td>&plusmn;2 &times; 2.5 % (5 positions)</td></tr>
+      <tr><td>40-year energy bill</td>
+          <td>P<sub>0</sub> / P<sub>k</sub> at stated reference temperature</td>
+          <td>Ecodesign Tier 2 / low-loss class as reference; capitalised-loss
+          evaluation</td></tr>
+      <tr><td>50&nbsp;&deg;C, dust, indoor</td>
+          <td>Insulation class and rise; environmental/climatic/fire classes; enclosure</td>
+          <td>Class F (reduced rise) or H; E2/C2/F1; IP31&ndash;IP44 enclosure (resin,
+          indoor)</td></tr>
+      <tr><td>Protection integration</td>
+          <td>Winding temperature devices; inrush data</td>
+          <td>PT100 per limb + T-relay (alarm/trip/fan); declared inrush curve for the
+          relay study</td></tr>
+    </tbody>
+  </table>
+
+  <div class="key">Key takeaway: every line of this card comes straight from the Plant
+  Data Card or the studies — the catalogue's only freedoms are technology, losses tier
+  and thermal margin. Specify in IEC 60076 parameter language and any of the families in
+  <a href="#cat-tx-families">the families table</a> can bid comparably.</div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       5. SAUDI-SPECIFIC PRACTICE
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="cat-tx-saudi">Saudi-Specific Practice — Heat, Dust, SASO and SEC</h3>
+
+  <h4>SASO certification and the SABER platform</h4>
+
+  <p>Imported transformers clear Saudi customs through the <strong>SABER</strong>
+  platform with certificates of conformity against the SASO-adopted IEC 60076 series —
+  and SASO additionally maintains minimum energy-performance requirements for
+  distribution transformers, so the losses figures are a <em>regulatory</em> matter, not
+  just an economic one. Make the vendor contractually responsible for: SABER product and
+  shipment certificates, type-test and routine-test reports (IEC 60076-1/-11 for dry,
+  -1/-2 for oil, including the 60&nbsp;Hz basis), and country-of-origin documents.
+  Missing conformity paperwork strands transformers in port far more often than
+  technical defects do. Note also that several of the families in
+  <a href="#cat-tx-families">the families table</a> are manufactured inside the Kingdom
+  under licence — local content (and the IKTVA programme) can be a tender criterion and
+  usually shortens delivery.</p>
+
+  <h4>SEC approved-vendor expectations</h4>
+
+  <p>Where the transformer sits at or near the SEC boundary, expect SEC to apply its
+  distribution-transformer specifications (the SEC standard transformer specs, e.g. the
+  51-SDMS series for distribution equipment) and, in practice, an
+  <strong>approved-vendor expectation</strong>: makes and factories with an SEC
+  acceptance history clear review faster. Even for plant-side units behind the metering
+  point, aligning the data sheet with SEC's spec families (loss levels, fittings,
+  rating-plate content) costs little and removes review friction. Engage SEC at
+  specification stage and get the requirements — including the fault-level letter that
+  drives the LV board rating — in writing before the RFQ goes out.</p>
+
+  <h4>Heat, dust and the substation room</h4>
+
+  <p>The 50&nbsp;&deg;C thermal answer was engineered in
+  <a href="#cat-tx-datasheet">the datasheet section</a>; the room has to deliver it.
+  Cast-resin windings breathe the room air, and desert dust is the technology's one real
+  weakness: a dust film on the resin surface, wetted by morning humidity, tracks — and a
+  tracking flashover inside an unenclosed transformer is a plant-down event. Practice for
+  this plant, all indicative: cast-resin units in <strong>IP31&ndash;IP44 ventilated
+  enclosures</strong> (the enclosure derates the unit slightly — make the vendor certify
+  the enclosed rating), in a force-ventilated or HVAC-conditioned room with filtered
+  intake and over-temperature alarms to the control system; PT100 winding sensors wired
+  to the T-relay with staged fan-start / alarm / trip; and scheduled de-energised
+  cleaning of the windings written into the maintenance plan. Oil units outdoors dodge
+  the dust problem (sealed tank) but inherit solar gain, sand abrasion of radiators and
+  bunding requirements per SBC&nbsp;401 and the fire code.</p>
+
+  <h4>Seismic and transport</h4>
+
+  <p>Saudi sites are mostly low-seismicity, but SBC requirements and (for industrial-city
+  sites) the local authority may still ask for seismic qualification of anchorage —
+  cast-resin units are top-heavy, and the anchor-bolt calculation is the vendor's to
+  certify against the declared seismic class. Transport is the larger practical risk: a
+  1600&nbsp;kVA unit is a ~3&ndash;5&nbsp;t fragile load, and resin windings dislike
+  shock. Specify impact recorders on each unit for the road journey, inspect on arrival
+  before off-loading signature, and check the catalogue's transport dimensions and
+  enclosure split early — door and corridor sizes have redesigned more substations than
+  electrical calculations have.</p>
+
+  <div class="tip">At the factory acceptance test, witness the routine tests (ratio,
+  vector group, impedance, losses, applied/induced voltage, partial discharge for resin
+  units — PD is the cast-resin quality fingerprint, indicatively &le;10&nbsp;pC), and
+  read the measured impedance and losses against the capitalisation in the bid. The FAT
+  certificate values, not the catalogue, become the plant's protection-study and
+  energy-model inputs.</div>
+
+  <h4>Procurement review checklist</h4>
+
+  <ul class="checklist">
+    <li>Ratings line verified: 2 &times; 1600 kVA, 13.8/0.4 kV, Dyn11, Z = 6 %, 60 Hz nameplate — both units identical, impedances matched within tolerance.</li>
+    <li>Rated power certified in writing at 50&nbsp;&deg;C design ambient (IEC 60076-11 / -2), including the AF and enclosed ratings where applicable.</li>
+    <li>Losses (P<sub>0</sub>/P<sub>k</sub>) declared at a stated reference temperature, evaluated on capitalised cost, and compliant with SASO efficiency requirements.</li>
+    <li>Insulation class/rise, fire-behaviour class (F1) and climatic/environmental classes (C2/E2) stated; IP enclosure rating and room ventilation design agreed.</li>
+    <li>Tappings &plusmn;2 &times; 2.5 % off-circuit confirmed; commissioning tap-setting procedure and same-tap rule for both units in the O&amp;M documents.</li>
+    <li>Protection interfaces complete: PT100/T-relay schedule, declared inrush data to the relay study, marshalling to DCS/PMS defined.</li>
+    <li>Paperwork chain complete: SABER/SASO certificates, type- and routine-test reports at 60 Hz, SEC spec alignment and acceptance references, transport/impact-recorder and seismic anchorage documents.</li>
+  </ul>
+
+  <div class="note"><strong>Closing the loop.</strong> Everything in this section is
+  indicative training data. The binding chain for the real purchase is: SEC written
+  requirements &rarr; formal load and short-circuit studies
+  (<a href="#c-transformer">Part 2</a>) &rarr; approved data sheet &rarr; vendor
+  certified drawings and test reports &rarr; FAT &rarr; site acceptance and
+  energisation. The catalogue's job is only to make you fluent for that
+  conversation.</div>
+
+</section>

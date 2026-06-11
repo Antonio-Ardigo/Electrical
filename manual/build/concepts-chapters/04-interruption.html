@@ -1,0 +1,104 @@
+<article class="concept" id="concept-interruption">
+  <h2>4. Breaker Arc Interruption</h2>
+  <p class="backlink">Manual deep-dive: <a href="manual-rev3.html#c-breaker">open the full section</a></p>
+
+  <h3>The Problem</h3>
+  <p>Intuition says stopping a current is easy: pull the contacts apart and the circuit is broken. At 38 500 A, intuition is wrong in the most dramatic way available to electrical engineering. The instant the contacts separate, the current does not stop — it cannot, because the circuit's inductance insists on continuity of current — so it leaps the gap as an <strong>electric arc</strong>: a channel of ionised metal vapour and plasma at 5 000–20 000 °C, hotter than the surface of the sun, and an excellent conductor. Opening the contacts has not interrupted anything; it has merely inserted a small plasma furnace into the circuit. Pull the contacts further apart and the arc simply stretches.</p>
+  <p>Early switchgear builders learned this destructively: knife switches opened under fault load became flame-throwers; the arc burned until something melted, welded or exploded. A switch that can <em>carry</em> 2 500 A and a device that can <em>extinguish</em> a 38.5 kA arc are entirely different machines — and the second one is what "circuit breaker" actually means. Its true job description is not "opens the circuit" but "<strong>kills an arc, reliably, in a few hundredths of a second, and survives</strong>".</p>
+  <p>What is at stake: every protection scheme in Ch. 5 and every arc-flash calculation in Ch. 6 silently assumes that when a trip command is issued, the breaker really does clear the fault within its rated time. Arc interruption is the physical foundation under the entire protection philosophy.</p>
+  <h3>Core Principles</h3>
+  <h4>Principle 1: Inductance forbids instant interruption</h4>
+  <p><strong>Statement:</strong> the energy stored in the circuit's magnetic field (½LI²) must go somewhere; current through an inductance cannot step to zero. Force it to and the inductance answers with whatever voltage it takes (<code>v = L·di/dt</code>) to keep current flowing — thousands of volts across a millimetre gap, which is precisely what strikes the arc. The arc is not an accident; it is the circuit's stored energy refusing to vanish.</p>
+
+  <h4>Principle 2: AC gives you a free gift — current zero every 8.33 ms</h4>
+  <p><strong>Statement:</strong> a 60 Hz alternating current passes through exactly zero twice per cycle, i.e. every <code>1/(2×60) = 8.33 ms</code>. At that instant the arc carries no current and momentarily stops being heated. Every practical AC breaker works by exploiting this instant: it does not fight the 38.5 kA — it waits for the natural zero, then makes sure the arc cannot re-ignite.</p>
+  <p><strong>Example:</strong> this is why DC breaking is notoriously harder than AC (no free zero — the breaker must force one) and why our 110 V DC distribution (DCDB) uses breakers specifically rated for DC duty.</p>
+
+  <h4>Principle 3: Interruption is a race — dielectric recovery vs voltage recovery</h4>
+  <p><strong>Statement:</strong> after current zero, two things rise simultaneously: the gap's <em>dielectric strength</em> (the cooling, de-ionising gas regaining its insulation) and the <em>transient recovery voltage</em> (TRV — the system voltage reappearing across the open contacts, with an oscillatory overshoot). If insulation wins the race, the fault is cleared; if the voltage wins, the arc re-strikes and the breaker gets another try 8.33 ms later. A breaker's interrupting rating is fundamentally a statement about winning this race at that current.</p>
+
+  <h4>Principle 4: The interrupting medium is the design choice</h4>
+  <p><strong>Statement:</strong> what fills the contact gap decides how fast de-ionisation happens. <em>Air with arc chutes</em> (our LV ACBs and MCCBs): splitter plates chop the arc into many short arcs in series, multiplying arc voltage and cooling surface. <em>Vacuum</em> (our 13.8 kV breakers): with almost no gas to ionise, the metal-vapour arc collapses at current zero and the gap recovers dielectric strength in microseconds — compact, maintenance-light, ideal at MV. <em>SF6</em>: an electronegative gas that captures free electrons; superb at transmission voltages, now retreating where vacuum suffices because SF6 is a potent greenhouse gas.</p>
+
+  <h3>Key Innovations</h3>
+  <h4>The arc chute / deion plate stack (early 20th century, refined by every LV OEM since)</h4>
+  <p><strong>What:</strong> a stack of steel/copper plates above the contacts; magnetic forces (the same i² forces of Ch. 2, here put to work) drive the arc up into the stack, splitting one long arc into 10–20 short arcs in series.</p>
+  <p><strong>Why it mattered:</strong> each short arc needs ~20–30 V to sustain near its electrodes, so the stack forces total arc voltage to several hundred volts — comparable to the 400 V system voltage. The arc then starves: the system can no longer drive full current through it, current is actively pushed down ("current limiting" in fast MCCBs), and at the next zero the segmented, cooled arc cannot re-strike. This is the technology inside our LV-MSB ACBs and every MCC breaker.</p>
+  <h4>The vacuum interrupter (commercialised 1960s)</h4>
+  <p><strong>What:</strong> contacts sealed in a ceramic bottle at ~10⁻⁶ mbar; contact geometry spins or spreads the arc magnetically so it does not bore into one spot.</p>
+  <p><strong>Why it mattered:</strong> dielectric recovery in a vacuum gap is so fast that a contact gap of barely 10–15 mm interrupts 31.5 kA at 17.5 kV class — which is why our MV switchgear is a fraction of the size of its oil-breaker ancestors, needs no arc-products venting, and survives tens of thousands of operations. Vacuum + 60 Hz current zeros is the quiet workhorse of the whole MV system.</p>
+  <h3>Worked Example</h3>
+  <p><strong>Scenario:</strong> order-of-magnitude energy handled by an LV air-break ACB clearing the 38.5 kA bus fault in 3 cycles at 60 Hz. <strong>Given:</strong> Isc = 38.5 kA RMS (Ch. 2); arc voltage in the chute ≈ 300 V (typical for a multi-plate LV stack, indicative); 60 Hz. Every number is an estimate of scale, not a design figure.</p>
+  <div class="worked">
+    <p><strong>Step 1 — Clearing time for a "3-cycle" breaker at 60 Hz.</strong></p>
+    <code class="formula">1 cycle = 1/60 s = 16.7 ms   →   t_clear ≈ 3 × 16.7 ms ≈ 50 ms</code>
+    <p><em>Why:</em> ~1–1.5 cycles of mechanism/relay action plus arcing until a favourable current zero. Note at 60 Hz everything is ~17 % faster per cycle than the 50 Hz figures in older references — current zeros arrive every 8.33 ms, not 10 ms.</p>
+    <p><strong>Step 2 — Of that, how long does the arc actually burn?</strong> Contacts part after the mechanism delay; take arcing time ≈ 1 to 1.5 cycles:</p>
+    <code class="formula">t_arc ≈ 1.5 × 16.7 ms ≈ 25 ms  (arc rides through 2–3 current zeros at worst)</code>
+    <p><strong>Step 3 — Power dissipated in the arc while it burns.</strong></p>
+    <code class="formula">P_arc ≈ V_arc × I ≈ 300 V × 38 500 A ≈ 11.6 MW</code>
+    <p><em>Why:</em> the arc behaves roughly as a constant-voltage element (~300 V across the chute) carrying the fault current. Eleven megawatts — about six times the whole plant's demand — concentrated in a shoebox of steel plates.</p>
+    <p><strong>Step 4 — Energy absorbed over the arcing time.</strong></p>
+    <code class="formula">E_arc ≈ P_arc × t_arc ≈ 11.6×10⁶ W × 0.025 s ≈ 290 kJ</code>
+    <code class="formula">Pessimistic bound (arc for the full 50 ms clear): E ≈ 11.6 MW × 0.05 s ≈ 580 kJ</code>
+    <p><em>Why:</em> so the chute must swallow roughly <strong>0.3–0.6 MJ</strong>. For feel: ≈ a 2 kW kettle running for 3–5 minutes, or the kinetic energy of a 1.5 t car at 70–100 km/h — released in a fortieth of a second, inside the panel. This is the energy budget the arc chute, venting and contact materials are type-tested against, and why an ACB that has cleared its rated fault must be inspected before re-service.</p>
+    <p><strong>Step 5 — Sanity check.</strong> Compare with the let-through I²t of Ch. 2 (7.4×10⁷ A²s over 50 ms): the arc takes a few hundred kJ; the rest of the circuit's I²R heating spreads along cables and bus. Orders of magnitude are consistent: MJ-class energy, MW-class power, ms-class time — exactly the regime where only "wait for the zero, win the recovery race" works, and why no one "just opens" 38.5 kA.</p>
+  </div>
+  <div class="warning">
+    <p><strong>Field rule:</strong> never defeat or hand-slow a breaker mechanism, and never put a non-rated device (isolator, contactor, switch-disconnector) in a position where it could be called on to break fault current. Isolators isolate <em>dead</em> circuits; only breakers kill arcs.</p>
+  </div>
+
+  <h3>Intuitive Formalization</h3>
+  <p>The physics fits in four short statements. Symbols: <code>L</code> = circuit inductance (H), <code>i</code> = current (A), <code>f</code> = 60 Hz, <code>V_arc</code> = arc voltage (V), <code>t_arc</code> = arcing time (s).</p>
+  <div class="worked">
+    <code class="formula">E_stored = ½ L i²            — what must be dissipated (you can't delete it)</code>
+    <code class="formula">t_zero = 1/(2f) = 8.33 ms    — how often nature offers a way out</code>
+    <code class="formula">E_arc ≈ V_arc × I × t_arc    — the bill the breaker pays meanwhile</code>
+    <code class="formula">Clear if: dielectric recovery rate &gt; TRV rise rate at current zero</code>
+  </div>
+  <p>Physical meaning: the first line is why the arc exists at all (magnetic energy demanding an exit). The second is the entire reason AC switchgear is practical — at 60 Hz the exit door opens 120 times a second. The third prices each missed door. The fourth is the pass/fail criterion: interruption is not brute force but a race won at a zero crossing, by a medium (air chute, vacuum, SF6) engineered to regain insulation faster than the system voltage returns.</p>
+
+  <h3>CTQ Mapping</h3>
+  <table class="tbl">
+    <thead><tr><th>Critical-to-quality requirement</th><th>How the concept delivers it</th><th>What to check in the field</th></tr></thead>
+    <tbody>
+      <tr><td>Every breaker can actually clear its bus fault</td><td>Interrupting rating = proven win of the recovery race at rated current</td><td>Icu ≥ bus fault level: LV ACBs ≥ 50 kA vs 38.5 kA; MV vacuum breakers 31.5 kA vs 25 kA design</td></tr>
+      <tr><td>Clearing times assumed in Ch. 5/6 are real</td><td>3-cycle ≈ 50 ms at 60 Hz comes from mechanism + arcing physics, not the relay alone</td><td>Breaker operating-time test results (timing tests) on record; add breaker time to relay time in grading and arc-flash studies</td></tr>
+      <tr><td>Breaker remains serviceable after fault duty</td><td>Arc chute/contacts are type-tested for the ~0.3–0.6 MJ energy bill, a finite number of times</td><td>After any full fault clearance: inspect contacts/chutes per OEM; track cumulative interrupted-current duty</td></tr>
+      <tr><td>No arc-breaking duty on non-rated devices</td><td>Only an interrupting medium can de-ionise the gap; isolators have none</td><td>Interlocks prevent opening isolators/earth switches on load; switching procedures name the breaker first, always</td></tr>
+      <tr><td>Mechanism ready at 50 °C, dusty ambient</td><td>The "race" is won by stored-energy springs and clean contacts — both degrade silently</td><td>Periodic spring-charge, trip-coil and timing checks; IP54 integrity and panel filters maintained</td></tr>
+    </tbody>
+  </table>
+  <h3>Conceptual Map</h3>
+  <pre>
+                    ARC INTERRUPTION (core)
+              "kill the plasma, win the race"
+                            |
+        +-------------------+--------------------+
+        | rests on          | rests on           | rests on
+        v                   v                    v
+  [½LI² must go        [60 Hz current zero   [Race at the zero:
+   somewhere →          every 8.33 ms =       dielectric recovery
+   arc strikes]         free exit door]       vs TRV rise]
+        |                   |                    |
+        | led to            | led to             | led to
+        v                   v                    v
+  [Arc = working      [AC breakers wait,    [Interrupting MEDIUM
+   element: ~300 V,    never fight 38.5 kA   is the design choice]
+   ~11.6 MW burn]      head-on]                  |
+        |                            +-----------+-----------+
+        | enables                    v           v           v
+        v                        [Air chute] [Vacuum]     [SF6]
+  [Energy budget ≈ 0.3–0.6 MJ     LV ACB/     13.8 kV     HV legacy,
+   per clear → type tests,        MCCB        bottles     GHG retreat
+   post-fault inspection]            |           |
+                                     +-----+-----+
+                                           | enables
+                                           v
+                            Trustworthy clearing times →
+                            Ch.5 Selectivity, Ch.6 Arc Flash
+  </pre>
+  <div class="note">
+    <p>Arc voltages, times and energies above are <strong>indicative order-of-magnitude</strong> values on the Rev 3 basis (400 V / 13.8 kV, 60 Hz); breaker type-test certificates and OEM data govern.</p>
+  </div>
+</article>

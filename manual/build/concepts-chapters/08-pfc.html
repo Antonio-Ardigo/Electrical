@@ -1,0 +1,100 @@
+<article class="concept" id="concept-pfc">
+  <h2>8. Power Factor Correction</h2>
+  <p class="backlink">Manual deep-dive: <a href="manual-rev3.html#c-pfc">open the full section</a></p>
+
+  <h3>The Problem</h3>
+  <p>Every motor, transformer and reactor in the plant needs a magnetic field to work, and that field is built and collapsed 60 times a second. The energy that swings in and out of those fields is <strong>reactive power</strong> (measured in kvar). It does no useful work — no shaft turns because of it, no product is made — yet the current that carries it is just as real as the current that delivers kilowatts. It heats cables, loads transformers, drops voltage and occupies switchgear ampacity.</p>
+  <p>Our Rev 3 plant draws an indicative <strong>2.0 MW at power factor 0.85</strong>. That means the apparent power the network must deliver is about <strong>2353 kVA</strong>, not 2000 kVA. Roughly 15 % of the current flowing through the SEC metering point, the 13.8 kV switchgear, both 1600 kVA transformers and the LV main switchboard is doing nothing but magnetising iron. Without correction, the plant pays for that three ways: a <strong>Saudi Electricity Company (SEC) tariff penalty</strong> when the metered power factor falls below the contractual threshold (SEC applies reactive-power charges below roughly 0.9, per the Distribution Code and its tariff rules — exact clause to be confirmed in the supply agreement), extra I²R losses in every cable, and transformer capacity that is bought, installed and cooled at 50 °C ambient but never converted into product.</p>
+  <p>What did plants do before correction? They simply oversized everything — bigger transformers, bigger cables — and paid the penalty. That works, but it is the most expensive way imaginable to make magnetism. Power factor correction (PFC) is the alternative: generate the reactive power <em>locally</em>, with capacitors, a few metres from the loads that consume it.</p>
+
+  <h3>Core Principles</h3>
+  <h4>Principle 1: Power has two components, and only one of them is useful</h4>
+  <p><strong>Statement:</strong> Apparent power S (kVA) is the vector combination of real power P (kW), which does work, and reactive power Q (kvar), which sustains magnetic and electric fields.</p>
+  <p>The classic picture is a glass of beer: the liquid is kW (you drink it), the foam is kvar (you must carry it, but it quenches no thirst), and the glass is kVA (what the barman — SEC — actually has to hand over the counter). The three are related by Pythagoras: <code>S² = P² + Q²</code>. Power factor is simply <code>pf = P / S</code> — the fraction of the glass that is beer.</p>
+  <h4>Principle 2: Current follows kVA, not kW</h4>
+  <p><strong>Statement:</strong> For a given real power, line current scales as 1/pf, so every piece of copper between source and load is sized by the power factor.</p>
+  <p>At 400 V, our 2.0 MW plant at pf 0.85 draws about 3396 A total; at pf 1.0 the same 2.0 MW would need only 2887 A. The 509 A difference flows through both transformers, the LV-MSB, and every feeder — pure overhead. Cable losses scale with current <em>squared</em>, so a 15 % current reduction cuts I²R losses by about 28 %.</p>
+  <h4>Principle 3: Capacitors are local kvar generators</h4>
+  <p><strong>Statement:</strong> A capacitor draws current that leads the voltage by 90°, exactly opposite to the lagging magnetising current of motors, so the two cancel.</p>
+  <p>An induction motor and a capacitor connected to the same bus swap reactive energy back and forth between the motor's magnetic field and the capacitor's electric field, 120 times a second at 60 Hz. The grid no longer has to carry that exchange — it stays inside the plant. The capacitor does not "consume" anything in steady state except its small dielectric losses.</p>
+  <h4>Principle 4: Compensate close to the demand, control to a target</h4>
+  <p><strong>Statement:</strong> Reactive power is best produced electrically close to where it is consumed, and the amount must follow the load, because over-correction (leading power factor) causes overvoltage and is also penalised.</p>
+  <p>That is why the Rev 3 plant puts an automatic <strong>≈580 kvar detuned bank (tag PFC)</strong> on the 400 V main switchboard rather than a fixed bank at 13.8 kV: it relieves the transformers as well as the utility, and it switches in steps as compressors start and stop.</p>
+
+  <h3>Key Innovations</h3>
+  <h4>The automatic multi-step capacitor bank (mid-20th century onward)</h4>
+  <p><strong>What:</strong> A var controller measures bus kvar via a CT, compares it to a target power factor (here 0.95), and switches capacitor steps (e.g. 6 × 100 kvar) in and out through contactors with discharge resistors.</p>
+  <p><strong>Why it mattered:</strong> A fixed bank sized for full load over-corrects at night and under-corrects at peak. Automatic stepping keeps the metered power factor inside the SEC band around the clock without an operator touching anything.</p>
+  <h4>The detuned reactor (1970s onward)</h4>
+  <p><strong>What:</strong> A series reactor in front of each capacitor step — 7 % in our plant — that tunes the branch to 227 Hz at 60 Hz, safely below the 5th harmonic at 300 Hz.</p>
+  <p><strong>Why it mattered:</strong> Plain capacitors form a resonant circuit with the transformer inductance and can amplify VFD harmonics catastrophically. The detuned reactor makes the bank look inductive to all characteristic harmonics, so it cannot resonate with them. Chapter <a href="09-harmonics.html">9 — Harmonics &amp; VFDs</a> works this out in numbers.</p>
+  <h4>LV placement economics</h4>
+  <p><strong>What:</strong> Installing the bank at 400 V on LV-MSB instead of at 13.8 kV.</p>
+  <p><strong>Why it mattered:</strong> LV capacitors and switching are cheaper per kvar at this size, maintenance is simpler, and — crucially — the reactive current disappears from the 1600 kVA transformers themselves, releasing transformer capacity, not just utility capacity.</p>
+
+  <h3>Worked Example: Sizing the Rev 3 PFC bank from 0.85 to 0.95</h3>
+  <div class="worked">
+    <p><strong>Given:</strong> Plant real power P = 2.0 MW (2000 kW), existing power factor pf₁ = 0.85 lagging, target pf₂ = 0.95 lagging, bus 400 V / 60 Hz. All values indicative.</p>
+    <p><strong>Step 1 — Reactive power at pf 0.85.</strong> First convert each power factor to its phase angle and tangent. cos φ₁ = 0.85 → φ₁ = 31.8° → tan φ₁ = 0.620.</p>
+    <p><code class="formula">Q₁ = P × tan φ₁</code></p>
+    <p><code class="formula">Q₁ = 2000 kW × 0.620 = 1239 kvar</code></p>
+    <p><em>Why:</em> tan φ is the ratio of foam to beer — kvar per kW. At pf 0.85 the plant drags 1239 kvar through the metering point.</p>
+    <p><strong>Step 2 — Reactive power allowed at pf 0.95.</strong> cos φ₂ = 0.95 → φ₂ = 18.2° → tan φ₂ = 0.329.</p>
+    <p><code class="formula">Q₂ = 2000 kW × 0.329 = 657 kvar</code></p>
+    <p><strong>Step 3 — Capacitor bank size.</strong> The bank must supply the difference:</p>
+    <p><code class="formula">Q_c = Q₁ − Q₂ = 1239 − 657 = 582 kvar</code></p>
+    <p>Select the next standard build-up: <strong>600 kvar in 6 × 100 kvar detuned steps</strong> (≈580 kvar effective at the bus once the 7 % reactor and tolerance are accounted for — matching the Plant Data Card).</p>
+    <p><em>Note:</em> with a detuned bank the capacitor units themselves are rated above 400 V (typically 480 V class) because the series reactor raises the voltage across the capacitor; the <em>bank</em> nameplate kvar is quoted at the bus.</p>
+    <p><strong>Step 4 — Apparent power released.</strong></p>
+    <p><code class="formula">S₁ = P / pf₁ = 2000 / 0.85 = 2353 kVA</code></p>
+    <p><code class="formula">S₂ = P / pf₂ = 2000 / 0.95 = 2105 kVA</code></p>
+    <p><code class="formula">ΔS = 2353 − 2105 = 248 kVA released (≈ 10.5 %)</code></p>
+    <p><em>Why:</em> 248 kVA of transformer and switchgear capacity — already bought and derated for 50 °C ambient — becomes available for future load, free.</p>
+    <p><strong>Step 5 — Current and loss reduction.</strong> At 400 V:</p>
+    <p><code class="formula">I₁ = 2 353 000 / (√3 × 400) = 3396 A&nbsp;&nbsp;→&nbsp;&nbsp;I₂ = 2 105 000 / (√3 × 400) = 3038 A</code></p>
+    <p><code class="formula">Loss ratio = (I₂/I₁)² = (0.85/0.95)² = 0.80 → ≈ 20 % lower I²R losses</code></p>
+    <p><strong>Sanity check:</strong> 582 kvar is about 29 % of the 2000 kW load — a normal ratio for a motor-heavy plant moving from 0.85 to 0.95. The bank current is 600 000 / (√3 × 400) ≈ 866 A, well within a dedicated LV-MSB feeder. Result: <strong>≈600 kvar automatic detuned bank, target pf 0.95</strong>, SEC penalty avoided, 248 kVA freed.</p>
+  </div>
+
+  <h3>Intuitive Formalization</h3>
+  <p>Everything in this chapter follows from one right-angled triangle. Draw P horizontally (the work you sell), Q vertically (the field energy you shuttle), and S as the hypotenuse (the current-carrying burden):</p>
+  <p><code class="formula">S² = P² + Q²&nbsp;&nbsp;&nbsp;pf = cos φ = P / S&nbsp;&nbsp;&nbsp;Q = P × tan φ</code></p>
+  <p>Here <strong>P</strong> is real power in kW (rate of doing work), <strong>Q</strong> is reactive power in kvar (peak rate of energy exchange with fields — it averages to zero over a cycle, which is exactly why it earns nothing), <strong>S</strong> is apparent power in kVA (what determines current: S = √3 × U × I), and <strong>φ</strong> is the time-shift angle between voltage and current waves. The whole design method is one line:</p>
+  <p><code class="formula">Q_c = P × (tan φ₁ − tan φ₂)</code></p>
+  <p>Physical meaning: the capacitor bank's job is to shrink the vertical leg of the triangle from tan φ₁ per kW down to tan φ₂ per kW, while the horizontal leg — the product you actually make — stays untouched. The hypotenuse shortens, the current falls, and everything upstream breathes easier. Over-correct (Q_c &gt; Q₁) and the triangle flips below the axis: leading power factor, rising bus voltage, and a different SEC complaint.</p>
+
+  <h3>CTQ Mapping</h3>
+  <table class="tbl">
+    <thead><tr><th>Critical-to-quality requirement</th><th>How the concept delivers it</th><th>What to check in the field</th></tr></thead>
+    <tbody>
+      <tr><td>No SEC reactive-power penalty on the monthly bill</td><td>Automatic bank holds metered pf at target 0.95 across the load cycle</td><td>Var controller target setting; metered pf trend at MV-MET over a full production day</td></tr>
+      <tr><td>Transformer capacity available for plant growth</td><td>Correction at LV-MSB removes ≈580 kvar from TX-1/TX-2 loading</td><td>TX load (A) before/after bank steps switch; compare with LV FLC 2309 A</td></tr>
+      <tr><td>No harmonic resonance or capacitor failure</td><td>7 % detuning reactors tune the bank to 227 Hz, below the 5th harmonic</td><td>Reactor nameplate (p = 7 %); capacitor can temperature; THD-V at the bus (&lt;5 %)</td></tr>
+      <tr><td>No overvoltage at light load</td><td>Steps switch out automatically; no fixed over-correction</td><td>Night-time bus voltage and step status; pf never leading</td></tr>
+      <tr><td>Safe maintenance</td><td>Discharge resistors drain each step below 50 V within 1 min (IEC 60831)</td><td>Discharge time verified before touching; lockout procedure includes wait time</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Conceptual Map</h3>
+  <pre>
+                       POWER FACTOR CORRECTION (core)
+                                  |
+        +------------ rests on ---+--------------------+
+        |                         |                    |
+  P-Q-S triangle          Current follows kVA    Capacitor = local
+  S² = P² + Q²            I = S/(√3·U)           kvar generator
+        |                         |                    |
+        |                  led to |             led to |
+        v                         v                    v
+  Q_c = P(tanφ1−tanφ2)    Losses ∝ I²       Automatic stepped bank
+  (sizing rule)           (28 % saved)      + 7 % detuning reactor
+        |                         |                    |
+        +-------- enables --------+--------------------+
+                                  |
+              +-------------------+-------------------+
+              |                   |                   |
+        SEC penalty         248 kVA released     Harmonic safety
+        avoided (pf≥0.95)   on TX-1/TX-2         (see Ch. 9, 227 Hz)
+  </pre>
+  <div class="note"><p>All values indicative, on the Rev 3 basis (13.8 kV / 400-230 V / 60 Hz / 50 °C); the detailed power factor and harmonic study governs final bank size and step count.</p></div>
+</article>

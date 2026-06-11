@@ -206,3 +206,85 @@ Before submitting a fragment, verify:
 - [ ] No external links, `<img>` tags, or `<script>` / `<link>` elements
 - [ ] No duplicate `id` values across all fragments
 - [ ] Numbers are marked as indicative (e.g. "~2 MW", "indicative")
+
+---
+
+## 14. Rev 3 Addendum (Saudi / SEC edition)
+
+### 14.1 Multiple sections per fragment (corrects §2)
+
+A fragment contains **one or more** top-level `<section>` elements. All sections in
+one fragment must share the same `data-part`. The builder parses every top-level
+section for the nav.
+
+### 14.2 Rev 3 electrical basis
+
+The Rev 3 manual is localized to Saudi Arabia (SEC supply): **13.8 kV MV,
+400/230 V LV, 60 Hz, TN-S, 50 °C design ambient**, standards cited as
+SASO-adopted IEC + SEC Distribution Code / Saudi Grid Code / SBC 401.
+Binding plant numbers live in the **Rev 3 Plant Data Card** inside
+`.claude/agents/electrical-engineer.md` — use those values verbatim.
+
+### 14.3 Drawing-basis note (mandatory under every electrical SLD figure)
+
+The SVG diagrams still show the original 11 kV / 415 V / 50 Hz reference design.
+Place this note immediately after the `<figcaption>` of every electrical SLD
+figure, and before any embedded study document:
+
+```html
+<div class="warning drawing-basis"><strong>Drawing basis note.</strong> This diagram was
+drawn for the original 11 kV / 415 V / 50 Hz reference design and has not been re-rendered.
+For this Saudi (SEC) Rev 3 edition read 11 kV as 13.8 kV, 415 V as 400 V and 50 Hz as 60 Hz.
+Topology, tags and protection philosophy are unchanged.</div>
+```
+
+### 14.3a Embedded documents (`div.doc-embed`)
+
+`<div class="doc-embed" data-src="...">` embeds a standalone HTML document; the
+builder inlines it as an iframe/srcdoc. The `data-src` path is relative to the
+`manual/` directory. Every `doc-embed` must be preceded by a document-basis note
+when the embedded document uses a different electrical basis from the Rev 3
+plant data card.
+
+### 14.4 Catalogue disclaimer (mandatory at the top of every `cat-` section)
+
+```html
+<div class="warning"><strong>Indicative catalogue data.</strong> Product families and typical
+parameters are listed for training and familiarisation only, are approximate, and change with
+manufacturer revisions. No part numbers are given; always obtain current certified data sheets
+and SASO/SEC acceptance status from the manufacturer.</div>
+```
+
+### 14.5 Calculation pedagogy pattern (mandatory `<h4>` sub-headings)
+
+Every calculation topic in Part 2 uses these canonical `<h4>` headings, in order:
+
+1. `Why this exists`
+2. `What goes wrong without it`
+3. `Feel for the numbers`
+4. `Worked calculation`
+5. `Equipment settings`
+6. `Equipment technology`
+7. `Control`
+8. `Sizing method`
+
+Concept before math; complete worked calcs (formula → substitution → result with
+units → sanity check); intuitive energy comparisons in "Feel for the numbers".
+
+**Exemption:** sections badged "Reference" (e.g. the load-flow overview
+`c-loadflow` in `30-part2-foundations.html`) are survey/reference material and
+are exempt from the 8-heading pattern.
+
+### 14.6 Section id prefixes
+
+| Part | Prefix |
+|------|--------|
+| Front matter | `cover-` |
+| Part 0 — Orientation | `orientation-` |
+| Part 1 — Foundations | `f-` |
+| Part 2 — Calculations | `c-` |
+| Part 3 — SPOF Analysis & Reliability | `s-` |
+| Part 4 — Philosophies, Modifications & Control | `p-` |
+| Part 5 — Field Tools & Case Study | `t-` |
+| Part 6 — Equipment Catalogues | `cat-` |
+| Appendices | `a-` |

@@ -2,7 +2,9 @@
      Part 0 — Orientation
      Sections: orientation-job | orientation-forms |
                orientation-workflow | orientation-howto |
-               orientation-conventions
+               orientation-conventions | orientation-saudi |
+               orientation-environment
+     Saudi (SEC) Rev 3 edition — 13.8 kV / 400-230 V / 60 Hz / 50 degC
      ============================================================ -->
 
 <section id="orientation-job" data-title="The Assignment" data-part="Part 0 — Orientation">
@@ -405,23 +407,29 @@
     <tbody>
       <tr>
         <td>Standards basis</td>
-        <td>IEC (primary); IEEE referenced where relevant (e.g. IEEE 1584, IEEE 493)</td>
-        <td>ANSI device numbers (52, 87T, etc.) are used in SLD breaker notation as industry practice.</td>
+        <td>SASO-adopted IEC (primary), applied together with the SEC Distribution Code,
+            the Saudi Grid Code and SBC 401 (Saudi Building Code — Electrical);
+            IEEE referenced where relevant (e.g. IEEE 1584, IEEE 493)</td>
+        <td>ANSI device numbers (52, 87T, etc.) are used in SLD breaker notation as industry practice.
+            See <a href="#orientation-saudi">The Saudi Electrical Context</a> for the regulatory map.</td>
       </tr>
       <tr>
         <td>MV supply voltage</td>
-        <td>11 kV (indicative)</td>
-        <td>Actual utility voltage must be confirmed per plant; could be 6.6 kV, 13.8 kV or other.</td>
+        <td>13.8 kV (SEC standard distribution voltage, indicative)</td>
+        <td>13.8 kV is the normal SEC MV distribution level for industrial customers of this size;
+            confirm the actual connection voltage per plant from the SEC connection agreement.</td>
       </tr>
       <tr>
         <td>LV distribution voltage</td>
-        <td>400 / 415 V, 3-phase</td>
-        <td>IEC utilisation voltage. Confirm per plant.</td>
+        <td>400 / 230 V, 3-phase</td>
+        <td>SEC / SASO low-voltage utilisation voltage. Confirm per plant.</td>
       </tr>
       <tr>
         <td>Frequency</td>
-        <td>50 Hz</td>
-        <td>Confirm per plant.</td>
+        <td>60 Hz</td>
+        <td>The Saudi national grid operates at 60 Hz — not the 50 Hz used in most IEC-basis
+            countries. Confirm per plant; 4-pole induction motors therefore run at a
+            synchronous speed of 1800 rpm.</td>
       </tr>
       <tr>
         <td>MV earthing</td>
@@ -454,10 +462,10 @@
       </tr>
     </thead>
     <tbody>
-      <tr><td><code>MV-MET</code></td><td>Utility revenue metering cubicle</td><td>11 kV (MV)</td></tr>
-      <tr><td><code>MV-SWGR</code></td><td>MV metal-clad switchgear</td><td>11 kV (MV)</td></tr>
-      <tr><td><code>MV-NER</code></td><td>Neutral Earthing Resistor</td><td>11 kV (MV)</td></tr>
-      <tr><td><code>TX-1</code> / <code>TX-2</code></td><td>MV/LV power transformers (2 × 1600 kVA, indicative)</td><td>11 kV / 400 V boundary</td></tr>
+      <tr><td><code>MV-MET</code></td><td>Utility revenue metering cubicle</td><td>13.8 kV (MV)</td></tr>
+      <tr><td><code>MV-SWGR</code></td><td>MV metal-clad switchgear</td><td>13.8 kV (MV)</td></tr>
+      <tr><td><code>MV-NER</code></td><td>Neutral Earthing Resistor</td><td>13.8 kV (MV)</td></tr>
+      <tr><td><code>TX-1</code> / <code>TX-2</code></td><td>MV/LV power transformers (2 × 1600 kVA, indicative)</td><td>13.8 kV / 400 V boundary</td></tr>
       <tr><td><code>LV-MSB</code></td><td>Main LV switchboard / PCC (split bus A/B)</td><td>400 V (LV)</td></tr>
       <tr><td><code>BT</code></td><td>LV bus-tie circuit breaker (normally open)</td><td>400 V (LV)</td></tr>
       <tr><td><code>MCC-1</code> … <code>MCC-n</code></td><td>Motor Control Centres</td><td>400 V (LV)</td></tr>
@@ -498,5 +506,459 @@
     cybersecurity data-handling requirements apply to all data collected on site.
   </div>
 
-  <div class="key">Key takeaway: IEC basis, 11 kV / 400–415 V / 50 Hz, the tag scheme above, all figures indicative — and every site survey is non-intrusive. These four rules underpin everything in this manual. Part 1 now walks you through the standard MV/LV plant architecture you will encounter on most of these 21 sites.</div>
+  <div class="key">Key takeaway: SASO-adopted IEC basis, 13.8 kV / 400–230 V / 60 Hz, the tag scheme above, all figures indicative — and every site survey is non-intrusive. These four rules underpin everything in this manual. Part 1 now walks you through the standard MV/LV plant architecture you will encounter on most of these 21 sites.</div>
+</section>
+
+<!-- ============================================================ -->
+
+<section id="orientation-saudi" data-title="The Saudi Electrical Context" data-part="Part 0 — Orientation">
+  <h2>The Saudi Electrical Context</h2>
+
+  <p><em>Where you are in the workflow: before the first desk study, understand who the utility is, what the connection looks like, and which rulebooks govern every plant in this campaign.</em></p>
+
+  <p>
+    Every plant you will assess is connected to the Saudi grid and operates under the Saudi
+    regulatory framework. Even though the engineering inside the fence is recognisably
+    "IEC-style" MV/LV practice, the surrounding context — the utility, the connection voltage,
+    the codes, the certification regime — is specific to the Kingdom. This section gives you
+    the working map. As everywhere in this manual, regulatory details evolve;
+    <strong>treat the descriptions below as indicative and confirm the current editions of all
+    codes and the actual connection agreement per plant</strong>.
+  </p>
+
+  <h3 id="orientation-saudi-sec">SEC — the utility you connect to</h3>
+
+  <p>
+    The <strong>Saudi Electricity Company (SEC)</strong> is the dominant transmission and
+    distribution utility in the Kingdom and the supply authority for the plants in this
+    campaign. From your point of view as an assessment engineer, SEC matters in four practical ways:
+  </p>
+
+  <ul>
+    <li><strong>Connection agreement:</strong> each plant has (or should have) a connection
+        agreement with SEC stating the connection voltage, the agreed supply capacity, the
+        metering arrangement and the network fault-level data. This document belongs in your
+        Document Inventory (form SF-01) for every plant — chase it during the desk study.</li>
+    <li><strong>Network data:</strong> the utility fault level at the point of connection is
+        an SEC-supplied figure. In this manual we assume a <strong>25 kA design value at
+        13.8 kV</strong> (SEC networks are commonly quoted in the 25–40 kA range, indicative) —
+        confirm per plant before relying on any short-circuit result.</li>
+    <li><strong>Metering and tariffs:</strong> revenue metering (<code>MV-MET</code>) is on the
+        SEC side of the ownership boundary; tariff structure and any power-factor or
+        maximum-demand clauses come from the SEC supply contract.</li>
+    <li><strong>Compliance codes:</strong> SEC publishes the <strong>SEC Distribution Code</strong>,
+        which — together with the national <strong>Saudi Grid Code</strong> — sets the technical
+        conditions a connected customer must meet (see below).</li>
+  </ul>
+
+  <div class="note">
+    <strong>Note — who regulates whom.</strong> SEC is the utility, not the regulator. The
+    sector regulator (the Water &amp; Electricity Regulatory Authority, WERA — formerly ECRA)
+    licenses utilities and approves the codes; SEC applies them at the connection point.
+    For your assessments the practical interface is SEC: the connection agreement, the
+    Distribution Code and the network data all come through the utility.
+  </div>
+
+  <h3 id="orientation-saudi-connection">Connection at 13.8 kV distribution</h3>
+
+  <p>
+    A ~2 MW industrial plant in Saudi Arabia is normally connected at the
+    <strong>13.8 kV SEC distribution level</strong> — too large for an LV service, far too small
+    for a transmission connection. The typical arrangement, and the one assumed throughout this
+    manual, is:
+  </p>
+
+  <ul>
+    <li>SEC feeder(s) terminate in a <strong>utility metering cubicle</strong> (<code>MV-MET</code>)
+        at the plant boundary — this is the ownership and metering demarcation point;</li>
+    <li>the customer's <strong>13.8 kV metal-clad switchgear</strong> (<code>MV-SWGR</code>,
+        17.5 kV class, indicative 31.5 kA / 3 s rating) distributes to the two
+        <strong>13.8/0.4 kV, 1600 kVA</strong> transformers (<code>TX-1</code>/<code>TX-2</code>,
+        Dyn11, Z = 6 %, MV FLC ≈ 66.9 A each, indicative);</li>
+    <li>everything downstream of <code>MV-MET</code> is the customer's responsibility — which is
+        exactly the scope of your SPOF assessment.</li>
+  </ul>
+
+  <p>
+    Other SEC distribution voltages exist (33 kV and legacy levels in some areas), and a few
+    plants may have non-standard arrangements. <strong>Always confirm the actual connection
+    voltage and the demarcation point from the connection agreement and the as-found
+    installation</strong> — a red-line on the SLD at the boundary is one of the most common
+    site-visit findings.
+  </p>
+
+  <h3 id="orientation-saudi-gridcode">Saudi Grid Code essentials for an industrial customer</h3>
+
+  <p>
+    The <strong>Saudi Grid Code</strong> and the <strong>SEC Distribution Code</strong> define the
+    technical envelope of the supply and the customer's obligations. For an industrial customer
+    of this size the essentials are (all values <em>indicative — verify against the current code
+    edition and the connection agreement</em>):
+  </p>
+
+  <ul>
+    <li><strong>Frequency:</strong> the national grid operates at <strong>60 Hz</strong>. Normal
+        operation is held within a narrow band around 60 Hz (roughly ±0.5 %, i.e. ~59.7–60.3 Hz
+        under normal conditions, indicative), with wider excursions permitted briefly during
+        disturbances. Your underfrequency/overfrequency protection and any generator controls
+        must coordinate with these bands.</li>
+    <li><strong>Voltage:</strong> distribution-level supply voltage is typically maintained
+        within about ±5 % of nominal at the connection point under normal conditions
+        (indicative); the customer must keep its own disturbances (flicker, harmonics,
+        unbalance) within code limits.</li>
+    <li><strong>Power factor:</strong> a contractual expectation of <strong>power factor
+        ≥ 0.9 (lagging) at the connection point</strong> is the typical basis (indicative —
+        the exact threshold and any penalty mechanism are tariff/contract matters). This is the
+        commercial driver behind the <code>PFC</code> bank: this plant's design targets 0.95,
+        i.e. ≈ 580 kvar of detuned capacitors, comfortably inside the expectation.</li>
+    <li><strong>Harmonics and power quality:</strong> emission limits at the point of connection
+        follow the codes (aligned with the IEC 61000 series); VFD-heavy plants like these
+        deserve attention here — hence the 7 % detuning reactors on the PFC bank.</li>
+    <li><strong>Protection coordination at the boundary:</strong> the customer's incoming
+        protection must grade with the SEC feeder protection; setting changes at the incomer
+        normally require utility agreement.</li>
+  </ul>
+
+  <div class="tip">
+    <strong>Tip — what to actually check on a plant.</strong> You are not auditing Grid Code
+    compliance in detail. But three quick checks belong in every assessment: (1) does the
+    metered power factor honour the contractual basis, (2) do the incomer relay settings match
+    the SEC-agreed settings record, and (3) is the declared fault level in the short-circuit
+    study consistent with the SEC network data? A mismatch on any of these is a finding.
+  </div>
+
+  <h3 id="orientation-saudi-saso">SASO and the adoption of IEC standards</h3>
+
+  <p>
+    The <strong>Saudi Standards, Metrology and Quality Organization (SASO)</strong> is the
+    national standards body. Rather than writing electrical standards from scratch, SASO
+    largely <strong>adopts IEC standards</strong>, issuing them as Saudi national standards
+    (typically referenced as <em>SASO IEC xxxxx</em>), sometimes with national deviations
+    (notably the 60 Hz frequency, 230/400 V utilisation voltage and the 50&nbsp;°C climatic
+    context). The practical consequences for you:
+  </p>
+
+  <ul>
+    <li>your IEC knowledge transfers almost directly — switchgear is still IEC 62271-series
+        equipment, transformers are still IEC 60076 machines, LV assemblies still follow
+        IEC 61439;</li>
+    <li>when citing a standard in a deliverable, cite the <strong>SASO-adopted edition</strong>
+        where one exists, alongside the SEC codes and SBC 401;</li>
+    <li>watch for the national deviations: ratings stated for 50 Hz or 40&nbsp;°C ambient in a
+        generic IEC catalogue sheet do <em>not</em> automatically hold at 60 Hz and 50&nbsp;°C
+        (see <a href="#orientation-environment">Designing for 50&nbsp;°C and Dust</a>).</li>
+  </ul>
+
+  <p>
+    The table below maps the IEC standards you will use most often to their SASO adoptions.
+    <strong>The mapping is indicative</strong> — adoption status, edition and numbering change
+    over time; confirm the current SASO catalogue entry before citing in a formal deliverable.
+  </p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Subject</th>
+        <th>IEC standard</th>
+        <th>SASO adoption (indicative)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>HV/MV switchgear &amp; controlgear — common specs</td><td>IEC 62271-1</td><td>SASO IEC 62271-1</td></tr>
+      <tr><td>MV metal-enclosed switchgear (1–52 kV)</td><td>IEC 62271-200</td><td>SASO IEC 62271-200</td></tr>
+      <tr><td>Power transformers</td><td>IEC 60076 series</td><td>SASO IEC 60076 series</td></tr>
+      <tr><td>LV switchgear &amp; controlgear assemblies</td><td>IEC 61439 series</td><td>SASO IEC 61439 series</td></tr>
+      <tr><td>LV circuit-breakers</td><td>IEC 60947-2</td><td>SASO IEC 60947-2</td></tr>
+      <tr><td>LV electrical installations</td><td>IEC 60364 series</td><td>SASO IEC 60364 series (basis of SBC 401)</td></tr>
+      <tr><td>Power cables 1–30 kV</td><td>IEC 60502 series</td><td>SASO IEC 60502 series</td></tr>
+      <tr><td>Short-circuit current calculation</td><td>IEC 60909 series</td><td>SASO IEC 60909 (method reference)</td></tr>
+      <tr><td>Degrees of protection (IP code)</td><td>IEC 60529</td><td>SASO IEC 60529</td></tr>
+      <tr><td>Rotating electrical machines</td><td>IEC 60034 series</td><td>SASO IEC 60034 series</td></tr>
+      <tr><td>EMC / power quality limits</td><td>IEC 61000 series</td><td>SASO IEC 61000 series</td></tr>
+      <tr><td>Failure mode and effects analysis (FMEA/FMECA)</td><td>IEC 60812</td><td>SASO IEC 60812 (method reference)</td></tr>
+    </tbody>
+  </table>
+
+  <h3 id="orientation-saudi-saber">SABER — the conformity certification platform</h3>
+
+  <p>
+    <strong>SABER</strong> is the Saudi online conformity-assessment platform through which
+    regulated products imported into or sold in the Kingdom obtain their
+    <strong>Product Certificate of Conformity</strong> and per-consignment
+    <strong>Shipment Certificate</strong>, issued via SASO-approved certification bodies.
+    Many categories of electrical equipment are regulated products. Why an assessment engineer
+    should care:
+  </p>
+
+  <ul>
+    <li>when your Recommendations Register leads to a concept modification with new equipment,
+        the procurement phase will require <strong>SABER certification for regulated items</strong> —
+        flag this in the outline specification so it is not discovered at customs;</li>
+    <li>vendor "typical" data sheets are not evidence of Saudi acceptance — ask for the
+        certified data sheet and SASO/SABER status (see the catalogue disclaimer convention in
+        <a href="#cat-intro">Part 6</a>);</li>
+    <li>lead times for certification are real schedule items in any modification plan.</li>
+  </ul>
+
+  <h3 id="orientation-saudi-sbc">SBC 401 — the Saudi Building Code, Electrical</h3>
+
+  <p>
+    <strong>SBC 401</strong> is the electrical part of the <strong>Saudi Building Code</strong>.
+    It governs electrical installations in buildings and facilities in the Kingdom and is
+    grounded in the IEC 60364 installation rules (with national adaptations for 230/400 V,
+    60 Hz and the Saudi climate). For the plants in this campaign, SBC 401 is most relevant to:
+  </p>
+
+  <ul>
+    <li><strong>LV installation practice:</strong> earthing arrangement (TN-S in this manual's
+        basis), protection against electric shock, RCD requirements for final circuits,
+        cable installation and identification;</li>
+    <li><strong>Buildings on the plant:</strong> switchrooms, control rooms, admin buildings —
+        their wiring, lighting, socket circuits and emergency systems fall squarely under
+        SBC 401;</li>
+    <li><strong>Modification packages:</strong> any concept modification touching an LV
+        installation should cite SBC 401 alongside the SASO-adopted IEC standards in its
+        outline specification.</li>
+  </ul>
+
+  <div class="note">
+    <strong>Note — how the three layers stack.</strong> Think of the regulatory stack in three
+    layers: <strong>SASO-adopted IEC</strong> standards define <em>what good equipment and
+    installations are</em>; <strong>SBC 401</strong> defines <em>how installations in buildings
+    must be designed and erected</em>; the <strong>SEC Distribution Code / Saudi Grid Code</strong>
+    define <em>the rules at the connection point with the utility</em>. A compliant plant
+    satisfies all three simultaneously. In your deliverables, cite them together.
+  </div>
+
+  <div class="key">Key takeaway: SEC supplies at 13.8 kV / 60 Hz under the SEC Distribution Code
+  and the Saudi Grid Code (power factor ≥ 0.9 typical contractual basis, indicative); SASO adopts
+  the IEC standards you already know; SABER certifies the products you specify; SBC 401 governs
+  the building installations. Cite all of them together, and confirm current editions and the
+  per-plant connection agreement before issuing any deliverable.</div>
+</section>
+
+<!-- ============================================================ -->
+
+<section id="orientation-environment" data-title="Designing for 50 °C and Dust" data-part="Part 0 — Orientation">
+  <h2>Designing for 50 °C and Dust</h2>
+
+  <p><em>Where you are in the workflow: calibrate your engineering instincts to the Saudi environment before you size, check or inspect anything — the climate quietly invalidates many "standard" ratings.</em></p>
+
+  <p>
+    Most IEC equipment ratings are written for a 40&nbsp;°C maximum ambient (often 35&nbsp;°C
+    average). The plants in this campaign live in a different world: <strong>50&nbsp;°C design
+    ambient</strong>, intense solar radiation, wind-blown dust and sand, and — at coastal and
+    high-water-table sites — aggressive humidity and salinity. Almost every reliability and
+    sizing judgement you make must pass through this filter. All figures below are
+    <strong>indicative</strong>; site climatic data and manufacturer derating curves govern.
+  </p>
+
+  <h3 id="orientation-env-ambient">50 °C ambient — the dominant design driver</h3>
+
+  <p>
+    Heat is the single most important environmental variable for electrical equipment, because
+    almost every failure mechanism — insulation ageing, contact deterioration, electronics
+    drift, battery decay — accelerates with temperature. A useful rule of thumb: <strong>every
+    8–10&nbsp;°C of additional operating temperature roughly halves the life of organic
+    insulation</strong> (the classic Arrhenius/Montsinger behaviour). Running gear designed for
+    40&nbsp;°C at a true 50&nbsp;°C ambient is therefore not a marginal note — it can halve
+    insulation life and erode every thermal margin in the plant.
+  </p>
+
+  <p>What it means in practice on these plants:</p>
+
+  <ul>
+    <li><strong>Transformers:</strong> an IEC 60076 transformer's rated temperature rise assumes
+        a standard ambient; at 50&nbsp;°C it must either be purchased with a suitably reduced
+        rise (the usual Saudi practice) or operated below nameplate. Check the nameplate ambient
+        on site — a "standard ambient" unit at full load in a Saudi summer is a finding.</li>
+    <li><strong>Switchgear and busbars:</strong> continuous current ratings are
+        ambient-referenced; a board rated 2500 A at 40&nbsp;°C may carry meaningfully less at
+        50&nbsp;°C switchroom temperature. The LV main board carrying ≈ 2309 A per transformer
+        (indicative) has little slack to waste.</li>
+    <li><strong>The diesel generator:</strong> engine and alternator outputs fall with intake
+        air temperature and altitude — which is exactly why this plant's standby set is
+        specified as <strong>1250 kVA ESP <em>at 50&nbsp;°C</em></strong> (indicative), not at
+        the brochure's reference conditions.</li>
+    <li><strong>Electronics (VFDs, relays, UPS):</strong> most drives derate above 40&nbsp;°C
+        (typically a few percent of output current per °C, indicative) and their cooling fans
+        become life-limiting components.</li>
+  </ul>
+
+  <div class="warning">
+    <strong>Warning — nameplate ≠ usable rating.</strong> On site, never accept a nameplate
+    rating at face value. Ask: <em>at what ambient was this rating declared, and what is the
+    real ambient where the equipment lives?</em> A piece of equipment that is "adequately rated"
+    on paper but thermally over-driven every summer afternoon is a slow-motion failure — and a
+    legitimate FMECA entry.
+  </div>
+
+  <h3 id="orientation-env-solar">Solar gain on outdoor enclosures</h3>
+
+  <p>
+    Air temperature is only part of the story. Direct solar radiation on an outdoor enclosure
+    adds heat the ambient figure does not capture: an unshaded metal kiosk, feeder pillar or
+    marshalling box in the Saudi sun commonly runs <strong>10–15&nbsp;°C above the surrounding
+    air internally</strong> (indicative) — so a 50&nbsp;°C day can mean 60–65&nbsp;°C inside the
+    box, beyond the working range of much electronics and battery equipment.
+  </p>
+
+  <ul>
+    <li>Prefer <strong>shaded or indoor</strong> locations for anything electronic; a simple
+        sunshade canopy over an outdoor panel is one of the cheapest reliability upgrades
+        available.</li>
+    <li>Specify <strong>light-coloured / reflective finishes</strong> and, where applicable,
+        double-skin (ventilated) roofs on outdoor enclosures.</li>
+    <li>On site, note the <strong>orientation</strong> of outdoor panels: a west-facing door in
+        afternoon sun is the worst case. Touch-test (back of hand, carefully) and record
+        suspiciously hot enclosures in the Site-Visit Report.</li>
+  </ul>
+
+  <h3 id="orientation-env-dust">Dust and sand — ingress, filters and creepage</h3>
+
+  <p>
+    Wind-blown dust and occasional sandstorms are routine in the Central sector. Dust attacks
+    electrical equipment in three distinct ways, each with its own countermeasure:
+  </p>
+
+  <ul>
+    <li><strong>Ingress:</strong> dust inside enclosures blankets components (worsening heat),
+        abrades moving parts and contaminates contacts. Specify <strong>minimum IP54 for
+        outdoor enclosures</strong> (IP65 for instruments and small boxes is common practice,
+        indicative) per IEC 60529, and keep switchroom doors and gland plates properly sealed.
+        On site, dust drifts inside a panel mean the IP integrity is already lost — record it.</li>
+    <li><strong>Ventilation and filters:</strong> any forced-ventilated equipment (switchroom
+        HVAC, generator radiator and intake, VFD cooling paths) needs <strong>sand-trap louvres
+        and serviceable filters</strong> — and a maintenance regime that actually changes them.
+        A clogged filter quietly converts a ventilation system into a heat trap; ask to see the
+        filter-change records.</li>
+    <li><strong>Creepage and tracking:</strong> dust layers on insulators, combined with the
+        morning condensation events of desert climates, create conductive films that promote
+        surface tracking — especially at MV. Outdoor MV insulation in dusty/saline areas is
+        normally specified with <strong>increased creepage distance</strong> (heavy pollution
+        class per IEC/TS 60815, indicative), and periodic insulator cleaning belongs in the
+        maintenance plan.</li>
+  </ul>
+
+  <h3 id="orientation-env-corrosion">Humidity and corrosion — coastal C4/C5 conditions</h3>
+
+  <p>
+    The Eastern Province sites (and any site near sabkha/salt flats or with saline groundwater —
+    common around groundwater desalination plants by definition) combine heat with
+    <strong>chloride-laden humidity</strong>. In ISO 12944 atmospheric-corrosivity terms these
+    environments are typically <strong>category C4 (high) to C5 (very high)</strong> —
+    indicative; classify per site.
+  </p>
+
+  <ul>
+    <li>Specify <strong>C4/C5 paint systems</strong> (or hot-dip galvanising plus duplex
+        coating) for outdoor steelwork, cable trays, ladder racks and enclosures; stainless
+        fasteners and hinges.</li>
+    <li>Inside panels, look for <strong>green/white corrosion bloom on copper and aluminium
+        terminations</strong> — a classic precursor to hot joints. Anti-condensation heaters
+        must actually be working (a failed panel heater is a frequent and easy site finding).</li>
+    <li>Beware <strong>dissimilar-metal joints</strong> (aluminium lug on copper bar) in humid
+        salty air — galvanic corrosion is accelerated; bimetallic connectors and inhibitor
+        compound are the standard defence.</li>
+  </ul>
+
+  <h3 id="orientation-env-derating">Cable derating at 50 °C — the ≈ 0.82 factor</h3>
+
+  <p>
+    Published current-carrying capacities for XLPE cables are tabulated at a reference ambient
+    (30&nbsp;°C in air for many IEC 60364-5-52 tables). At a 50&nbsp;°C air ambient, the
+    correction factor for 90&nbsp;°C XLPE insulation is approximately
+    <strong>0.82</strong> (indicative) — a cable "good for" 100 A in the table is good for about
+    82 A here, before any grouping or solar-exposure corrections, which stack multiplicatively
+    on top.
+  </p>
+
+  <div class="worked">
+    <h4>Quick feel — what 0.82 does to a feeder</h4>
+    <code class="formula">I_permissible = I_table × k_ambient = 100 A × 0.82 = 82 A</code>
+    <p>
+      Stack a grouping factor of, say, 0.8 for several touching cables on a tray and the same
+      cable is down to <strong>≈ 66 A</strong> — two-thirds of its table rating. This is why
+      cables sized "by the table" in a temperate-climate design routinely turn out undersized
+      in the Kingdom. Full method and worked examples in
+      <a href="#c-cables">Part 2 — Cable Selection</a>.
+    </p>
+  </div>
+
+  <p>
+    On site, treat any cable route in direct sun, any heavily-bundled tray, and any duct bank
+    in hot ground as derating hot-spots, and check whether the plant's cable schedule states the
+    ambient on which its sizing was based.
+  </p>
+
+  <h3 id="orientation-env-batteries">Batteries — life halves every 8–10 °C above 20 °C</h3>
+
+  <p>
+    Stationary batteries (the UPS bank and the 110 V DC <code>DCDB</code> system that trips the
+    MV switchgear) are the plant components most punished by heat. The design life of a VRLA
+    battery is quoted at <strong>20–25&nbsp;°C</strong>; as a rule of thumb, <strong>service
+    life halves for every 8–10&nbsp;°C above 20&nbsp;°C</strong> (indicative). A "10-year" VRLA
+    block living at 35&nbsp;°C is realistically a 2–3 year battery; at 40&nbsp;°C+, worse.
+  </p>
+
+  <ul>
+    <li>Battery rooms/areas <strong>must be air-conditioned</strong> and held near
+        20–25&nbsp;°C; verify the actual room temperature on every site visit, not just the
+        set-point.</li>
+    <li>Check battery <strong>installation date vs design life corrected for the real room
+        temperature</strong> — an aged battery in a hot room is a high-criticality FMECA entry,
+        because the DC system is the classic hidden SPOF: when it fails, MV protection cannot
+        trip (see Part 3).</li>
+    <li>Where rooms cannot be reliably cooled, consider NiCd chemistry (more
+        temperature-tolerant, indicative) in the Recommendations Register.</li>
+  </ul>
+
+  <h3 id="orientation-env-hvac">HVAC as a reliability-critical system</h3>
+
+  <p>
+    Put the threads together and an uncomfortable conclusion emerges: in this climate the
+    <strong>switchroom air-conditioning is part of the electrical protection system</strong>.
+    If the HVAC fails on a summer afternoon, room temperature can climb past equipment limits
+    within hours — VFDs trip or derate, batteries cook, relays and UPS electronics drift toward
+    failure. A single non-redundant air-conditioning unit serving a critical switchroom is a
+    genuine single point of failure and must appear in your SPOF inventory like any breaker or
+    transformer.
+  </p>
+
+  <ul>
+    <li>Look for <strong>N+1 redundancy</strong> (two units, each able to carry the room) on
+        critical switchrooms and battery rooms; record the as-found arrangement.</li>
+    <li>Check for a <strong>high-temperature alarm</strong> in the room, routed to a place where
+        somebody actually responds — an unalarmed HVAC failure is found only when equipment
+        starts tripping.</li>
+    <li>Ask what happens on power failure: is the HVAC on the essential (DG-backed) supply?
+        A diesel-backed plant whose switchroom cooling is on the non-essential bus can ride
+        through the outage and then overheat during it.</li>
+  </ul>
+
+  <div class="tip">
+    <strong>Tip — the afternoon test.</strong> Whenever practicable, time part of your site
+    visit for the early afternoon. Equipment, rooms and enclosures show their true thermal
+    behaviour at 14:00 in July, not at 08:00 in January. A thermal camera (where permitted,
+    non-intrusively) earns its keep in this hour.
+  </div>
+
+  <h4>Field checklist — environment</h4>
+
+  <ul class="checklist">
+    <li>Record switchroom and battery-room temperatures (actual, not set-point) and the HVAC arrangement (single / N+1, essential-supply backed, high-temperature alarm).</li>
+    <li>Check nameplate ambient ratings of transformers, switchgear and the DG against the 50 °C design ambient; flag any standard-ambient equipment running near full load.</li>
+    <li>Inspect outdoor enclosures for solar exposure, IP integrity (seals, gland plates, dust drifts inside) and condition of sand-trap louvres / filters.</li>
+    <li>Inspect for corrosion: coating condition (C4/C5 environments), terminal bloom inside panels, working anti-condensation heaters, dissimilar-metal joints.</li>
+    <li>Note cable routes in direct sun or heavy bundling; confirm the cable schedule states its sizing ambient (expect ≈ 0.82 air derating at 50 °C).</li>
+    <li>Verify battery installation dates against temperature-corrected life expectancy; record room temperature next to the battery age.</li>
+  </ul>
+
+  <div class="key">Key takeaway: 50&nbsp;°C ambient is the dominant design driver — it derates
+  cables (≈ 0.82), transformers, switchgear, drives and the DG; solar gain adds another
+  10–15&nbsp;°C inside outdoor enclosures; dust demands IP54+, filters and creepage margin;
+  coastal salt demands C4/C5 protection; heat halves battery life every 8–10&nbsp;°C above
+  20&nbsp;°C. Treat the switchroom HVAC as reliability-critical — in this climate, cooling
+  failures are electrical failures. All figures indicative; site data and manufacturer curves
+  govern.</div>
 </section>

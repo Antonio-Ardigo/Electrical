@@ -1,0 +1,108 @@
+<article class="concept" id="concept-n1">
+  <h2>14. N-1 and the SPOF Mindset</h2>
+  <p class="backlink">Manual deep-dive: <a href="manual-rev3.html#s-fmeca">open the FMECA section</a> (and see Part 3 of the manual for the full SPOF walk-through of the plant SLDs)</p>
+
+  <h3>The Problem</h3>
+  <p>Ask why the Rev 3 plant has <strong>two</strong> 1600 kVA transformers instead of one 3200 kVA unit — same total copper and iron, one set of foundations, one MV breaker, visibly cheaper — and you have asked the central question of reliability engineering. The single big transformer is the better machine on every line of the procurement spreadsheet, and the worse machine on the only line that matters at 2 a.m. when its Buchholz relay trips: <em>with one transformer, a transformer failure is a 100 % plant outage measured in weeks</em> — large transformers are repaired in factories, and replacements at 50 °C desert spec are not shelf items.</p>
+  <p>A <strong>single point of failure (SPOF)</strong> is any component whose individual failure brings down the whole function. The deceptive thing about SPOFs is that they hide in plain sight: not just the big transformer, but the one bus-tie breaker, the one battery charger, the one NER (neutral earthing resistor) on the MV system, the one cable route through which both "redundant" feeders happen to run, the one operator who knows the changeover procedure. Plants that bought redundancy have still gone black because the redundancy shared a cable trench, a relay, or a wrong setting — the failure mode engineers call <strong>common cause</strong>.</p>
+  <p>The discipline that flushes SPOFs out is the <strong>N-1 criterion</strong>, borrowed from grid planning: take the system at its design duty, remove any ONE component — any one — and check what survives. Not "will it probably be fine", but arithmetic: how many kVA remain, which loads are shed, how long the switching takes. This chapter builds that mindset and runs the signature Rev 3 calculation: two 1600 kVA transformers versus one 3200 kVA unit, in numbers.</p>
+
+  <h3>Core Principles</h3>
+  <h4>Principle 1: N-1 — survive the loss of any single component</h4>
+  <p><strong>Statement:</strong> A system meets N-1 for a given function if removing any one component still leaves enough capacity, after defined switching actions, to carry that function's load.</p>
+  <p>The key honesty clause is "for a given function". Our split-bus design meets N-1 for the <em>essential</em> load, not for the full 2353 kVA — and saying so explicitly, with numbers, is the difference between engineering and marketing.</p>
+  <h4>Principle 2: Series elements multiply fragility, parallel elements multiply robustness</h4>
+  <p><strong>Statement:</strong> Components in series (all must work) have their unavailabilities <em>added</em>; components in parallel (any one suffices) have their unavailabilities <em>multiplied</em>.</p>
+  <p>Jargon defined: <strong>availability A</strong> is the long-run fraction of time a component works; <strong>unavailability U = 1 − A</strong>. For a chain: U_series ≈ U₁ + U₂ + … (each weak link adds). For true redundancy: U_parallel = U₁ × U₂ (both must be down at once). Multiplying two small numbers gives a tiny number — that multiplication is the entire mathematical case for redundancy.</p>
+  <h4>Principle 3: Availability = MTBF / (MTBF + MTTR) — repair time matters as much as failure rate</h4>
+  <p><strong>Statement:</strong> A component's availability depends equally on how rarely it fails (MTBF, mean time between failures = 1/λ, where λ is the failure rate) and how fast it is restored (MTTR, mean time to repair).</p>
+  <p>This is why the single 3200 kVA transformer is so damaging: its λ is no worse than a 1600 kVA unit's, but its MTTR — factory repair or long-lead replacement — is measured in weeks to months. Redundancy is, at bottom, a machine for converting "MTTR of the component" into "switching time of the system".</p>
+  <h4>Principle 4: Redundancy only counts if capacity, independence and switching are all real</h4>
+  <p><strong>Statement:</strong> Two of something is not N-1 unless (a) one alone can carry the protected load, (b) they cannot fail together (no common cause: separate routes, separate auxiliaries, no shared single relay), and (c) the changeover actually works — which only testing proves.</p>
+  <p>An untested bus-tie is decoration. A "redundant" pair fed through one cable trench is one component wearing two nameplates. FMECA (next section) is the tool that audits all three conditions, row by row.</p>
+
+  <h3>Key Innovations</h3>
+  <h4>The split LV bus with normally-open tie (classic industrial practice)</h4>
+  <p><strong>What:</strong> The Rev 3 architecture itself: TX-1 and TX-2 each feed half of LV-MSB; a normally-open bus-tie breaker joins the halves only when one transformer is lost. Running the tie open keeps fault level at 38.5 kA per half (closed it would be ≈77 kA, above the board's economic rating) and stops one bus fault from taking both halves.</p>
+  <p><strong>Why it mattered:</strong> It buys N-1 for the essential load at the cost of one breaker — provided the interlock (2-out-of-3: never all three of incomer + incomer + tie closed) and the load-shed scheme exist and are tested.</p>
+  <h4>FMECA — failure mode, effects and criticality analysis (aerospace, 1950s–60s; IEC 60812)</h4>
+  <p><strong>What:</strong> A table that walks every component asking: how can it fail? what happens plant-wide? how likely, how severe, how detectable? The manual's <a href="manual-rev3.html#s-fmeca">FMECA section</a> applies it to the whole SLD; criticality = likelihood × severity ranks where to spend money.</p>
+  <p><strong>Why it mattered:</strong> It converts the SPOF hunt from inspiration to procedure. The humbling discoveries are always the small items: the single 110 V DC battery charger feeding both halves' breaker tripping supplies, the single NER, the shared VT fuse.</p>
+  <h4>The reliability block diagram (RBD)</h4>
+  <p><strong>What:</strong> Redraw the electrical SLD as chains of series and parallel <em>reliability</em> blocks, then apply Principle 2 arithmetic end-to-end. Crucially, the RBD does not mirror the wiring: two parallel transformers feeding one bus-tie put the tie in <em>series</em> with the redundancy it enables.</p>
+  <p><strong>Why it mattered:</strong> It exposes exactly which components the redundancy still depends on — and they, not the duplicated items, set the system's availability ceiling. Part 3 of the manual works the full plant RBD.</p>
+
+  <h3>Worked Example: 2 × 1600 kVA vs 1 × 3200 kVA — capacity and availability arithmetic</h3>
+  <div class="worked">
+    <p><strong>Given:</strong> Plant demand 2.0 MW at pf 0.85 → S = 2353 kVA. Option A: 2 × 1600 kVA (Z = 6 %), split bus, NO tie. Option B: 1 × 3200 kVA. Indicative reliability data: transformer failure rate λ ≈ 0.02 failures/year; MTTR = 720 h (30 days, spare/repair) for a 1600 kVA unit, ≈ 2160 h (90 days) for a one-off 3200 kVA unit. All values indicative.</p>
+    <p><strong>Step 1 — Normal loading in Option A.</strong> Tie open, load split roughly evenly:</p>
+    <p><code class="formula">Load per TX = 2353 / 2 = 1176 kVA → 1176 / 1600 = 73.5 % each</code></p>
+    <p><em>Why:</em> healthy margin in normal operation; also room for the 50 °C ambient and harmonic duty.</p>
+    <p><strong>Step 2 — The N-1 event: lose TX-1, close the bus-tie.</strong> Survivor must not exceed its continuous rating; at 50 °C design ambient good practice caps it around 87.5 %:</p>
+    <p><code class="formula">Allowed on TX-2 ≈ 0.875 × 1600 = 1400 kVA&nbsp;&nbsp;(absolute ceiling 1600 kVA = 68 % of plant)</code></p>
+    <p><code class="formula">Load to shed = 2353 − 1400 = 953 kVA → carry 1400/2353 ≈ 60 %, shed ≈ 40 %</code></p>
+    <p><em>Note:</em> with short-time cyclic overload per IEC 60076-7 the survivor may briefly carry more, but the planning figure is the continuous one. Either way the essential load (PMS shed list, Ch. 12) fits comfortably under 1400 kVA.</p>
+    <p><strong>Step 3 — The same event in Option B.</strong></p>
+    <p><code class="formula">Surviving capacity = 0 kVA → 100 % outage for the full MTTR (≈90 days)</code></p>
+    <p><em>Verdict so far:</em> Option A converts "weeks of total outage" into "minutes of switching plus partial shed". That is Principle 3 in action: system MTTR became the tie-closing time.</p>
+    <p><strong>Step 4 — Availability numbers.</strong> Single 1600 kVA transformer: MTBF = 1/λ = 50 years = 438 000 h:</p>
+    <p><code class="formula">U₁ = MTTR / (MTBF + MTTR) = 720 / (438 000 + 720) = 0.00164 → ≈ 14.4 h/year expected outage</code></p>
+    <p><strong>Step 5 — Parallel pair (for the essential load, either TX suffices):</strong></p>
+    <p><code class="formula">U_pair = U₁ × U₁ = 0.00164² = 2.7 × 10⁻⁶ → ≈ 0.024 h/year ≈ 1.4 minutes/year</code></p>
+    <p><em>Why:</em> both must be down simultaneously. Multiplying two small unavailabilities collapses the risk by a factor of ~600.</p>
+    <p><strong>Step 6 — Option B for comparison (longer MTTR):</strong></p>
+    <p><code class="formula">U_single3200 = 2160 / (438 000 + 2160) = 0.0049 → ≈ 43 h/year expected FULL-plant outage</code></p>
+    <p><strong>Step 7 — The honesty check (series elements).</strong> The pair's 1.4 min/year is the ceiling, not the promise: the bus-tie breaker, its interlock, the shared 110 V DC tripping supply (DCDB) and the protection settings are all in <em>series</em> with the redundancy. If the tie fails to close on demand 1 time in 100, the effective gain shrinks accordingly — which is why the FMECA and the periodic live tie-closing test exist.</p>
+    <p><strong>Sanity check:</strong> orders of magnitude are credible — utility-grade transformers fail rarely (decades of MTBF), and the dominant design lever is visibly MTTR, exactly as Principle 3 predicts. <strong>Result: Option A — partial shed (~40 %) for minutes, ~1.4 min/yr dual-loss exposure; Option B — 100 % outage, ~43 h/yr expectation. The second transformer is the cheapest insurance on the plant.</strong></p>
+  </div>
+
+  <h3>Intuitive Formalization</h3>
+  <p>Three formulas carry the whole discipline. Availability of one component:</p>
+  <p><code class="formula">A = MTBF / (MTBF + MTTR)&nbsp;&nbsp;&nbsp;U = 1 − A ≈ λ × MTTR&nbsp;(when both are small)</code></p>
+  <p><strong>λ</strong> (failures/year) is how often fate knocks; <strong>MTTR</strong> (hours) is how long the door stays open when it does; <strong>U</strong> is the fraction of life spent broken — the product of the two, which is why halving repair time is exactly as valuable as halving failure rate. Combination rules:</p>
+  <p><code class="formula">Series (all needed):&nbsp;&nbsp;U_sys ≈ U₁ + U₂ + …&nbsp;&nbsp;&nbsp;Parallel (any one suffices):&nbsp;&nbsp;U_sys = U₁ × U₂</code></p>
+  <p>Physical meaning: a series chain is as bad as the <em>sum</em> of its parts (every element donates its downtime); a true parallel pair is as bad as the <em>coincidence</em> of its parts (downtime only when outages overlap). And the capacity test that makes redundancy real rather than nominal:</p>
+  <p><code class="formula">N-1 check: S_remaining ≥ S_protected-load&nbsp;&nbsp;(here 1400 kVA ≥ essential load &lt; 2353 kVA total)</code></p>
+  <p>The fine print — independence (no common cause) and proven switching — is not in the formulas, which is precisely why the formulas alone overestimate real systems and why FMECA exists.</p>
+
+  <h3>CTQ Mapping</h3>
+  <table class="tbl">
+    <thead><tr><th>Critical-to-quality requirement</th><th>How the concept delivers it</th><th>What to check in the field</th></tr></thead>
+    <tbody>
+      <tr><td>No single equipment failure causes total plant outage</td><td>N-1 walk of the SLD: 2 TXs + NO tie, DG, UPS, duplicated where critical</td><td>Part 3 SPOF register up to date; every "remove one component" line has a stated surviving capacity</td></tr>
+      <tr><td>Surviving transformer not destroyed by heroism</td><td>Capacity arithmetic: shed to ≈1400 kVA (87.5 % at 50 °C) before/while closing the tie</td><td>PMS shed list sums below 1400 kVA; tie-closing procedure includes shed step; interlock prevents 3-breaker closure</td></tr>
+      <tr><td>Redundancy works on demand, not just on paper</td><td>Switching is part of the design: tested tie, ATS, staged restart</td><td>Periodic live tie-closing and transfer tests with records; failure-to-operate events investigated</td></tr>
+      <tr><td>No hidden common-cause links between "redundant" paths</td><td>FMECA audits shared routes, auxiliaries, settings, single DC supplies</td><td>Cable routing drawings (separate trenches); DCDB/charger redundancy; relay setting files independent per half</td></tr>
+      <tr><td>Spending targeted where criticality is highest</td><td>FMECA criticality ranking (likelihood × severity) drives spares and maintenance priorities</td><td>Spares holding vs the ranking (e.g. tie breaker spare, NER elements); maintenance KPIs per critical item</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Conceptual Map</h3>
+  <pre>
+                 N-1 AND THE SPOF MINDSET (core)
+                             |
+       +--------- rests on --+---------------------------+
+       |                     |                           |
+  N-1 criterion         Series adds U,            A = MTBF/(MTBF+MTTR)
+  (remove ANY one;      parallel multiplies U     (repair time is half
+  check what            (U_pair = U₁ × U₂)         the battle)
+  survives, in kVA)          |                           |
+       |              led to |                    led to |
+       v                     v                           v
+  Split LV bus +        Reliability block         Redundancy converts
+  NO bus-tie            diagram (RBD):            component MTTR into
+  (TX-1 / TX-2)         tie &amp; DC supply are       system switching time
+       |                SERIES with the pair             |
+       |                     |                           |
+       +---- audited by FMECA (#s-fmeca): modes ---------+
+             × effects × criticality; common-cause hunt
+                             |
+                          enables
+                             |
+     2×1600: shed ~40 %, carry essentials, ~1.4 min/yr
+     dual-loss — vs 1×3200: 100 % outage, ~43 h/yr.
+     Same mindset cascades: DG, UPS, ATS, NER, DCDB (Part 3)
+  </pre>
+  <div class="note"><p>All reliability figures are indicative planning values; the plant RAM study (IEC 60812 FMECA, RBD) and tested switching procedures govern. Rev 3 basis throughout: 2 × 1600 kVA, 2353 kVA demand, 50 °C, 60 Hz.</p></div>
+</article>
+

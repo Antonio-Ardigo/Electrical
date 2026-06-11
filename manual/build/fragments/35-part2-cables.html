@@ -1,0 +1,828 @@
+<!-- ============================================================
+     §C-CABLES  Cables — sizing, voltage drop & withstand
+     Rev 3 (Saudi/SEC edition) — 13.8 kV / 400-230 V / 60 Hz / 50 °C
+     Deep rewrite of the original §6 reference card into a full
+     tutorial on the Saudi basis (50 °C air, 35 °C soil, dust/sand).
+     All numbers indicative; SASO-adopted IEC 60364-5-52 / IEC 60502.
+============================================================ -->
+<section id="c-cables" data-title="Cable Sizing and Voltage Drop" data-part="Part 2 — Calculations">
+
+  <h2>6 — Cable Sizing, Voltage Drop &amp; Withstand <span style="font-size:0.65em; font-weight:normal; background:#e8f4fd; border:1px solid #aad4f5; border-radius:3px; padding:1px 5px; color:#1a6fa0;">Core</span></h2>
+
+  <p><strong>Goal:</strong> understand why every cable-sizing rule in the book is really a
+  rule about insulation temperature; run the three independent checks — ampacity with the
+  full Saudi derating chain, voltage drop at 60&nbsp;Hz, and adiabatic short-circuit
+  withstand — on two real connections of this plant: the <code>TX-1</code>-to-<code>LV-MSB</code>
+  link (2&nbsp;309&nbsp;A over ~25&nbsp;m) and a 160&nbsp;kW pump feeder (≈&nbsp;280&nbsp;A
+  over 120&nbsp;m); and finish with a complete step-by-step sizing procedure for the Rev&nbsp;3
+  basis: 400/230&nbsp;V, 60&nbsp;Hz, TN-S, <strong>50&nbsp;&deg;C design air ambient,
+  35&nbsp;&deg;C soil</strong>, dust and sand everywhere.</p>
+
+  <p>The load currents used here come from <a href="#c-flc">§2 — Full-Load Currents</a>, the
+  fault duty (38.5&nbsp;kA at the LV bus, one transformer) from
+  <a href="#c-shortcircuit">§4 — Short-Circuit Current &amp; Switchgear Withstand</a>, and the
+  device that must protect every cable we size is dissected in
+  <a href="#c-breaker">§14 — Circuit Breakers</a>.</p>
+
+  <div class="note">
+    <strong>Indicative data.</strong> Every numeric value in this section — base ratings,
+    derating factors, resistances, reactances, k-constants — is indicative and chosen for
+    teaching on the Rev&nbsp;3 plant basis. Tabulated ampacities vary between table editions
+    and manufacturers; the project cable schedule and the formal sizing study govern.
+    Standards cited are the SASO-adopted editions of IEC&nbsp;60364-5-52 (current-carrying
+    capacity and installation methods) and IEC&nbsp;60502-1/-2 (power cables 0.6/1&nbsp;kV
+    and up to 30&nbsp;kV), applied together with SBC&nbsp;401 and the SEC Distribution Code.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       1. WHY THIS EXISTS
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-cables-concept">A Cable Is a Thermal Device</h3>
+
+  <h4>Why this exists</h4>
+
+  <p>Ask a layperson what a cable is and they will say "a conductor of electricity". Ask a
+  cable engineer and you will get a different answer: <strong>a cable is a thermal device
+  that happens to conduct electricity.</strong> The copper or aluminium in the middle does
+  not care how hot it gets — copper melts at 1&nbsp;085&nbsp;&deg;C and is perfectly happy
+  at 200&nbsp;&deg;C. What cares, intensely, is the few millimetres of polymer wrapped
+  around it. Cross-linked polyethylene (XLPE) is rated for a continuous conductor
+  temperature of <strong>90&nbsp;&deg;C</strong>; PVC for <strong>70&nbsp;&deg;C</strong>.
+  Exceed those numbers and the insulation does not fail today — it ages faster, quietly,
+  chemically, until one summer afternoon years from now it fails for you.</p>
+
+  <p>Once you accept that a cable is a thermal device, every sizing rule in every standard
+  suddenly makes sense as one of three ways the insulation can be overheated:</p>
+
+  <ul>
+    <li><strong>Slow heating — the ampacity check.</strong> Load current flowing through
+    the conductor resistance generates heat continuously (I&sup2;R). That heat must escape
+    through the insulation, sheath, and surrounding air or soil. The steady-state balance
+    between heat generated and heat removed sets the conductor temperature. The
+    "current-carrying capacity" in the tables is simply the current at which that balance
+    lands exactly on 90&nbsp;&deg;C (XLPE) with the table's assumed surroundings. Change
+    the surroundings — hotter air, more neighbouring cables, dry sand instead of moist
+    soil — and the same current produces a higher temperature, which is why we
+    <em>derate</em>.</li>
+    <li><strong>Fast heating — the short-circuit withstand check.</strong> During a fault
+    the cable may carry tens of kiloamps for tenths of a second. There is no time for heat
+    to escape: the energy dumps adiabatically into the copper, and the conductor
+    temperature rockets from 90&nbsp;&deg;C towards the insulation's short-time limit
+    (250&nbsp;&deg;C for XLPE). The adiabatic equation tells us the minimum cross-section
+    that can absorb the fault energy without crossing that line before the breaker
+    clears.</li>
+    <li><strong>Heating somebody else's equipment — the voltage-drop check.</strong> This
+    one is not about the cable's own temperature but about what the cable does to the load
+    at its far end. Resistance and reactance steal voltage along the run; a motor fed at
+    370&nbsp;V instead of 400&nbsp;V draws more current for the same power, runs hotter,
+    and produces less starting torque. The voltage-drop limit protects the <em>load's</em>
+    thermal life and the stability of everything downstream.</li>
+  </ul>
+
+  <p>These three checks are <strong>independent</strong>, and that word matters. They test
+  different physics over different timescales — years, milliseconds, and continuously —
+  and a cable must pass <strong>all three</strong>. A short run at huge current passes
+  voltage drop trivially but is governed by ampacity. A long run at modest current passes
+  ampacity easily but is governed by voltage drop. A short, lightly loaded cable on a
+  stiff bus can pass both and still be destroyed by a fault it was never sized to survive
+  — governed by the adiabatic check. You cannot tell in advance which check will bite, so
+  you always run all three. The worked calculations below are arranged to show each check
+  governing in turn.</p>
+
+  <p>On this plant the thermal problem is harder than almost anywhere else on Earth. The
+  IEC base tables assume 30&nbsp;&deg;C air and 20&nbsp;&deg;C soil. The Rev&nbsp;3 design
+  basis is <strong>50&nbsp;&deg;C air and 35&nbsp;&deg;C soil</strong>, with dry sand whose
+  thermal resistivity can be two or three times that of the moist soil the tables assume.
+  An XLPE cable that carries 100&nbsp;A in Europe carries about 82&nbsp;A here before its
+  insulation reaches the same 90&nbsp;&deg;C. Saudi cable sizing is, at its heart, the
+  discipline of never forgetting that the tables were written for somewhere cooler.</p>
+
+  <div class="key">
+    A cable is a thermal device: every sizing rule exists to keep insulation temperature
+    inside its rated limit — slowly (ampacity and derating), suddenly (adiabatic
+    short-circuit withstand), or at the far end of the run (voltage drop). The three
+    checks are independent and <em>all</em> must pass; any one of them can govern, and on
+    the Saudi basis the thermal margins the tables silently assume are simply not there.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       2. WHAT GOES WRONG WITHOUT IT
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-cables-failure">A Failure Story: the Trench That Cooked a Cable</h3>
+
+  <h4>What goes wrong without it</h4>
+
+  <p>The following narrative is fictional but assembled from failure modes seen repeatedly
+  in hot-climate plants. Every number is consistent with the Rev&nbsp;3 basis. Notice that
+  nothing in this story breaks — until the very end. That is what makes thermal failures
+  so dangerous: the plant gives almost no warning.</p>
+
+  <p><strong>Year 0 — the shortcut.</strong> During construction, a 120&nbsp;m feeder to a
+  process pump is sized from a manufacturer's quick-reference card: 280&nbsp;A load,
+  185&nbsp;mm&sup2; rated "around 430&nbsp;A in air" — nearly 50&nbsp;% margin, signed off
+  in five minutes. Nobody applies the derating chain. The card's rating assumed
+  30&nbsp;&deg;C air and a single cable lying alone on a tray. This cable will actually run
+  in a covered outdoor cable trench at the edge of the plant, touching five other loaded
+  power cables, in air that the design basis says reaches 50&nbsp;&deg;C — and inside a
+  covered trench in direct sun, locally hotter still. Apply the honest factors —
+  ≈&nbsp;0.82 for 50&nbsp;&deg;C and ≈&nbsp;0.75 for six grouped circuits — and the real
+  capacity is 430 &times; 0.82 &times; 0.75 ≈ <strong>264&nbsp;A</strong>. The cable is
+  undersized by about 6&nbsp;% before the plant has even started. Nothing happens.
+  280&nbsp;A flows; the conductor settles not at 90&nbsp;&deg;C but at roughly
+  95–100&nbsp;&deg;C every summer afternoon. XLPE does not melt at 100&nbsp;&deg;C. It
+  just begins to die.</p>
+
+  <p><strong>Years 1–8 — Arrhenius does its quiet work.</strong> Insulation ageing is a
+  chemical reaction, and like most chemical reactions it follows the Arrhenius law: the
+  reaction rate roughly <strong>doubles for every 8–10&nbsp;&deg;C rise</strong> in
+  temperature. The flip side is the rule every cable engineer carries in their head:
+  <em>every 8–10&nbsp;&deg;C of sustained over-temperature halves the insulation's
+  life.</em> XLPE run at its rated 90&nbsp;&deg;C is good for a design life of, say,
+  30–40&nbsp;years. Run at 100&nbsp;&deg;C, that becomes 15–20. The trench cover traps
+  heat; wind-blown sand fills the gaps between cables and blocks the convective paths the
+  tables assumed; a later project lays two more cables in the same trench, worsening the
+  grouping factor that was never applied in the first place. Each effect alone is a few
+  degrees. Together they push the hottest metre of the run — the section under the
+  sun-baked cover, in the middle of the group — to perhaps 105–110&nbsp;&deg;C on peak
+  afternoons. The polymer hardens, micro-cracks, and loses dielectric strength,
+  fastest exactly where it is hottest. The plant sees nothing: the pump runs, the
+  breaker holds, the panel meter reads 280&nbsp;A as it always has.</p>
+
+  <p><strong>Year 9 — a Tuesday in August.</strong> 48&nbsp;&deg;C in the shade, plant at
+  full output, the grid voltage a few percent low so every motor is drawing a few percent
+  more current — the cable's worst hour of the year, repeated daily for weeks. In the
+  hottest metre, the embrittled insulation finally cracks through to the screen.
+  Earth-fault, then within a cycle phase-to-phase, fed at the full bus fault level. The
+  feeder breaker clears it — that part of the protection works — but the pump is gone from
+  the process at peak production, the trench cover comes off to reveal a charred section
+  and five <em>neighbouring</em> cables with heat-damaged sheaths, and the repair is a
+  cable replacement through a live, congested trench in August. The failure investigation
+  finds no defective product, no operator error, no protection mis-setting. It finds a
+  derating chain that was never applied, nine years earlier, by someone saving five
+  minutes.</p>
+
+  <div class="warning">
+    <strong>The signature of thermal under-sizing</strong> is that everything works —
+    for years. Protection does not detect over-temperature; an overload relay set at
+    the cable's <em>paper</em> rating happily passes a current the <em>derated</em> cable
+    cannot stand. The defences are: applying the derating chain at design time, setting
+    the overload pickup to the derated ampacity (not the nameplate one — see
+    <a href="#c-breaker">§14</a>), and catching hot spots with thermography before the
+    chemistry finishes its work. In the field, look for discoloured or hardened sheath,
+    hot glands, deformed tray plastic, and sand-packed trenches — each is a chapter of
+    this story in progress.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       3. FEEL FOR THE NUMBERS
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-cables-feel">Feel for the Numbers</h3>
+
+  <h4>Feel for the numbers</h4>
+
+  <p>Before sizing anything, calibrate your intuition. How much heat does a big cable
+  actually make? Take a 240&nbsp;mm&sup2; copper conductor — a serious cable, about as
+  thick as a garden hose — carrying 400&nbsp;A. Its AC resistance at operating temperature
+  is about 0.0754&nbsp;m&Omega; per metre. The heat generated in each metre of <em>one</em>
+  conductor is:</p>
+
+  <div class="worked">
+    <h4>Quick estimate — heat per metre of a loaded 240&nbsp;mm&sup2; cable</h4>
+    <code class="formula">P = I&sup2; &times; R = 400&sup2; &times; 0.0000754 &Omega;/m = 160 000 &times; 0.0000754 = 12.1 W per metre per conductor</code>
+    <p>A three-phase circuit has three loaded conductors, so each metre of the
+    <em>circuit</em> dissipates:</p>
+    <code class="formula">P_3ph = 3 &times; 12.1 ≈ 36 W per metre of route</code>
+    <p><strong>Sanity check:</strong> ~30–40&nbsp;W is a small soldering iron. Picture a
+    soldering iron strapped to every single metre of the run, switched on permanently —
+    over a 120&nbsp;m route, that is ≈&nbsp;4.3&nbsp;kW of continuous heating, two
+    domestic space heaters' worth, buried in a trench in a country where the air is
+    already at 50&nbsp;&deg;C. The entire ampacity problem is the question: <em>can each
+    metre of surroundings carry one soldering iron's worth of heat away, forever, without
+    the insulation passing 90&nbsp;&deg;C?</em></p>
+  </div>
+
+  <p>That image explains nearly everything about derating at a glance:</p>
+
+  <ul>
+    <li><strong>Why ambient temperature matters so much.</strong> Heat only flows downhill,
+    from hot to cold. The driving force is the temperature difference between the
+    90&nbsp;&deg;C conductor and the surroundings. At the tables' 30&nbsp;&deg;C air there
+    is a 60&nbsp;K hill for the heat to roll down; at our 50&nbsp;&deg;C there is only a
+    40&nbsp;K hill — two-thirds the driving force, so only &radic;(40/60) ≈ 0.82 of the
+    current (heat goes with I&sup2;, hence the square root). One line of algebra, and it
+    is the single most important number in Saudi cable engineering.</li>
+    <li><strong>Why XLPE beats PVC here.</strong> PVC's 70&nbsp;&deg;C limit leaves only a
+    20&nbsp;K hill above 50&nbsp;&deg;C air — its derating factor is
+    &radic;((70&minus;50)/(70&minus;30)) = &radic;0.5 ≈ <strong>0.71</strong>, against
+    XLPE's <strong>0.82</strong>. Worse, PVC's short-circuit limit is 160&nbsp;&deg;C
+    against XLPE's 250&nbsp;&deg;C, so its adiabatic k-constant is lower too (115 vs 143
+    for copper). In a 50&nbsp;&deg;C country, XLPE is not a luxury; PVC power cable is
+    close to unusable for anything heavily loaded. This plant standardises on XLPE
+    (90&nbsp;&deg;C) throughout.</li>
+    <li><strong>Why grouping factors exist.</strong> Six soldering irons in one trench
+    must share the same cooling air and the same patch of soil. Each cable's "ambient" is
+    raised by its neighbours' heat, so each can carry less. The grouping factor is just
+    mutual heating given a number.</li>
+    <li><strong>Why dry sand is the enemy.</strong> Moist soil conducts heat about as well
+    as brick (thermal resistivity ≈ 1.0&nbsp;K·m/W — the tables' assumption). Dry desert
+    sand is an insulator by comparison, 2.5–3.0&nbsp;K·m/W: it wraps the cable in a
+    thermal blanket. A direct-buried cable in unimproved dry sand can lose 20–30&nbsp;%
+    of its tabulated rating from soil resistivity alone, which is why buried runs here
+    get imported thermal backfill (stabilised sand-cement mix) rather than native
+    dune sand.</li>
+  </ul>
+
+  <p>Two more 60&nbsp;Hz-specific intuitions, because this is a 60&nbsp;Hz plant and most
+  cable tables in circulation are written for 50&nbsp;Hz:</p>
+
+  <ul>
+    <li><strong>Skin effect is slightly worse at 60&nbsp;Hz.</strong> Alternating current
+    crowds toward the conductor surface; the skin depth in copper is ≈ 9.3&nbsp;mm at
+    50&nbsp;Hz and ≈ 8.5&nbsp;mm at 60&nbsp;Hz. Small cables (≤ 95&nbsp;mm&sup2;, radius
+    well under one skin depth) barely notice. Large single-core conductors — the
+    630&nbsp;mm&sup2; cables in our transformer link, radius ≈ 15&nbsp;mm — do: their AC
+    resistance at 60&nbsp;Hz runs a few percent (indicatively 2–4&nbsp;%) above the
+    50&nbsp;Hz table value. Real designs use 60&nbsp;Hz manufacturer data; for hand
+    checks, adding ~3&nbsp;% to R for very large cables is honest enough.</li>
+    <li><strong>Reactance scales directly with frequency.</strong> X = 2&pi;fL, so the
+    same cable geometry has <strong>1.2&times; the reactance at 60&nbsp;Hz</strong> that
+    the 50&nbsp;Hz tables show. For small cables, where resistance dominates voltage drop,
+    this hardly matters. For large cables — where X can exceed R several times over — the
+    reactive term dominates the voltage drop, and forgetting the 1.2 factor understates
+    the drop on exactly the runs where it matters most. The worked calculation below shows
+    both numbers side by side.</li>
+  </ul>
+
+  <div class="key">
+    Carry three numbers in your head for this plant: <strong>0.82</strong> (XLPE air
+    derating at 50&nbsp;&deg;C — the cost of the climate), <strong>~12&nbsp;W per metre per
+    conductor</strong> for a heavily loaded large cable (a soldering iron per metre of
+    circuit), and <strong>1.2&times;</strong> on every 50&nbsp;Hz tabulated reactance.
+    With those three, you can sanity-check almost any cable decision on site with a phone
+    calculator.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       4. WORKED CALCULATION
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-cables-worked">Worked Calculation — the TX Link and a Pump Feeder, All Three Checks</h3>
+
+  <h4>Worked calculation</h4>
+
+  <p>We now size two very different connections completely, running each through the full
+  set of checks. The contrast is deliberate: the transformer link is short and enormous
+  (ampacity governs), the motor feeder is long and modest (voltage drop nearly governs),
+  and the adiabatic check sits in the background of both, waiting to govern anything
+  small. All cables are <strong>copper, XLPE (90&nbsp;&deg;C), 0.6/1&nbsp;kV to
+  IEC&nbsp;60502-1</strong>, on the Rev&nbsp;3 environment: 50&nbsp;&deg;C air,
+  35&nbsp;&deg;C soil, 60&nbsp;Hz.</p>
+
+  <!-- ─────────── Case A : TX → MSB ─────────── -->
+  <div class="worked">
+    <h4>Case A — TX-1 to LV-MSB link: 2 309 A, route ≈ 25 m, on ladder rack in air</h4>
+
+    <p><strong>Step A1 — Design current.</strong> The LV full-load current of one
+    1 600 kVA, 13.8/0.4 kV transformer (<a href="#c-flc">§2</a>):</p>
+    <code class="formula">I_B = S / (&radic;3 &times; U) = 1 600 000 / (1.732 &times; 400) = 2 309 A</code>
+    <p>The link must carry this continuously — a transformer incomer is sized for the
+    transformer's capability, not today's load, so no diversity is taken.</p>
+
+    <p><strong>Step A2 — Installation method and base rating.</strong> No practical
+    multicore cable carries 2 309 A; this duty is met with <strong>parallel single-core
+    cables per phase</strong>. Choose 630 mm&sup2; Cu/XLPE single-core, trefoil groups on
+    ladder rack in free air (IEC 60364-5-52 method F). Indicative tabulated rating per
+    cable, trefoil in free air at the table's 30 &deg;C reference:</p>
+    <code class="formula">I_table ≈ 870 A   (630 mm&sup2; Cu XLPE single-core, trefoil, free air, 30 &deg;C — indicative)</code>
+
+    <p><strong>Step A3 — Derating chain.</strong> Two factors apply (no soil factors —
+    this run is in air):</p>
+    <code class="formula">k_ambient = &radic;((&theta;_cond &minus; &theta;_amb) / (&theta;_cond &minus; 30)) = &radic;((90 &minus; 50)/(90 &minus; 30)) = &radic;0.667 = 0.82</code>
+    <code class="formula">k_grouping ≈ 0.90   (four trefoil groups on one ladder, spaced ≥ one cable diameter apart — indicative)</code>
+    <code class="formula">I_z(per cable) = 870 &times; 0.82 &times; 0.90 = 642 A</code>
+
+    <p><strong>Step A4 — Number of parallel runs.</strong></p>
+    <code class="formula">n ≥ I_B / I_z = 2 309 / 642 = 3.6  →  n = 4 runs per phase</code>
+    <code class="formula">Check: 4 &times; 642 = 2 568 A ≥ 2 309 A  ✓   (margin 11 %)</code>
+    <p>So the link is <strong>4 &times; (3 &times; 1c 630 mm&sup2; Cu/XLPE)</strong> — twelve
+    single-core power cables in four trefoils, plus the neutral and PE runs. Each parallel
+    run carries 2 309 / 4 ≈ 577 A, i.e. 90 % of its derated capacity.
+    <strong>Sanity check:</strong> at 577 A a 630 mm&sup2; conductor
+    (R ≈ 0.037 m&Omega;/m) dissipates 577&sup2; &times; 0.000037 ≈ 12 W/m — one soldering
+    iron per metre per conductor, exactly the intuition from
+    <a href="#c-cables-feel">above</a>; twelve conductors ≈ 150 W per metre of ladder,
+    which is why these ladders are run in open air with spacing, never sealed into a
+    duct.</p>
+
+    <div class="tip">
+      Parallel runs only share current equally if they are <em>identical</em>: same size,
+      same length, same formation, same phase arrangement (transposed or symmetrically
+      grouped). A lazy phase layout at 60 Hz unbalances the reactances and one run quietly
+      carries 20 % more than its sisters. At this current level many plants use
+      <strong>busduct</strong> instead of cables precisely to avoid this problem — the
+      cable solution is shown here because it teaches the method.
+    </div>
+
+    <p><strong>Step A5 — Voltage drop at 60 Hz.</strong> Per-cable impedance
+    (90 &deg;C, trefoil, indicative): R ≈ 0.0367 &Omega;/km; tabulated 50 Hz reactance
+    X<sub>50</sub> ≈ 0.130 &Omega;/km. Convert the reactance to 60 Hz, then divide both by
+    the 4 parallel runs:</p>
+    <code class="formula">X_60 = 1.2 &times; X_50 = 1.2 &times; 0.130 = 0.156 &Omega;/km</code>
+    <code class="formula">R_eff = 0.0367 / 4 = 0.00918 &Omega;/km ;  X_eff = 0.156 / 4 = 0.0390 &Omega;/km</code>
+    <p>At plant power factor 0.85 (cos&phi; = 0.85, sin&phi; = 0.527), route length
+    L = 0.025 km:</p>
+    <code class="formula">&Delta;U = &radic;3 &times; I &times; L &times; (R·cos&phi; + X·sin&phi;)</code>
+    <code class="formula">&Delta;U = 1.732 &times; 2 309 &times; 0.025 &times; (0.00918 &times; 0.85 + 0.0390 &times; 0.527)</code>
+    <code class="formula">&Delta;U = 100.0 &times; (0.00780 + 0.02055) = 100.0 &times; 0.02835 = 2.8 V  →  2.8 / 400 = 0.71 %  ✓</code>
+    <p>For comparison, the same calculation with the raw 50 Hz reactance gives
+    100.0 &times; (0.00780 + 0.01713) = 2.5 V (0.62 %). On this short link the 60 Hz
+    correction is harmless — but notice that the <em>reactive</em> term is already
+    2.6&times; the resistive term. On large cables, voltage drop is a reactance problem,
+    and reactance is the term that grows 20 % when you move from a 50 Hz table to a
+    60 Hz plant.</p>
+
+    <p><strong>Step A6 — Adiabatic short-circuit check.</strong> Worst case: a fault on
+    the link cleared by upstream protection in t = 0.3 s (a deliberately slow, conservative
+    teaching value — transformer-secondary faults are cleared by the MV side or the
+    incomer ACB short-time stage, see <a href="#c-breaker">§14</a>) at the one-transformer
+    fault level of 38.5 kA (<a href="#c-shortcircuit">§4</a>). Minimum copper/XLPE
+    cross-section, with k = 143:</p>
+    <code class="formula">S_min = I &times; &radic;t / k = 38 500 &times; &radic;0.3 / 143 = 38 500 &times; 0.548 / 143 = 21 090 / 143 = 147 mm&sup2;</code>
+    <code class="formula">Installed per phase: 4 &times; 630 = 2 520 mm&sup2; ≫ 147 mm&sup2;  ✓  (margin &gt; 17&times;)</code>
+    <p><strong>Sanity check and verdict:</strong> for the transformer link, ampacity
+    governs (it set the 4 &times; 630 mm&sup2; answer); voltage drop and adiabatic
+    withstand pass with huge margins. That ordering is typical of short, heavy
+    connections.</p>
+  </div>
+
+  <!-- ─────────── Case B : 160 kW pump feeder ─────────── -->
+  <div class="worked">
+    <h4>Case B — 160 kW process pump feeder: ≈ 280 A, route 120 m, multicore on perforated tray</h4>
+
+    <p><strong>Step B1 — Design current.</strong> Motor FLC by the
+    <a href="#c-flc">§2</a> method (400 V, 60 Hz, 4-pole 1 800 rpm pump motor,
+    indicative efficiency 0.95, pf 0.85):</p>
+    <code class="formula">I_B = P / (&radic;3 &times; U &times; pf &times; &eta;) = 160 000 / (1.732 &times; 400 &times; 0.85 &times; 0.95) = 160 000 / 559 = 286 A ≈ 280–290 A</code>
+    <p>Use the nameplate/schedule value <strong>I_B = 280 A</strong> (indicative) for the
+    sizing; motors are sized on FLC, not on today's pumping duty
+    (<a href="#c-motors">§3</a>).</p>
+
+    <p><strong>Step B2 — Installation and derating chain.</strong> One 4-core (3P+PE
+    handled separately — see step B5) multicore Cu/XLPE cable on perforated tray, run with
+    five other loaded power circuits, 50 &deg;C air:</p>
+    <code class="formula">k_ambient = &radic;((90 &minus; 50)/(90 &minus; 30)) = 0.82 ;  k_grouping = 0.80 (6 circuits, single layer, touching — indicative)</code>
+    <code class="formula">k_total = 0.82 &times; 0.80 = 0.656</code>
+    <code class="formula">Required table rating: I_table ≥ I_B / k_total = 280 / 0.656 = 427 A</code>
+
+    <p><strong>Step B3 — Select from the table.</strong> Indicative multicore Cu/XLPE
+    tray ratings (method E, 30 &deg;C): 150 mm&sup2; ≈ 380 A — too small;
+    <strong>185 mm&sup2; ≈ 435 A</strong> — passes (435 ≥ 427, margin 2 %);
+    240 mm&sup2; ≈ 510 A — comfortable. Tentatively select <strong>185 mm&sup2;</strong>
+    and let the other two checks confirm or overturn it. Note how brutal the chain is: a
+    cable tabulated at 435 A is, in this trench-mate-crowded Saudi installation, really a
+    <code class="formula">435 &times; 0.656 = 285 A</code> cable — barely above the
+    280 A load. The "430 A cable for a 280 A load" of the failure story was never the
+    50 % margin it appeared to be.</p>
+
+    <p><strong>Step B4 — Voltage drop at 60 Hz over 120 m.</strong> 185 mm&sup2; Cu/XLPE
+    multicore (90 &deg;C, indicative): R ≈ 0.128 &Omega;/km;
+    X<sub>50</sub> ≈ 0.075 &Omega;/km → X<sub>60</sub> = 1.2 &times; 0.075 =
+    0.090 &Omega;/km. Running condition, pf 0.85:</p>
+    <code class="formula">&Delta;U = &radic;3 &times; 280 &times; 0.120 &times; (0.128 &times; 0.85 + 0.090 &times; 0.527)</code>
+    <code class="formula">&Delta;U = 1.732 &times; 280 &times; 0.120 &times; (0.1088 + 0.0474) = 58.2 &times; 0.1562 = 9.1 V</code>
+    <code class="formula">%&Delta;U = 9.1 / 400 = 2.3 %  ✓  (≤ 3 % motor steady-state target; ≤ 5 % absolute limit)</code>
+    <p>With the raw 50 Hz reactance the answer would have been
+    58.2 &times; (0.1088 + 0.0395) = 8.6 V (2.2 %) — only 0.1 point different here,
+    because at 185 mm&sup2; resistance still dominates. The 60 Hz correction matters more
+    as cables get bigger; the habit of applying it should be unconditional.</p>
+
+    <p><strong>Step B4a — Starting voltage drop (sanity check).</strong> If this pump
+    starts direct-on-line it draws ≈ 6 &times; 280 = 1 680 A at starting pf ≈ 0.2
+    (<a href="#c-motors">§3</a>):</p>
+    <code class="formula">&Delta;U_start = 1.732 &times; 1 680 &times; 0.120 &times; (0.128 &times; 0.20 + 0.090 &times; 0.98) = 349 &times; 0.1138 = 39.7 V ≈ 9.9 %</code>
+    <p>Nearly 10 % drop in the cable alone, before the transformer's own dip is added.
+    For a DOL start this would push the motor-terminal voltage during start toward the
+    edge of the usual 80–85 % torque-safety band — one reason this size of pump on this
+    plant is started by VFD or soft starter rather than DOL. The steady-state check
+    passed; the starting check is what actually disciplines long motor feeders.</p>
+
+    <p><strong>Step B5 — Adiabatic short-circuit check — and a trap.</strong> Bus fault
+    level 38.5 kA. If the feeder MCCB clears instantaneously (&lt; 10 ms, and
+    current-limiting below its let-through threshold — <a href="#c-breaker">§14</a>,
+    <a href="#cat-lv-breakers">LV breaker catalogue</a>), the energy let through is far
+    below the cable's capability. But check the conservative case — clearing in 0.3 s,
+    as if the fault were cleared by a delayed upstream stage:</p>
+    <code class="formula">S_min = I &times; &radic;t / k = 38 500 &times; &radic;0.3 / 143 = 147 mm&sup2;</code>
+    <code class="formula">Selected 185 mm&sup2; ≥ 147 mm&sup2;  ✓  — but only just (margin 26 %)</code>
+    <p><strong>The trap:</strong> run the same numbers for a small cable. A 35 mm&sup2;
+    feeder to a small panel on this same 38.5 kA bus, protected by a breaker that clears
+    in 0.3 s, would need 147 mm&sup2; — it fails by a factor of four. Even at a fast
+    relay-graded 0.1 s, S_min = 38 500 &times; 0.316 / 143 = 85 mm&sup2;. Small cables
+    near a stiff bus are <strong>governed by the adiabatic check, not by ampacity</strong>,
+    and survive only because their protective device is current-limiting (its let-through
+    I&sup2;t, not the bus fault level and relay time, is what the cable sees). Whenever
+    you see a small cable on a big board, the question is never "can it carry the load?"
+    — it is "what exactly limits the energy when it faults?"</p>
+
+    <p><strong>Step B6 — Earth-fault loop and protective conductor.</strong> The plant is
+    TN-S (<a href="#c-earthing">§9</a>): an earth fault returns through the dedicated PE
+    conductor, and the loop impedance must be low enough that the feeder protection
+    disconnects within the standard's time limit. Two notes close the design:</p>
+    <ul>
+      <li><strong>PE size.</strong> By the IEC 60364-5-54 table rule, for phase conductors
+      above 35 mm&sup2; the PE may be half the phase size: 185 / 2 = 92.5 →
+      <strong>95 mm&sup2;</strong> Cu. Cross-check adiabatically with the earth-fault
+      current and actual clearing time (e.g. 0.1 s at an indicative 20 kA earth-fault
+      level: S_min = 20 000 &times; 0.316 / 143 = 44 mm&sup2; — 95 mm&sup2; passes
+      comfortably).</li>
+      <li><strong>Loop check.</strong> Estimate Z<sub>s</sub> = source + phase + PE
+      impedances over the 120 m run and confirm the resulting earth-fault current sits
+      above the breaker's magnetic/short-time pickup so disconnection is instantaneous.
+      Long LV runs fail this check before they fail anything else; the fix is a larger PE,
+      a parallel earth conductor, or earth-fault (G) protection on the feeder breaker
+      (<a href="#c-breaker">§14</a>).</li>
+    </ul>
+
+    <p><strong>Verdict, Case B:</strong> 1 &times; 4c (or 3c + 95 mm&sup2; PE)
+    <strong>185 mm&sup2; Cu/XLPE</strong>, passing ampacity (just — the derating chain ate
+    the apparent margin), voltage drop 2.3 % running, adiabatic 185 ≥ 147 mm&sup2;,
+    PE 95 mm&sup2;. If the project later adds circuits to that tray, the grouping factor
+    drops and this cable must be rechecked — a derating chain is a living calculation, not
+    a one-time stamp.</p>
+  </div>
+
+  <div class="key">
+    Three checks, two cases, three different governors: ampacity sized the transformer
+    link, the starting/steady voltage drop disciplines the long pump feeder, and the
+    adiabatic equation silently governs every <em>small</em> cable on a 38.5 kA bus.
+    Formula → substitution → result → sanity check, every time — and never trust a margin
+    until the derating chain has been applied to it.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       5. EQUIPMENT SETTINGS
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-cables-settings">Equipment Settings — Making the Breaker Defend the Cable</h3>
+
+  <h4>Equipment settings</h4>
+
+  <p>A cable has no settings of its own — it is a passive thermal device. Its "settings"
+  live entirely in the protective device upstream, and the whole point of this sub-section
+  is one sentence: <strong>the breaker must be set to protect the cable you actually
+  installed, in the environment it actually lives in — the derated cable, not the
+  catalogue cable.</strong> Three coordination rules follow, one per timescale.</p>
+
+  <p><strong>Rule 1 — Overload pickup bracketed by load and derated ampacity.</strong>
+  The long-time (thermal) pickup I<sub>r</sub> of the feeder breaker must sit between the
+  design current and the cable's <em>derated</em> capacity:</p>
+
+  <div class="worked">
+    <h4>Setting window — overload pickup for our two cases</h4>
+    <code class="formula">Condition:  I_B ≤ I_r ≤ I_z(derated)</code>
+    <p>Case A, TX-1 incomer ACB (see <a href="#c-breaker">§14</a> for the trip-unit
+    anatomy):</p>
+    <code class="formula">2 309 A ≤ I_r ≤ 2 568 A  →  set I_r = 2 375 A (0.95 &times; the 2 500 A sensor — see <a href="#c-breaker-lsig">the breakers chapter</a>)</code>
+    <p>Case B, 160 kW pump feeder MCCB:</p>
+    <code class="formula">280 A ≤ I_r ≤ 285 A  →  set I_r = 285 A (0.71 &times; a 400 A frame — indicative)</code>
+    <p><strong>Sanity check:</strong> the Case B window is only 5 A wide — that is what a
+    derating chain eating the margin looks like at the settings stage. If the window
+    closes completely (I_z &lt; I_B), no setting exists: the <em>cable</em> is wrong, and
+    the fix is one size up, never a higher pickup. A pickup set above I_z is the failure
+    story of <a href="#c-cables-failure">this section</a> written into the trip unit.</p>
+  </div>
+
+  <p><strong>Rule 2 — Let-through energy below the cable's adiabatic limit.</strong>
+  The adiabatic capability of a cable is the constant <code>k&sup2;S&sup2;</code>
+  (in A&sup2;s), and the breaker's job is to clear any fault before it delivers more
+  I&sup2;t than that. Compare the worst-case let-through with the limit:</p>
+
+  <div class="worked">
+    <h4>Mini-check — is 38.5 kA for 0.3 s acceptable for the chosen sizes?</h4>
+    <p>Energy delivered if a 38.5 kA bus fault persists for a 0.3 s short-time delay
+    (a typical incomer ACB STD setting — <a href="#c-breaker">§14</a>):</p>
+    <code class="formula">I&sup2;t = 38 500&sup2; &times; 0.3 = 1.482 &times; 10&#8313; &times; 0.3 = 4.45 &times; 10&#8312; A&sup2;s</code>
+    <p>Cable capability, k = 143 (Cu/XLPE):</p>
+    <code class="formula">185 mm&sup2;:  k&sup2;S&sup2; = 143&sup2; &times; 185&sup2; = 20 449 &times; 34 225 = 7.00 &times; 10&#8312; A&sup2;s ≥ 4.45 &times; 10&#8312;  ✓ (margin 1.57&times;)</code>
+    <code class="formula">630 mm&sup2; (one run): 143&sup2; &times; 630&sup2; = 8.12 &times; 10&#8313; A&sup2;s  ✓ (margin 18&times;)</code>
+    <code class="formula">95 mm&sup2; PE:  143&sup2; &times; 95&sup2; = 1.85 &times; 10&#8312; A&sup2;s &lt; 4.45 &times; 10&#8312;  ✗ at full bus fault for 0.3 s</code>
+    <p><strong>Reading the result:</strong> the phase conductors are fine — this is the
+    same 147 mm&sup2; answer as the worked calculation, expressed in energy instead of
+    cross-section. The 95 mm&sup2; PE "failure" is the instructive line: it never sees
+    the full 38.5 kA three-phase level (earth-fault current is lower) and earth faults on
+    a TN-S feeder are cleared instantaneously or by the G stage, not after a 0.3 s delay —
+    but the arithmetic shows <em>why</em> earth-fault clearing time must be fast, and why
+    a PE conductor is never protected by hope. Verify with the actual earth-fault level
+    and the actual G-stage time, per <a href="#c-earthing">§9</a>.</p>
+  </div>
+
+  <p>For small cables the same rule works in reverse: a 35 mm&sup2; cable
+  (k&sup2;S&sup2; = 2.5 &times; 10&#8311; A&sup2;s) on the 38.5 kA bus survives only
+  because a current-limiting MCCB lets through perhaps 10&#8310;–10&#8311; A&sup2;s — read
+  the let-through curve from the manufacturer data
+  (<a href="#cat-lv-breakers">LV breaker catalogue</a>) and check
+  <code>I&sup2;t_let-through ≤ k&sup2;S&sup2;</code> explicitly. Never assume; the curve
+  is in every catalogue precisely for this comparison.</p>
+
+  <p><strong>Rule 3 — Overload protection must ride through the motor start.</strong>
+  Case B starts at ≈ 1 680 A for several seconds (<a href="#c-motors">§3</a>). The
+  feeder's long-time curve, set at I<sub>r</sub> = 285 A, must not trip during a healthy
+  start; the instantaneous pickup must sit above the asymmetrical starting peak
+  (≈ 2–2.5&times; the starting current, so set I<sub>i</sub> ≥ ~4 200 A indicatively) but
+  below the minimum fault current at the motor terminals. The cable is comfortable: a
+  6&times; start for 10 s delivers 1 680&sup2; &times; 10 = 2.8 &times; 10&#8311; A&sup2;s,
+  4 % of the 185 mm&sup2; limit. Cables shrug off motor starts; it is the <em>settings</em>
+  that must be taught not to flinch.</p>
+
+  <div class="key">
+    Three settings rules defend a cable: I_B ≤ I_r ≤ I_z(derated) for slow heat;
+    let-through I&sup2;t ≤ k&sup2;S&sup2; for fast heat; and a curve that rides through
+    motor starting without ever exceeding either. If a setting window will not close,
+    change the cable, never the rule.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       6. EQUIPMENT TECHNOLOGY
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-cables-technology">Equipment Technology — What a Cable Actually Is, Layer by Layer</h3>
+
+  <h4>Equipment technology</h4>
+
+  <p>Cut a power cable square and you see a set of concentric answers to the questions
+  this section has been asking. Working outward from the centre of a typical LV
+  cable to IEC&nbsp;60502-1:</p>
+
+  <ul>
+    <li><strong>Conductor</strong> — copper or aluminium, normally <strong>class 2
+    stranded</strong> (compacted strands: flexible enough to install, solid enough to
+    terminate). Class 1 solid is for small fixed wiring; class 5 fine-stranded flexible
+    is for moving equipment and needs ferrules at every termination.</li>
+    <li><strong>Insulation</strong> — <strong>XLPE</strong> on this plant: 90&nbsp;&deg;C
+    continuous, 250&nbsp;&deg;C short-circuit, k = 143 with copper. The cross-linking is
+    the whole trick — ordinary polyethylene softens near 80&nbsp;&deg;C; chemically
+    cross-linking the chains makes a thermoset that holds shape to far higher
+    temperatures. This single material choice buys the 0.82 (not 0.71) ambient factor
+    that makes Saudi sizing workable.</li>
+    <li><strong>Screen</strong> (MV cables, and metallic-screened LV designs) — a copper
+    tape or wire screen over each insulated core, carrying capacitive charging current
+    and earth-fault current, and tying the electric field to a defined earthed
+    boundary.</li>
+    <li><strong>Bedding and armour</strong> — <strong>SWA</strong> (galvanised steel wire
+    armour) on multicore cables gives mechanical protection and a low-impedance earth
+    path. On <strong>single-core</strong> cables steel is forbidden — a magnetic tube
+    around one phase is a transformer core and heats ferociously — so single-core armour
+    is <strong>AWA</strong> (non-magnetic aluminium wire).</li>
+    <li><strong>Outer sheath</strong> — PVC for general buried duty;
+    <strong>LSZH</strong> (low smoke, zero halogen) wherever cables run through occupied
+    or safety-critical buildings, because burning PVC releases dense smoke and corrosive
+    HCl. Specify <strong>UV-stabilised</strong> (carbon-black loaded) sheath for anything
+    outdoors here — Saudi sun destroys unstabilised polymer sheaths in a few years.</li>
+  </ul>
+
+  <p><strong>Copper vs aluminium.</strong> Aluminium has ~61&nbsp;% of copper's
+  conductivity, so an Al cable needs roughly 1.6&times; the cross-section (about two
+  standard sizes up) for the same duty — but it weighs half as much and, per ampere,
+  usually costs noticeably less. The price is termination discipline: aluminium creeps
+  under pressure and grows an insulating oxide skin instantly, so it demands bimetallic
+  lugs, joint compound, and torque-checked connections. Indicative plant practice:
+  <strong>Al for large, long, rarely-disturbed feeders</strong> (where the cost saving is
+  real and terminations are few), <strong>Cu for motor feeders, controls, and anything
+  frequently terminated</strong>. The adiabatic k also drops (≈ 94 for Al/XLPE vs 143),
+  so the short-circuit check tightens too.</p>
+
+  <p><strong>Single-core vs multicore.</strong> Multicore (3- or 4-core) is the default
+  up to roughly 300–400&nbsp;mm&sup2;: one pull, balanced fields, armour usable as PE.
+  Above that, cables become unmanageably stiff and heavy, and the design shifts to
+  <strong>single-core in trefoil</strong> — exactly the Case A solution. Trefoil
+  (three cables touching in a triangle) keeps the three phase fields cancelling, which
+  minimises reactance and stray heating; flat formation runs slightly cooler but has
+  higher and unequal reactances and needs transposition on long runs.</p>
+
+  <p><strong>Screen and armour bonding — a genuinely 60 Hz topic.</strong> The metallic
+  screen/armour of a single-core cable links the phase flux, so a voltage is induced
+  along it, proportional to current <em>and to frequency</em> — about
+  <strong>20&nbsp;% higher at 60&nbsp;Hz</strong> than the 50&nbsp;Hz literature value
+  for the same geometry. The bonding choice decides what that voltage does:</p>
+
+  <ul>
+    <li><strong>Both-ends bonding</strong> (default for LV and short MV runs): the
+    induced voltage drives a <strong>circulating current</strong> around the
+    screen–earth loop. It is safe and simple, but the circulating current heats the
+    screen and can eat 5–15&nbsp;% of the cable's ampacity on large single-core runs —
+    slightly worse at 60&nbsp;Hz, and worth checking against the manufacturer's
+    both-ends-bonded rating column, not the single-point one.</li>
+    <li><strong>Single-point bonding</strong> (long, heavily loaded MV single-core
+    runs): earth one end only — no loop, no circulating current, full ampacity — but the
+    open end develops a standing voltage (volts to tens of volts per hundred metres at
+    load, far more during faults), so it needs a sheath-voltage limiter and a warning
+    label. Choose deliberately and document it; a "temporary" second earth quietly added
+    later converts a single-point design into an undeclared both-ends one and the cable
+    runs hotter than its calculation.</li>
+  </ul>
+
+  <p><strong>MV terminations and stress control.</strong> On the 13.8&nbsp;kV feeders,
+  cutting back the insulation screen creates the most electrically stressed few
+  millimetres on the plant: the field that was uniform inside the cable concentrates at
+  the screen edge. A <strong>stress cone or stress-control tubing</strong> (cold-shrink
+  or heat-shrink) grades that field back to safe values. Termination kits are
+  rated-and-tested assemblies to IEC&nbsp;60502-4; they fail not by calculation error but
+  by craftsmanship — a knife nick in the insulation, a fingerprint of conductive grime, a
+  screen cut 5&nbsp;mm short. Most MV cable failures are termination failures, which is
+  why <a href="#c-cables-control">the monitoring section below</a> aims its tests squarely
+  at them.</p>
+
+  <div class="tip">
+    <strong>Saudi installation notes.</strong> Outdoors: UV-stabilised black sheaths,
+    metal (not plastic) tray covers as sunshades with an air gap, and glands rated for
+    the enclosure's IP54+ dust rating. Buried: imported thermal backfill (stabilised
+    sand–cement, resistivity ≤ ~1.2 K·m/W) around the cables — never native dune sand —
+    with route markers and warning tape, because wind-relocated sand erases surface
+    evidence of trench routes within months. Trenches and ducts attract rodents and
+    nesting insects: seal duct ends, and use SWA/AWA rather than unarmoured cable for
+    anything they can reach. Sand packing between cables in covered trenches destroys
+    the convective cooling the ratings assume — specify spacing and inspect for drift
+    ingress.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       7. CONTROL
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-cables-control">Control — Monitoring a Device That Has No Moving Parts</h3>
+
+  <h4>Control</h4>
+
+  <p>A cable cannot be "controlled" in the way a breaker or a motor can — it has no coil
+  to energise and no setting to change. What it has is a <strong>condition</strong>, and
+  the control discipline for cables is condition monitoring plus ruthless data
+  management. The failure story earlier in this section gave nine years of warning to
+  anyone who looked; these are the ways of looking.</p>
+
+  <ul>
+    <li><strong>Insulation resistance (IR) testing</strong> — the basic LV health check:
+    a DC test voltage (typically 500–1 000 V for LV cables) between conductors and
+    between each conductor and earth, isolated and discharged first. New XLPE cable
+    reads in the gigaohms; the absolute number matters less than the <strong>trend</strong>
+    — a feeder that read 2 G&Omega; at commissioning and reads 50 M&Omega; this shutdown
+    is telling a story, even though 50 M&Omega; still "passes". Record temperature and
+    humidity with every reading; IR halves roughly every 10 &deg;C, and an August reading
+    compared raw against a January baseline will frighten you for nothing.</li>
+    <li><strong>VLF withstand and partial-discharge (PD) testing — MV cables.</strong>
+    The 13.8 kV feeders get more than a megger. A <strong>VLF</strong> (very low
+    frequency, 0.1 Hz) AC withstand test stresses the insulation like power frequency
+    without needing a building-sized test set; <strong>PD measurement</strong> listens
+    for the tiny discharges inside voids, nicks and bad terminations — the precursor
+    noise of every termination failure, detectable years before breakdown. Test at
+    commissioning to fingerprint the system, then periodically or after any cable is
+    disturbed. Never DC-pressure-test aged XLPE: DC can leave trapped space charge that
+    damages exactly the insulation you were checking.</li>
+    <li><strong>Thermography of terminations and routes.</strong> The hottest point of a
+    healthy circuit is a clue; the hottest point of an unhealthy one is a prediction. An
+    infrared survey of terminations, glands and accessible tray runs at peak load —
+    summer afternoon, plant at full output — finds loose lugs, overloaded runs and
+    sand-choked trench sections while they are still maintenance items. The practical
+    technique, pass criteria and report format live in Part 5, the field-tools part of
+    this manual.</li>
+  </ul>
+
+  <p><strong>The cable schedule is a control system.</strong> Every check in this section
+  consumed data: route length, installation method, grouping, derating chain, breaker
+  settings, bonding method, test history. The <strong>cable schedule</strong> is the
+  single document that holds it, one row per cable, tags per the plant scheme. Its
+  discipline rules: every cable on the plant appears in it; every change — an added tray
+  circuit, a rerouted trench, a resized feeder — re-triggers the derating check of its
+  neighbours (recall the grouping-factor erosion in the failure story); and test results
+  are appended to the row, not filed in a separate binder that no designer will ever
+  open. A perfect calculation with an unmaintained schedule decays into the failure
+  story at the speed of plant modifications.</p>
+
+  <div class="key">
+    Cables are controlled by <em>knowledge</em>: trended IR for LV, VLF/PD for the
+    13.8 kV feeders, thermography at peak load for terminations and routes, and a living
+    cable schedule that forces a derating re-check whenever anyone touches a tray or a
+    trench. The plant gives years of warning — but only in the data.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       8. SIZING METHOD
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-cables-sizing">Sizing Method — the Complete Procedure for the Rev 3 Basis</h3>
+
+  <h4>Sizing method</h4>
+
+  <p>Everything above compresses into one repeatable procedure. Run it in order, write
+  down every factor, and let the <em>largest</em> answer from the independent checks
+  choose the size. All table values below are indicative; the SASO-adopted editions of
+  IEC&nbsp;60364-5-52 (LV ampacity and methods) and IEC&nbsp;60502 (construction),
+  applied with SBC&nbsp;401 and the SEC Distribution Code, govern.</p>
+
+  <ol>
+    <li><strong>Establish the design current I<sub>B</sub>.</strong> Transformer links:
+    full nameplate FLC (Case A — 2 309 A). Motor feeders: motor FLC, not pumping duty
+    (<a href="#c-flc">§2</a>, <a href="#c-motors">§3</a>). Distribution feeders: maximum
+    demand after diversity. Add known future load now — recabling later costs ten times
+    more than one size up today.</li>
+    <li><strong>Fix the route and installation method.</strong> Walk it or take it from
+    the layout: length, in air or buried, tray/ladder/duct/trench, how many other loaded
+    circuits share each segment, sun exposure. Identify the <em>worst</em> segment — the
+    whole cable is rated by its hottest metre. Map to an IEC 60364-5-52 method letter
+    (E multicore on tray, F single-core in air, D buried).</li>
+    <li><strong>Read the base table rating I<sub>table</sub></strong> for the method,
+    candidate size and material, at the table's reference conditions (30 &deg;C air /
+    20 &deg;C soil).</li>
+    <li><strong>Apply the full derating chain</strong> —
+    <code>I_z = I_table &times; k_amb &times; k_group &times; k_soil &times; k_depth</code>
+    — using the Saudi factors below, and require I<sub>z</sub> ≥ I<sub>B</sub>. The
+    anchor factor is worth re-deriving from first principles whenever in doubt:
+    <code class="formula">k_amb = &radic;((90 &minus; 50)/(90 &minus; 30)) = &radic;0.667 ≈ 0.82  (XLPE, 50 &deg;C air)</code></li>
+    <li><strong>Voltage-drop check at 60 Hz.</strong>
+    <code>&Delta;U = &radic;3 &times; I &times; L &times; (R·cos&phi; + X·sin&phi;)</code>,
+    with <strong>X ≈ 1.2 &times; the 50 Hz table value</strong> (X = 2&pi;fL) and R at
+    90 &deg;C (plus ~3 % skin allowance above ≈ 400 mm&sup2;). Indicative limits: 3 %
+    steady-state to a motor, 5 % overall to any load, and check DOL starting drop on
+    long motor feeders (Case B, step B4a). If it fails, go up a size — or question the
+    route.</li>
+    <li><strong>Adiabatic check.</strong>
+    <code>S ≥ I &times; &radic;t / k</code> with k = 143 (Cu/XLPE), 94 (Al/XLPE), using
+    the real fault level (<a href="#c-shortcircuit">§4</a>) and the real clearing time —
+    or compare the breaker's published let-through I&sup2;t against k&sup2;S&sup2; for
+    current-limiting devices (<a href="#c-breaker">§14</a>,
+    <a href="#cat-lv-breakers">catalogue</a>). This check, not ampacity, governs small
+    cables on stiff buses.</li>
+    <li><strong>Earth-fault loop and PE conductor.</strong> Size the PE (half the phase
+    above 35 mm&sup2;, table rule, adiabatically cross-checked), estimate the TN-S loop
+    impedance over the full run, and confirm the earth-fault current trips the protection
+    within the disconnection time (<a href="#c-earthing">§9</a>). Long runs fail here
+    first; fixes are a bigger PE or a G-stage on the breaker.</li>
+    <li><strong>Choose the next standard size</strong> ≥ every check's answer
+    (… 95, 120, 150, 185, 240, 300, 400, 500, 630 mm&sup2;), or parallel runs above
+    ~630 mm&sup2; (identical cables, symmetrical layout — Case A). Then close the loop:
+    record the chain in the cable schedule and set the breaker per
+    <a href="#c-cables-settings">Equipment settings</a>.</li>
+  </ol>
+
+  <p><strong>Quick-reference derating factors — Rev 3 Saudi basis</strong> (indicative;
+  the project tables govern):</p>
+
+  <table class="tbl">
+    <thead>
+      <tr><th>Factor</th><th>Condition (Rev 3 basis)</th><th>Indicative value</th><th>Notes</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>k_amb (air)</td><td>50 &deg;C air, XLPE 90 &deg;C</td><td><strong>0.82</strong></td><td>&radic;((90&minus;50)/(90&minus;30)); the Saudi anchor number</td></tr>
+      <tr><td>k_amb (air)</td><td>50 &deg;C air, PVC 70 &deg;C</td><td>0.71</td><td>Why this plant standardises on XLPE</td></tr>
+      <tr><td>k_soil (temp)</td><td>35 &deg;C soil, XLPE</td><td>≈ 0.89</td><td>&radic;((90&minus;35)/(90&minus;20)); buried runs only</td></tr>
+      <tr><td>k_soil (resistivity)</td><td>Dry sand 2.5–3.0 K·m/W, unimproved</td><td>0.70–0.80</td><td>Avoid: use thermal backfill ≤ ~1.2 K·m/W → ≈ 0.95</td></tr>
+      <tr><td>k_group (tray)</td><td>2 / 4 / 6 touching circuits, one layer</td><td>0.88 / 0.82 / 0.80</td><td>Spacing ≥ 2&times; diameter recovers most of it</td></tr>
+      <tr><td>k_group (buried)</td><td>2 / 4 ducts or cables, 0.25 m apart</td><td>0.85 / 0.75</td><td>Mutual soil heating; worse when closer</td></tr>
+      <tr><td>k_depth</td><td>Buried 1.0 m vs reference 0.7/0.8 m</td><td>≈ 0.97</td><td>Minor; deeper = slightly worse</td></tr>
+      <tr><td>Bonding (1c, both ends)</td><td>Large single-core, screen bonded both ends</td><td>0.85–0.95</td><td>Circulating current; slightly worse at 60 Hz</td></tr>
+      <tr><td>X at 60 Hz</td><td>Any 50 Hz tabulated reactance</td><td>&times; 1.2</td><td>X = 2&pi;fL — apply to every voltage-drop check</td></tr>
+    </tbody>
+  </table>
+
+  <div class="worked">
+    <h4>Worked micro-example — the chain at its worst</h4>
+    <p>A buried feeder in unimproved dry sand, 35 &deg;C soil, grouped with three other
+    circuits:</p>
+    <code class="formula">k_total = 0.89 &times; 0.75 &times; 0.75 = 0.50</code>
+    <p><strong>Half</strong> the table rating — a "400 A" cable carrying 200 A.
+    <strong>Sanity check:</strong> this is why thermal backfill is specified
+    (0.75 → ≈ 0.95 on the resistivity term, k_total back to ≈ 0.63) and why no Saudi
+    buried run is ever sized from the bare table number.</p>
+  </div>
+
+  <div class="key">
+    The method is eight steps: load → route → base table → derating chain →
+    60 Hz voltage drop → adiabatic check → earth-fault loop → next standard size. The
+    biggest answer wins, the schedule records the chain, and the breaker settings close
+    the loop.
+  </div>
+
+  <!-- ────────────────────────────────────────────────────────────
+       SELF-CHECK
+  ──────────────────────────────────────────────────────────────── -->
+  <h3 id="c-cables-selfcheck">Self-Check</h3>
+
+  <ul class="checklist">
+    <li>I can explain why a cable is a thermal device and name the three independent
+    checks (ampacity, voltage drop, adiabatic) and the timescale each one tests.</li>
+    <li>I can derive k_amb = 0.82 for XLPE at 50 &deg;C air from
+    &radic;((90&minus;50)/(90&minus;30)) without notes, and explain why PVC gets only 0.71.</li>
+    <li>I can rebuild Case A: why the TX-1-to-LV-MSB link needs 4 parallel
+    630 mm&sup2; Cu/XLPE trefoils for 2 309 A, and which of the three checks governed.</li>
+    <li>I can compute a 60 Hz voltage drop, including the 1.2&times; correction on the
+    tabulated 50 Hz reactance, and state the indicative 3 % / 5 % limits.</li>
+    <li>I can run S ≥ I &times; &radic;t / k for 38.5 kA / 0.3 s (147 mm&sup2; with
+    k = 143) and explain why small cables on a stiff bus survive only through
+    current-limiting let-through (I&sup2;t ≤ k&sup2;S&sup2;).</li>
+    <li>I can state the overload-setting window I_B ≤ I_r ≤ I_z(derated), apply it to
+    both worked cases, and say what to do when the window closes.</li>
+    <li>I can explain SWA vs AWA armour, both-ends vs single-point screen bonding, and
+    why circulating currents are slightly worse on this 60 Hz plant.</li>
+    <li>I know the Saudi installation rules: UV-stabilised sheaths, thermal backfill
+    instead of dune sand, IP54+ glands, sealed ducts, and sand-drift inspection of
+    covered trenches.</li>
+    <li>I can name the condition-monitoring toolkit — trended IR for LV, VLF/PD for the
+    13.8 kV cables, thermography at peak load — and why the cable schedule must trigger
+    a derating re-check on every plant modification.</li>
+  </ul>
+
+</section>

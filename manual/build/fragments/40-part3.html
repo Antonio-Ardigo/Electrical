@@ -1,9 +1,12 @@
 <!-- ================================================================
-     PART 3 — SPOF ANALYSIS & RELIABILITY
+     PART 3 — SPOF ANALYSIS & RELIABILITY (Saudi / SEC Rev 3 edition)
      Fragment: 40-part3.html
      Data source: training/module-03-spof-analysis.md,
                   training/module-05-reliability-fmeca.md,
                   diagrams/spof-examples/sld-A..E.
+     Rev 3 basis: SEC 13.8 kV / 400-230 V / 60 Hz / 50 degC ambient.
+     SLD figures still show the original 11 kV / 415 V / 50 Hz drawing
+     basis — see the drawing-basis note under every figure.
      All values are INDICATIVE — for training only.
 ================================================================ -->
 
@@ -28,6 +31,19 @@
     not matter how much redundancy exists downstream: if a common element upstream can black it all
     out, the function has a SPOF.
   </p>
+
+  <div class="note">
+    <strong>Rev 3 plant basis (Saudi / SEC).</strong> Throughout this Part the analysis prose uses
+    the Rev 3 plant basis: SEC supply at <strong>13.8 kV, 60 Hz</strong>; LV distribution at
+    <strong>400/230 V, 60 Hz, TN-S</strong>; 2 × 1600 kVA transformers (13.8/0.4 kV, Dyn11,
+    Z = 6 %, MV FLC ≈ 66.9 A, LV FLC ≈ 2309 A); LV fault level ≈ <strong>38.5 kA</strong> per
+    transformer, ≈ <strong>77 kA with the bus-tie closed</strong>; DG 1250 kVA; UPS 100 kVA /
+    30 min; NER 7.97 kV, 400 A / 10 s (≈ 19.9 Ω); design ambient <strong>50 °C</strong> with
+    dust/sand exposure. Standards are cited as SASO-adopted IEC together with the SEC
+    Distribution Code / Saudi Grid Code and SBC 401. All values are indicative — detailed
+    studies govern. The embedded SLD figures still show the original drawing basis; see the
+    drawing-basis note under each figure.
+  </div>
 
   <h3 id="s-what-why">Why SPOFs matter in a process plant</h3>
 
@@ -63,6 +79,15 @@
     no protection if they share a single supply cable. Always trace from source to load — the SPOF
     is wherever there is no alternative path.
   </div>
+
+  <p>
+    In the Saudi context one further class of SPOF deserves explicit treatment: the
+    <strong>environment itself</strong>. At a 50 °C design ambient with wind-blown dust, a single
+    HVAC unit cooling the switchgear room, or a single set of blinded filters, can act as a
+    common-cause failure that defeats every electrical redundancy on the drawing. These
+    environmental failure modes are analysed in the dedicated section
+    <a href="#s-environment-failures">Environmental Failure Modes</a> at the end of this Part.
+  </p>
 
 </section><!-- /s-what -->
 
@@ -114,16 +139,22 @@
 
   <p>
     Apply the method to the indicative 2 MW plant master SLD below. Starting from the top:
-    utility supply → MV-MET → MV-SWGR → (TX-1 to Bus A, TX-2 to Bus B) → LV-MSB with bus-tie
-    (BT) → MCCs → loads / DG / ATS / UPS.
+    SEC utility supply at 13.8 kV, 60 Hz → MV-MET → MV-SWGR → (TX-1 to Bus A, TX-2 to Bus B;
+    each 1600 kVA, 13.8/0.4 kV, MV FLC ≈ 66.9 A) → 400/230 V LV-MSB with bus-tie
+    (BT) → MCCs → loads / DG / ATS / UPS. All values indicative.
   </p>
 
   <figure class="fig">
     <div class="svg-embed" data-src="diagrams/svg/sld-master-2MW.svg"></div>
     <figcaption>
-      Fig 3-0 — Master SLD, indicative 2 MW MV/LV process plant (IEC 60617 symbols, indicative).
+      Fig 3-0 — Master SLD, indicative 2 MW MV/LV process plant (IEC 60617 symbols, indicative,
+      drawn on the original reference basis).
       Trace each element from source to load; flag any with no alternative path.
     </figcaption>
+    <div class="warning drawing-basis"><strong>Drawing basis note.</strong> This diagram was
+drawn for the original 11 kV / 415 V / 50 Hz reference design and has not been re-rendered.
+For this Saudi (SEC) Rev 3 edition read 11 kV as 13.8 kV, 415 V as 400 V and 50 Hz as 60 Hz.
+Topology, tags and protection philosophy are unchanged.</div>
   </figure>
 
   <p>
@@ -231,11 +262,15 @@
     <figcaption>
       Fig 3-A — SPOF variant A: single transformer TX-1, single un-split LV bus (indicative).
     </figcaption>
+    <div class="warning drawing-basis"><strong>Drawing basis note.</strong> This diagram was
+drawn for the original 11 kV / 415 V / 50 Hz reference design and has not been re-rendered.
+For this Saudi (SEC) Rev 3 edition read 11 kV as 13.8 kV, 415 V as 400 V and 50 Hz as 60 Hz.
+Topology, tags and protection philosophy are unchanged.</div>
   </figure>
 
   <p>
-    <strong>Configuration:</strong> One utility feed → TX-1 (1600 kVA indicative) → single
-    un-split LV bus (LV-MSB) feeding all loads. No second source, no bus-tie.
+    <strong>Configuration:</strong> One utility feed → TX-1 (1600 kVA, 13.8/0.4 kV indicative) →
+    single un-split 400 V LV bus (LV-MSB) feeding all loads. No second source, no bus-tie.
   </p>
 
   <p>
@@ -269,6 +304,10 @@
     <figcaption>
       Fig 3-B — SPOF variant B: two transformers, two buses, no bus-tie between them (indicative).
     </figcaption>
+    <div class="warning drawing-basis"><strong>Drawing basis note.</strong> This diagram was
+drawn for the original 11 kV / 415 V / 50 Hz reference design and has not been re-rendered.
+For this Saudi (SEC) Rev 3 edition read 11 kV as 13.8 kV, 415 V as 400 V and 50 Hz as 60 Hz.
+Topology, tags and protection philosophy are unchanged.</div>
   </figure>
 
   <p>
@@ -308,6 +347,10 @@
     <figcaption>
       Fig 3-C — SPOF variant C: good LV architecture but single MV incomer and bus (indicative).
     </figcaption>
+    <div class="warning drawing-basis"><strong>Drawing basis note.</strong> This diagram was
+drawn for the original 11 kV / 415 V / 50 Hz reference design and has not been re-rendered.
+For this Saudi (SEC) Rev 3 edition read 11 kV as 13.8 kV, 415 V as 400 V and 50 Hz as 60 Hz.
+Topology, tags and protection philosophy are unchanged.</div>
   </figure>
 
   <p>
@@ -336,9 +379,12 @@
 
   <p>
     <strong>Mitigation:</strong> Provide a second independent utility feeder with a closeable MV
-    bus-section (as in Variant E). Where a second feeder is not feasible, rely on DG + ATS to
-    ride through utility loss for all essential loads. Strengthen MV incomer protection
-    (differential, IDMT O/C, earth fault) to minimise fault duration.
+    bus-section (as in Variant E). A second 13.8 kV feeder from a different SEC distribution
+    substation or ring point is negotiated with SEC under the SEC Distribution Code connection
+    process — confirm feasibility, fault-level implications (SEC networks range ≈ 25–40 kA at
+    13.8 kV; this design assumes 25 kA) and tariff terms early. Where a second feeder is not
+    feasible, rely on DG + ATS to ride through utility loss for all essential loads. Strengthen
+    MV incomer protection (differential, IDMT O/C, earth fault) to minimise fault duration.
   </p>
 
   <!-- ---- D ---- -->
@@ -349,6 +395,10 @@
     <figcaption>
       Fig 3-D — SPOF variant D: upstream redundancy defeated by a shared MCC feeder cable (indicative).
     </figcaption>
+    <div class="warning drawing-basis"><strong>Drawing basis note.</strong> This diagram was
+drawn for the original 11 kV / 415 V / 50 Hz reference design and has not been re-rendered.
+For this Saudi (SEC) Rev 3 edition read 11 kV as 13.8 kV, 415 V as 400 V and 50 Hz as 60 Hz.
+Topology, tags and protection philosophy are unchanged.</div>
   </figure>
 
   <p>
@@ -388,6 +438,10 @@
     <figcaption>
       Fig 3-E — Resilient reference layout: all A–D SPOFs mitigated (indicative).
     </figcaption>
+    <div class="warning drawing-basis"><strong>Drawing basis note.</strong> This diagram was
+drawn for the original 11 kV / 415 V / 50 Hz reference design and has not been re-rendered.
+For this Saudi (SEC) Rev 3 edition read 11 kV as 13.8 kV, 415 V as 400 V and 50 Hz as 60 Hz.
+Topology, tags and protection philosophy are unchanged.</div>
   </figure>
 
   <p>
@@ -539,6 +593,19 @@
     the transformer incomers to prevent mal-operation.
   </p>
 
+  <div class="warning">
+    <strong>Fault-level constraint on the bus-tie (Rev 3 numbers):</strong> With one 1600 kVA,
+    Z = 6 % transformer feeding a bus section, the prospective LV fault level is ≈
+    <strong>38.5 kA</strong>. If both transformers are paralleled through a closed bus-tie, the
+    prospective fault current approximately doubles to ≈ <strong>77 kA</strong> — above the
+    typical 50–65 kA rating of the LV-MSB. The transfer scheme must therefore be
+    <strong>break-before-make</strong> (open the dead incomer before closing BT), or any
+    momentary paralleling window must be proven shorter than the switchboard's rated
+    short-time withstand. A bus-tie scheme that quietly allows sustained parallel operation
+    converts an availability improvement into a switchgear-rating violation — itself a hidden
+    SPOF. See the short-circuit calculations in <a href="#c-shortcircuit">Part 2</a>.
+  </div>
+
   <h3 id="s-principles-dualfeed">Dual Feed</h3>
   <p>
     Two <strong>independent utility incomers</strong> (physically separate cables from separate
@@ -559,19 +626,24 @@
 
   <h3 id="s-principles-dg">Standby Generation (DG)</h3>
   <p>
-    A <strong>diesel generator (DG)</strong> sized for the essential load (typically 30–50 % of
-    installed kVA, indicative) with an automatic transfer switch (ATS) provides a completely
-    independent source independent of the utility supply. The DG covers: total utility failure,
-    MV incomer fault, and transformer outage that would otherwise leave essential loads dark.
-    Weekly no-load test and monthly on-load test are minimum recommended practice. Fuel, coolant,
-    and battery condition are critical.
+    A <strong>diesel generator (DG)</strong> sized for the essential load (this plant:
+    <strong>1250 kVA</strong> indicative, quoted as an <em>ESP rating valid at the 50 °C design
+    ambient</em> — a generator rated at 25 °C or 40 °C reference conditions loses several percent
+    of output at Saudi summer temperatures) with an automatic transfer switch (ATS,
+    open-transition, transfer ≤ 10 s indicative) provides a source completely independent of the
+    SEC utility supply. The DG covers: total utility failure, MV incomer fault, and transformer
+    outage that would otherwise leave essential loads dark. Weekly no-load test and monthly
+    on-load test are minimum recommended practice. Fuel, coolant, and battery condition are
+    critical — and at 50 °C the radiator and charge-air cooling margins must be verified, not
+    assumed (see <a href="#f-derating">temperature derating</a>).
   </p>
 
   <h3 id="s-principles-ups">UPS for Control and Protection</h3>
   <p>
-    The <strong>uninterruptible power supply (UPS)</strong> provides AC no-break power to DCS,
+    The <strong>uninterruptible power supply (UPS)</strong> (this plant: <strong>100 kVA /
+    30 min</strong> indicative) provides AC no-break power to DCS,
     PLC, and marshalling panels; the <strong>DC distribution board (DCDB)</strong> provides
-    battery-backed DC (typically 110 V DC or 24 V DC, indicative) for protection relay trip
+    battery-backed DC (this plant: <strong>110 V DC</strong> indicative) for protection relay trip
     coils, remote indication, and emergency lighting. Without these, a supply disturbance
     triggers a protection relay loss-of-supply condition, preventing controlled re-energisation.
     UPS battery condition, bypass functionality, and charger health must be routinely verified.
@@ -654,7 +726,12 @@
     <li>Verify the MV protection relay (IDMT O/C and earth fault) is active, in-service, and
         last tested within the maintenance interval.</li>
     <li>Confirm the neutral earthing resistor (MV-NER) is connected, resistance value within
-        tolerance, and has thermal overload monitoring.</li>
+        tolerance (design basis: 7.97 kV, 400 A / 10 s → ≈ 19.9 Ω, indicative), and has thermal
+        overload monitoring.</li>
+    <li>Verify the MV switchgear nameplate ratings against the design basis: 17.5 kV class,
+        31.5 kA / 3 s short-time withstand, 630–1250 A bus (indicative) — adequate for the
+        assumed SEC fault level of 25 kA (confirm actual SEC value; the SEC range is
+        25–40 kA at 13.8 kV).</li>
     <li>Check arc-flash / pressure-relief arrangement on the MV switchgear — a single MV arc
         event that damages the bus will cause a prolonged outage unless the design contains it.</li>
     <li>Confirm that MV switchgear control / trip power supply is from the UPS or DCDB — a
@@ -674,8 +751,12 @@
   <ul class="checklist">
     <li>Confirm two transformers are installed (TX-1 and TX-2). If only one transformer: the
         entire LV plant is a SPOF for that transformer — document and assess DG coverage.</li>
-    <li>Verify each transformer nameplate (kVA, voltage ratio, vector group Dyn11, impedance)
-        matches the design basis; mismatched impedances affect load sharing after N-1 transfer.</li>
+    <li>Verify each transformer nameplate (1600 kVA, 13.8/0.4 kV, vector group Dyn11,
+        Z = 6 % — indicative design basis) matches the design documents; mismatched impedances
+        affect load sharing and fault levels after N-1 transfer.</li>
+    <li>Cross-check full-load currents against protection settings: MV FLC ≈ 66.9 A,
+        LV FLC ≈ 2309 A per transformer (indicative) — see
+        <a href="#c-transformer">transformer calculations in Part 2</a>.</li>
     <li>Check that each transformer has <strong>independent</strong> MV and LV protection
         (IDMT O/C, earth fault, winding temperature, oil level / Buchholz gas — as applicable)
         — shared protection is a common-element SPOF.</li>
@@ -708,8 +789,13 @@
         to close simultaneously (prevents dangerous parallel operation).</li>
     <li>Verify the LV-MSB construction standard (Form 4 compartmentalisation preferred) —
         a low-form panel allows a fault to spread across bus sections, defeating the split.</li>
+    <li>Check the LV-MSB short-circuit rating against the design fault levels: ≈ 38.5 kA with
+        one transformer per section, rising to ≈ 77 kA if both transformers are momentarily
+        paralleled through the bus-tie (indicative). Confirm the board is rated 50–65 kA and
+        the transfer scheme is break-before-make (no sustained paralleling).</li>
     <li>Check for arc-flash detection (optical or pressure) on the LV-MSB — a bus arc event
-        in a high-fault-level plant is a high-consequence SPOF for the LV distribution.</li>
+        at ≈ 38.5 kA prospective fault current is a high-consequence SPOF for the LV
+        distribution.</li>
     <li>Confirm that Bus A and Bus B feeders to critical loads are balanced — a heavily
         unbalanced split means N-1 transfer may overload the surviving transformer.</li>
   </ul>
@@ -749,8 +835,10 @@
   </div>
 
   <ul class="checklist">
-    <li>Confirm the DG rating is sufficient for the defined essential load — if the essential
-        load list has grown since commissioning, the DG may now be undersized.</li>
+    <li>Confirm the DG rating is sufficient for the defined essential load (design basis:
+        1250 kVA ESP <em>at 50 °C ambient</em>, indicative) — if the essential load list has
+        grown since commissioning, or the nameplate rating is referenced to 25/40 °C, the DG
+        may now be effectively undersized.</li>
     <li>Verify the essential bus is clearly defined and segregated: only loads that must run on
         generator should be connected. Non-essential loads left on the essential bus overload
         the DG and cause it to trip — a SPOF for all essential functions.</li>
@@ -777,13 +865,18 @@
 
   <ul class="checklist">
     <li>Confirm a UPS is installed for DCS / PLC / relay panels. Check the rated hold-up time
-        (battery autonomy at full load, <strong>indicative minimum 15–30 min for UPS</strong>; confirm per plant) — is it current or degraded?</li>
+        (battery autonomy at full load; design basis <strong>100 kVA / 30 min</strong>,
+        indicative; confirm per plant) — is it current or degraded? Note that sustained battery
+        room temperatures above 25 °C roughly halve VRLA battery life for every 8–10 °C —
+        a critical concern at a 50 °C site (see
+        <a href="#s-environment-failures">Environmental Failure Modes</a>).</li>
     <li>Verify the UPS battery has been tested (discharge test) within the maintenance interval
         and that battery string health is monitored (cell voltage, temperature).</li>
     <li>Check UPS bypass path — can the UPS be bypassed for maintenance without a supply
         interruption to critical control panels? A UPS with no bypass is itself a SPOF
         during UPS maintenance or failure.</li>
-    <li>Confirm the DCDB (DC distribution board) is fed from a dedicated battery charger, and
+    <li>Confirm the DCDB (110 V DC distribution board, indicative) is fed from a dedicated
+        battery charger, and
         that DC supplies reach all protection relay trip / close coils. Check the rated DCDB
         battery hold-up time (<strong>indicative minimum 2 h</strong>; confirm per plant requirement).</li>
     <li>Verify DCDB battery charger AC supply — if it is fed from the same bus as the equipment
@@ -805,7 +898,8 @@
 
   <ul class="checklist">
     <li>Confirm MV-NER is connected and resistance value is within design tolerance
-        (measured at last maintenance, with certificate).</li>
+        (design value ≈ 19.9 Ω for 7.97 kV, 400 A / 10 s, indicative — measured at last
+        maintenance, with certificate).</li>
     <li>Verify only one NER is connected at a time when the MV bus-section is closed — two
         parallel NERs alter the earth fault current and can defeat protection settings.</li>
     <li>Check LV transformer neutral earthing (solidly earthed at one point per bus section)
@@ -978,6 +1072,18 @@
     data for real studies.</em></p>
   </div>
 
+  <div class="warning">
+    <strong>Published failure rates assume temperate conditions.</strong> Generic λ / MTBF data
+    (IEEE 493 "Gold Book", ISO 14224) are largely drawn from plants operating at 20–30 °C
+    ambients. At a Saudi site with a 50 °C design ambient, dust and high solar gain, real
+    failure rates for temperature-sensitive items — electronics, VRLA batteries, capacitors
+    (PFC), VFDs, gaskets and seals — can be a factor of 2 or more higher unless the equipment
+    is specifically rated and cooled for the environment. Treat published values as
+    <em>optimistic</em> baselines; adjust Occurrence scores accordingly, and see
+    <a href="#s-environment-failures">Environmental Failure Modes</a> for the systematic
+    treatment.
+  </div>
+
   <div class="tip">
     <strong>Practical implication of MTTR:</strong> MTTR is strongly influenced by spares holding,
     access, and contractor response time — all factors within the plant operator's control. A
@@ -1140,8 +1246,8 @@
   <h2>FMECA — Failure Mode, Effects and Criticality Analysis</h2>
 
   <p>
-    FMECA (IEC 60812) is the formal tool for converting a SPOF list into a scored, ranked risk
-    register. For each component, you identify its <strong>failure modes</strong>, trace the
+    FMECA (IEC 60812, applied here as SASO-adopted IEC practice) is the formal tool for
+    converting a SPOF list into a scored, ranked risk register. For each component, you identify its <strong>failure modes</strong>, trace the
     <strong>local and system effects</strong>, and score <strong>criticality</strong>.
   </p>
 
@@ -1408,7 +1514,6 @@
         <td>Form 4 Type 7 compartmentalisation (contains arc to one functional unit); arc-flash detection; planned arc-flash study; routine PM</td>
       </tr>
       <tr>
-        <td>&#9744;</td>
         <td>&#9744;</td>
         <td><code>DG</code></td>
         <td>Standby power for essential bus</td>
@@ -1877,3 +1982,447 @@
   </div>
 
 </section><!-- /s-selfcheck -->
+
+
+<!-- ============================================================
+     3.10 — ENVIRONMENTAL FAILURE MODES (Saudi-specific)
+============================================================ -->
+<section id="s-environment-failures" data-title="Environmental Failure Modes" data-part="Part 3 — SPOF Analysis &amp; Reliability">
+
+  <h2>Environmental Failure Modes</h2>
+
+  <p>
+    Everything in this Part so far has hunted SPOFs <em>on the single-line diagram</em> — items
+    you can point to with a pencil: a transformer, a bus-tie, a cable. This closing section hunts
+    a class of SPOF that <strong>never appears on any electrical drawing</strong>: the
+    environment. At a Saudi site the design ambient is <strong>50 °C</strong>, the air carries
+    wind-blown dust and sand for much of the year, solar gain on outdoor enclosures is severe,
+    and coastal locations add salt-laden humidity. Each of these is a <em>common-cause stress</em>:
+    it acts on Bus A and Bus B, on duty and standby, on TX-1 and TX-2 <em>simultaneously and
+    equally</em>. Redundancy on the drawing is no defence against a stress that attacks both
+    redundant halves at once.
+  </p>
+
+  <div class="key">
+    The defining property of an environmental SPOF is that it is a <strong>common-cause
+    failure</strong>: one environmental event (an HVAC failure, a dust storm, a rare flood)
+    degrades or disables <em>multiple</em> electrically independent paths at the same time.
+    The N-1 arithmetic of the <a href="#s-rbd">RBD section</a> silently assumes failures are
+    independent — environmental stresses break exactly that assumption.
+  </div>
+
+  <p>
+    The plant environment basis is set out in
+    <a href="#orientation-environment">Part 0 — Site Environment</a>, and the quantitative
+    consequences for equipment ratings are developed in
+    <a href="#f-derating">Part 1 — Temperature Derating</a>. Here we treat the environment the
+    same way we treated the switchgear: identify the failure modes, trace local and plant-level
+    effects, score them FMECA-style, and assign mitigations. All values are indicative.
+  </p>
+
+  <!-- ---- Heat ---- -->
+  <h3 id="s-env-heat">Heat — HVAC Failure as a Hidden Common-Cause SPOF</h3>
+
+  <p>
+    Indoor electrical equipment — protection relays, VFDs, UPS electronics, PLC racks, and
+    above all batteries — is typically specified for an operating ambient of 40 °C, sometimes
+    55 °C with derating. The switchgear room therefore depends on its <strong>air-conditioning
+    plant to hold an artificial climate</strong> inside a 50 °C desert. That makes the room HVAC
+    an electrical-availability item in disguise: when it fails, every panel in the room begins a
+    slow, simultaneous slide toward malfunction. A single packaged A/C unit cooling the
+    switchgear room is exactly as much a whole-room SPOF as a single transformer is a
+    whole-plant SPOF in <a href="#s-library-a">Variant A</a> — but because it belongs to the
+    "civil/HVAC" discipline, it is routinely missed by electrical SPOF reviews.
+  </p>
+
+  <p>
+    What actually goes wrong as the room temperature climbs past its design point (indicative
+    thresholds — consult equipment data sheets):
+  </p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Room temperature (indicative)</th>
+        <th>Equipment affected</th>
+        <th>Failure behaviour</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>&gt; 40 °C sustained</td>
+        <td>Numerical protection relays</td>
+        <td>Display dropout, measurement drift, spurious self-supervision alarms; some relays
+            block or restart — a relay that restarts during a fault <strong>fails to trip</strong></td>
+      </tr>
+      <tr>
+        <td>&gt; 40–45 °C</td>
+        <td>VFDs</td>
+        <td>Automatic current derating, then over-temperature trip — critical driven loads
+            (cooling pumps, fans) shut down <em>just when cooling demand is highest</em></td>
+      </tr>
+      <tr>
+        <td>&gt; 45–50 °C</td>
+        <td>UPS inverter / rectifier</td>
+        <td>Power-stage derating, fan-speed alarms, eventual transfer to static bypass — the
+            "no-break" supply becomes a raw-mains supply with no ride-through</td>
+      </tr>
+      <tr>
+        <td>Any rise above 25 °C, sustained</td>
+        <td>VRLA batteries (UPS, DCDB, DG starter)</td>
+        <td>Service life roughly <strong>halves for every 8–10 °C</strong> above 25 °C; a
+            nominal 10-year battery held at 45 °C may fail in 2–3 years — silently, discovered
+            only on demand</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="warning">
+    <strong>The cruellest property of the heat SPOF is its timing.</strong> The HVAC works
+    hardest, and is most likely to fail, on the hottest afternoon of the year — exactly when
+    grid demand peaks, when the transformers are at maximum load, and when a DG start (with its
+    own 50 °C cooling margins) is most likely to be demanded. Heat failures cluster; they do
+    not arrive politely one at a time.
+  </div>
+
+  <div class="worked">
+    <h4>Feel for the numbers — how long until the room overheats?</h4>
+    <p>
+      Take an indicative switchgear room with an internal equipment heat dissipation of
+      <strong>15 kW</strong> (switchboard losses, VFD losses, UPS losses, lighting) plus solar
+      and fabric gain of ~5 kW at midday — say <strong>20 kW</strong> total. The room air plus
+      the thermal mass it couples to quickly might absorb roughly 2 MJ per °C (indicative for a
+      modest room; real values vary widely).
+    </p>
+    <code class="formula">Rate of rise ≈ Q / C = 20 kW / 2 MJ·°C⁻¹ = 0.01 °C/s ≈ 36 °C per hour (initial, adiabatic)</code>
+    <p>
+      Even allowing for fabric losses slowing the rise as the room approaches the 50 °C
+      outdoor temperature, the practical conclusion holds: after a total HVAC failure at
+      midday, the room can pass the ~40 °C electronics threshold in well under an hour
+      and approach outdoor ambient within a few hours.
+    </p>
+    <code class="formula">Time from 24 °C set-point to ~40 °C ≈ (40 − 24) / 36 ≈ 0.4–1 h (indicative)</code>
+    <p>
+      <strong>Sanity check:</strong> 20 kW is about eight domestic kettles running continuously
+      in a sealed room in the desert sun — intuitively, that room overheats fast.
+      <strong>Result:</strong> an unalarmed HVAC failure on a Friday afternoon can take the
+      entire protection, control and drives population through their temperature limits before
+      anyone is even aware. All values indicative.
+    </p>
+  </div>
+
+  <p>
+    <strong>The N+1 cooling argument.</strong> Apply exactly the same logic used for
+    transformers in <a href="#s-principles-n1">SPOF-Hardening Principles</a>: if the room
+    requires one A/C unit's capacity to hold its design temperature at peak summer load, then
+    one unit is a SPOF and the correct provision is <strong>N+1 units</strong> (e.g. 2 × 100 %
+    or 3 × 50 %), arranged so that:
+  </p>
+
+  <ul>
+    <li>each unit alone (or any N of N+1) can hold the room below the equipment limit on the
+        hottest design day — verified by calculation at 50 °C ambient, not at the vendor's
+        35 °C catalogue point;</li>
+    <li>the units are fed from <strong>different LV bus sections</strong> (Bus A / Bus B) —
+        otherwise the electrical SPOF simply re-enters through the supply, the
+        <a href="#s-library-d">Variant D</a> lesson re-applied to HVAC;</li>
+    <li>at least the essential cooling for rooms containing protection and UPS equipment is on
+        the <strong>essential (DG-backed) bus</strong> — a blackout that takes out the cooling
+        also bakes the batteries the recovery depends on;</li>
+    <li>room temperature is <strong>continuously monitored and alarmed to the DCS</strong> with
+        a two-stage alarm (high → investigate; high-high → prepare controlled load reduction).
+        An HVAC failure that nobody sees is a Detection-5 latent failure in FMECA terms
+        (<a href="#s-fmeca">FMECA section</a>).</li>
+  </ul>
+
+  <!-- ---- Dust ---- -->
+  <h3 id="s-env-dust">Dust and Sand Ingress</h3>
+
+  <p>
+    Desert dust is not an occasional nuisance; it is a continuous, plant-wide degradation
+    mechanism punctuated by severe step-changes during shamal dust storms. Its three principal
+    electrical failure mechanisms are worth understanding individually, because each one is
+    slow, cumulative, and — crucially — <strong>attacks every enclosure on site at the same
+    rate</strong>, making it a textbook common-cause stress.
+  </p>
+
+  <p>
+    <strong>1. Filter blinding.</strong> Every ventilated enclosure — MCC sections, VFD
+    cubicles, UPS cabinets, DG radiator intake, HVAC condensers — breathes through filters.
+    Dust loading blinds them progressively: airflow falls, internal temperature creeps up, and
+    the equipment moves quietly toward the heat failure modes described in
+    <a href="#s-env-heat">the previous sub-section</a>. A single dust storm can deposit weeks'
+    worth of loading in an afternoon, so filters that were "fine last month" can be effectively
+    sealed today. Filter blinding converts the dust problem into the heat problem — the two
+    environmental stresses compound.
+  </p>
+
+  <p>
+    <strong>2. Insulator tracking.</strong> Dust settling on outdoor and semi-outdoor
+    insulation (transformer bushings, MV cable terminations, busbar supports) is relatively
+    benign while bone-dry. Add the morning coastal humidity or a rare rain shower and the
+    dust layer becomes a weakly conductive film. Leakage current flows across the surface,
+    dries local bands, and forms <em>dry-band arcing</em> — carbonised tracking paths that
+    grow over months until a full flashover occurs, typically during the first humid morning
+    after a long dusty period. A bushing flashover on TX-1 is electrically identical to the
+    transformer winding fault analysed in the <a href="#s-fmeca">FMECA table</a> — except that
+    the same dust layer is simultaneously maturing on TX-2's bushings, eroding the
+    independence that the N-1 design depends on.
+  </p>
+
+  <p>
+    <strong>3. Mechanism gumming.</strong> Fine dust mixed with lubricant inside circuit
+    breaker operating mechanisms, contactor guides and ATS linkages forms an abrasive paste
+    that slows or seizes the mechanism. The result is the most dangerous failure category in
+    this manual: the <strong>latent failure-to-operate</strong> — a breaker that sits closed
+    for years and then fails to trip on demand, or a bus-tie that fails to close during the
+    one N-1 event it exists for. In FMECA terms these are Detection = 5 rows; the only
+    defence is periodic exercising and lubrication.
+  </p>
+
+  <div class="note">
+    <strong>Maintenance interval pressure.</strong> Vendor maintenance intervals (filter
+    changes, breaker servicing, insulator cleaning) are written for temperate, low-dust sites.
+    On a Saudi site the realistic intervals are typically <strong>half or less</strong> of the
+    catalogue figures — e.g. monthly rather than quarterly filter inspection, with additional
+    unscheduled checks after every major dust storm. A maintenance plan imported unchanged from
+    the vendor manual is itself a latent environmental SPOF. Cable ratings carry the same
+    site-correction logic — see <a href="#c-cables">cable sizing and derating in Part 2</a>.
+  </div>
+
+  <!-- ---- Environmental FMECA ---- -->
+  <h3 id="s-env-fmeca">Environmental FMECA Extract</h3>
+
+  <p>
+    The table below extends the component FMECA of <a href="#s-fmeca">the FMECA section</a> with
+    representative <em>environmental</em> failure modes. Note how often the <strong>plant
+    effect</strong> column reads "common-cause" — one environmental event degrading multiple
+    electrically independent items — and how often <strong>detection</strong> is poor without
+    deliberate monitoring. All entries are indicative training values.
+  </p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Item</th>
+        <th>Failure mode</th>
+        <th>Cause</th>
+        <th>Local effect</th>
+        <th>Plant effect</th>
+        <th>Detection</th>
+        <th>Mitigation</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Switchgear room HVAC (single unit)</td>
+        <td>Total loss of cooling</td>
+        <td>Compressor failure at peak summer load; condenser filter blinding</td>
+        <td>Room temperature rises past 40 °C within ~1 h (indicative)</td>
+        <td><strong>Common-cause:</strong> relays, VFDs and UPS in the room degrade or trip
+            together; possible uncontrolled plant trip</td>
+        <td>Poor unless room temperature is alarmed to DCS — otherwise found by smell or
+            by trip</td>
+        <td>N+1 HVAC fed from separate bus sections; two-stage room temperature alarm;
+            essential cooling on DG-backed bus</td>
+      </tr>
+      <tr>
+        <td>Battery room A/C</td>
+        <td>Loss of cooling / sustained high room temperature</td>
+        <td>Single A/C unit failure; set-point raised "to save energy"</td>
+        <td>VRLA cells run hot; life halves per 8–10 °C above 25 °C; capacity silently lost</td>
+        <td>UPS and DCDB autonomy collapse — discovered only during the next real mains
+            failure, when ride-through and breaker tripping are both lost</td>
+        <td>Very poor (latent, D = 5 behaviour) without battery monitoring and periodic
+            discharge tests</td>
+        <td>Dedicated alarmed A/C; battery temperature monitoring; 6-monthly discharge test;
+            replace cells on condition, not calendar optimism</td>
+      </tr>
+      <tr>
+        <td>MCC ventilation filters</td>
+        <td>Filter blinding</td>
+        <td>Cumulative dust loading; step change after a dust storm</td>
+        <td>Cubicle internal temperature rises; contactor coils and VFDs overheat</td>
+        <td>Multiple motor starters / drives across the MCC derate or trip in the same
+            hot afternoon — looks like an electrical fault, is actually an air fault</td>
+        <td>Moderate — visible on inspection; better with cubicle temperature sensors</td>
+        <td>Monthly filter inspection (post-storm extra checks); differential-pressure
+            indicators; stock of spare filter elements on site</td>
+      </tr>
+      <tr>
+        <td>Outdoor local control panels / kiosks</td>
+        <td>Internal over-temperature</td>
+        <td>Solar gain on enclosure plus 50 °C ambient; dark paint; no shading</td>
+        <td>Internal air can exceed 70 °C (indicative); electronics fail, terminal
+            insulation ages rapidly</td>
+        <td>Field instruments and remote I/O drop out; spurious process trips that are hard
+            to diagnose because they self-clear after sunset</td>
+        <td>Poor — intermittent, temperature-correlated symptoms</td>
+        <td>Sun shades / double-roof construction; light-coloured finish; thermostat-controlled
+            vent fans with filters; relocate sensitive electronics indoors</td>
+      </tr>
+      <tr>
+        <td>Earthing connections (coastal site)</td>
+        <td>Corrosion / open-circuit of earth bonds</td>
+        <td>Salt-laden humidity attacking joints, clamps and buried connections;
+            galvanic pairs at copper–steel interfaces</td>
+        <td>Earth path resistance rises or bond opens — invisible in normal operation</td>
+        <td>During a fault: dangerous touch voltages, earth-fault relays desensitised,
+            NER current path compromised — a safety SPOF revealed only by the fault itself</td>
+        <td>Very poor (latent) without scheduled testing</td>
+        <td>Annual earth-continuity and resistance testing; tinned/bimetallic connectors;
+            inspection of buried joints on a sampling plan; corrosion-protective compounds</td>
+      </tr>
+      <tr>
+        <td>Cable trenches / ducts</td>
+        <td>Flooding</td>
+        <td>Rare but intense rain events overwhelming drainage designed for "it never
+            rains here"</td>
+        <td>Joints and glands immersed; water tracking into terminations over following
+            weeks</td>
+        <td>Duty <em>and</em> standby cables sharing the same flooded trench fail in the
+            same event or the same month — the Variant D common-route lesson driven by water</td>
+        <td>Moderate — visible after the event, but insulation damage emerges later</td>
+        <td>Trench drainage and sump pumps; water-blocked cable designs; separate routes for
+            duty/standby at different levels; post-rain inspection and IR testing</td>
+      </tr>
+      <tr>
+        <td>Transformer cooling fans (ONAF stage)</td>
+        <td>Fan or fan-supply failure at peak summer</td>
+        <td>Motor failure, blinded guards, loss of fan supply MCB</td>
+        <td>Transformer limited to its ONAN rating just as ambient and load both peak;
+            winding temperature alarm, then trip</td>
+        <td>Loss of one transformer at maximum plant load — the N-1 transfer happens at the
+            worst loading moment; surviving TX may itself be near its 50 °C-corrected limit
+            (see <a href="#c-transformer">transformer sizing</a>)</td>
+        <td>Good if fan-run and winding temperature are alarmed; poor otherwise</td>
+        <td>Fan-failure alarm to DCS; summer pre-season fan test; verify N-1 loading against
+            site-corrected (not nameplate-reference) ratings</td>
+      </tr>
+      <tr>
+        <td>MV bushings / outdoor terminations</td>
+        <td>Surface flashover</td>
+        <td>Dust film + morning humidity → dry-band arcing → carbon tracking</td>
+        <td>Phase-to-earth flashover at a bushing or termination</td>
+        <td>Transformer or feeder trip; because contamination matures on all outdoor
+            insulation together, a second flashover on the "redundant" path is statistically
+            close behind</td>
+        <td>Moderate — visible tracking on inspection; UV/corona camera finds it earlier</td>
+        <td>Creepage class selected for heavy pollution (IEC/TS 60815); scheduled cleaning;
+            silicone coatings / boosters; corona survey in the humid season</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    <em>All entries indicative — calibrate causes, scores and intervals against site history
+    and project-specific environmental data before use in a formal study.</em>
+  </p>
+
+  <!-- ---- Mitigation ---- -->
+  <h3 id="s-env-mitigation">Design and Operations Mitigations</h3>
+
+  <p>
+    Environmental SPOFs are mitigated on two fronts. <strong>Design measures</strong> remove
+    the single points and harden the equipment; <strong>operations measures</strong> keep the
+    hardening effective for the following twenty summers. Both are needed — an IP54 enclosure
+    with a missing gland plate, or an N+1 HVAC plant with one unit "awaiting spares" since
+    March, provides paper protection only.
+  </p>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Front</th>
+        <th>Mitigation</th>
+        <th>SPOF / failure mode addressed</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td rowspan="4"><strong>Design</strong></td>
+        <td>Redundant (N+1) HVAC for switchgear, battery and control rooms, units fed from
+            separate bus sections, essential cooling on the DG-backed bus, room temperature
+            alarmed to the DCS</td>
+        <td>HVAC common-cause heat failure (<a href="#s-env-heat">§ Heat</a>)</td>
+      </tr>
+      <tr>
+        <td>Enclosure ingress protection minimum <strong>IP54 outdoors</strong> (IP65 for
+            instruments), filtered forced ventilation, sun shading / double roofs and
+            light-coloured finishes on outdoor enclosures</td>
+        <td>Dust ingress; solar gain over-temperature</td>
+      </tr>
+      <tr>
+        <td>Pollution-class creepage on outdoor insulation; tinned / bimetallic earthing
+            connectors with corrosion protection; water-blocked cables and drained,
+            duty/standby-separated trench routes</td>
+        <td>Insulator tracking; coastal corrosion; rare-rain flooding</td>
+      </tr>
+      <tr>
+        <td>Site-corrected ratings everywhere: equipment selected and N-1 loading verified at
+            <strong>50 °C ambient</strong>, not at 25/40 °C catalogue references
+            (see <a href="#f-derating">derating</a>)</td>
+        <td>Hidden undersizing revealed only at peak summer</td>
+      </tr>
+      <tr>
+        <td rowspan="4"><strong>Operations</strong></td>
+        <td>Scheduled filter inspection/change at site-corrected intervals (≈ half vendor
+            figures, indicative), plus unscheduled checks after every major dust storm</td>
+        <td>Filter blinding → secondary heat failures</td>
+      </tr>
+      <tr>
+        <td>Pre-summer campaign: thermographic survey of boards, terminations and
+            transformer connections; HVAC and transformer-fan function tests before the
+            first 45 °C week</td>
+        <td>Heat-correlated failures clustering at peak summer</td>
+      </tr>
+      <tr>
+        <td>Annual earthing continuity / resistance testing and corrosion inspection;
+            insulator cleaning and corona survey before the humid season</td>
+        <td>Latent earthing and tracking failures</td>
+      </tr>
+      <tr>
+        <td>Battery stewardship: temperature-controlled rooms, monitoring, 6-monthly
+            discharge tests, condition-based replacement</td>
+        <td>Silent battery death — loss of UPS/DCDB autonomy on demand</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Environmental walkdown checklist</h4>
+
+  <ul class="checklist">
+    <li>Confirm switchgear, battery and control room cooling is N+1, that each unit alone can
+        hold the room at 50 °C ambient, and that the units are fed from different bus
+        sections.</li>
+    <li>Verify room temperature (switchgear, battery, UPS rooms) is continuously monitored and
+        alarmed to the DCS, with alarm response defined in operating procedures.</li>
+    <li>Inspect a sample of outdoor enclosures: IP rating intact (gaskets, gland plates,
+        unused entries sealed), shading effective, internal temperature acceptable at
+        mid-afternoon.</li>
+    <li>Check filter condition and differential-pressure indicators on MCCs, VFD cubicles,
+        UPS cabinets and the DG radiator intake; confirm spare filter stock on site.</li>
+    <li>Review maintenance intervals against site conditions — flag any vendor-default
+        (temperate-climate) intervals applied unchanged.</li>
+    <li>Confirm the pre-summer thermography and HVAC/transformer-fan test campaign is in the
+        maintenance plan, with last-completed records.</li>
+    <li>Verify earthing connection corrosion inspection and resistance test records
+        (coastal sites: annually as a minimum).</li>
+    <li>Walk the cable trench routes: drainage clear, sumps functional, duty and standby
+        cables not sharing a floodable common route.</li>
+    <li>Check battery room temperature history and last discharge-test results for UPS, DCDB
+        and DG starter batteries.</li>
+  </ul>
+
+  <div class="key">
+    Treat the environment as one more system on the single-line diagram. An HVAC unit, a
+    filter bank, an earthing joint or a trench drain can each defeat the plant's electrical
+    redundancy as completely as any breaker failure analysed in this Part — and, unlike a
+    breaker, they attack both redundant halves at once. Feed every environmental finding from
+    the checklist above into the same FMECA and recommendations register
+    (<a href="#s-recommendations">Risk Ranking</a>) as the electrical findings; one ranked
+    register, one set of priorities.
+  </div>
+
+</section><!-- /s-environment-failures -->
+

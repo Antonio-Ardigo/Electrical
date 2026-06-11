@@ -1,0 +1,110 @@
+<article class="concept" id="concept-perunit">
+  <h2>1. Per-Unit Thinking</h2>
+  <p class="backlink">Manual deep-dive: <a href="manual-rev3.html#c-perunit">open the full section</a></p>
+
+  <h3>The Problem</h3>
+  <p>Our plant lives on two voltage levels at once: SEC delivers at <strong>13.8 kV</strong>, and almost everything that actually does work — motors, heaters, lighting — runs at <strong>400/230 V</strong>. Between them sit two 1600 kVA transformers. Now try to answer a simple question in ordinary amperes: "how much fault current flows if the LV busbar is short-circuited?" The current on the LV side is about 38 500 A; the <em>same fault, same instant</em>, seen on the MV side, is about 1 115 A. Same event, numbers 34.5 times apart. Every cable, every relay, every calculation on the MV side speaks one numerical language; the LV side speaks another. Before per-unit, engineers carried transformer turns ratios through every line of every fault study, and one missed ratio — one impedance left un-referred across a winding — silently corrupted the whole study.</p>
+  <p>It got worse with size: a real network has several transformations (transmission, sub-transmission, distribution, LV). Referring every impedance through every ratio by hand was the dominant source of error in protection and fault studies. People tried colour-coded tables of "ohms referred to 13.8 kV" — workable for one substation, hopeless for a network, and meaningless the day the tap-changer moved.</p>
+  <p>What was at stake is not academic tidiness. A fault calculation that is wrong by a transformer ratio squared (impedance refers with the <em>square</em> of the ratio — a factor of about 1 190 for 13.8 kV/400 V) leads to switchgear bought with the wrong interrupting rating, or relays set to trip never, or always.</p>
+  <h3>Core Principles</h3>
+  <h4>Principle 1: Measure everything as a fraction of a chosen "normal"</h4>
+  <p><strong>Statement:</strong> instead of volts, amps and ohms, express every quantity as a fraction of a deliberately chosen <em>base</em> value: <code>quantity (pu) = actual value ÷ base value</code>. "pu" means <em>per-unit</em> — per unit of the base. If the base current is 2 309 A and you measure 2 309 A, the current is 1.0 pu: the equipment is at exactly its normal full load. If you measure 38 500 A, the current is 16.7 pu — 16.7 times normal — and the number itself screams "fault".</p>
+  <p><strong>Example:</strong> a transformer at 0.85 pu load is at 85 % of nameplate, whether it is our 1600 kVA unit or a 160 MVA grid transformer. The per-unit number carries the <em>meaning</em>; the base carries the size.</p>
+
+  <h4>Principle 2: Only two bases are free — the rest follow</h4>
+  <p><strong>Statement:</strong> choose a base power <code>S_base</code> (one value for the whole system) and a base voltage <code>V_base</code> (one per voltage level, set equal to the nominal voltage there). Base current and base impedance are then forced by Ohm's law and the power equation:</p>
+  <div class="worked">
+    <code class="formula">I_base = S_base / (√3 × V_base)</code>
+    <code class="formula">Z_base = V_base² / S_base</code>
+  </div>
+  <p>You never pick a base current; you derive it. That discipline is what keeps the system self-consistent.</p>
+
+  <h4>Principle 3: The transformer disappears</h4>
+  <p><strong>Statement:</strong> if the base voltages on the two sides of a transformer are chosen in the ratio of its windings (13.8 kV and 0.4 kV for TX-1), then a per-unit impedance has the <em>same numerical value seen from either side</em>. The ratio referral — the historical source of errors — cancels exactly, because the base impedances themselves differ by the ratio squared. The transformer becomes just a series impedance of 0.06 pu in the circuit diagram; the magic 34.5:1 ratio is gone.</p>
+
+  <h4>Principle 4: Nameplate percent impedance is already per-unit</h4>
+  <p><strong>Statement:</strong> the "Z = 6 %" stamped on TX-1's nameplate is a per-unit impedance on the transformer's own rating: 6 % = 0.06 pu on 1600 kVA. Manufacturers worldwide publish in this form precisely so that the number is size-independent and directly usable. (When mixing equipment of different ratings, convert to a common base: <code>Z_new = Z_old × S_base,new / S_base,old</code>.)</p>
+
+  <h3>Key Innovations</h3>
+  <h4>The normalised network (early 20th-century power engineers, formalised ~1930s)</h4>
+  <p><strong>What:</strong> redraw the entire multi-voltage network as a single circuit in which every element — grid source, transformer, cable, motor — is one per-unit impedance on a common power base.</p>
+  <p><strong>Why it mattered:</strong> fault studies, load flow and stability studies became single-circuit problems. Every modern power-system program (ETAP, DIgSILENT, SKM) works internally in per-unit; the software you will see study reports from is per-unit thinking, automated.</p>
+  <p><strong>Example:</strong> our plant from grid to LV bus is, in per-unit on 1600 kVA: grid source ≈ 0.0027 pu (a 25 kA source at 13.8 kV is enormous compared to our base — nearly a perfect source) in series with TX-1 at 0.06 pu. The transformer dominates: that single observation, visible at a glance only in per-unit, is why "Isc ≈ FLC ÷ Z%" works so well at LV.</p>
+  <h4>Percent impedance as a universal nameplate language (IEC 60076 practice)</h4>
+  <p><strong>What:</strong> standardising that transformer impedance is declared as a percentage on own rating, measured by the short-circuit test.</p>
+  <p><strong>Why it mattered:</strong> a field engineer can estimate the LV fault level of any substation on Earth from two nameplate numbers — rating and Z % — with no other data. That estimate is usually within a few percent of the full study.</p>
+  <h3>Worked Example</h3>
+  <p><strong>Scenario:</strong> convert the Rev 3 plant to per-unit on a 1600 kVA base and find the LV bolted-fault current through one transformer. <strong>Given:</strong> TX-1 = 1600 kVA, 13.8/0.4 kV, Z = 6 %; system 60 Hz; all values indicative.</p>
+  <div class="worked">
+    <p><strong>Step 1 — Choose the bases.</strong> Take S_base = 1600 kVA (the transformer's own rating — so its nameplate Z needs no conversion). Base voltages: 13.8 kV on the MV side, 0.4 kV on the LV side (the winding ratio, so the transformer "disappears").</p>
+    <p><strong>Step 2 — Derive the base currents.</strong></p>
+    <code class="formula">I_base(LV) = S_base / (√3 × V_base) = 1 600 000 VA / (1.732 × 400 V) = 2 309 A</code>
+    <code class="formula">I_base(MV) = 1 600 000 VA / (1.732 × 13 800 V) = 66.9 A</code>
+    <p><em>Why:</em> note these are exactly the Plant Data Card full-load currents — choosing the transformer rating as base makes "1.0 pu current" mean "transformer at full load" on both sides at once.</p>
+    <p><strong>Step 3 — Express the impedance.</strong></p>
+    <code class="formula">Z_TX = 6 % = 6/100 = 0.06 pu  (on 1600 kVA — no conversion needed)</code>
+    <p><strong>Step 4 — Solve the fault in per-unit.</strong> A bolted fault on the LV bus, fed from a strong grid (source impedance ≈ 0.003 pu, neglected here for the field estimate), sees only the transformer:</p>
+    <code class="formula">I_fault = V / Z = 1.0 pu / 0.06 pu = 16.7 pu</code>
+    <p><em>Why:</em> the driving voltage is the normal system voltage, i.e. 1.0 pu by construction. The answer reads directly as "16.7 times full load".</p>
+    <p><strong>Step 5 — Convert back to amperes, on whichever side you care about.</strong></p>
+    <code class="formula">LV side: I_fault = 16.7 × 2 309 A = 38 500 A ≈ 38.5 kA</code>
+    <code class="formula">MV side: I_fault = 16.7 × 66.9 A ≈ 1 115 A  (same fault, same 16.7 pu)</code>
+    <p><strong>Sanity check:</strong> 38.5 kA matches the Plant Data Card LV fault level, and 1 115 A × (13 800/400) voltage ratio... cross-check: 1 115 A × 34.5 = 38 470 A ≈ 38.5 kA. The two sides agree through the turns ratio, exactly as they must. Including the grid impedance would lower this by only ~4 % — the 6 % transformer dominates.</p>
+  </div>
+  <div class="key">
+    <p><strong>The field rule this buys you:</strong> <code>Isc(LV) ≈ FLC / Z(pu)</code>. For any transformer: full-load current divided by per-unit impedance. 2 309 A / 0.06 = 38.5 kA. Two nameplate numbers, one division.</p>
+  </div>
+
+  <h3>Intuitive Formalization</h3>
+  <p>The whole method is three definitions and one consequence. Each symbol: <code>S_base</code> = chosen reference power (VA), <code>V_base</code> = nominal voltage of the level (V), <code>X(pu)</code> = any quantity X divided by its base.</p>
+  <div class="worked">
+    <code class="formula">X(pu) = X_actual / X_base          (definition — a pure, unitless ratio)</code>
+    <code class="formula">I_base = S_base / (√3 × V_base)    (forced by the 3-phase power equation)</code>
+    <code class="formula">Z_base = V_base² / S_base          (forced by Ohm's law)</code>
+    <code class="formula">Z(pu) seen from HV = Z(pu) seen from LV   (because Z_base scales by ratio² too)</code>
+  </div>
+  <p>Physical meaning: per-unit measures <em>stress relative to design</em>. Voltage at 0.95 pu is 5 % undervoltage anywhere in the world. Current at 16.7 pu is a fault, whether the amperes read 38 500 or 38.5. The base values are the "100 % marks" you draw on every gauge; per-unit is reading the gauges in percent instead of raw units. Ohm's law, Kirchhoff's laws and power equations all keep their familiar forms in per-unit — that is the honest mathematical content: a change of units carefully rigged so the transformer ratio becomes 1.</p>
+
+  <h3>CTQ Mapping</h3>
+  <table class="tbl">
+    <thead><tr><th>Critical-to-quality requirement</th><th>How the concept delivers it</th><th>What to check in the field</th></tr></thead>
+    <tbody>
+      <tr><td>Switchgear interrupting ratings match real fault duty</td><td>Two-number estimate Isc ≈ FLC/Z(pu) gives an instant, ratio-error-free fault level at any bus</td><td>LV-MSB nameplate Icu (50–65 kA) ≥ 38.5 kA single-TX; verify tie-closed operation (77 kA) is procedurally blocked</td></tr>
+      <tr><td>Fault studies free of referral errors across 13.8 kV / 400 V</td><td>Equal pu impedance on both sides eliminates the ratio² conversion entirely</td><td>Study reports state the S_base used; all nameplate Z % converted to that common base</td></tr>
+      <tr><td>Loading judged consistently across unequal equipment</td><td>1.0 pu always means "at rating", independent of size</td><td>Trend transformer load in pu (or %) on the PMS, not raw amperes; alarm above ~0.9 pu sustained</td></tr>
+      <tr><td>Indicative hand checks agree with software studies</td><td>Same per-unit model underlies both; hand result should land within a few % of ETAP/DIgSILENT</td><td>If hand estimate and study differ by &gt;10 %, suspect a base-conversion or tap-position assumption</td></tr>
+    </tbody>
+  </table>
+  <h3>Conceptual Map</h3>
+  <pre>
+                       PER-UNIT THINKING (core)
+                       "measure stress, not units"
+                                |
+        +-----------------------+----------------------+
+        | rests on              | rests on             | rests on
+        v                       v                      v
+  [Ratio definition]     [Bases derived,         [Base voltages follow
+   X(pu)=X/X_base         not chosen]             winding ratios]
+        |                 I_base=S/(√3·V)               |
+        |                 Z_base=V²/S                   | led to
+        |                       |                       v
+        |                       |              [TRANSFORMER DISAPPEARS]
+        |                       |               same Z(pu) both sides
+        |                       |                       |
+        +-----------+-----------+-----------------------+
+                    | enables
+                    v
+        +---------------------------+---------------------------+
+        v                           v                           v
+  [Nameplate Z% used         [One-line fault rule        [Single normalised
+   directly: 6%=0.06 pu]      Isc ≈ FLC/Z(pu)            network model]
+        |                     = 2309/0.06 = 38.5 kA]            |
+        | feeds                     | feeds                     | feeds
+        v                           v                           v
+  Ch.3 Transformer            Ch.2 Fault Current          Protection studies,
+  Impedance                   Ch.6 Arc Flash              Ch.5 Selectivity
+  </pre>
+  <div class="note">
+    <p>All numeric values in this chapter are <strong>indicative</strong>, drawn from the Rev 3 plant basis (SEC 13.8 kV, 60 Hz, 50 °C design ambient); the project short-circuit and protection studies govern final figures.</p>
+  </div>
+</article>
