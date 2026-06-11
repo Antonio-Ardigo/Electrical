@@ -55,7 +55,7 @@ def build(d):
     # ---------------- utility, metering, incomer ----------------
     s.place(d, s.UtilitySource(), (X_INC, Y_UTIL), anchor="center")
     tag(d, (0.55, Y_UTIL + 0.12), "UTILITY")
-    note(d, (0.55, Y_UTIL - 0.16), "11 kV  50 Hz", size=FS - 2)
+    note(d, (0.55, Y_UTIL - 0.16), "13.8 kV  60 Hz", size=FS - 2)
     s.wire(d, (X_INC, Y_UTIL - 1.0), (X_INC, Y_MET + 0.45))
     s.place(d, s.Block(w=1.7, h=0.85, name="MV-MET", sub="kWh  CT/VT",
                        fill="#f3f3f3"), (X_INC, Y_MET), anchor="center")
@@ -68,7 +68,7 @@ def build(d):
     # ---------------- MV switchgear ----------------
     d += (elm.Line().at((MV_L - 0.4, Y_MVBUS + 1.55)).to((MV_R + 0.4, Y_MVBUS + 1.55))
           .color("#aaaaaa").linewidth(1).linestyle("--"))
-    tag(d, (MV_L - 0.4, Y_MVBUS + 1.30), "MV-SWGR  -  11 kV switchgear",
+    tag(d, (MV_L - 0.4, Y_MVBUS + 1.30), "MV-SWGR  -  13.8 kV switchgear",
         size=FS - 1, color=s.MV_COLOR)
     note(d, (MV_R + 0.4, Y_MVBUS + 1.30), "IEC 62271-200  -  25 kA", ha="right")
     # busbar split by the bus-section breaker
@@ -90,9 +90,10 @@ def build(d):
         t, b = vbreaker(d, X_TX, Y_TXFDR, kind="closed", label="52-T", sub="87T")
         s.wire(d, (X_TX, b), (X_TX, Y_TX + 1.05), color=s.MV_COLOR)
         s.place(d, s.Transformer2W(), (X_TX, Y_TX), anchor="center")
-        tag(d, (X_TX + 0.52, Y_TX + 0.20), txtag)
-        note(d, (X_TX + 0.52, Y_TX - 0.08), "1600 kVA")
-        note(d, (X_TX + 0.52, Y_TX - 0.36), "11/0.4 kV Dyn11")
+        tag(d, (X_TX + 0.70, Y_TX + 0.34), txtag)
+        note(d, (X_TX + 0.70, Y_TX + 0.06), "1600 kVA")
+        note(d, (X_TX + 0.70, Y_TX - 0.22), "13.8/0.4 kV")
+        note(d, (X_TX + 0.70, Y_TX - 0.46), "Dyn11  Z~6%")
         s.wire(d, (X_TX, Y_TX - 1.05), (X_TX, Y_ACB + 0.6))
         t2, b2 = vbreaker(d, X_TX, Y_ACB, kind="closed",
                           label="ACB-A" if X_TX < 0 else "ACB-B")
@@ -102,7 +103,7 @@ def build(d):
     # ---------------- LV main switchboard (split bus + tie) ----------------
     s.busbar(d, LVA_L, LVA_R, Y_LVBUS, color=s.LV_COLOR)
     s.busbar(d, LVB_L, LVB_R, Y_LVBUS, color=s.LV_COLOR)
-    tag(d, (LVA_L, Y_LVBUS + 0.32), "LV-MSB  -  400 V main switchboard (PCC)",
+    tag(d, (LVA_L, Y_LVBUS + 0.32), "LV-MSB  -  400/230 V main switchboard (PCC)",
         size=FS - 1, color=s.LV_COLOR)
     note(d, (LVA_L, Y_LVBUS - 0.5), "Bus A", size=FS - 2, color=s.LV_COLOR)
     note(d, (LVB_R, Y_LVBUS - 0.5), "Bus B", ha="right", size=FS - 2, color=s.LV_COLOR)
@@ -154,7 +155,7 @@ def build(d):
     note(d, (X_DG - 0.62, Y_LOAD + 0.02), "1000 kVA", ha="right")
     s.place(d, s.Block(w=1.2, h=0.7, name="ATS", fill="#eef7ee"),
             (X_ATS, Y_LOAD + 0.4), anchor="center")
-    note(d, (X_ATS, Y_LOAD + 0.82), "Util / DG", ha="center")
+    note(d, (X_ATS + 0.78, Y_LOAD + 0.55), "Util / DG", ha="left")
     s.wire(d, (X_DG + 0.42, Y_LOAD + 0.15), (X_ATS - 0.6, Y_LOAD + 0.15))
     s.wire(d, (X_ATS - 0.6, Y_LOAD + 0.15), (X_ATS - 0.6, Y_LOAD + 0.4))
     s.wire(d, (X_ATS, Y_LOAD + 0.75), (X_ATS, Y_EQUIP - 0.55))   # ATS up to EDB drop
@@ -164,16 +165,21 @@ def build(d):
                        fill="#f3f3f3"), (7.4, Y_TXFDR + 0.1), anchor="center")
     note(d, (7.4, Y_TXFDR + 0.85), "MV trip / close + protection", ha="center")
 
-    # ---------------- title ----------------
-    tag(d, (0, Y_LOAD - 1.7), "MASTER SINGLE-LINE DIAGRAM   -   ~2 MW MV/LV PROCESS PLANT",
-        ha="center", size=FS + 2)
-    note(d, (0, Y_LOAD - 2.05),
-         "11 kV / 400 V  -  50 Hz  -  2 x 1600 kVA (Dyn11, Z~6%)  -  IEC 60617  -  indicative",
-         ha="center", size=FS - 2)
+    # ---------------- title block ----------------
+    s.title_block(
+        d, LVA_L, LVB_R, Y_LOAD - 1.9,
+        "MASTER SINGLE-LINE DIAGRAM  -  ~2 MW MV/LV PROCESS PLANT",
+        "DWG SLD-2MW-00",
+        subtitle="2 x 1600 kVA (Dyn11, Z~6%)  -  split LV bus, N.O. tie  -  "
+                 "Saudi / SEC edition")
+
+    # margin spacers so nothing is clipped at the canvas edge
+    note(d, (LVA_L - 0.7, Y_UTIL + 0.6), " ")
+    note(d, (LVB_R + 0.7, Y_LOAD - 3.2), " ")
 
 
 d = schemdraw.Drawing()
 build(d)
 d.save(os.path.join(OUT, "sld-master-2MW.svg"))
-d.save(os.path.join(OUT, "sld-master-2MW.png"), dpi=130)
+d.save(os.path.join(OUT, "sld-master-2MW.png"), dpi=200)
 print("master SLD rendered")

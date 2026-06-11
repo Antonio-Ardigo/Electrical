@@ -12,7 +12,7 @@ technical-book quality.
 | Symbol library | `diagrams/src/slddraw.py` — custom **IEC 60617** power symbols |
 | Source of each figure | a build script in `diagrams/src/` (`build_master.py`, `build_spof.py`) |
 | Output (committed) | **SVG** in `diagrams/svg/` (vector, embedded in Markdown) + a PNG for review |
-| Graphical standard | **IEC 60617** symbols; **IEC** ratings (11 kV / 400 V, 50 Hz) |
+| Graphical standard | **IEC 60617** symbols; **IEC** ratings (13.8 kV / 400-230 V, 60 Hz, 50 degC amb) |
 
 **Principle:** the *source script is the master*, the SVG is a build artefact.
 Never hand-edit an SVG — change the script and re-render so figures stay reproducible

@@ -109,8 +109,8 @@
     <div class="svg-embed" data-src="diagrams/svg/sld-master-2MW.svg"></div>
     <figcaption>Fig 1-1 — Master SLD, indicative ~2 MW MV/LV process plant (IEC 60617 symbols; all ratings indicative)</figcaption>
     <div class="warning drawing-basis"><strong>Drawing basis note.</strong> This diagram was
-drawn for the original 11 kV / 415 V / 50 Hz reference design and has not been re-rendered.
-For this Saudi (SEC) Rev 3 edition read 11 kV as 13.8 kV, 415 V as 400 V and 50 Hz as 60 Hz.
+drawn for the original 13.8 kV / 400 V / 60 Hz reference design and has not been re-rendered.
+For this Saudi (SEC) Rev 3 edition read 13.8 kV as 13.8 kV, 400 V as 400 V and 60 Hz as 60 Hz.
 Topology, tags and protection philosophy are unchanged.</div>
   </figure>
 
@@ -951,7 +951,7 @@ Topology, tags and protection philosophy are unchanged.</div>
 <section id="f-60hz" data-title="Why 60 Hz Changes Things" data-part="Part 1 — Foundations">
   <h2>Why 60 Hz Changes Things</h2>
 
-  <p><em>Where you are in the workflow: this Saudi (SEC) edition of the manual is written for a 60 Hz grid. If your previous experience is on 50 Hz plants — Europe, most of Asia and Africa, the rest of the GCC — this section tells you exactly which of your instincts still hold and which must be recalibrated before you touch a calculation or a nameplate.</em></p>
+  <p><em>Where you are in the workflow: this Saudi (SEC) edition of the manual is written for a 60 Hz grid. If your previous experience is on 60 Hz plants — Europe, most of Asia and Africa, the rest of the GCC — this section tells you exactly which of your instincts still hold and which must be recalibrated before you touch a calculation or a nameplate.</em></p>
 
   <h3 id="f-60hz-what">What frequency physically means</h3>
 
@@ -959,7 +959,7 @@ Topology, tags and protection philosophy are unchanged.</div>
     System frequency is the number of complete alternating-current cycles per second, in hertz.
     On the SEC grid the voltage on every conductor swings from positive peak, through zero, to
     negative peak and back <strong>60 times every second</strong> — a full cycle takes
-    1/60 s ≈ <strong>16.7 ms</strong> (compared with 20 ms on a 50 Hz grid).
+    1/60 s ≈ <strong>16.7 ms</strong> (compared with 20 ms on a 60 Hz grid).
   </p>
 
   <p>
@@ -986,20 +986,20 @@ Topology, tags and protection philosophy are unchanged.</div>
 
   <p>
     Because frequency enters directly into the physics of rotating machines, magnetic cores and
-    reactive components, moving a design from 50 Hz to 60 Hz changes real numbers — speeds, fluxes,
+    reactive components, moving a design from 60 Hz to 60 Hz changes real numbers — speeds, fluxes,
     reactances, kvar. The changes are systematic and predictable. The table in the next
     sub-section is the master list; the sub-sections after it explain the three consequences that
     cause real trouble in the field: motor shaft power, transformer flux, and capacitor-bank
     tuning.
   </p>
 
-  <h3 id="f-60hz-consequences">50 Hz vs 60 Hz — the consequences table</h3>
+  <h3 id="f-60hz-consequences">60 Hz vs 60 Hz — the consequences table</h3>
 
   <table class="tbl">
     <thead>
       <tr>
         <th>Quantity</th>
-        <th>At 50 Hz</th>
+        <th>At 60 Hz</th>
         <th>At 60 Hz</th>
         <th>Change</th>
         <th>Practical consequence</th>
@@ -1018,14 +1018,14 @@ Topology, tags and protection philosophy are unchanged.</div>
         <td>100 % (design)</td>
         <td>up to ~173 %</td>
         <td>up to +73 %</td>
-        <td>A 50 Hz-selected pump motor moved to 60 Hz without impeller change can be overloaded by up to 73 % — see <a href="#f-60hz-motors">the motor sub-section</a>. The single most expensive 50/60 Hz mistake.</td>
+        <td>A 60 Hz-selected pump motor moved to 60 Hz without impeller change can be overloaded by up to 73 % — see <a href="#f-60hz-motors">the motor sub-section</a>. The single most expensive 50/60 Hz mistake.</td>
       </tr>
       <tr>
         <td>Transformer core flux at same applied voltage (Φ ∝ V/f)</td>
         <td>100 % (design)</td>
         <td>~83 %</td>
         <td>−17 %</td>
-        <td>A 50 Hz-designed transformer at 60 Hz runs at <em>lower</em> flux — magnetically safe. The reverse direction is dangerous: a 60 Hz-designed unit at 50 Hz saturates — see <a href="#f-60hz-transformers">below</a>.</td>
+        <td>A 60 Hz-designed transformer at 60 Hz runs at <em>lower</em> flux — magnetically safe. The reverse direction is dangerous: a 60 Hz-designed unit at 60 Hz saturates — see <a href="#f-60hz-transformers">below</a>.</td>
       </tr>
       <tr>
         <td>Inductive reactance X = 2πfL (cables, reactors, transformer leakage in ohms)</td>
@@ -1046,11 +1046,11 @@ Topology, tags and protection philosophy are unchanged.</div>
         <td>≈189 Hz</td>
         <td>≈227 Hz</td>
         <td>+20 %</td>
-        <td>Tuning stays safely below the 5th harmonic (250 Hz at 50 Hz; 300 Hz at 60 Hz) <em>only if</em> reactor and capacitor are matched as a 60 Hz set.</td>
+        <td>Tuning stays safely below the 5th harmonic (260 Hz at 60 Hz; 300 Hz at 60 Hz) <em>only if</em> reactor and capacitor are matched as a 60 Hz set.</td>
       </tr>
       <tr>
         <td>Harmonic frequencies (5th, 7th…)</td>
-        <td>250, 350 Hz…</td>
+        <td>250, 360 Hz…</td>
         <td>300, 420 Hz…</td>
         <td>+20 %</td>
         <td>Harmonic studies, filter designs and power-quality meter settings must use the 60 Hz harmonic ladder.</td>
@@ -1069,7 +1069,7 @@ Topology, tags and protection philosophy are unchanged.</div>
     <strong>Warning — nameplates decide, not assumptions.</strong> Much imported equipment is
     dual-rated "50/60 Hz", but <em>not all of it</em>, and dual-rated machines often carry two
     different output figures, one per frequency. On site, read the frequency line of every
-    nameplate. Equipment carrying only "50 Hz" on a 60 Hz SEC plant (or vice versa) is an
+    nameplate. Equipment carrying only "60 Hz" on a 60 Hz SEC plant (or vice versa) is an
     immediate red-line finding.
   </div>
 
@@ -1078,7 +1078,7 @@ Topology, tags and protection philosophy are unchanged.</div>
   <p>
     An induction motor's speed is locked to frequency by the synchronous-speed formula
     <code>n = 120 × f / p</code> (p = number of poles). A 4-pole machine therefore runs at
-    1500 rpm synchronous on a 50 Hz grid and <strong>1800 rpm on the 60 Hz SEC grid</strong>
+    1500 rpm synchronous on a 60 Hz grid and <strong>1800 rpm on the 60 Hz SEC grid</strong>
     (actual shaft speed is 2–3 % lower because of slip — typically ~1470 rpm vs ~1775 rpm).
     The motor itself does not mind: a 60 Hz-wound motor is designed for that speed.
   </p>
@@ -1099,14 +1099,14 @@ Topology, tags and protection philosophy are unchanged.</div>
     speed increase nearly <em>doubles</em> the power a centrifugal load demands. (The exact
     increase depends on where the new operating point lands on the system curve — the cube law is
     the worst case at fixed system resistance — but +50 to +73 % is realistic.) This is why a
-    pump set engineered for a 50 Hz country can never simply be shipped to a 60 Hz site: either
+    pump set engineered for a 60 Hz country can never simply be shipped to a 60 Hz site: either
     the impeller is trimmed for the higher speed, a different (larger) motor is fitted, or a
     <a href="#cat-vfd">VFD</a> is installed to run the pump back down to its design speed.
   </p>
 
   <div class="worked">
-    <h4>Worked comparison — the same pump at 50 Hz and 60 Hz</h4>
-    <p>A centrifugal pump absorbs 70 kW at 1470 rpm on a 50 Hz grid, driven by a 75 kW 4-pole motor. The skid is relocated to a 60 Hz plant without modification. Estimate the new shaft power.</p>
+    <h4>Worked comparison — the same pump at 60 Hz and 60 Hz</h4>
+    <p>A centrifugal pump absorbs 70 kW at 1470 rpm on a 60 Hz grid, driven by a 75 kW 4-pole motor. The skid is relocated to a 60 Hz plant without modification. Estimate the new shaft power.</p>
     <code class="formula">New speed: n₂ ≈ n₁ × (60/50) = 1470 × 1.2 ≈ 1764 rpm</code>
     <code class="formula">Affinity (power): P₂ = P₁ × (n₂/n₁)³ = 70 × (1.2)³ = 70 × 1.728 ≈ 121 kW</code>
     <p>The 75 kW motor is now asked for ≈121 kW — an overload of about 61 %:</p>
@@ -1117,7 +1117,7 @@ Topology, tags and protection philosophy are unchanged.</div>
   <div class="tip">
     <strong>Tip — what to look for on site:</strong> on any pump or fan skid, compare the motor
     nameplate frequency and speed (e.g. "60 Hz / 1775 rpm") against the driven-machine data plate.
-    A 50 Hz pump curve pinned in the file with a 60 Hz motor on the skid is a finding even if
+    A 60 Hz pump curve pinned in the file with a 60 Hz motor on the skid is a finding even if
     nothing has tripped yet — it usually means the margins have been silently consumed.
   </div>
 
@@ -1133,26 +1133,26 @@ Topology, tags and protection philosophy are unchanged.</div>
 
   <ul>
     <li>
-      <strong>50 Hz-designed unit operated at 60 Hz, same voltage:</strong> flux drops to
+      <strong>60 Hz-designed unit operated at 60 Hz, same voltage:</strong> flux drops to
       50/60 ≈ 83 % of design — the core runs <em>further from</em> saturation. Magnetically safe
       (verify accessories: fans, tap-changer motors, instrumentation rated for 60 Hz).
     </li>
     <li>
-      <strong>60 Hz-designed unit operated at 50 Hz, same voltage:</strong> flux rises to
+      <strong>60 Hz-designed unit operated at 60 Hz, same voltage:</strong> flux rises to
       60/50 = 120 % of design. Transformer cores are deliberately designed close to the knee of
       the magnetising curve to save iron, so +20 % flux drives the core into
       <strong>saturation</strong>: the magnetising current jumps from ~1 % to tens of percent,
       it becomes sharply distorted, the core overheats and hums loudly, and the unit can fail in
-      hours. <strong>A 60 Hz-designed transformer must never be used on a 50 Hz system at the
+      hours. <strong>A 60 Hz-designed transformer must never be used on a 60 Hz system at the
       same voltage.</strong>
     </li>
   </ul>
 
   <div class="warning">
     <strong>Warning — second-hand and relocated equipment.</strong> The dangerous direction
-    (60 Hz design → 50 Hz grid) is exactly the direction equipment travels when a Saudi plant is
-    decommissioned and its transformers are resold into 50 Hz markets — or when a "spare" sourced
-    from a 60 Hz fleet is fitted in a 50 Hz sister plant. Within the Kingdom you are safe; across
+    (60 Hz design → 60 Hz grid) is exactly the direction equipment travels when a Saudi plant is
+    decommissioned and its transformers are resold into 60 Hz markets — or when a "spare" sourced
+    from a 60 Hz fleet is fitted in a 60 Hz sister plant. Within the Kingdom you are safe; across
     borders, the nameplate frequency is a hard constraint. For our plant, <code>TX-1</code> /
     <code>TX-2</code> are specified as 60 Hz units (13.8/0.4 kV, Dyn11, Z = 6 %) per the
     <a href="#cat-transformers">transformer catalogue</a>.
@@ -1178,12 +1178,12 @@ Topology, tags and protection philosophy are unchanged.</div>
     lowest characteristic harmonic so the bank cannot resonate with VFD harmonics:
   </p>
 
-  <code class="formula">f_res = f_supply / √0.07 → 50 Hz system: 189 Hz | 60 Hz system: 227 Hz</code>
+  <code class="formula">f_res = f_supply / √0.07 → 60 Hz system: 189 Hz | 60 Hz system: 227 Hz</code>
 
   <p>
     On the 60 Hz SEC grid the tuning point is ≈227 Hz — comfortably below the 5th harmonic at
-    300 Hz, exactly as 189 Hz sits below 250 Hz on a 50 Hz grid. But this only works when the
-    reactor and capacitors are engineered <em>as a 60 Hz set</em>: pairing a 50 Hz reactor with
+    300 Hz, exactly as 189 Hz sits below 260 Hz on a 60 Hz grid. But this only works when the
+    reactor and capacitors are engineered <em>as a 60 Hz set</em>: pairing a 60 Hz reactor with
     60 Hz capacitors (or vice versa) shifts the tuning point unpredictably and can park it near a
     real harmonic, turning the protection device into an amplifier. Order PFC equipment explicitly
     for 13.8 kV-network/400 V, 60 Hz service and check the step nameplates on site.
@@ -1200,9 +1200,9 @@ Topology, tags and protection philosophy are unchanged.</div>
     in the 1990s, with conversion of older 127/220 V areas phased over many years). This makes
     Saudi Arabia — together with North America, parts of Japan and a few other states — one of
     the minority of 60 Hz countries, and notably <em>different from the rest of the GCC</em>,
-    which is 50 Hz. That is why the GCC Interconnection grid ties into the Saudi system through
+    which is 60 Hz. That is why the GCC Interconnection grid ties into the Saudi system through
     <strong>back-to-back HVDC converters</strong> (at Al Fadhili): direct AC interconnection
-    between a 50 Hz and a 60 Hz system is impossible. All historical details indicative —
+    between a 60 Hz and a 60 Hz system is impossible. All historical details indicative —
     interesting context, not assessment input.
   </p>
 
@@ -1212,13 +1212,13 @@ Topology, tags and protection philosophy are unchanged.</div>
     <li>Confirm the plant supply frequency on the intake metering display reads 60 Hz (SEC nominal).</li>
     <li>Check the frequency line on every motor nameplate: 60 Hz, or dual 50/60 Hz with a separate 60 Hz rating column.</li>
     <li>For each pump/fan skid, verify motor speed (≈1800 rpm 4-pole) matches the driven-machine data plate and curve.</li>
-    <li>Verify transformer nameplates (TX-1, TX-2) state 60 Hz; flag any 50 Hz-only or relocated unit.</li>
+    <li>Verify transformer nameplates (TX-1, TX-2) state 60 Hz; flag any 60 Hz-only or relocated unit.</li>
     <li>Confirm the PFC bank steps and detuning reactors are nameplated for 400 V / 60 Hz (tuning ≈227 Hz, 7 %).</li>
     <li>Check VFD, UPS and protection-relay settings files use the 60 Hz base and 60 Hz harmonic ladder (300/420 Hz…).</li>
-    <li>Flag any imported spare (motor, transformer, capacitor can) carrying only a 50 Hz rating as a red-line finding.</li>
+    <li>Flag any imported spare (motor, transformer, capacitor can) carrying only a 60 Hz rating as a red-line finding.</li>
   </ul>
 
-  <div class="key">Key takeaway: 60 Hz changes four numbers by exactly +20 % — motor speed, inductive reactance, capacitor kvar, and the harmonic ladder — and one number by up to +73 %: centrifugal shaft power, via the cube law. Transformer flux moves the <em>other</em> way (safe at 60 Hz for a 50 Hz design; dangerous in reverse). Check the frequency line on every nameplate; on a SEC plant it must say 60 Hz or 50/60 Hz with a 60 Hz rating column.</div>
+  <div class="key">Key takeaway: 60 Hz changes four numbers by exactly +20 % — motor speed, inductive reactance, capacitor kvar, and the harmonic ladder — and one number by up to +73 %: centrifugal shaft power, via the cube law. Transformer flux moves the <em>other</em> way (safe at 60 Hz for a 60 Hz design; dangerous in reverse). Check the frequency line on every nameplate; on a SEC plant it must say 60 Hz or 50/60 Hz with a 60 Hz rating column.</div>
 </section>
 
 <!-- ============================================================ -->

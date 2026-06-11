@@ -271,3 +271,52 @@ def dot(d, p, color=COLOR):
 def place(d, element, at, anchor="N"):
     """Place an element with its <anchor> at point <at>; return placed element."""
     return d.add(element.at(at).anchor(anchor))
+
+
+# ----------------------------------------------------------------------------
+# Standard project parameters + title block (shared across every figure)
+# ----------------------------------------------------------------------------
+# Saudi / SEC edition (Rev 3b).  ASCII-only — see DRAWING-STANDARD.md.
+REV = "Rev 3b"
+PARAM_STRIP = "13.8 kV / 400-230 V / 60 Hz / 50 degC amb"
+STD_NOTE = "IEC 60617 - indicative"
+
+
+def title_block(d, x_left, x_right, y_top, title, dwg_no,
+                subtitle=None, color=COLOR):
+    """Draw a tidy, consistent title block as a bordered band.
+
+    Spans x_left..x_right; its top edge sits at y_top (block grows downward by
+    ~1.0 unit). Carries: drawing title, drawing number, Rev, the standard note
+    and the project parameter strip. ASCII-only.
+    """
+    h = 1.35 if subtitle else 1.05
+    y_bot = y_top - h
+    xm = 0.18                      # internal text margin
+    # outer frame.  Pin the rect at the origin with theta=0 so its absolute
+    # corner coordinates are not offset/rotated by the drawing cursor.
+    d += elm.Rect(corner1=(x_left, y_bot), corner2=(x_right, y_top)).at(
+        (0, 0)).theta(0).color("#888888").linewidth(1.1).fill(
+        "#fbfbfb").zorder(0)
+    # vertical divider for the right-hand metadata cell
+    x_div = x_right - 3.9
+    d += elm.Line().at((x_div, y_bot)).to((x_div, y_top)).color(
+        "#bbbbbb").linewidth(0.9)
+    # left cell: title, optional subtitle, then the parameter strip (stacked,
+    # evenly spaced, never overlapping)
+    d += elm.Label().at((x_left + xm, y_top - 0.34)).label(
+        title, halign="left", fontsize=FS - 1, color=color)
+    if subtitle:
+        d += elm.Label().at((x_left + xm, y_top - 0.72)).label(
+            subtitle, halign="left", fontsize=FS - 3, color="#555555")
+    d += elm.Label().at((x_left + xm, y_bot + 0.22)).label(
+        PARAM_STRIP, halign="left", fontsize=FS - 2, color="#333333")
+    # right cell: drawing number / rev / standard note
+    xr = x_div + xm
+    d += elm.Label().at((xr, y_top - 0.32)).label(
+        dwg_no, halign="left", fontsize=FS - 2, color=COLOR)
+    d += elm.Label().at((xr, y_top - 0.66)).label(
+        REV, halign="left", fontsize=FS - 2, color=color)
+    d += elm.Label().at((xr, y_bot + 0.24)).label(
+        STD_NOTE, halign="left", fontsize=FS - 3, color="#555555")
+    return y_bot

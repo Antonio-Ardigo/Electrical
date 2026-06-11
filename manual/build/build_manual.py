@@ -221,7 +221,7 @@ def inline_docs(html: str, repo_root: Path, warnings: list[str]) -> tuple[str, i
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Build the field manual HTML.")
-    parser.add_argument("--rev", type=int, default=0, help="Revision number (default 0)")
+    parser.add_argument("--rev", type=str, default="0", help="Revision label (e.g. 0, 2, 3b)")
     args = parser.parse_args()
     rev = args.rev
 
