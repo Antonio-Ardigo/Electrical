@@ -260,6 +260,27 @@ def main() -> None:
     # 5. Build nav HTML
     nav_html = build_nav(sections)
 
+    # 5b. Mark the FIRST section of each Part so print can page-break per Part
+    #     (not per section — avoids many half-empty printed pages).
+    first_ids: set[str] = set()
+    seen_parts: set[str] = set()
+    for sec in sections:
+        if sec["part"] not in seen_parts:
+            seen_parts.add(sec["part"])
+            first_ids.add(sec["id"])
+
+    def _mark_part_start(m: re.Match) -> str:
+        tag = m.group(0)
+        sid = m.group(1)
+        if sid in first_ids and "data-part-start" not in tag:
+            return tag[:-1] + ' data-part-start="1">'
+        return tag
+
+    combined_html = re.sub(
+        r'<section\b[^>]*\bid=["\']([^"\']+)["\'][^>]*>',
+        _mark_part_start, combined_html,
+    )
+
     # 6. Inline SVGs and embedded documents
     combined_html, svg_count = inline_svgs(combined_html, REPO_ROOT, warnings)
     combined_html, doc_count = inline_docs(combined_html, REPO_ROOT, warnings)

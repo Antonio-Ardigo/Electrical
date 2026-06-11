@@ -537,40 +537,67 @@ figcaption {
 }
 
 /* ===== PRINT ===== */
+/* Utility classes for print/screen-only content */
+.print-only { display: none; }
+
+@page { size: A4; margin: 14mm 12mm; }
+
 @media print {
-  :root { --sidebar-w: 0; }
+  :root { --sidebar-w: 0 !important; }
 
-  #site-header { position: static; background: #fff; color: var(--navy); box-shadow: none; border-bottom: 2px solid var(--navy); }
-  #site-header .header-controls .btn { display: none; }
-  .rev-badge { background: none; color: var(--navy); border: 1px solid var(--navy); }
-  #sidebar { display: none; }
-  #layout { display: block; }
-  #main { padding: 0; }
-  #content { max-width: 100%; }
+  /* Linearise the whole document: no sidebar, no chrome, full width.
+     The sidebar is removed from print entirely (a printed sidebar/TOC adds
+     no value on paper) so the output is a clean, single-column manual. */
+  #sidebar,
+  #sidebar-toggle,
+  #site-header .header-controls,
+  .no-print { display: none !important; }
 
-  section { page-break-before: always; border-top: 2px solid var(--navy-lt); }
+  html, body { background: #fff !important; width: auto !important; height: auto !important; }
+  body { color: #000 !important; }
+
+  #site-header { position: static !important; background: #fff !important; color: var(--navy) !important; box-shadow: none !important; border-bottom: 2px solid var(--navy); }
+  .rev-badge { background: none !important; color: var(--navy) !important; border: 1px solid var(--navy); }
+
+  #layout { display: block !important; }
+  #main { padding: 0 !important; }
+  #content { max-width: 100% !important; margin: 0 !important; }
+
+  .print-only { display: block !important; }
+
+  /* Page-break before each PART (not every section) so the printout is compact;
+     sections flow within a Part. Never strand a heading at a page foot. */
+  section { page-break-before: auto; border-top: 2px solid var(--navy-lt); }
+  section[data-part-start] { page-break-before: always; }
   section:first-child { page-break-before: avoid; border-top: none; }
-
   h2 { font-size: 1.2rem; }
   h3 { font-size: 1rem; }
+  h2, h3, h4 { page-break-after: avoid; break-after: avoid; }
+
+  /* Keep these blocks intact across page boundaries */
+  figure, table, .worked, .note, .tip, .warning, .key,
+  ul.checklist li, .doc-embed-frame, tr {
+    page-break-inside: avoid; break-inside: avoid;
+  }
+
+  /* Reveal any collapsed <details> so nothing is hidden on paper
+     (the Print button also force-opens them via JS) */
+  details { display: block !important; }
+  details > *:not(summary) { display: revert !important; }
+  details > summary { list-style: none; font-weight: 600; }
 
   a { color: var(--navy); text-decoration: none; }
 
-  .note, .tip, .warning, .key {
-    border: 1px solid #999;
-    background: #f9f9f9 !important;
-  }
+  .note, .tip, .warning, .key,
   .worked { border: 1px solid #999; background: #f9f9f9 !important; }
 
   ul.checklist li input[type="checkbox"] { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-
   table.tbl thead th { background: var(--navy) !important; color: #fff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 
-  figure.fig .svg-wrapper svg { max-width: 100%; }
-
-  .nav-part-items, .nav-sub-items { display: block !important; }
-
-  #sidebar-toggle { display: none; }
+  /* Figures: never overflow the page width */
+  figure.fig, .svg-wrapper { max-width: 100% !important; }
+  figure.fig .svg-wrapper svg, .svg-wrapper svg { max-width: 100% !important; height: auto !important; }
+  .doc-embed-frame { width: 100% !important; border: none !important; }
 }
 </style>
 </head>
@@ -584,7 +611,7 @@ figcaption {
     <span class="rev-badge"><!--REV--></span>
     <button class="btn" onclick="expandAll()">Expand all</button>
     <button class="btn" onclick="collapseAll()">Collapse all</button>
-    <button class="btn" onclick="window.print()">Print</button>
+    <button class="btn" onclick="printManual()">Print / Save PDF</button>
   </div>
 </header>
 
@@ -629,6 +656,17 @@ figcaption {
   window.collapseAll = function () {
     document.querySelectorAll('.nav-part').forEach(function (p) { p.classList.add('collapsed'); });
   };
+
+  /* ---- Robust print: reveal everything collapsible, then print ---- */
+  window.printManual = function () {
+    document.querySelectorAll('details').forEach(function (d) { d.open = true; });
+    document.querySelectorAll('.nav-part').forEach(function (p) { p.classList.remove('collapsed'); });
+    document.body.classList.add('printing');
+    setTimeout(function () { window.print(); }, 120);
+  };
+  window.addEventListener('afterprint', function () {
+    document.body.classList.remove('printing');
+  });
 
   /* ---- Scrollspy ---- */
   var allNavAnchors = {};
