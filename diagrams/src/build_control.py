@@ -197,19 +197,20 @@ def build(d):
         note(d, (fx, fy - i * 0.34), txt, ha="left", size=FS - 3, color="#333333")
 
     # ============================================================
-    # title
+    # title block (standard, consistent with the SLDs)
     # ============================================================
-    tag(d, (0, Y_FLD - 3.6),
-        "CONTROL-SYSTEM / POWER-MANAGEMENT ARCHITECTURE   -   ~2 MW MV/LV PROCESS PLANT",
-        ha="center", size=FS + 2)
-    note(d, (0, Y_FLD - 3.98),
+    note(d, (0, Y_FLD - 3.35),
          "IEC 61850 station + process bus  -  GOOSE for fast schemes  -  "
          "hardwired trips for safety  -  indicative",
-         ha="center", size=FS - 2)
+         ha="center", size=FS - 2, color="#333333")
+    s.title_block(
+        d, X_L - 0.6, X_R + 0.6, Y_FLD - 3.7,
+        "CONTROL-SYSTEM / POWER-MANAGEMENT ARCHITECTURE  -  ~2 MW MV/LV PLANT",
+        "DWG SLD-2MW-CTL")
 
 
 d = schemdraw.Drawing()
 build(d)
 d.save(os.path.join(OUT, "control-architecture.svg"))
-d.save(os.path.join(OUT, "control-architecture.png"), dpi=130)
+d.save(os.path.join(OUT, "control-architecture.png"), dpi=200)
 print("control architecture diagram rendered")

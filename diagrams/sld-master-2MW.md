@@ -21,13 +21,13 @@
 
 | Tag | Description |
 |-----|-------------|
-| <a id="mv-met"></a>MV-MET | Utility revenue metering cubicle (CTs/VTs, tariff kWh meter) at the 11 kV incomer. |
-| <a id="mv-swgr"></a>MV-SWGR | 11 kV metal-clad switchgear: incomer CB, bus-section CB, two transformer feeders; vacuum CBs, 25 kA/1 s, IEC 62271-200. |
+| <a id="mv-met"></a>MV-MET | Utility revenue metering cubicle (CTs/VTs, tariff kWh meter) at the 13.8 kV incomer. |
+| <a id="mv-swgr"></a>MV-SWGR | 13.8 kV metal-clad switchgear: incomer CB, bus-section CB, two transformer feeders; vacuum CBs, 25 kA/1 s, IEC 62271-200. |
 | <a id="mv-prot"></a>MV-PROT | MV protection & control IEDs: 50/51, 50N/51N overcurrent/earth-fault, 87T transformer differential, 27/59. |
 | <a id="mv-ner"></a>MV-NER | Neutral Earthing Resistor — limits MV earth-fault current (~300–400 A) with neutral CT. |
-| <a id="tx-1"></a>TX-1 | MV/LV power transformer No.1 — 1600 kVA, 11 kV/0.4 kV, Dyn11, Z≈6%, IEC 60076. Feeds LV-MSB Bus A. |
-| <a id="tx-2"></a>TX-2 | MV/LV power transformer No.2 — 1600 kVA, 11 kV/0.4 kV, Dyn11, Z≈6%, IEC 60076. Feeds LV-MSB Bus B. |
-| <a id="lv-msb"></a>LV-MSB | Main LV switchboard / Power Control Centre — 400 V, split bus A/B, 2500–3200 A, 50–65 kA, ACB incomers + motorized N.O. bus-tie, IEC 61439-1/2. |
+| <a id="tx-1"></a>TX-1 | MV/LV power transformer No.1 — 1600 kVA, 13.8 kV/0.4 kV, Dyn11, Z≈6%, IEC 60076 (50 degC ambient). Feeds LV-MSB Bus A. |
+| <a id="tx-2"></a>TX-2 | MV/LV power transformer No.2 — 1600 kVA, 13.8 kV/0.4 kV, Dyn11, Z≈6%, IEC 60076 (50 degC ambient). Feeds LV-MSB Bus B. |
+| <a id="lv-msb"></a>LV-MSB | Main LV switchboard / Power Control Centre — 400/230 V, split bus A/B, 2500–3200 A, 50–65 kA, ACB incomers + motorized N.O. bus-tie, IEC 61439-1/2. |
 | <a id="bt"></a>BT | LV bus-tie circuit breaker — normally-open; auto-closes on loss of either incomer to maintain supply to the surviving bus. |
 | <a id="mcc-1"></a>MCC-1 | Motor Control Centre No.1 (on Bus A) — DOL / star-delta / soft-starter / VFD buckets, IEC 61439-1/2. |
 | <a id="mcc-2"></a>MCC-2 | Motor Control Centre No.2 (on Bus B) — DOL / soft-starter / VFD buckets, IEC 61439-1/2. |

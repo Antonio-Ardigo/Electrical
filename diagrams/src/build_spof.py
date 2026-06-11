@@ -45,14 +45,17 @@ def vbrk(d, x, yc, kind="closed", label=None):
     return yc + 0.6, yc - 0.6
 
 
-def title(d, x, y, t, sub):
-    tag(d, (x, y), t, ha="center", size=FS + 1)
-    note(d, (x, y - 0.34), sub, ha="center", size=FS - 2)
+def title(d, xl, xr, y_top, t, dwg_no, sub):
+    """Caption line + standard title block beneath the diagram."""
+    xc = (xl + xr) / 2.0
+    note(d, (xc, y_top + 0.05), sub, ha="center", size=FS - 2, color="#333333")
+    s.title_block(d, xl, xr, y_top - 0.45, t, dwg_no)
 
 
 def source_to_mvbus(d, x, y_src, y_brk, y_bus, bl, br, label="52-I"):
     s.place(d, s.UtilitySource(r=0.4), (x, y_src), anchor="center")
-    note(d, (x + 0.5, y_src), "11 kV", size=FS - 2)
+    tag(d, (x + 0.55, y_src + 0.14), "UTILITY", size=FS - 1)
+    note(d, (x + 0.55, y_src - 0.14), "13.8 kV  60 Hz", size=FS - 3)
     s.wire(d, (x, y_src - 0.8), (x, y_brk + 0.6))
     vbrk(d, x, y_brk, label=label)
     s.wire(d, (x, y_brk - 0.6), (x, y_bus))
@@ -64,8 +67,9 @@ def tx_drop(d, x, y_bus, y_tx, y_acb, y_lvbus, txlabel):
     s.dot(d, (x, y_bus))
     s.wire(d, (x, y_bus), (x, y_tx + 1.0), color=s.MV_COLOR)
     s.place(d, s.Transformer2W(r=0.38), (x, y_tx), anchor="center")
-    tag(d, (x + 0.5, y_tx + 0.12), txlabel, size=FS - 1)
-    note(d, (x + 0.5, y_tx - 0.16), "1600 kVA", size=FS - 3)
+    tag(d, (x + 0.62, y_tx + 0.26), txlabel, size=FS - 1)
+    note(d, (x + 0.62, y_tx - 0.02), "1600 kVA", size=FS - 3)
+    note(d, (x + 0.62, y_tx - 0.26), "13.8/0.4 kV", size=FS - 3)
     s.wire(d, (x, y_tx - 1.0), (x, y_acb + 0.6))
     vbrk(d, x, y_acb)
     s.wire(d, (x, y_acb - 0.6), (x, y_lvbus))
@@ -82,7 +86,7 @@ def lv_feeder(d, x, y_lvbus, y_eq, name, sub, fill="#eef2f7"):
 
 def save(d, stem):
     d.save(os.path.join(OUT, stem + ".svg"))
-    d.save(os.path.join(OUT, stem + ".png"), dpi=130)
+    d.save(os.path.join(OUT, stem + ".png"), dpi=200)
 
 
 # ============================================================ A
@@ -94,8 +98,10 @@ def diagram_A():
     tag(d, (-2.6, 2.7 + 0.3), "LV-MSB  -  single bus", size=FS - 1, color=s.LV_COLOR)
     lv_feeder(d, -1.6, 2.7, 1.2, "MCC", "motors")
     lv_feeder(d, 1.6, 2.7, 1.2, "DB", "light/pwr")
-    spof(d, (0, 5.0), "SPOF: single TX\n+ single bus", r=0.7, lbldx=1.6, lbldy=0.0, ha="left")
-    title(d, 0, -0.4, "SPOF-A  -  Single transformer, single bus",
+    spof(d, (0, 5.0), "SPOF: single TX\n+ single bus", r=0.7,
+         lbldx=-1.55, lbldy=0.0, ha="right")
+    title(d, -6.6, 6.6, 0.0, "SPOF-A  -  SINGLE TRANSFORMER, SINGLE BUS",
+          "DWG SLD-2MW-A",
           "Any loss of TX-1, its feeder, the incomer or the bus blacks out the whole plant.")
     save(d, "spof-A")
 
@@ -114,9 +120,10 @@ def diagram_B():
     lv_feeder(d, 3.0, 3.1, 1.5, "MCC-2", "Bus B loads")
     # no tie
     note(d, (0, 3.1), "NO TIE", ha="center", size=FS - 1, color=RED)
-    spof(d, (-3.0, 5.4), "lose TX-1\n= lose Bus A", r=0.65, lbldx=-1.45, lbldy=0.0, ha="right")
-    spof(d, (3.0, 5.4), "lose TX-2\n= lose Bus B", r=0.65, lbldx=1.45, lbldy=0.0, ha="left")
-    title(d, 0, -0.3, "SPOF-B  -  Two transformers, no bus-tie",
+    spof(d, (-3.0, 5.4), "lose TX-1\n= lose Bus A", r=0.65, lbldx=-1.0, lbldy=1.05, ha="center")
+    spof(d, (3.0, 5.4), "lose TX-2\n= lose Bus B", r=0.65, lbldx=1.0, lbldy=1.05, ha="center")
+    title(d, -6.6, 6.6, 0.0, "SPOF-B  -  TWO TRANSFORMERS, NO BUS-TIE",
+          "DWG SLD-2MW-B",
           "Redundant sources, but no tie: a single source loss drops its entire half of the plant.")
     save(d, "spof-B")
 
@@ -135,8 +142,10 @@ def diagram_C():
     note(d, (0, 3.1 + 0.4), "tie (N.O.)", ha="center", size=FS - 3)
     lv_feeder(d, -3.0, 3.1, 1.5, "MCC-1", "Bus A loads")
     lv_feeder(d, 3.0, 3.1, 1.5, "MCC-2", "Bus B loads")
-    spof(d, (0, 7.6), "SPOF: single incomer\n+ single MV bus", r=0.7, lbldx=1.6, lbldy=0.0, ha="left")
-    title(d, 0, -0.3, "SPOF-C  -  Single utility incomer / MV bus",
+    spof(d, (0, 7.6), "SPOF: single incomer\n+ single MV bus", r=0.7,
+         lbldx=0.95, lbldy=0.55, ha="left")
+    title(d, -6.6, 6.6, 0.0, "SPOF-C  -  SINGLE UTILITY INCOMER / MV BUS",
+          "DWG SLD-2MW-C",
           "LV redundancy is fine, but one incomer or MV-bus fault still blacks out everything.")
     save(d, "spof-C")
 
@@ -150,9 +159,10 @@ def diagram_D():
     note(d, (-3.2, 7.0 - 0.4), "redundant upstream", size=FS - 3)
     s.dot(d, (0, 7.0))
     s.wire(d, (0, 7.0), (0, 6.0), color=s.LV_COLOR)
-    vbrk(d, 0, 5.4, label="single MCCB")
+    vbrk(d, 0, 5.4)
+    note(d, (-0.32, 5.4), "single MCCB", size=FS - 3, ha="right")
     s.wire(d, (0, 4.8), (0, 4.2))
-    note(d, (0.3, 4.5), "single shared cable", size=FS - 3, color=RED)
+    note(d, (0.3, 4.45), "single shared cable", size=FS - 3, color=RED)
     s.place(d, s.Block(name="MCC", sub="one board", w=2.0, h=1.0), (0, 3.5), anchor="center")
     s.wire(d, (-1.0, 3.0), (1.0, 3.0))
     s.wire(d, (-1.0, 3.0), (-1.0, 2.4)); s.wire(d, (1.0, 3.0), (1.0, 2.4))
@@ -160,10 +170,12 @@ def diagram_D():
     s.place(d, s.Motor(r=0.34), (1.0, 2.05), anchor="center")
     note(d, (-1.0, 1.4), "duty pump", ha="center", size=FS - 3)
     note(d, (1.0, 1.4), "standby pump", ha="center", size=FS - 3)
-    spof(d, (0, 5.4), "SPOF: shared MCCB /\ncable / single MCC", r=0.7, lbldx=1.7, lbldy=0.2, ha="left")
-    note(d, (0, 0.7), "Duty + standby share one board -> the standby gives no real redundancy.",
-         ha="center", size=FS - 2, color="#333333")
-    title(d, 0, 0.1, "SPOF-D  -  Shared cable / single MCC for duty + standby", "")
+    spof(d, (0, 5.4), "SPOF: shared MCCB /\ncable / single MCC", r=0.7,
+         lbldx=1.95, lbldy=0.0, ha="left")
+    title(d, -6.6, 6.6, 0.7,
+          "SPOF-D  -  SHARED CABLE / SINGLE MCC FOR DUTY + STANDBY",
+          "DWG SLD-2MW-D",
+          "Duty + standby share one board -> the standby gives no real redundancy.")
     save(d, "spof-D")
 
 
@@ -203,7 +215,8 @@ def diagram_E():
     note(d, (0, 1.9), "duty / standby on\nseparate buses", ha="center", size=FS - 3, color=GREEN)
     tag(d, (0, 10.4), "RESILIENT REFERENCE  -  no single point of failure", ha="center",
         size=FS, color=GREEN)
-    title(d, 0, 0.2, "SPOF-E  -  Resilient layout (for contrast)",
+    title(d, -6.6, 6.6, 0.4, "SPOF-E  -  RESILIENT LAYOUT (FOR CONTRAST)",
+          "DWG SLD-2MW-E",
           "Dual feeds, two transformers, bus-section + auto tie, segregated buses: every common element has an alternative path.")
     save(d, "spof-E")
 
