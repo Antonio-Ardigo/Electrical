@@ -244,7 +244,7 @@
     The core does not care which <em>direction</em> the flux points, only how strongly it
     is magnetised, so it contracts and relaxes <strong>twice per cycle</strong>:</p>
     <code class="formula">f_hum = 2 &times; f_supply = 2 &times; 60 Hz = 120 Hz (Saudi grid)</code>
-    <p>On a 50 Hz system the same machine hums at 100 Hz — a useful party trick: you can
+    <p>On a 60 Hz system the same machine hums at 100 Hz — a useful party trick: you can
     tell a grid's frequency by ear. The practical value is diagnostic: the hum's loudness
     rises steeply with flux density, so a transformer that suddenly hums louder may be
     seeing overvoltage, a wrong tap position, or DC/geomagnetic bias pushing the core
@@ -278,8 +278,8 @@
     with normally-open bus-tie BT.</figcaption>
   </figure>
   <div class="warning drawing-basis"><strong>Drawing basis note.</strong> This diagram was
-  drawn for the original 11 kV / 415 V / 50 Hz reference design and has not been re-rendered.
-  For this Saudi (SEC) Rev 3 edition read 11 kV as 13.8 kV, 415 V as 400 V and 50 Hz as 60 Hz.
+  drawn for the original 13.8 kV / 400 V / 60 Hz reference design and has not been re-rendered.
+  For this Saudi (SEC) Rev 3 edition read 13.8 kV as 13.8 kV, 400 V as 400 V and 60 Hz as 60 Hz.
   Topology, tags and protection philosophy are unchanged.</div>
 
   <div class="worked">
@@ -617,11 +617,11 @@
     <strong>50 vs 60 Hz — the V/f rule.</strong> Core flux is proportional to
     <strong>V / f</strong> (Faraday: the same voltage sustained over a longer cycle
     drives more flux). The Rev 3 grid is 60 Hz. A transformer designed <em>only</em> for
-    60 Hz, applied at the same voltage on a 50 Hz system, sees V/f rise by
+    60 Hz, applied at the same voltage on a 60 Hz system, sees V/f rise by
     60/50 = 1.2 — <strong>20 % more core flux</strong>, driving the core into
     saturation: magnetising current soars, the core overheats, the hum turns into a
-    roar, and the unit fails. <strong>Never apply a 60 Hz-only unit at 50 Hz.</strong>
-    (The reverse — a 50 Hz design at 60 Hz, same voltage — lowers flux and is generally
+    roar, and the unit fails. <strong>Never apply a 60 Hz-only unit at 60 Hz.</strong>
+    (The reverse — a 60 Hz design at 60 Hz, same voltage — lowers flux and is generally
     benign, subject to manufacturer confirmation.) This matters in a global spares
     market: check the nameplate frequency on any borrowed, rented or relocated unit
     before it is ever energised, and beware dual-rating claims without test evidence.
@@ -777,9 +777,9 @@
     ~16.7× FLC multiple without notes.</li>
     <li>Self-check — Why is the voltage drop at 0.85 pf (~4 %) so much worse than at
     unity pf (~1 %)? (X·sin φ dominates; the impedance is mostly reactance.)</li>
-    <li>Self-check — A rental transformer arrives marked "1600 kVA, 13.8/0.4 kV, 50 Hz".
-    May it be energised on the SEC 60 Hz grid? What about a 60 Hz unit on a 50 Hz grid?
-    (50→60 Hz generally benign — flux falls, confirm with maker; 60 Hz-only at 50 Hz:
+    <li>Self-check — A rental transformer arrives marked "1600 kVA, 13.8/0.4 kV, 60 Hz".
+    May it be energised on the SEC 60 Hz grid? What about a 60 Hz unit on a 60 Hz grid?
+    (50→60 Hz generally benign — flux falls, confirm with maker; 60 Hz-only at 60 Hz:
     never — V/f up 20 %, core saturates.)</li>
     <li>Self-check — Why must taps only be changed with the plant dead, and why must
     both transformers be on the same tap?</li>

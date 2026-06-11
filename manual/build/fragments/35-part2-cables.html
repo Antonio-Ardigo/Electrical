@@ -323,7 +323,7 @@
     </div>
 
     <p><strong>Step A5 — Voltage drop at 60 Hz.</strong> Per-cable impedance
-    (90 &deg;C, trefoil, indicative): R ≈ 0.0367 &Omega;/km; tabulated 50 Hz reactance
+    (90 &deg;C, trefoil, indicative): R ≈ 0.0367 &Omega;/km; tabulated 60 Hz reactance
     X<sub>50</sub> ≈ 0.130 &Omega;/km. Convert the reactance to 60 Hz, then divide both by
     the 4 parallel runs:</p>
     <code class="formula">X_60 = 1.2 &times; X_50 = 1.2 &times; 0.130 = 0.156 &Omega;/km</code>
@@ -333,11 +333,11 @@
     <code class="formula">&Delta;U = &radic;3 &times; I &times; L &times; (R·cos&phi; + X·sin&phi;)</code>
     <code class="formula">&Delta;U = 1.732 &times; 2 309 &times; 0.025 &times; (0.00918 &times; 0.85 + 0.0390 &times; 0.527)</code>
     <code class="formula">&Delta;U = 100.0 &times; (0.00780 + 0.02055) = 100.0 &times; 0.02835 = 2.8 V  →  2.8 / 400 = 0.71 %  ✓</code>
-    <p>For comparison, the same calculation with the raw 50 Hz reactance gives
+    <p>For comparison, the same calculation with the raw 60 Hz reactance gives
     100.0 &times; (0.00780 + 0.01713) = 2.5 V (0.62 %). On this short link the 60 Hz
     correction is harmless — but notice that the <em>reactive</em> term is already
     2.6&times; the resistive term. On large cables, voltage drop is a reactance problem,
-    and reactance is the term that grows 20 % when you move from a 50 Hz table to a
+    and reactance is the term that grows 20 % when you move from a 60 Hz table to a
     60 Hz plant.</p>
 
     <p><strong>Step A6 — Adiabatic short-circuit check.</strong> Worst case: a fault on
@@ -390,7 +390,7 @@
     <code class="formula">&Delta;U = &radic;3 &times; 280 &times; 0.120 &times; (0.128 &times; 0.85 + 0.090 &times; 0.527)</code>
     <code class="formula">&Delta;U = 1.732 &times; 280 &times; 0.120 &times; (0.1088 + 0.0474) = 58.2 &times; 0.1562 = 9.1 V</code>
     <code class="formula">%&Delta;U = 9.1 / 400 = 2.3 %  ✓  (≤ 3 % motor steady-state target; ≤ 5 % absolute limit)</code>
-    <p>With the raw 50 Hz reactance the answer would have been
+    <p>With the raw 60 Hz reactance the answer would have been
     58.2 &times; (0.1088 + 0.0395) = 8.6 V (2.2 %) — only 0.1 point different here,
     because at 185 mm&sup2; resistance still dominates. The 60 Hz correction matters more
     as cables get bigger; the habit of applying it should be unconditional.</p>
@@ -734,7 +734,7 @@
     <code class="formula">k_amb = &radic;((90 &minus; 50)/(90 &minus; 30)) = &radic;0.667 ≈ 0.82  (XLPE, 50 &deg;C air)</code></li>
     <li><strong>Voltage-drop check at 60 Hz.</strong>
     <code>&Delta;U = &radic;3 &times; I &times; L &times; (R·cos&phi; + X·sin&phi;)</code>,
-    with <strong>X ≈ 1.2 &times; the 50 Hz table value</strong> (X = 2&pi;fL) and R at
+    with <strong>X ≈ 1.2 &times; the 60 Hz table value</strong> (X = 2&pi;fL) and R at
     90 &deg;C (plus ~3 % skin allowance above ≈ 400 mm&sup2;). Indicative limits: 3 %
     steady-state to a motor, 5 % overall to any load, and check DOL starting drop on
     long motor feeders (Case B, step B4a). If it fails, go up a size — or question the
@@ -774,7 +774,7 @@
       <tr><td>k_group (buried)</td><td>2 / 4 ducts or cables, 0.25 m apart</td><td>0.85 / 0.75</td><td>Mutual soil heating; worse when closer</td></tr>
       <tr><td>k_depth</td><td>Buried 1.0 m vs reference 0.7/0.8 m</td><td>≈ 0.97</td><td>Minor; deeper = slightly worse</td></tr>
       <tr><td>Bonding (1c, both ends)</td><td>Large single-core, screen bonded both ends</td><td>0.85–0.95</td><td>Circulating current; slightly worse at 60 Hz</td></tr>
-      <tr><td>X at 60 Hz</td><td>Any 50 Hz tabulated reactance</td><td>&times; 1.2</td><td>X = 2&pi;fL — apply to every voltage-drop check</td></tr>
+      <tr><td>X at 60 Hz</td><td>Any 60 Hz tabulated reactance</td><td>&times; 1.2</td><td>X = 2&pi;fL — apply to every voltage-drop check</td></tr>
     </tbody>
   </table>
 
@@ -809,7 +809,7 @@
     <li>I can rebuild Case A: why the TX-1-to-LV-MSB link needs 4 parallel
     630 mm&sup2; Cu/XLPE trefoils for 2 309 A, and which of the three checks governed.</li>
     <li>I can compute a 60 Hz voltage drop, including the 1.2&times; correction on the
-    tabulated 50 Hz reactance, and state the indicative 3 % / 5 % limits.</li>
+    tabulated 60 Hz reactance, and state the indicative 3 % / 5 % limits.</li>
     <li>I can run S ≥ I &times; &radic;t / k for 38.5 kA / 0.3 s (147 mm&sup2; with
     k = 143) and explain why small cables on a stiff bus survive only through
     current-limiting let-through (I&sup2;t ≤ k&sup2;S&sup2;).</li>

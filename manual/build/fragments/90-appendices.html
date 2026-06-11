@@ -254,7 +254,7 @@
     All worked numbers are on the <strong>Rev 3 Saudi basis: 13.8 kV / 400-230 V, 60 Hz</strong>
     (plant 2.0 MW at pf 0.85 &rarr; 2353 kVA; 2 &times; 1600 kVA, Z = 6 %).
     Frequency-dependent quantities (reactance, motor speed, capacitor output) are evaluated at
-    <strong>f = 60 Hz</strong> — do not reuse 50 Hz table values without correction.
+    <strong>f = 60 Hz</strong> — do not reuse 60 Hz table values without correction.
     All values are <em>indicative</em>.
   </p>
 
@@ -295,14 +295,14 @@
       <tr>
         <td><strong>Motor synchronous speed</strong></td>
         <td><code>N_s = 120 &times; f / p</code></td>
-        <td>N_s: synchronous speed (rpm); f: frequency (Hz); p: number of poles. Actual speed = N_s &minus; slip. At 60 Hz all speeds are 20 % higher than the 50 Hz equivalents.</td>
-        <td>4-pole @ 60 Hz &rarr; 1800 rpm (2-pole 3600, 6-pole 1200); same motor at 50 Hz would run 1500 rpm</td>
+        <td>N_s: synchronous speed (rpm); f: frequency (Hz); p: number of poles. Actual speed = N_s &minus; slip. At 60 Hz all speeds are 20 % higher than the 60 Hz equivalents.</td>
+        <td>4-pole @ 60 Hz &rarr; 1800 rpm (2-pole 3600, 6-pole 1200); same motor at 60 Hz would run 1500 rpm</td>
       </tr>
       <tr>
         <td><strong>Inductive reactance</strong></td>
         <td><code>X = 2&pi; &times; f &times; L</code></td>
-        <td>X: reactance (&Omega;); f: frequency (Hz); L: inductance (H). At 60 Hz, reactances are 60/50 = 1.2 &times; the 50 Hz values — affects voltage drop, fault X/R and cable tables.</td>
-        <td>L = 0.35 mH &rarr; X = 2&pi; &times; 60 &times; 0.00035 = 0.132 &Omega; (vs 0.110 &Omega; at 50 Hz)</td>
+        <td>X: reactance (&Omega;); f: frequency (Hz); L: inductance (H). At 60 Hz, reactances are 60/50 = 1.2 &times; the 60 Hz values — affects voltage drop, fault X/R and cable tables.</td>
+        <td>L = 0.35 mH &rarr; X = 2&pi; &times; 60 &times; 0.00035 = 0.132 &Omega; (vs 0.110 &Omega; at 60 Hz)</td>
       </tr>
       <tr>
         <td><strong>Transformer loading (pu)</strong></td>
@@ -325,7 +325,7 @@
       <tr>
         <td><strong>Voltage drop (3-phase feeder)</strong></td>
         <td><code>&Delta;V = &radic;3 &times; I &times; (R&middot;cos&phi; + X&middot;sin&phi;) &times; L</code></td>
-        <td>I: current (A); R, X: conductor resistance / reactance (&Omega;/km); L: length (km); cos&phi;/sin&phi; from load pf. <strong>Use 60 Hz reactance values</strong> (X is 1.2 &times; the 50 Hz table figure).</td>
+        <td>I: current (A); R, X: conductor resistance / reactance (&Omega;/km); L: length (km); cos&phi;/sin&phi; from load pf. <strong>Use 60 Hz reactance values</strong> (X is 1.2 &times; the 60 Hz table figure).</td>
         <td>194 A, 120 m, 95 mm&sup2; Cu @ 60 Hz &rarr; &asymp; 9.8 V &asymp; 2.4 % (limit &le; 5 %)</td>
       </tr>
       <tr>
@@ -337,8 +337,8 @@
       <tr>
         <td><strong>Capacitor output vs frequency</strong></td>
         <td><code>Q = 2&pi; &times; f &times; C &times; V&sup2;</code></td>
-        <td>Q: reactive output (var); C: capacitance (F); V: voltage (V). Output is proportional to frequency: a capacitor delivers 60/50 = 1.2 &times; its 50 Hz kvar at 60 Hz. Always order capacitor steps and detuned reactors specified <strong>for 60 Hz</strong>; a 7 % reactor then tunes the branch to 60/&radic;0.07 &asymp; 227 Hz, below the 5th harmonic (300 Hz).</td>
-        <td>A "50 kvar @ 400 V, 50 Hz" can &rarr; 60 kvar at 60 Hz (and its reactor detuning shifts) — never mix 50 Hz and 60 Hz PFC components</td>
+        <td>Q: reactive output (var); C: capacitance (F); V: voltage (V). Output is proportional to frequency: a capacitor delivers 60/50 = 1.2 &times; its 60 Hz kvar at 60 Hz. Always order capacitor steps and detuned reactors specified <strong>for 60 Hz</strong>; a 7 % reactor then tunes the branch to 60/&radic;0.07 &asymp; 227 Hz, below the 5th harmonic (300 Hz).</td>
+        <td>A "50 kvar @ 400 V, 60 Hz" can &rarr; 60 kvar at 60 Hz (and its reactor detuning shifts) — never mix 60 Hz and 60 Hz PFC components</td>
       </tr>
       <tr>
         <td><strong>Generator sizing (essential load)</strong></td>
@@ -413,11 +413,11 @@
     <strong>Tip:</strong> For arc-flash and short-circuit studies, always use recognised power-system software (ETAP, DIgSILENT, SKM or equivalent) with the full IEC 60909 / IEEE 1584 models. The simplified formulas above are for quick manual checks and teaching purposes only.
   </div>
 
-  <h3 id="a-formula-60hz">50 Hz &harr; 60 Hz conversion quick table</h3>
+  <h3 id="a-formula-60hz">60 Hz &harr; 60 Hz conversion quick table</h3>
 
   <p>
     Much published reference data (cable tables, motor catalogues, capacitor cans) is tabulated
-    at 50 Hz. Before reusing any such figure on this 60 Hz plant, apply the corrections below.
+    at 60 Hz. Before reusing any such figure on this 60 Hz plant, apply the corrections below.
     Resistance, kVA, FLC and thermal ratings do not change with frequency; everything built on
     reactance or speed does.
   </p>
@@ -432,15 +432,15 @@
     </thead>
     <tbody>
       <tr><td>Inductive reactance X<sub>L</sub></td><td>&times; 1.2 (proportional to f)</td><td>Cable and transformer X up 20 %: slightly higher reactive voltage drop, slightly lower X/R-driven peak factor differences — use 60 Hz impedance data in studies.</td></tr>
-      <tr><td>Capacitive reactance X<sub>C</sub></td><td>&divide; 1.2 (inversely proportional)</td><td>Capacitors draw 20 % more current and deliver 20 % more kvar at the same voltage — a 50 Hz-rated PFC can is overstressed at 60 Hz.</td></tr>
-      <tr><td>Motor synchronous speed</td><td>&times; 1.2 (1500 &rarr; 1800 rpm, 4-pole)</td><td>Centrifugal pump/fan power rises roughly with speed cubed — a 50 Hz motor-pump set moved to 60 Hz overloads unless re-rated or VFD-limited.</td></tr>
-      <tr><td>Transformer core flux (same V)</td><td>&divide; 1.2 (V/f lower)</td><td>A 50 Hz-designed transformer runs <em>less</em> saturated at 60 Hz and the same voltage — benign; the reverse direction (60 Hz unit on 50 Hz) is the dangerous one.</td></tr>
-      <tr><td>Detuned-filter tuning frequency</td><td>&times; 1.2 (7 % reactor: 189 &rarr; 227 Hz)</td><td>Reactor-capacitor steps must be engineered as a 60 Hz set; mixing 50 Hz reactors with 60 Hz cans detunes the detuning.</td></tr>
+      <tr><td>Capacitive reactance X<sub>C</sub></td><td>&divide; 1.2 (inversely proportional)</td><td>Capacitors draw 20 % more current and deliver 20 % more kvar at the same voltage — a 60 Hz-rated PFC can is overstressed at 60 Hz.</td></tr>
+      <tr><td>Motor synchronous speed</td><td>&times; 1.2 (1500 &rarr; 1800 rpm, 4-pole)</td><td>Centrifugal pump/fan power rises roughly with speed cubed — a 60 Hz motor-pump set moved to 60 Hz overloads unless re-rated or VFD-limited.</td></tr>
+      <tr><td>Transformer core flux (same V)</td><td>&divide; 1.2 (V/f lower)</td><td>A 60 Hz-designed transformer runs <em>less</em> saturated at 60 Hz and the same voltage — benign; the reverse direction (60 Hz unit on 60 Hz) is the dangerous one.</td></tr>
+      <tr><td>Detuned-filter tuning frequency</td><td>&times; 1.2 (7 % reactor: 189 &rarr; 227 Hz)</td><td>Reactor-capacitor steps must be engineered as a 60 Hz set; mixing 60 Hz reactors with 60 Hz cans detunes the detuning.</td></tr>
       <tr><td>Relay / trip-unit settings in seconds</td><td>Unchanged</td><td>Time grading margins are frequency-agnostic; settings in <em>cycles</em>, however, are 16.7 ms per cycle at 60 Hz, not 20 ms.</td></tr>
     </tbody>
   </table>
 
-  <div class="key">Key takeaway: 23 formulas on one page, all worked on the 13.8 kV / 400 V / 60 Hz Rev 3 basis. The three you will use most in the field are the FLC formula, the short-circuit formula (I_sc = I_fl / Z), and the availability formula (A = MTBF / (MTBF + MTTR)). Remember the three 60 Hz traps: reactance is 1.2 &times; the 50 Hz value, motor speeds are 1.2 &times; (1800 rpm for 4-pole), and capacitor kvar is 1.2 &times; nameplate-at-50 Hz. For full calculations, use the Part 2 worked examples.</div>
+  <div class="key">Key takeaway: 23 formulas on one page, all worked on the 13.8 kV / 400 V / 60 Hz Rev 3 basis. The three you will use most in the field are the FLC formula, the short-circuit formula (I_sc = I_fl / Z), and the availability formula (A = MTBF / (MTBF + MTTR)). Remember the three 60 Hz traps: reactance is 1.2 &times; the 60 Hz value, motor speeds are 1.2 &times; (1800 rpm for 4-pole), and capacitor kvar is 1.2 &times; nameplate-at-60 Hz. For full calculations, use the Part 2 worked examples.</div>
 </section>
 
 <!-- ============================================================ -->
@@ -580,8 +580,8 @@
   </p>
 
   <div class="warning drawing-basis"><strong>Drawing basis note.</strong> The single-line
-diagrams on which these symbols appear were drawn for the original 11 kV / 415 V / 50 Hz
-reference design — read 11 kV as 13.8 kV, 415 V as 400 V and 50 Hz as 60 Hz.</div>
+diagrams on which these symbols appear were drawn for the original 13.8 kV / 400 V / 60 Hz
+reference design — read 13.8 kV as 13.8 kV, 400 V as 400 V and 60 Hz as 60 Hz.</div>
 
   <table class="tbl">
     <thead>

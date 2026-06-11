@@ -334,8 +334,8 @@
     motor MCCB.</figcaption>
   </figure>
   <div class="warning drawing-basis"><strong>Drawing basis note.</strong> This diagram was
-  drawn for the original 11 kV / 415 V / 50 Hz reference design and has not been re-rendered.
-  For this Saudi (SEC) Rev 3 edition read 11 kV as 13.8 kV, 415 V as 400 V and 50 Hz as 60 Hz.
+  drawn for the original 13.8 kV / 400 V / 60 Hz reference design and has not been re-rendered.
+  For this Saudi (SEC) Rev 3 edition read 13.8 kV as 13.8 kV, 400 V as 400 V and 60 Hz as 60 Hz.
   Topology, tags and protection philosophy are unchanged.</div>
 
   <p><strong>The cast (indicative ratings):</strong></p>
@@ -800,7 +800,7 @@
   bends and unlatches (the L function, fixed by physics), and a magnetic armature attracts
   at &asymp; 5–12 &times; rating and unlatches instantly (the I function, sometimes
   adjustable). Cheap, robust, immune to electronics failure — and inflexible: curves are
-  what they are, accuracy is modest, and at 60 Hz versus 50 Hz the magnetic pickup of
+  what they are, accuracy is modest, and at 60 Hz versus 60 Hz the magnetic pickup of
   some designs shifts a few percent (a Rev 3 detail worth checking on imported gear). The
   electronic-trip MCCB and every modern ACB instead measure through internal CTs or
   Rogowski coils into a microprocessor: full LSIG, fine adjustment, tight tolerance,
@@ -856,7 +856,7 @@
         — check the 400 V column, where I<sub>cu</sub> is typically <em>higher</em>).
         U<sub>i</sub>: insulation design voltage. U<sub>imp</sub>: lightning-impulse
         withstand (8 or 12 kV), matching installation overvoltage category.</td>
-        <td>U<sub>e</sub> &ge; 400 V (ratings read at 400/415 V column);
+        <td>U<sub>e</sub> &ge; 400 V (ratings read at 400/230 V column);
         U<sub>imp</sub> = 12 kV for main boards</td>
       </tr>
     </tbody>
@@ -864,7 +864,7 @@
 
   <div class="warning">
     The classic nameplate trap: a breaker advertised "65 kA" may be
-    I<sub>cu</sub> = 65 kA at 415 V with I<sub>cs</sub> = 50 % — meaning that after one
+    I<sub>cu</sub> = 65 kA at 400 V with I<sub>cs</sub> = 50 % — meaning that after one
     full-level fault it is not warranted for continued service — and an I<sub>cw</sub>
     too low to support any short-time delay. Three different "65 kA questions", three
     different answers. Always read all three lines, at the correct voltage column,
@@ -1009,7 +1009,7 @@
 
     <p><strong>Step 6 — Voltage class and frequency.</strong>
     U<sub>e</sub> &ge; 400 V (standard 690 V-class gear; read I<sub>cu</sub> at the
-    400/415 V column, where it is typically at its highest);
+    400/230 V column, where it is typically at its highest);
     U<sub>imp</sub> = 12 kV for a main board. Confirm <strong>60 Hz</strong> explicitly
     on the data sheet: electronic trip units handle 50/60 Hz transparently, but some
     thermal-magnetic curves and, importantly, motorised accessories and undervoltage
@@ -1080,8 +1080,8 @@
     confirm the actual utility fault contribution in writing at the connection
     application stage, because if it is 40 kA the entire switchboard moves to a 40 kA
     rating — a procurement decision, impossible to retrofit. Note the 60 Hz detail:
-    IEC's peak/making factor is 2.6 at 60 Hz (vs 2.5 at 50 Hz), a small but real reason
-    never to buy MV gear from a 50 Hz data sheet unverified.</p>
+    IEC's peak/making factor is 2.6 at 60 Hz (vs 2.5 at 60 Hz), a small but real reason
+    never to buy MV gear from a 60 Hz data sheet unverified.</p>
   </div>
 
   <p>Technology selection per <a href="#c-breaker-tech">above</a>: vacuum interrupters,

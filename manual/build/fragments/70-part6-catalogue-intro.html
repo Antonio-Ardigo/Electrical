@@ -204,10 +204,10 @@ number is implied.</p>
     <tbody>
       <tr><td>Rated current I<sub>n</sub> (at 40 °C)</td><td>2500 A</td><td>Continuous capability <em>at the reference ambient</em>. Not yet usable — see the derating row.</td></tr>
       <tr><td>Derated current at 50 °C / 55 °C</td><td>~2400 A / ~2300 A</td><td>The number that matters in Saudi Arabia. At 50 °C switchroom-failure conditions this "2500 A" breaker carries ~2400 A — still above 2309 A FLC, but the margin has shrunk from ~8 % to ~4 %. Check the <em>assembly</em> derating too: the breaker inside a Form 4b cubicle runs hotter than the bare breaker the table describes.</td></tr>
-      <tr><td>Rated operational voltage U<sub>e</sub></td><td>690 V</td><td>Maximum system voltage at which performance is guaranteed. Our 400 V system is comfortably inside — but I<sub>cu</sub> is quoted <em>per voltage</em>: read the kA column for 400/415 V, not the headline.</td></tr>
+      <tr><td>Rated operational voltage U<sub>e</sub></td><td>690 V</td><td>Maximum system voltage at which performance is guaranteed. Our 400 V system is comfortably inside — but I<sub>cu</sub> is quoted <em>per voltage</em>: read the kA column for 400/230 V, not the headline.</td></tr>
       <tr><td>Rated insulation voltage U<sub>i</sub></td><td>1000 V</td><td>Dielectric design level of the insulation system; must be ≥ U<sub>e</sub>.</td></tr>
       <tr><td>Rated impulse withstand U<sub>imp</sub></td><td>12 kV</td><td>Surge/lightning impulse capability; relevant to insulation coordination of the installation.</td></tr>
-      <tr><td>Ultimate breaking capacity I<sub>cu</sub> at 400/415 V</td><td>85 kA</td><td>The biggest fault the breaker can interrupt — <em>once</em>, possibly ending its service life. Must exceed the 77 kA tie-closed prospective fault (indicative).</td></tr>
+      <tr><td>Ultimate breaking capacity I<sub>cu</sub> at 400/230 V</td><td>85 kA</td><td>The biggest fault the breaker can interrupt — <em>once</em>, possibly ending its service life. Must exceed the 77 kA tie-closed prospective fault (indicative).</td></tr>
       <tr><td>Service breaking capacity I<sub>cs</sub></td><td>100 % of I<sub>cu</sub> (= 85 kA)</td><td>The fault level it can interrupt and <em>remain serviceable</em>. For a main incomer, demand I<sub>cs</sub> = 100 % I<sub>cu</sub>; budget breakers quoting I<sub>cs</sub> = 50 % I<sub>cu</sub> are throwaway devices after a full fault.</td></tr>
       <tr><td>Short-time withstand I<sub>cw</sub></td><td>85 kA / 1 s</td><td>What it can <em>carry without tripping</em> while a downstream device clears — the property that makes time-graded selectivity possible. ACBs have high I<sub>cw</sub>; MCCBs typically do not. The time qualifier (1 s, 3 s) is part of the rating, never optional.</td></tr>
       <tr><td>Rated frequency</td><td>50 / 60 Hz</td><td>Dual-rated — usable on the SEC 60 Hz system. Verify the trip unit and accessories share the dual rating (see below).</td></tr>
@@ -239,7 +239,7 @@ voltage other than yours.</p>
   <p>Three voltage ratings, three jobs: U<sub>e</sub> is the operational voltage at which the
 performance tables are valid; U<sub>i</sub> is the insulation design voltage (≥ U<sub>e</sub>);
 U<sub>imp</sub> is the impulse withstand for surges. Breaking capacity generally <em>falls</em> as
-U<sub>e</sub> rises — always read the kA column at 400/415 V for this plant, not the flattering
+U<sub>e</sub> rises — always read the kA column at 400/230 V for this plant, not the flattering
 value at 240 V.</p>
   <h4>50/60 Hz — usually dual, never assumed</h4>
   <p>The SEC system is 60 Hz. Most modern switchgear, breakers, transformers in this class, and
@@ -248,9 +248,9 @@ rating must appear <em>on the datasheet and the nameplate</em>, not in a salesma
 Watch for: CTs/VTs and meters specified per-frequency; capacitor banks and detuned reactors whose
 tuning is frequency-specific by definition; and above all <strong>rotating machines</strong>.
 Motors and generator sets are <em>not</em> trivially dual-frequency: a 4-pole motor runs 1500 rpm
-at 50 Hz and 1800 rpm at 60 Hz, with different V/Hz, different fan loads and different driven-machine
+at 60 Hz and 1800 rpm at 60 Hz, with different V/Hz, different fan loads and different driven-machine
 power demands. A genset alternator is wound and its engine governed for one frequency. Treat any
-50 Hz-referenced data for rotating plant as inapplicable until the vendor issues 60 Hz data.</p>
+60 Hz-referenced data for rotating plant as inapplicable until the vendor issues 60 Hz data.</p>
   <h4>IP and IK — dust is the design case</h4>
   <p>IP ratings (IEC 60529) code ingress protection: first digit solids/dust, second digit water.
 This plant's outdoor minimum is IP54 — "dust-protected" and splash-proof; IP65 buys "dust-tight".
@@ -273,7 +273,7 @@ vendor in writing"; two or more hits mean "treat the whole document as unverifie
     <li>"Designed to", "in accordance with", "complies with the intent of" a standard — weasel wording. Only "type-tested to IEC xxxxx" (with the certificate) is evidence.</li>
     <li>kA ratings quoted without a time qualifier or without the test voltage — a short-time withstand without its duration (1 s vs 3 s) or a breaking capacity without its voltage is not a rating, it is a slogan.</li>
     <li>I<sub>cs</sub> not stated, or quietly set at 50 % of I<sub>cu</sub> on a main incomer application.</li>
-    <li>No 60 Hz column, or all performance data referenced to 50 Hz only — unacceptable for SEC-connected plant; rotating machines especially must have native 60 Hz data.</li>
+    <li>No 60 Hz column, or all performance data referenced to 60 Hz only — unacceptable for SEC-connected plant; rotating machines especially must have native 60 Hz data.</li>
     <li>No derating tables at all (temperature, altitude, enclosure) — the vendor is leaving you to discover the limits in service.</li>
     <li>Catalogue page submitted where a project datasheet was required — generic family data is not a commitment to your configuration.</li>
     <li>IP rating quoted for the device but not for the assembly/enclosure as it will actually be installed on site.</li>

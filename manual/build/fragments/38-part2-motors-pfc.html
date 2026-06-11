@@ -129,7 +129,7 @@
 
   <h4>Feel for the numbers</h4>
 
-  <p>Start with speed, because at 60 Hz it surprises engineers trained on 50 Hz
+  <p>Start with speed, because at 60 Hz it surprises engineers trained on 60 Hz
   plants. An induction motor's stator creates a magnetic field rotating at
   <strong>synchronous speed</strong> n<sub>s</sub> = 120&middot;f / p (p = number of
   poles). On the SEC 60 Hz grid:</p>
@@ -145,8 +145,8 @@
     </tbody>
   </table>
 
-  <p>Everything runs <strong>20 % faster</strong> than the same machine on 50 Hz —
-  which is why a 50 Hz pump curve cannot simply be reused here, and why direct-replacement
+  <p>Everything runs <strong>20 % faster</strong> than the same machine on 60 Hz —
+  which is why a 60 Hz pump curve cannot simply be reused here, and why direct-replacement
   spares must be 60 Hz machines.</p>
 
   <p>Now the representative machine used through this section: a <strong>160 kW,
@@ -627,7 +627,7 @@
     DG cases).</li>
     <li>Largest motor: read nameplate FLC, starting method, overload class; compare
     class against the actual measured start time.</li>
-    <li>Confirm 60 Hz nameplates throughout — a 50 Hz spare motor installed "because
+    <li>Confirm 60 Hz nameplates throughout — a 60 Hz spare motor installed "because
     it fits" runs 20 % fast on its pump curve and overloads.</li>
     <li>Check IC411 fans and fins for dust blanket; confirm 50 &deg;C ambient was in
     the motor datasheet (temperature rise class vs insulation class margin).</li>
@@ -990,7 +990,7 @@
     that frequency. The plant's dominant VFD harmonics are the 5th and 7th —
     <strong>300 Hz and 420 Hz at 60 Hz</strong> — both safely above 227 Hz.
     Sanity check: the familiar catalogue figure "189 Hz" for 7 % reactors is the
-    <em>50 Hz-system</em> value (50 &times; 3.78); on the SEC 60 Hz grid the same
+    <em>60 Hz-system</em> value (50 &times; 3.78); on the SEC 60 Hz grid the same
     7 % hardware tunes to 227 Hz. Same order, different hertz — quote the right
     one in specifications. &#10003;</p>
   </div>
@@ -1228,7 +1228,7 @@
     0.894&sup2; &asymp; 80 %.</li>
     <li>Self-check — Why 227 Hz and not 189 Hz on this plant? (n = 1/&radic;0.07
     &asymp; 3.78 is a <em>multiple of mains frequency</em>: 60 &times; 3.78
-    &asymp; 227 Hz; 189 Hz is the 50 Hz-system figure.)</li>
+    &asymp; 227 Hz; 189 Hz is the 60 Hz-system figure.)</li>
     <li>Self-check — A colleague proposes correcting to unity "while we're at it".
     Give the three reasons to refuse. (660 extra kvar for 5 % kVA gain; zero margin
     before leading at every load dip; leading pf risks with capacitors, voltage and
